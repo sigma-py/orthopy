@@ -13,7 +13,7 @@ from .__about__ import (
     __status__,
     )
 
-from . import helpers
+from .main import *
 
 try:
     import pipdate
