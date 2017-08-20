@@ -1,6 +1,28 @@
 # -*- coding: utf-8 -*-
 #
 # pylint: disable=too-few-public-methods
+'''
+[1] Gene H. Golub and John H. Welsch,
+    Calculation of Gauss Quadrature Rules,
+    Mathematics of Computation,
+    Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10,
+    <https://dx.doi.org/10.2307/2004418>,
+    <https://pdfs.semanticscholar.org/c715/119d5464f614fd8ec590b732ccfea53e72c4.pdf>.
+
+[2] Algorithm 726: ORTHPOL–a package of routines for generating orthogonal
+    polynomials and Gauss-type quadrature rules,
+    W. Gautschi,
+    ACM Transactions on Mathematical Software (TOMS),
+    Volume 20, Issue 1, March 1994,
+    Pages 21-62,
+    <http://doi.org/10.1145/174603.174605>,
+    <http://www.cs.purdue.edu/archives/2002/wxg/codes/gauss.m>,
+
+[3] How and how not to check Gaussian quadrature formulae,
+    BIT Numerical Mathematics,
+    June 1983, Volume 23, Issue 2, pp 209–216,
+    <https://doi.org/10.1007/BF02218441>.
+'''
 import math
 import warnings
 
@@ -14,14 +36,7 @@ class Gauss(object):
 
     (with omega being a nonnegative weight function), this class creates the
     Gauss scheme corresponding to the above integral. It uses the mechanism
-    from
-
-    Gene H. Golub and John H. Welsch,
-    Calculation of Gauss Quadrature Rules,
-    Mathematics of Computation,
-    Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10,
-    <https://dx.doi.org/10.2307/2004418>,
-    <https://pdfs.semanticscholar.org/c715/119d5464f614fd8ec590b732ccfea53e72c4.pdf>.
+    from [1].
     '''
     def __init__(self, n, moments):
         self.degree = 2*n-1
@@ -42,21 +57,8 @@ class Gauss(object):
 
 
 def scheme_from_coefficients(alpha, beta):
-    '''
-    Compute the Gauss nodes and weights from the recursion coefficients
-    associated with a set of orthogonal polynomials.
-
-    Algorithm 726: ORTHPOL–a package of routines for generating orthogonal
-    polynomials and Gauss-type quadrature rules,
-    W. Gautschi,
-    ACM Transactions on Mathematical Software (TOMS),
-    Volume 20, Issue 1, March 1994,
-    Pages 21-62,
-    <http://doi.org/10.1145/174603.174605>,
-    <http://www.cs.purdue.edu/archives/2002/wxg/codes/gauss.m>,
-
-    and
-
+    '''Compute the Gauss nodes and weights from the recursion coefficients
+    associated with a set of orthogonal polynomials. See [2] and
     http://www.scientificpython.net/pyblog/radau-quadrature
     '''
     from scipy.linalg import eig_banded
@@ -75,23 +77,7 @@ def coefficients_from_moments(n, moments):
     (with omega being a nonnegative weight function), this class creates the
     recursion coefficients of the corresponding orthogonal polynomials, see
     section 4 ("Determining the Three Term Relationship from the Moments") in
-
-    Gene H. Golub and John H. Welsch,
-    Calculation of Gauss Quadrature Rules,
-    Mathematics of Computation,
-    Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10,
-    <https://dx.doi.org/10.2307/2004418>,
-    <https://pdfs.semanticscholar.org/c715/119d5464f614fd8ec590b732ccfea53e72c4.pdf>.
-
-    Numerically unstable, see
-
-    Algorithm 726: ORTHPOL–a package of routines for generating orthogonal
-    polynomials and Gauss-type quadrature rules,
-    W. Gautschi,
-    ACM Transactions on Mathematical Software (TOMS),
-    Volume 20, Issue 1, March 1994,
-    Pages 21-62,
-    <http://doi.org/10.1145/174603.174605>.
+    [1]. Numerically unstable, see [2].
     '''
     M = numpy.array([[
         moments[i+j] for j in range(n+1)
@@ -115,8 +101,7 @@ def coefficients_from_moments(n, moments):
 
 
 def jacobi_recursion_coefficients(n, a, b):
-    '''
-    Generate the recursion coefficients alpha_k, beta_k
+    '''Generate the recursion coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
 
@@ -153,15 +138,9 @@ def jacobi_recursion_coefficients(n, a, b):
 
 
 def check_coefficients(moments, alpha, beta):
-    '''
-    In his article
-
-    How and how not to check Gaussian quadrature formulae,
-    BIT Numerical Mathematics,
-    June 1983, Volume 23, Issue 2, pp 209–216,
-
-    Walter Gautschi suggests a method for checking if a Gauss quadrature rule
-    is sane. This method implements test #3 for the article.
+    '''In his article [3], Walter Gautschi suggests a method for checking if a
+    Gauss quadrature rule is sane. This method implements test #3 for the
+    article.
     '''
     n = len(alpha)
     assert len(beta) == n
