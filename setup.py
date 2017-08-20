@@ -31,13 +31,10 @@ setup(
     author=about['__author__'],
     author_email=about['__email__'],
     install_requires=[
-        'matplotlib',
         'numpy',
         'pipdate',
-        'scipy',
-        'sympy'
         ],
-    description='numerical integration, quadrature for various shapes',
+    description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
     license=about['__license__'],
     classifiers=[
