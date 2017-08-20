@@ -33,6 +33,7 @@ setup(
     install_requires=[
         'numpy',
         'pipdate',
+        'scipy',
         ],
     description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
