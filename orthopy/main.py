@@ -36,8 +36,34 @@ class Gauss(object):
                 'Handle with care!'
                 )
 
-        self.points, self.weights = _gauss(alpha, beta)
+        self.points, self.weights = scheme_from_coefficients(alpha, beta)
         return
+
+
+def scheme_from_coefficients(alpha, beta):
+    '''
+    Compute the Gauss nodes and weights from the recursion coefficients
+    associated with a set of orthogonal polynomials.
+
+    Algorithm 726: ORTHPOL–a package of routines for generating orthogonal
+    polynomials and Gauss-type quadrature rules,
+    W. Gautschi,
+    ACM Transactions on Mathematical Software (TOMS),
+    Volume 20, Issue 1, March 1994,
+    Pages 21-62,
+    <http://doi.org/10.1145/174603.174605>,
+    <http://www.cs.purdue.edu/archives/2002/wxg/codes/gauss.m>,
+
+    and
+
+    http://www.scientificpython.net/pyblog/radau-quadrature
+    '''
+    from scipy.linalg import eig_banded
+    import scipy
+    A = numpy.vstack((numpy.sqrt(beta), alpha))
+    x, V = eig_banded(A, lower=False)
+    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+    return x, w
 
 
 def coefficients_from_moments(n, moments):
@@ -162,29 +188,3 @@ def check_coefficients(moments, alpha, beta):
         errors_beta[k] = abs(beta[k] - D[k+1]*D[k-1]/D[k]**2)
 
     return errors_alpha, errors_beta
-
-
-def _gauss(alpha, beta):
-    '''
-    Compute the Gauss nodes and weights from the recursion coefficients
-    associated with a set of orthogonal polynomials.
-
-    Algorithm 726: ORTHPOL–a package of routines for generating orthogonal
-    polynomials and Gauss-type quadrature rules,
-    W. Gautschi,
-    ACM Transactions on Mathematical Software (TOMS),
-    Volume 20, Issue 1, March 1994,
-    Pages 21-62,
-    <http://doi.org/10.1145/174603.174605>,
-    <http://www.cs.purdue.edu/archives/2002/wxg/codes/gauss.m>,
-
-    and
-
-    http://www.scientificpython.net/pyblog/radau-quadrature
-    '''
-    from scipy.linalg import eig_banded
-    import scipy
-    A = numpy.vstack((numpy.sqrt(beta), alpha))
-    x, V = eig_banded(A, lower=False)
-    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
-    return x, w
