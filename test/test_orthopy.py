@@ -10,13 +10,6 @@ def test_coefficients_from_moments(tol=1.0e-14):
     '''
     alpha = 2.0
 
-    def integrate_exact(k):
-        # \int_{-1}^{+1} |x^alpha| x^k
-        return [
-            0.0 if kk % 2 == 1 else 2.0/(alpha+kk+1)
-            for kk in k
-            ]
-
     # Get the moment corresponding to the weight function omega(x) =
     # x^alpha:
     #
