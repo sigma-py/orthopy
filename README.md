@@ -13,6 +13,16 @@ Relevant publications:
  * [W. Gautschi, How and how not to check Gaussian quadrature formulae, BIT Numerical Mathematics, June 1983, Volume 23, Issue 2, pp 209–216](https://doi.org/10.1007/BF02218441)
  * [W. Gautschi, Algorithm 726: ORTHPOL–a package of routines for generating orthogonal polynomials and Gauss-type quadrature rules, ACM Transactions on Mathematical Software (TOMS), Volume 20, Issue 1, March 1994, Pages 21-62](http://doi.org/10.1145/174603.174605)
 
+
+### Bring your own weight function
+Do you need Gauss points and weights with respect to your own special weight
+function `w`? No problem: You simply need to provide the desired number of Gauss
+points `n` and the moments `integral(w(x) * x**k)` with `k` up to `2n+1`:
+```python
+my_gauss = quadpy.line_segment.Gauss(n, moments)
+```
+quadpy takes care of the rest (using the Golub-Welsch algorithm). The resulting
+scheme has degree `2n-1` and can be used like any other scheme in quadpy.
 ### Installation
 
 orthopy is [available from the Python Package Index](https://pypi.python.org/pypi/orthopy/), so with
