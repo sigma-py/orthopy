@@ -159,6 +159,46 @@ def coefficients_from_moments(n, moments):
     return alpha, beta
 
 
+def chebyshev(moments):
+    '''Given the first 2n moments `int t^k dt`, this method uses the Chebyshev
+    algorithm (see, e.g., [2]) for computing the associated recursion
+    coefficients.
+    '''
+    m = len(moments)
+    assert m % 2 == 0
+
+    n = m // 2
+
+    alpha = numpy.empty(n)
+    beta = numpy.empty(n)
+    sigma = numpy.empty((n, 2*n))
+
+    k = 0
+    sigma[k, k:2*n-k] = moments
+
+    alpha[0] = sigma[0, 1] / sigma[0, 0]
+    beta[0] = sigma[0, 0]
+
+    k = 1
+    L = numpy.arange(k, 2*n-k)
+    sigma[k, L] = sigma[k-1, L+1] - alpha[k-1] * sigma[k-1, L]
+    alpha[k] = sigma[k, k+1] / sigma[k, k] - sigma[k-1, k] / sigma[k-1, k-1]
+    beta[k] = sigma[k, k] / sigma[k-1, k-1]
+
+    for k in range(2, n):
+        L = numpy.arange(k, 2*n-k)
+        sigma[k, L] = (
+            sigma[k-1, L+1]
+            - alpha[k-1] * sigma[k-1, L]
+            - beta[k-1] * sigma[k-2, L]
+            )
+        alpha[k] = \
+            sigma[k, k+1] / sigma[k, k] - sigma[k-1, k] / sigma[k-1, k-1]
+        beta[k] = sigma[k, k] / sigma[k-1, k-1]
+
+    return alpha, beta
+
+
 def jacobi_recursion_coefficients(n, a, b):
     '''Generate the recursion coefficients alpha_k, beta_k
 

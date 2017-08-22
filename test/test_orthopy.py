@@ -34,6 +34,30 @@ def test_coefficients_from_moments(tol=1.0e-14):
     return
 
 
+def test_chebyshev(tol=1.0e-14):
+    alpha = 2.0
+
+    # Get the moment corresponding to the weight function omega(x) =
+    # x^alpha:
+    #
+    #                                     / 0 if k is odd,
+    #    int_{-1}^{+1} |x^alpha| x^k dx ={
+    #                                     \ 2/(alpha+k+1) if k is even.
+    #
+    n = 5
+    k = numpy.arange(2*n)
+    moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
+    alpha, beta = orthopy.chebyshev(moments)
+
+    assert numpy.all(abs(alpha) < tol)
+    assert abs(beta[0] - 2.0/3.0) < tol
+    assert abs(beta[1] - 3.0/5.0) < tol
+    assert abs(beta[2] - 4.0/35.0) < tol
+    assert abs(beta[3] - 25.0/63.0) < tol
+    assert abs(beta[4] - 16.0/99.0) < tol
+    return
+
+
 def test_jacobi(tol=1.0e-14):
     n = 5
     a = 1.0
@@ -119,4 +143,4 @@ def test_clenshaw(tol=1.0e-14):
 
 
 if __name__ == '__main__':
-    test_clenshaw()
+    test_chebyshev()
