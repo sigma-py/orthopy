@@ -74,12 +74,6 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments[2] = 8.0/45.0
     a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
 
-    # n = 5
-    # k = numpy.arange(2*n)
-    # moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
-    # a = numpy.zeros(n)
-    # b = numpy.zeros(n)
-
     alpha, beta = orthopy.chebyshev_modified(moments, a, b)
 
     assert numpy.all(abs(alpha) < tol)

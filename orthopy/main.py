@@ -168,37 +168,7 @@ def chebyshev(moments):
     '''
     m = len(moments)
     assert m % 2 == 0
-
-    n = m // 2
-
-    alpha = numpy.empty(n)
-    beta = numpy.empty(n)
-    sigma = numpy.empty((n, 2*n))
-
-    k = 0
-    sigma[k, k:2*n-k] = moments
-
-    alpha[0] = sigma[0, 1] / sigma[0, 0]
-    beta[0] = sigma[0, 0]
-
-    k = 1
-    L = numpy.arange(k, 2*n-k)
-    sigma[k, L] = sigma[k-1, L+1] - alpha[k-1] * sigma[k-1, L]
-    alpha[k] = sigma[k, k+1] / sigma[k, k] - sigma[k-1, k] / sigma[k-1, k-1]
-    beta[k] = sigma[k, k] / sigma[k-1, k-1]
-
-    for k in range(2, n):
-        L = numpy.arange(k, 2*n-k)
-        sigma[k, L] = (
-            sigma[k-1, L+1]
-            - alpha[k-1] * sigma[k-1, L]
-            - beta[k-1] * sigma[k-2, L]
-            )
-        alpha[k] = \
-            sigma[k, k+1] / sigma[k, k] - sigma[k-1, k] / sigma[k-1, k-1]
-        beta[k] = sigma[k, k] / sigma[k-1, k-1]
-
-    return alpha, beta
+    return chebyshev_modified(moments, numpy.zeros(m), numpy.zeros(m))
 
 
 def chebyshev_modified(nu, a, b):
