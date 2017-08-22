@@ -129,7 +129,7 @@ def test_jacobi_reconstruction(tol=1.0e-14):
     alpha1, beta1 = orthopy.jacobi_recursion_coefficients(4, 2.0, 1.0)
     points, weights = orthopy.scheme_from_coefficients(alpha1, beta1)
 
-    alpha2, beta2 = orthopy.coefficients_from_scheme(points, weights)
+    alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
 
     assert numpy.all(abs(alpha1 - alpha2) < tol)
     assert numpy.all(abs(beta1 - beta2) < tol)

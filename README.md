@@ -15,15 +15,84 @@ Relevant publications:
  * [W. Gautschi, Algorithm 726: ORTHPOL–a package of routines for generating orthogonal polynomials and Gauss-type quadrature rules, ACM Transactions on Mathematical Software (TOMS), Volume 20, Issue 1, March 1994, Pages 21-62](http://doi.org/10.1145/174603.174605)
 
 
-### Bring your own weight function
-Do you need Gauss points and weights with respect to your own special weight
-function `w`? No problem: You simply need to provide the desired number of Gauss
-points `n` and the moments `integral(w(x) * x**k)` with `k` up to `2n`:
-```python
-my_gauss = quadpy.line_segment.Gauss(moments)
+Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
-quadpy takes care of the rest (using the Golub-Welsch algorithm). The resulting
-scheme has degree `2n-1` and can be used like any other scheme in quadpy.
+pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
+```
+(defined by their _recursion coefficients_ `alpha` and `beta`) are closely
+related. This module provides tools for working with them.
+
+Some examples:
+
+#### Transform between a Gaussian and recursion coefficients
+```python
+import orthopy
+
+# alpha = ...
+# beta = ...
+points, weights = orthopy.gauss_from_coefficients(alpha, beta)
+alpha, beta = orthopy.coefficients_from_gauss(points, weights)
+```
+
+#### Recursion coefficients of classical weight functions
+
+The recusion coefficients of Gauss rules for the weight function 
+`w(x) = (1-x)^a * (1+x)^b` with any `a` or `b` are explicitly known. Retrieve
+them with
+```python
+import orthopy
+
+alpha, beta = orthopy.jacobi_recursion_coefficients(n, a, b)
+```
+Of course, it's easy to generate the corresponding Gaussian rule; for example
+for Gauss-Legendre of order 5:
+```python
+import orthopy
+
+alpha, beta = orthopy.jacobi_recursion_coefficients(5, 0.0, 0.0)
+points, weights = orthopy.gauss_from_coefficients(alpha, beta)
+```
+
+#### Recursion coefficients for your own weight function
+
+A couple of algorithms are implemented for that, particularly
+
+  * Golub-Welsch and
+  * (modified) Chebyshev.
+
+The input to all of those methods is an array of _moments_, i.e., the integrals
+```
+integral(w(x) p_k(x) dx)
+```
+with `p_k(x)` either the monomials `x^k` (for Golub-Welsch and Chebyshev), or
+a known set of orthogonal polynomials (for modified Chebyshev). Depending on
+your weight function, the moments may have an analytic representation.
+
+
+```python
+import orthopy
+
+# <odified moments of `int x^2 p_k(x) dx` with Legendre polynomials.
+# Almost all moments are 0.
+n = 5
+moments = numpy.zeros(2*n)
+moments[0] = 2.0/3.0
+moments[2] = 8.0/45.0
+
+a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+```
+
+Be aware of the fact that Golub-Welsch and unmodified Chebyshev are _very_
+ill-conditioned, so don't push `n` too far! In any case, [as recommended by
+Gautschi](https://doi.org/10.1007/BF02218441), you can test your
+moment-based scheme with
+```
+import orthopy
+orthopy.check_coefficients(moments, alpha, beta)
+```
+
+
 ### Installation
 
 orthopy is [available from the Python Package Index](https://pypi.python.org/pypi/orthopy/), so with

@@ -68,7 +68,9 @@ def clenshaw(a, alpha, beta, t):
     except AttributeError:  # 'float' object has no attribute 'shape'
         b = numpy.empty(n+1)
 
-    b[0] = 3.1415
+    # b[0] is unused, can be any value
+    # TODO shift the array
+    b[0] = 1.0
 
     b[n] = a[n]
     b[n-1] = a[n-1] + (t - alpha[n-1]) * b[n]
@@ -237,7 +239,7 @@ def jacobi_recursion_coefficients(n, a, b):
     return alpha, beta
 
 
-def coefficients_from_scheme(points, weights):
+def coefficients_from_gauss(points, weights):
     '''Given the points and weights of a Gaussian quadrature rule, this method
     reconstructs the recursion coefficients alpha, beta as appearing in the
     tridiagonal Jacobi matrix tri(b, a, b).
