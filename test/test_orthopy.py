@@ -225,5 +225,22 @@ def test_gautschi_how_to_and_how_not_to():
     return
 
 
+def test_show():
+    import matplotlib.pyplot as plt
+
+    for n in range(10):
+        moments = numpy.zeros(2*n)
+        if len(moments) > 0:
+            moments[0] = 2.0/3.0
+        if len(moments) > 2:
+            moments[2] = 8.0/45.0
+        a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+        orthopy.plot(alpha, beta, -1.0, +1.0)
+
+    plt.show()
+    return
+
+
 if __name__ == '__main__':
-    test_chebyshev_modified()
+    test_show()

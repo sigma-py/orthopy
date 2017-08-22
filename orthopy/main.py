@@ -130,7 +130,8 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
         vals = numpy.empty(n+1)
 
     vals[0] = 1.0
-    vals[1] = (t - alpha[0]) * vals[0]
+    if len(alpha) > 0:
+        vals[1] = (t - alpha[0]) * vals[0]
     for k in range(1, n):
         vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
     return vals[-1]
@@ -199,24 +200,26 @@ def chebyshev_modified(nu, a, b):
     # the shrinking rows there, only ever keeping the last two.
     sigma = numpy.empty((n, 2*n))
 
-    k = 0
-    sigma[k, k:2*n-k] = nu
-    alpha[0] = a[0] + nu[1] / nu[0]
-    beta[0] = nu[0]
+    if n > 0:
+        k = 0
+        sigma[k, k:2*n-k] = nu
+        alpha[0] = a[0] + nu[1] / nu[0]
+        beta[0] = nu[0]
 
-    k = 1
-    L = numpy.arange(k, 2*n-k)
-    sigma[k, L] = (
-        sigma[k-1, L+1]
-        - (alpha[k-1] - a[L]) * sigma[k-1, L]
-        + b[L] * sigma[k-1, L-1]
-        )
-    alpha[k] = (
-        a[k]
-        + sigma[k, k+1]/sigma[k, k]
-        - sigma[k-1, k]/sigma[k-1, k-1]
-        )
-    beta[k] = sigma[k, k] / sigma[k-1, k-1]
+    if n > 1:
+        k = 1
+        L = numpy.arange(k, 2*n-k)
+        sigma[k, L] = (
+            sigma[k-1, L+1]
+            - (alpha[k-1] - a[L]) * sigma[k-1, L]
+            + b[L] * sigma[k-1, L-1]
+            )
+        alpha[k] = (
+            a[k]
+            + sigma[k, k+1]/sigma[k, k]
+            - sigma[k-1, k]/sigma[k-1, k-1]
+            )
+        beta[k] = sigma[k, k] / sigma[k-1, k-1]
 
     for k in range(2, n):
         L = numpy.arange(k, 2*n-k)
@@ -250,7 +253,10 @@ def jacobi_recursion_coefficients(n, a, b):
     https://github.com/gregvw/orthopoly-quadrature/blob/master/rec_jacobi.pyx
     '''
     assert a > -1.0 or b > -1.0
-    assert n >= 1
+    if n == 0:
+        return numpy.array([]), numpy.array([])
+
+    assert n > 1
 
     mu = 2.0**(a+b+1.0) \
         * numpy.exp(
@@ -304,3 +310,21 @@ def check_coefficients(moments, alpha, beta):
         errors_beta[k] = abs(beta[k] - D[k+1]*D[k-1]/D[k]**2)
 
     return errors_alpha, errors_beta
+
+
+def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
+    plot(*args, **kwargs)
+    plt.show()
+    return
+
+
+def plot(alpha, beta, t0, t1):
+    import matplotlib.pyplot as plt
+
+    n = 1000
+    t = numpy.linspace(t0, t1, n)
+    vals = evaluate_orthogonal_polynomial(alpha, beta, t)
+
+    plt.plot(t, vals)
+    return
