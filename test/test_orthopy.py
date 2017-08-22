@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 #
+from distutils.version import LooseVersion
+
 import math
 import numpy
 import orthopy
+import pytest
+import scipy
 from scipy.special import legendre
 
 
@@ -125,6 +129,7 @@ def test_gauss(tol=1.0e-14):
     return
 
 
+@pytest.mark.skipif(LooseVersion(scipy.__version__) < LooseVersion('1.0.0'))
 def test_jacobi_reconstruction(tol=1.0e-14):
     alpha1, beta1 = orthopy.jacobi_recursion_coefficients(4, 2.0, 1.0)
     points, weights = orthopy.gauss_from_coefficients(alpha1, beta1)
@@ -166,6 +171,7 @@ def test_clenshaw(tol=1.0e-14):
     return
 
 
+@pytest.mark.skipif(LooseVersion(scipy.__version__) < LooseVersion('1.0.0'))
 def test_gautschi_how_to_and_how_not_to():
     '''Test Gautschi's famous example from
 
