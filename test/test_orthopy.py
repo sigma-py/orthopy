@@ -76,5 +76,17 @@ def test_gauss(tol=1.0e-14):
     return
 
 
+def test_jacobi_reconstruction(tol=1.0e-14):
+    alpha1, beta1 = orthopy.jacobi_recursion_coefficients(4, 2.0, 1.0)
+    points, weights = orthopy.scheme_from_coefficients(alpha1, beta1)
+
+    alpha2, beta2 = orthopy.coefficients_from_scheme(points, weights)
+
+    tol = 1.0e-14
+    assert numpy.all(abs(alpha1 - alpha2) < tol)
+    assert numpy.all(abs(beta1 - beta2) < tol)
+    return
+
+
 if __name__ == '__main__':
-    test_gauss()
+    test_jacobi_reconstruction(tol=1.0e-14)
