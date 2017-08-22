@@ -102,29 +102,26 @@ def test_jacobi(tol=1.0e-14):
 
 def test_gauss(tol=1.0e-14):
     n = 5
-
-    # weight function 1.0
-    k = numpy.arange(2*n+1)
-    moments = (1.0 + (-1.0)**k) / (k + 1)
-
-    scheme = orthopy.Gauss(n, moments)
+    points, weights = orthopy.gauss_from_coefficients(
+            *orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+            )
 
     s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
     t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
-    assert abs(scheme.points[0] + s) < tol
-    assert abs(scheme.points[1] + t) < tol
-    assert abs(scheme.points[2] + 0.0) < tol
-    assert abs(scheme.points[3] - t) < tol
-    assert abs(scheme.points[4] - s) < tol
+    assert abs(points[0] + s) < tol
+    assert abs(points[1] + t) < tol
+    assert abs(points[2] + 0.0) < tol
+    assert abs(points[3] - t) < tol
+    assert abs(points[4] - s) < tol
 
     u = 128.0/225.0
     v = (322.0 + 13 * math.sqrt(70)) / 900.0
     w = (322.0 - 13 * math.sqrt(70)) / 900.0
-    assert abs(scheme.weights[0] - w) < tol
-    assert abs(scheme.weights[1] - v) < tol
-    assert abs(scheme.weights[2] - u) < tol
-    assert abs(scheme.weights[3] - v) < tol
-    assert abs(scheme.weights[4] - w) < tol
+    assert abs(weights[0] - w) < tol
+    assert abs(weights[1] - v) < tol
+    assert abs(weights[2] - u) < tol
+    assert abs(weights[3] - v) < tol
+    assert abs(weights[4] - w) < tol
     return
 
 
@@ -170,4 +167,4 @@ def test_clenshaw(tol=1.0e-14):
 
 
 if __name__ == '__main__':
-    test_golub_welsch()
+    test_gauss()

@@ -30,44 +30,16 @@
     <https://doi.org/10.1088/0266-5611/3/4/010>.
 '''
 import math
-import warnings
 
 import numpy
 # pylint: disable=no-name-in-module
 from scipy.linalg.lapack import get_lapack_funcs
 
 
-class Gauss(object):
-    '''Given moments
-
-    mu_k = int_a^b omega(x) x^k dx,  k = {0, 1,...,2N-1}
-
-    (with omega being a nonnegative weight function), this class creates the
-    Gauss scheme corresponding to the above integral. It uses the mechanism
-    from [1].
-    '''
-    def __init__(self, n, moments):
-        self.degree = 2*n-1
-
-        alpha, beta = chebyshev(moments)
-
-        err_alpha, err_beta = check_coefficients(moments, alpha, beta)
-
-        max_error = max(numpy.max(err_alpha), numpy.max(err_beta))
-        if max_error > 1.0e-12:
-            warnings.warn(
-                'The sanity test shows an error of {:e}. '.format(max_error) +
-                'Handle with care!'
-                )
-
-        self.points, self.weights = scheme_from_coefficients(alpha, beta)
-        return
-
-
-def scheme_from_coefficients(alpha, beta):
+def gauss_from_coefficients(alpha, beta):
     '''Compute the Gauss nodes and weights from the recursion coefficients
     associated with a set of orthogonal polynomials. See [2] and
-    http://www.scientificpython.net/pyblog/radau-quadrature
+    <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
     from scipy.linalg import eig_banded
     import scipy
