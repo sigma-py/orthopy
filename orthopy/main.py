@@ -130,6 +130,7 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
         vals = numpy.empty(n+1)
 
     vals[0] = 1.0
+    # pylint: disable=len-as-condition
     if len(alpha) > 0:
         vals[1] = (t - alpha[0]) * vals[0]
         for k in range(1, n):

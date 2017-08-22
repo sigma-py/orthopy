@@ -127,7 +127,7 @@ def test_gauss(tol=1.0e-14):
 
 def test_jacobi_reconstruction(tol=1.0e-14):
     alpha1, beta1 = orthopy.jacobi_recursion_coefficients(4, 2.0, 1.0)
-    points, weights = orthopy.scheme_from_coefficients(alpha1, beta1)
+    points, weights = orthopy.gauss_from_coefficients(alpha1, beta1)
 
     alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
 
@@ -222,6 +222,9 @@ def test_gautschi_how_to_and_how_not_to():
 
     errors_alpha, errors_beta = \
         orthopy.check_coefficients(moments, alpha, beta)
+
+    assert numpy.max(errors_alpha) > 1.0e-2
+    assert numpy.max(errors_beta) > 1.0e-2
     return
 
 
@@ -230,6 +233,7 @@ def test_show():
 
     for n in range(6):
         moments = numpy.zeros(2*n)
+        # pylint: disable=len-as-condition
         if len(moments) > 0:
             moments[0] = 2.0/3.0
         if len(moments) > 2:
