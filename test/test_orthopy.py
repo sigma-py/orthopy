@@ -94,11 +94,29 @@ def test_eval(tol=1.0e-14):
     t = 1.0
     value = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
 
+    # Evaluating the Legendre polynomial in this way is rather unstable, so
+    # don't go too far with n.
     ref = numpy.polyval(legendre(n, monic=True), t)
 
     assert abs(value - ref) < tol
     return
 
 
+def test_clenshaw(tol=1.0e-14):
+    n = 5
+    alpha, beta = orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+    t = 1.0
+
+    a = numpy.ones(n+1)
+    value = orthopy.clenshaw(a, alpha, beta, t)
+
+    ref = math.fsum([
+            numpy.polyval(legendre(i, monic=True), t)
+            for i in range(n+1)])
+
+    assert abs(value - ref) < tol
+    return
+
+
 if __name__ == '__main__':
-    test_eval()
+    test_clenshaw()
