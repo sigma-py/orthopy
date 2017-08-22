@@ -49,6 +49,40 @@ def gauss_from_coefficients(alpha, beta):
     return x, w
 
 
+def coefficients_from_gauss(points, weights):
+    '''Given the points and weights of a Gaussian quadrature rule, this method
+    reconstructs the recursion coefficients alpha, beta as appearing in the
+    tridiagonal Jacobi matrix tri(b, a, b).
+    This is using "Method 2--orthogonal reduction" from (section 3.2 in [4]).
+    The complexity is O(n^3); a faster method is suggested in 3.3 in [4].
+    '''
+    n = len(points)
+    assert n == len(weights)
+
+    A = numpy.zeros((n+1, n+1))
+
+    # In sytrd, the _last_ row/column of Q are e, so put the values there.
+    a00 = 1.0
+    A[n, n] = a00
+    k = numpy.arange(n)
+    A[k, k] = points
+    A[n, :-1] = numpy.sqrt(weights)
+    A[:-1, n] = numpy.sqrt(weights)
+
+    # Implemented in
+    # <https://github.com/scipy/scipy/issues/7775>
+    sytrd, sytrd_lwork = get_lapack_funcs(('sytrd', 'sytrd_lwork'))
+
+    # query lwork (optional)
+    lwork, info = sytrd_lwork(n+1)
+    assert info == 0
+
+    _, d, e, _, info = sytrd(A, lwork=lwork)
+    assert info == 0
+
+    return d[:-1][::-1], e[::-1]**2
+
+
 def clenshaw(a, alpha, beta, t):
     '''Clenshaw's algorithm for evaluating
 
@@ -237,40 +271,6 @@ def jacobi_recursion_coefficients(n, a, b):
     B = 4.0 * (N+a) * (N+b) * N * (N+a+b) / (nab**2.0 * (nab+1.0) * (nab-1.0))
     beta = numpy.hstack((mu, B1, B))
     return alpha, beta
-
-
-def coefficients_from_gauss(points, weights):
-    '''Given the points and weights of a Gaussian quadrature rule, this method
-    reconstructs the recursion coefficients alpha, beta as appearing in the
-    tridiagonal Jacobi matrix tri(b, a, b).
-    This is using "Method 2--orthogonal reduction" from (section 3.2 in [4]).
-    The complexity is O(n^3); a faster method is suggested in 3.3 in [4].
-    '''
-    n = len(points)
-    assert n == len(weights)
-
-    A = numpy.zeros((n+1, n+1))
-
-    # In sytrd, the _last_ row/column of Q are e, so put the values there.
-    a00 = 1.0
-    A[n, n] = a00
-    k = numpy.arange(n)
-    A[k, k] = points
-    A[n, :-1] = numpy.sqrt(weights)
-    A[:-1, n] = numpy.sqrt(weights)
-
-    # Implemented in
-    # <https://github.com/scipy/scipy/issues/7775>
-    sytrd, sytrd_lwork = get_lapack_funcs(('sytrd', 'sytrd_lwork'))
-
-    # query lwork (optional)
-    lwork, info = sytrd_lwork(n+1)
-    assert info == 0
-
-    _, d, e, _, info = sytrd(A, lwork=lwork)
-    assert info == 0
-
-    return d[:-1][::-1], e[::-1]**2
 
 
 def check_coefficients(moments, alpha, beta):

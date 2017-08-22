@@ -166,5 +166,65 @@ def test_clenshaw(tol=1.0e-14):
     return
 
 
+def test_gautschi_how_to_and_how_not_to():
+    '''Test Gautschi's famous example from
+
+    W. Gautschi,
+    How and how not to check Gaussian quadrature formulae,
+    BIT Numerical Mathematics,
+    June 1983, Volume 23, Issue 2, pp 209–216,
+    <https://doi.org/10.1007/BF02218441>.
+    '''
+    points = numpy.array([
+        1.457697817613696e-02,
+        8.102669876765460e-02,
+        2.081434595902250e-01,
+        3.944841255669402e-01,
+        6.315647839882239e-01,
+        9.076033998613676e-01,
+        1.210676808760832,
+        1.530983977242980,
+        1.861844587312434,
+        2.199712165681546,
+        2.543839804028289,
+        2.896173043105410,
+        3.262066731177372,
+        3.653371887506584,
+        4.102376773975577,
+        ])
+    weights = numpy.array([
+        3.805398607861561e-2,
+        9.622028412880550e-2,
+        1.572176160500219e-1,
+        2.091895332583340e-1,
+        2.377990401332924e-1,
+        2.271382574940649e-1,
+        1.732845807252921e-1,
+        9.869554247686019e-2,
+        3.893631493517167e-2,
+        9.812496327697071e-3,
+        1.439191418328875e-3,
+        1.088910025516801e-4,
+        3.546866719463253e-6,
+        3.590718819809800e-8,
+        5.112611678291437e-11,
+        ])
+
+    # weight function exp(-t**3/3)
+    n = len(points)
+    moments = numpy.array([
+        3.0**((k-2)/3.0) * math.gamma((k+1) / 3.0)
+        for k in range(2*n)
+        ])
+
+    alpha, beta = orthopy.coefficients_from_gauss(points, weights)
+    # alpha, beta = orthopy.chebyshev(moments)
+
+    errors_alpha, errors_beta = \
+        orthopy.check_coefficients(moments, alpha, beta)
+    return
+
+
 if __name__ == '__main__':
-    test_gauss()
+    # test_gauss()
+    test_gautschi_how_to_and_how_not_to()

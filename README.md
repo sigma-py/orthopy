@@ -72,7 +72,7 @@ your weight function, the moments may have an analytic representation.
 ```python
 import orthopy
 
-# <odified moments of `int x^2 p_k(x) dx` with Legendre polynomials.
+# Modified moments of `int x^2 p_k(x) dx` with Legendre polynomials.
 # Almost all moments are 0.
 n = 5
 moments = numpy.zeros(2*n)
@@ -91,6 +91,15 @@ moment-based scheme with
 import orthopy
 orthopy.check_coefficients(moments, alpha, beta)
 ```
+
+#### Other tools
+
+* [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
+  computing the weighted sum of orthogonal polynomials:
+  ```python
+  import orthopy
+  orthopy.clenshaw(a, alpha, beta, t)
+  ```
 
 
 ### Installation
