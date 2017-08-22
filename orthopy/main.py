@@ -132,8 +132,8 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     vals[0] = 1.0
     if len(alpha) > 0:
         vals[1] = (t - alpha[0]) * vals[0]
-    for k in range(1, n):
-        vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
+        for k in range(1, n):
+            vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
     return vals[-1]
 
 
@@ -319,12 +319,15 @@ def show(*args, **kwargs):
     return
 
 
-def plot(alpha, beta, t0, t1):
+def plot(alpha, beta, t0, t1, normalized=False):
     import matplotlib.pyplot as plt
 
     n = 1000
     t = numpy.linspace(t0, t1, n)
     vals = evaluate_orthogonal_polynomial(alpha, beta, t)
+    if normalized:
+        # Make sure the function passes through (1, 1)
+        vals /= vals[-1]
 
     plt.plot(t, vals)
     return
