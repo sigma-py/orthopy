@@ -226,5 +226,4 @@ def test_gautschi_how_to_and_how_not_to():
 
 
 if __name__ == '__main__':
-    # test_gauss()
-    test_gautschi_how_to_and_how_not_to()
+    test_chebyshev_modified()

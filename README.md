@@ -1,6 +1,6 @@
 # orthopy
 
-Python tools for orthogonal polynomials and Gaussian quadature.
+Python tools for orthogonal polynomials and Gaussian quadrature.
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
@@ -36,7 +36,7 @@ alpha, beta = orthopy.coefficients_from_gauss(points, weights)
 
 #### Recursion coefficients of classical weight functions
 
-The recusion coefficients of Gauss rules for the weight function 
+The recursion coefficients of Gauss rules for the weight function
 `w(x) = (1-x)^a * (1+x)^b` with any `a` or `b` are explicitly known. Retrieve
 them with
 ```python
