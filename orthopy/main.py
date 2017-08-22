@@ -26,7 +26,8 @@
 
 [4] D. Boley and G.H. Golub,
     A survey of matrix inverse eigenvalue problems,
-    Inverse Problems, Volume 3, Number 4.
+    Inverse Problems, 1987, Volume 3, Number 4,
+    <https://doi.org/10.1088/0266-5611/3/4/010>.
 '''
 import math
 import warnings
