@@ -49,7 +49,7 @@ class Gauss(object):
     def __init__(self, n, moments):
         self.degree = 2*n-1
 
-        alpha, beta = coefficients_from_moments(n, moments)
+        alpha, beta = chebyshev(moments)
 
         err_alpha, err_beta = check_coefficients(moments, alpha, beta)
 
@@ -128,16 +128,19 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     return vals[-1]
 
 
-def coefficients_from_moments(n, moments):
+def golub_welsch(moments):
     '''Given moments
 
     mu_k = int_a^b omega(x) x^k dx,  k = {0, 1,...,2N}
 
-    (with omega being a nonnegative weight function), this class creates the
+    (with omega being a nonnegative weight function), this method creates the
     recursion coefficients of the corresponding orthogonal polynomials, see
     section 4 ("Determining the Three Term Relationship from the Moments") in
-    [1]. Numerically unstable, see [2].
+    Golub-Welsch [1]. Numerically unstable, see [2].
     '''
+    assert len(moments) % 2 == 1
+    n = (len(moments) - 1) // 2
+
     M = numpy.array([[
         moments[i+j] for j in range(n+1)
         ] for i in range(n+1)])
@@ -184,6 +187,8 @@ def chebyshev_modified(nu, a, b):
 
     alpha = numpy.empty(n)
     beta = numpy.empty(n)
+    # Actually overkill. One could alternatively make sigma a list, and store
+    # the shrinking rows there, only ever keeping the last two.
     sigma = numpy.empty((n, 2*n))
 
     k = 0

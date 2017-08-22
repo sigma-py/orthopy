@@ -6,7 +6,7 @@ import orthopy
 from scipy.special import legendre
 
 
-def test_coefficients_from_moments(tol=1.0e-14):
+def test_golub_welsch(tol=1.0e-14):
     '''Test the custom Gauss generator with the weight function x**2.
     '''
     alpha = 2.0
@@ -21,7 +21,7 @@ def test_coefficients_from_moments(tol=1.0e-14):
     n = 5
     k = numpy.arange(2*n+1)
     moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
-    alpha, beta = orthopy.coefficients_from_moments(n, moments)
+    alpha, beta = orthopy.golub_welsch(moments)
 
     assert numpy.all(abs(alpha) < tol)
     assert abs(beta[0] - 2.0/3.0) < tol
@@ -170,4 +170,4 @@ def test_clenshaw(tol=1.0e-14):
 
 
 if __name__ == '__main__':
-    test_chebyshev_modified()
+    test_golub_welsch()
