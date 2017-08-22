@@ -60,7 +60,6 @@ with `p_k(x)` either the monomials `x^k` (for Golub-Welsch and Chebyshev), or
 a known set of orthogonal polynomials (for modified Chebyshev). Depending on
 your weight function, the moments may have an analytic representation.
 
-
 ```python
 import orthopy
 
@@ -79,7 +78,7 @@ Be aware of the fact that Golub-Welsch and unmodified Chebyshev are _very_
 ill-conditioned, so don't push `n` too far! In any case, [as recommended by
 Gautschi](https://doi.org/10.1007/BF02218441), you can test your
 moment-based scheme with
-```
+```python
 import orthopy
 orthopy.check_coefficients(moments, alpha, beta)
 ```
@@ -90,7 +89,12 @@ orthopy.check_coefficients(moments, alpha, beta)
   computing the weighted sum of orthogonal polynomials:
   ```python
   import orthopy
-  orthopy.clenshaw(a, alpha, beta, t)
+  vals = orthopy.clenshaw(a, alpha, beta, t)
+  ```
+* Evaluate orthogonal polynomials (at many points at once):
+  ```python
+  import orthopy
+  vals = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
   ```
 
 ### Relevant publications
