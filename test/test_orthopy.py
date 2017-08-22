@@ -3,6 +3,7 @@
 import math
 import numpy
 import orthopy
+from scipy.special import legendre
 
 
 def test_coefficients_from_moments(tol=1.0e-14):
@@ -82,11 +83,22 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
     alpha2, beta2 = orthopy.coefficients_from_scheme(points, weights)
 
-    tol = 1.0e-14
     assert numpy.all(abs(alpha1 - alpha2) < tol)
     assert numpy.all(abs(beta1 - beta2) < tol)
     return
 
 
+def test_eval(tol=1.0e-14):
+    n = 5
+    alpha, beta = orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+    t = 1.0
+    value = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
+
+    ref = numpy.polyval(legendre(n, monic=True), t)
+
+    assert abs(value - ref) < tol
+    return
+
+
 if __name__ == '__main__':
-    test_jacobi_reconstruction(tol=1.0e-14)
+    test_eval()

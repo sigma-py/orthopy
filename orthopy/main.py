@@ -77,6 +77,25 @@ def scheme_from_coefficients(alpha, beta):
     return x, w
 
 
+def evaluate_orthogonal_polynomial(alpha, beta, t):
+    '''Evaluate the ortogonal polynomial defined by its recursion coefficients
+    alpha, beta at the point(s) t.
+    '''
+    n = len(alpha)
+    assert len(beta) == n
+
+    try:
+        vals = numpy.empty((n+1,) + t.shape)
+    except AttributeError:  # 'float' object has no attribute 'shape'
+        vals = numpy.empty(n+1)
+
+    vals[0] = 1.0
+    vals[1] = (t - alpha[0]) * vals[0]
+    for k in range(1, n):
+        vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
+    return vals[-1]
+
+
 def coefficients_from_moments(n, moments):
     '''Given moments
 
