@@ -58,6 +58,39 @@ def test_chebyshev(tol=1.0e-14):
     return
 
 
+def test_chebyshev_modified(tol=1.0e-14):
+    alpha = 2.0
+
+    # Get the moments corresponding to the Legendre polynomials and the weight
+    # function omega(x) = |x^alpha|:
+    #
+    #                                        / 2/3   if k == 0,
+    #    int_{-1}^{+1} |x^alpha| P_k(x) dx ={  8/45  if k == 2,
+    #                                        \ 0     otherwise.
+    #
+    n = 5
+    moments = numpy.zeros(2*n)
+    moments[0] = 2.0/3.0
+    moments[2] = 8.0/45.0
+    a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+
+    # n = 5
+    # k = numpy.arange(2*n)
+    # moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
+    # a = numpy.zeros(n)
+    # b = numpy.zeros(n)
+
+    alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+
+    assert numpy.all(abs(alpha) < tol)
+    assert abs(beta[0] - 2.0/3.0) < tol
+    assert abs(beta[1] - 3.0/5.0) < tol
+    assert abs(beta[2] - 4.0/35.0) < tol
+    assert abs(beta[3] - 25.0/63.0) < tol
+    assert abs(beta[4] - 16.0/99.0) < tol
+    return
+
+
 def test_jacobi(tol=1.0e-14):
     n = 5
     a = 1.0
@@ -143,4 +176,4 @@ def test_clenshaw(tol=1.0e-14):
 
 
 if __name__ == '__main__':
-    test_chebyshev()
+    test_chebyshev_modified()

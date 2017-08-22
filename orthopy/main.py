@@ -163,6 +163,8 @@ def chebyshev(moments):
     '''Given the first 2n moments `int t^k dt`, this method uses the Chebyshev
     algorithm (see, e.g., [2]) for computing the associated recursion
     coefficients.
+
+    Ill-conditioned, see [2].
     '''
     m = len(moments)
     assert m % 2 == 0
@@ -194,6 +196,58 @@ def chebyshev(moments):
             )
         alpha[k] = \
             sigma[k, k+1] / sigma[k, k] - sigma[k-1, k] / sigma[k-1, k-1]
+        beta[k] = sigma[k, k] / sigma[k-1, k-1]
+
+    return alpha, beta
+
+
+def chebyshev_modified(nu, a, b):
+    '''Given the first 2n modified moments `nu_k = int p_k(t) dt`, where the
+    p_k are orthogonal polynomials with recursion coefficients a, b, this
+    method implements the modified Chebyshev algorithm (see, e.g., [2]) for
+    computing the associated recursion coefficients.
+    '''
+    m = len(nu)
+    assert m % 2 == 0
+
+    n = m // 2
+
+    alpha = numpy.empty(n)
+    beta = numpy.empty(n)
+    sigma = numpy.empty((n, 2*n))
+
+    k = 0
+    sigma[k, k:2*n-k] = nu
+    alpha[0] = a[0] + nu[1] / nu[0]
+    beta[0] = nu[0]
+
+    k = 1
+    L = numpy.arange(k, 2*n-k)
+    sigma[k, L] = (
+        sigma[k-1, L+1]
+        - (alpha[k-1] - a[L]) * sigma[k-1, L]
+        + b[L] * sigma[k-1, L-1]
+        )
+    alpha[k] = (
+        a[k]
+        + sigma[k, k+1]/sigma[k, k]
+        - sigma[k-1, k]/sigma[k-1, k-1]
+        )
+    beta[k] = sigma[k, k] / sigma[k-1, k-1]
+
+    for k in range(2, n):
+        L = numpy.arange(k, 2*n-k)
+        sigma[k, L] = (
+            sigma[k-1, L+1]
+            - (alpha[k-1] - a[L]) * sigma[k-1, L]
+            - beta[k-1] * sigma[k-2, L]
+            + b[L] * sigma[k-1, L-1]
+            )
+        alpha[k] = (
+            a[k]
+            + sigma[k, k+1] / sigma[k, k]
+            - sigma[k-1, k] / sigma[k-1, k-1]
+            )
         beta[k] = sigma[k, k] / sigma[k-1, k-1]
 
     return alpha, beta
