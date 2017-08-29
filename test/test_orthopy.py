@@ -76,7 +76,7 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments = numpy.zeros(2*n)
     moments[0] = 2.0/3.0
     moments[2] = 8.0/45.0
-    a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+    a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
 
     alpha, beta = orthopy.chebyshev_modified(moments, a, b)
 
@@ -93,7 +93,7 @@ def test_jacobi(tol=1.0e-14):
     n = 5
     a = 1.0
     b = 1.0
-    alpha, beta = orthopy.jacobi_recursion_coefficients(n, a, b)
+    alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
 
     assert numpy.all(abs(alpha) < tol)
     assert abs(beta[0] - 4.0/3.0) < tol
@@ -107,7 +107,7 @@ def test_jacobi(tol=1.0e-14):
 def test_gauss(tol=1.0e-14):
     n = 5
     points, weights = orthopy.gauss_from_coefficients(
-            *orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+            *orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
             )
 
     s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
@@ -134,7 +134,7 @@ def test_gauss(tol=1.0e-14):
     reason='Requires SciPy 1.0'
     )
 def test_jacobi_reconstruction(tol=1.0e-14):
-    alpha1, beta1 = orthopy.jacobi_recursion_coefficients(4, 2.0, 1.0)
+    alpha1, beta1 = orthopy.jacobi_recurrence_coefficients(4, 2.0, 1.0)
     points, weights = orthopy.gauss_from_coefficients(alpha1, beta1)
 
     alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
@@ -146,7 +146,7 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 def test_eval(tol=1.0e-14):
     n = 5
-    alpha, beta = orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+    alpha, beta = orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
     t = 1.0
     value = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
 
@@ -160,7 +160,7 @@ def test_eval(tol=1.0e-14):
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    alpha, beta = orthopy.jacobi_recursion_coefficients(n, 0.0, 0.0)
+    alpha, beta = orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
     t = 1.0
 
     a = numpy.ones(n+1)
@@ -250,7 +250,7 @@ def test_show():
             moments[0] = 2.0/3.0
         if len(moments) > 2:
             moments[2] = 8.0/45.0
-        a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+        a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
         alpha, beta = orthopy.chebyshev_modified(moments, a, b)
         orthopy.plot(alpha, beta, -1.0, +1.0, normalized=True)
 

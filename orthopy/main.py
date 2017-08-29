@@ -37,7 +37,7 @@ from scipy.linalg.lapack import get_lapack_funcs
 
 
 def gauss_from_coefficients(alpha, beta):
-    '''Compute the Gauss nodes and weights from the recursion coefficients
+    '''Compute the Gauss nodes and weights from the recurrence coefficients
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
@@ -51,7 +51,7 @@ def gauss_from_coefficients(alpha, beta):
 
 def coefficients_from_gauss(points, weights):
     '''Given the points and weights of a Gaussian quadrature rule, this method
-    reconstructs the recursion coefficients alpha, beta as appearing in the
+    reconstructs the recurrence coefficients alpha, beta as appearing in the
     tridiagonal Jacobi matrix tri(b, a, b).
     This is using "Method 2--orthogonal reduction" from (section 3.2 in [4]).
     The complexity is O(n^3); a faster method is suggested in 3.3 in [4].
@@ -89,7 +89,7 @@ def clenshaw(a, alpha, beta, t):
     S(t) = \\sum a_k P_k(alpha, beta)(t)
 
     where P_k(alpha, beta) is the kth orthogonal polynomial defined by the
-    recursion coefficients alpha, beta.
+    recurrence coefficients alpha, beta.
 
     See <https://en.wikipedia.org/wiki/Clenshaw_algorithm> for details.
     '''
@@ -118,7 +118,7 @@ def clenshaw(a, alpha, beta, t):
 
 
 def evaluate_orthogonal_polynomial(alpha, beta, t):
-    '''Evaluate the ortogonal polynomial defined by its recursion coefficients
+    '''Evaluate the ortogonal polynomial defined by its recurrence coefficients
     alpha, beta at the point(s) t.
     '''
     n = len(alpha)
@@ -144,7 +144,7 @@ def golub_welsch(moments):
     mu_k = int_a^b omega(x) x^k dx,  k = {0, 1,...,2N}
 
     (with omega being a nonnegative weight function), this method creates the
-    recursion coefficients of the corresponding orthogonal polynomials, see
+    recurrence coefficients of the corresponding orthogonal polynomials, see
     section 4 ("Determining the Three Term Relationship from the Moments") in
     Golub-Welsch [1]. Numerically unstable, see [2].
     '''
@@ -174,7 +174,7 @@ def golub_welsch(moments):
 
 def chebyshev(moments):
     '''Given the first 2n moments `int t^k dt`, this method uses the Chebyshev
-    algorithm (see, e.g., [2]) for computing the associated recursion
+    algorithm (see, e.g., [2]) for computing the associated recurrence
     coefficients.
 
     Ill-conditioned, see [2].
@@ -186,9 +186,9 @@ def chebyshev(moments):
 
 def chebyshev_modified(nu, a, b):
     '''Given the first 2n modified moments `nu_k = int p_k(t) dt`, where the
-    p_k are orthogonal polynomials with recursion coefficients a, b, this
+    p_k are orthogonal polynomials with recurrence coefficients a, b, this
     method implements the modified Chebyshev algorithm (see, e.g., [2]) for
-    computing the associated recursion coefficients.
+    computing the associated recurrence coefficients.
     '''
     m = len(nu)
     assert m % 2 == 0
@@ -240,8 +240,8 @@ def chebyshev_modified(nu, a, b):
     return alpha, beta
 
 
-def jacobi_recursion_coefficients(n, a, b):
-    '''Generate the recursion coefficients alpha_k, beta_k
+def jacobi_recurrence_coefficients(n, a, b):
+    '''Generate the recurrence coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
 
