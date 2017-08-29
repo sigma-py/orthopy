@@ -13,12 +13,12 @@ Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
 pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
 ```
-(defined by their _recursion coefficients_ `alpha` and `beta`) are closely
+(defined by their _recurrence coefficients_ `alpha` and `beta`) are closely
 related. This module provides tools for working with them.
 
 Some examples:
 
-#### Transform between a Gaussian and recursion coefficients
+#### Transform between a Gaussian and recurrence coefficients
 ```python
 import orthopy
 
@@ -30,20 +30,20 @@ alpha, beta = orthopy.coefficients_from_gauss(points, weights)
 
 #### Recursion coefficients of classical weight functions
 
-The recursion coefficients of Gauss rules for the weight function
+The recurrence coefficients of Gauss rules for the weight function
 `w(x) = (1-x)^a * (1+x)^b` with any `a` or `b` are explicitly known. Retrieve
 them with
 ```python
 import orthopy
 
-alpha, beta = orthopy.jacobi_recursion_coefficients(n, a, b)
+alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
 ```
 Of course, it's easy to generate the corresponding Gaussian rule; for example
 for Gauss-Legendre of order 5:
 ```python
 import orthopy
 
-alpha, beta = orthopy.jacobi_recursion_coefficients(5, 0.0, 0.0)
+alpha, beta = orthopy.jacobi_recurrence_coefficients(5, 0.0, 0.0)
 points, weights = orthopy.gauss_from_coefficients(alpha, beta)
 ```
 
@@ -72,7 +72,7 @@ moments = numpy.zeros(2*n)
 moments[0] = 2.0/3.0
 moments[2] = 8.0/45.0
 
-a, b = orthopy.jacobi_recursion_coefficients(2*n, 0.0, 0.0)
+a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
 alpha, beta = orthopy.chebyshev_modified(moments, a, b)
 ```
 
