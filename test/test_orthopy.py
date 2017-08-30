@@ -43,7 +43,6 @@ def test_golub_welsch(tol=1.0e-14):
     'dtype', [numpy.float, sympy.Rational]
     )
 def test_chebyshev(dtype):
-    tol = 1.0e-14
     alpha = 2
 
     # Get the moment corresponding to the weight function omega(x) =
@@ -71,6 +70,7 @@ def test_chebyshev(dtype):
         assert beta[4] == sympy.Rational(16, 99)
     else:
         assert dtype == numpy.float
+        tol = 1.0e-14
         k = numpy.arange(2*n)
         moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
 
@@ -160,15 +160,16 @@ def test_recurrence_coefficients_xk(n, tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    'dtype', [sympy.Rational, numpy.float]
+    'mode', ['sympy', 'numpy', 'mpmath']
     )
-def test_gauss(dtype):
-    if dtype == sympy.Rational:
+def test_gauss(mode):
+    if mode == 'sympy':
         n = 3
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
         points, weights = orthopy.gauss_from_coefficients(
-                *orthopy.jacobi_recurrence_coefficients(n, a, b)
+                *orthopy.jacobi_recurrence_coefficients(n, a, b),
+                mode=mode
                 )
 
         assert points[0] == -sympy.sqrt(sympy.Rational(3, 5))
@@ -178,14 +179,45 @@ def test_gauss(dtype):
         assert weights[0] == sympy.Rational(5, 9)
         assert weights[1] == sympy.Rational(8, 9)
         assert weights[2] == sympy.Rational(5, 9)
+
+    elif mode == 'mpmath':
+        n = 5
+        a = sympy.Rational(0, 1)
+        b = sympy.Rational(0, 1)
+        points, weights = orthopy.gauss_from_coefficients(
+                *orthopy.jacobi_recurrence_coefficients(n, a, b),
+                mode=mode,
+                decimal_places=50
+                )
+
+        # TODO 50 decimal places for this?
+        tol = 1.0e-16
+        s = sympy.sqrt(5.0 + 2*sympy.sqrt(10.0/7.0)) / 3.0
+        t = sympy.sqrt(5.0 - 2*sympy.sqrt(10.0/7.0)) / 3.0
+        assert abs(points[0] + s) < tol
+        assert abs(points[1] + t) < tol
+        assert abs(points[2] + 0.0) < tol
+        assert abs(points[3] - t) < tol
+        assert abs(points[4] - s) < tol
+
+        u = 128.0/225.0
+        v = (322.0 + 13 * sympy.sqrt(70)) / 900.0
+        w = (322.0 - 13 * sympy.sqrt(70)) / 900.0
+        assert abs(weights[0] - w) < tol
+        assert abs(weights[1] - v) < tol
+        assert abs(weights[2] - u) < tol
+        assert abs(weights[3] - v) < tol
+        assert abs(weights[4] - w) < tol
+
     else:
+        assert mode == 'numpy'
         n = 5
         tol = 1.0e-14
         alpha, beta = orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
-        points, weights = orthopy.gauss_from_coefficients(alpha, beta)
-
-        print(points)
-        print(weights)
+        points, weights = orthopy.gauss_from_coefficients(
+                alpha, beta,
+                mode=mode
+                )
 
         s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
         t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
@@ -339,6 +371,6 @@ def test_show():
 
 
 if __name__ == '__main__':
-    test_gauss(dtype=sympy.Rational)
+    test_gauss(mode='mpmath')
     # test_show()
     # test_recurrence_coefficients_xk(5)
