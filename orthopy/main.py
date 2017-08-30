@@ -29,6 +29,8 @@
     Inverse Problems, 1987, Volume 3, Number 4,
     <https://doi.org/10.1088/0266-5611/3/4/010>.
 '''
+from __future__ import division
+
 import math
 
 import numpy
@@ -277,6 +279,19 @@ def jacobi_recurrence_coefficients(n, a, b):
     B1 = 4.0 * (a+1.0) * (b+1.0) / ((a+b+2.0)**2.0 * (a+b+3.0))
     B = 4.0 * (N+a) * (N+b) * N * (N+a+b) / (nab**2.0 * (nab+1.0) * (nab-1.0))
     beta = numpy.hstack((mu, B1, B))
+    return alpha, beta
+
+
+def recurrence_coefficients_xk(k, n):
+    '''Recurrence coefficients for `int_{-1}^{+1} |x|^k f(x) dx`.
+    '''
+    assert k == 2
+    alpha = numpy.zeros(n)
+    k = numpy.arange(n)
+    beta = numpy.empty(n)
+    beta[0] = 2/3
+    beta[1::2] = (k[1::2]+2)**2 / ((2*k[1::2]+2)**2 - 1)
+    beta[2::2] = k[2::2]**2 / ((2*k[2::2]+2)**2 - 1)
     return alpha, beta
 
 
