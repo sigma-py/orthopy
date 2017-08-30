@@ -44,11 +44,41 @@ def gauss_from_coefficients(alpha, beta):
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
-    from scipy.linalg import eig_banded
-    import scipy
-    A = numpy.vstack((numpy.sqrt(beta), alpha))
-    x, V = eig_banded(A, lower=False)
-    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+    if isinstance(alpha[0], sympy.Rational):
+        # Construct the triadiagonal matrix [sqrt(beta), alpha, sqrt(beta)]
+        n = len(alpha)
+        assert n == len(beta)
+        A = [[0 for j in range(n)] for i in range(n)]
+        for i in range(n):
+            A[i][i] = alpha[i]
+        for i in range(n-1):
+            sqrt_beta = sympy.sqrt(beta[i+1])
+            A[i][i+1] = sqrt_beta
+            A[i+1][i] = sqrt_beta
+        A = sympy.Matrix(A)
+
+        # Extract points and weights from eigenproblem
+        x = []
+        w = []
+        for item in A.eigenvects():
+            val, multiplicity, vec = item
+            assert multiplicity == 1
+            assert len(vec) == 1
+            vec = vec[0]
+            x.append(val)
+            norm2 = sum([v**2 for v in vec])
+            w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        # sort by x
+        order = sorted(range(len(x)), key=lambda i: x[i])
+        x = [x[i] for i in order]
+        w = [w[i] for i in order]
+    else:
+        from scipy.linalg import eig_banded
+        import scipy
+        A = numpy.vstack((numpy.sqrt(beta), alpha))
+        print(A)
+        x, V = eig_banded(A, lower=False)
+        w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
     return x, w
 
 

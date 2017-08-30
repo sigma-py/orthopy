@@ -159,28 +159,50 @@ def test_recurrence_coefficients_xk(n, tol=1.0e-14):
     return
 
 
-def test_gauss(tol=1.0e-14):
-    n = 5
-    points, weights = orthopy.gauss_from_coefficients(
-            *orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
-            )
+@pytest.mark.parametrize(
+    'dtype', [sympy.Rational, numpy.float]
+    )
+def test_gauss(dtype):
+    if dtype == sympy.Rational:
+        n = 3
+        a = sympy.Rational(0, 1)
+        b = sympy.Rational(0, 1)
+        points, weights = orthopy.gauss_from_coefficients(
+                *orthopy.jacobi_recurrence_coefficients(n, a, b)
+                )
 
-    s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
-    t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
-    assert abs(points[0] + s) < tol
-    assert abs(points[1] + t) < tol
-    assert abs(points[2] + 0.0) < tol
-    assert abs(points[3] - t) < tol
-    assert abs(points[4] - s) < tol
+        assert points[0] == -sympy.sqrt(sympy.Rational(3, 5))
+        assert points[1] == 0
+        assert points[2] == +sympy.sqrt(sympy.Rational(3, 5))
 
-    u = 128.0/225.0
-    v = (322.0 + 13 * math.sqrt(70)) / 900.0
-    w = (322.0 - 13 * math.sqrt(70)) / 900.0
-    assert abs(weights[0] - w) < tol
-    assert abs(weights[1] - v) < tol
-    assert abs(weights[2] - u) < tol
-    assert abs(weights[3] - v) < tol
-    assert abs(weights[4] - w) < tol
+        assert weights[0] == sympy.Rational(5, 9)
+        assert weights[1] == sympy.Rational(8, 9)
+        assert weights[2] == sympy.Rational(5, 9)
+    else:
+        n = 5
+        tol = 1.0e-14
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
+        points, weights = orthopy.gauss_from_coefficients(alpha, beta)
+
+        print(points)
+        print(weights)
+
+        s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
+        t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
+        assert abs(points[0] + s) < tol
+        assert abs(points[1] + t) < tol
+        assert abs(points[2] + 0.0) < tol
+        assert abs(points[3] - t) < tol
+        assert abs(points[4] - s) < tol
+
+        u = 128.0/225.0
+        v = (322.0 + 13 * math.sqrt(70)) / 900.0
+        w = (322.0 - 13 * math.sqrt(70)) / 900.0
+        assert abs(weights[0] - w) < tol
+        assert abs(weights[1] - v) < tol
+        assert abs(weights[2] - u) < tol
+        assert abs(weights[3] - v) < tol
+        assert abs(weights[4] - w) < tol
     return
 
 
@@ -317,6 +339,6 @@ def test_show():
 
 
 if __name__ == '__main__':
-    test_jacobi(dtype=sympy.Rational)
+    test_gauss(dtype=sympy.Rational)
     # test_show()
     # test_recurrence_coefficients_xk(5)
