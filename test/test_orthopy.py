@@ -40,7 +40,7 @@ def test_golub_welsch(tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    'dtype', ['numpy', 'sympy']
+    'dtype', [numpy.float, sympy.Rational]
     )
 def test_chebyshev(dtype):
     tol = 1.0e-14
@@ -55,7 +55,7 @@ def test_chebyshev(dtype):
     #
     n = 5
 
-    if dtype == 'sympy':
+    if dtype == sympy.Rational:
         moments = [
             sympy.Rational(1.0 + (-1.0)**kk, kk + alpha + 1)
             for kk in range(2*n)
@@ -70,7 +70,7 @@ def test_chebyshev(dtype):
         assert beta[3] == sympy.Rational(25, 63)
         assert beta[4] == sympy.Rational(16, 99)
     else:
-        assert dtype == 'numpy'
+        assert dtype == numpy.float
         k = numpy.arange(2*n)
         moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
 
@@ -113,7 +113,7 @@ def test_chebyshev_modified(tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    'dtype', ['numpy', 'sympy']
+    'dtype', [numpy.float, sympy.Rational]
     )
 def test_jacobi(dtype):
     n = 5
