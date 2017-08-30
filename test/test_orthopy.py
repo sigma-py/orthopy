@@ -374,7 +374,11 @@ def test_show():
     return
 
 
+def test_compute_moments():
+    moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
+    assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5), 0]
+    return
+
+
 if __name__ == '__main__':
-    test_gauss(mode='mpmath')
-    # test_show()
-    # test_recurrence_coefficients_xk(5)
+    test_compute_moments()

@@ -426,6 +426,22 @@ def check_coefficients(moments, alpha, beta):
     return errors_alpha, errors_beta
 
 
+def compute_moments(w, a, b, n, polynomial_class='monomials'):
+    '''Symbolically calculate the first n+1 moments
+
+      int_a^b w(x) P_k(x) dx
+
+    where `P_k` is the `k`th polynomials of a specified class. The default
+    settings are monomials, i.e., `P_k(x)=x^k`.
+    '''
+    assert polynomial_class == 'monomials'
+    x = sympy.Symbol('x')
+    return [
+        sympy.integrate(w(x) * x**k, (x, a, b))
+        for k in range(n+1)
+        ]
+
+
 def show(*args, **kwargs):
     import matplotlib.pyplot as plt
     plot(*args, **kwargs)
