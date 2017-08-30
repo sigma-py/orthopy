@@ -8,6 +8,7 @@ import orthopy
 import pytest
 import scipy
 from scipy.special import legendre
+import sympy
 
 
 def test_golub_welsch(tol=1.0e-14):
@@ -38,8 +39,12 @@ def test_golub_welsch(tol=1.0e-14):
     return
 
 
-def test_chebyshev(tol=1.0e-14):
-    alpha = 2.0
+@pytest.mark.parametrize(
+    'dtype', ['numpy', 'sympy']
+    )
+def test_chebyshev(dtype):
+    tol = 1.0e-14
+    alpha = 2
 
     # Get the moment corresponding to the weight function omega(x) =
     # x^alpha:
@@ -49,16 +54,34 @@ def test_chebyshev(tol=1.0e-14):
     #                                     \ 2/(alpha+k+1) if k is even.
     #
     n = 5
-    k = numpy.arange(2*n)
-    moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
-    alpha, beta = orthopy.chebyshev(moments)
 
-    assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 2.0/3.0) < tol
-    assert abs(beta[1] - 3.0/5.0) < tol
-    assert abs(beta[2] - 4.0/35.0) < tol
-    assert abs(beta[3] - 25.0/63.0) < tol
-    assert abs(beta[4] - 16.0/99.0) < tol
+    if dtype == 'sympy':
+        moments = [
+            sympy.Rational(1.0 + (-1.0)**kk, kk + alpha + 1)
+            for kk in range(2*n)
+            ]
+
+        alpha, beta = orthopy.chebyshev(moments)
+
+        assert all([a == 0 for a in alpha])
+        assert beta[0] == sympy.Rational(2, 3)
+        assert beta[1] == sympy.Rational(3, 5)
+        assert beta[2] == sympy.Rational(4, 35)
+        assert beta[3] == sympy.Rational(25, 63)
+        assert beta[4] == sympy.Rational(16, 99)
+    else:
+        assert dtype == 'numpy'
+        k = numpy.arange(2*n)
+        moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
+
+        alpha, beta = orthopy.chebyshev(moments)
+
+        assert numpy.all(abs(alpha) < tol)
+        assert abs(beta[0] - 2.0/3.0) < tol
+        assert abs(beta[1] - 3.0/5.0) < tol
+        assert abs(beta[2] - 4.0/35.0) < tol
+        assert abs(beta[3] - 25.0/63.0) < tol
+        assert abs(beta[4] - 16.0/99.0) < tol
     return
 
 
@@ -280,5 +303,6 @@ def test_show():
 
 
 if __name__ == '__main__':
+    test_chebyshev()
     # test_show()
-    test_recurrence_coefficients_xk(5)
+    # test_recurrence_coefficients_xk(5)

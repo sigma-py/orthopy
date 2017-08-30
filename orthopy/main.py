@@ -36,6 +36,7 @@ import math
 import numpy
 # pylint: disable=no-name-in-module
 from scipy.linalg.lapack import get_lapack_funcs
+import sympy
 
 
 def gauss_from_coefficients(alpha, beta):
@@ -183,7 +184,12 @@ def chebyshev(moments):
     '''
     m = len(moments)
     assert m % 2 == 0
-    return chebyshev_modified(moments, numpy.zeros(m), numpy.zeros(m))
+    if isinstance(moments[0], sympy.Rational):
+        dtype = sympy.Rational
+    else:
+        dtype = moments.dtype
+    zeros = numpy.zeros(m, dtype=dtype)
+    return chebyshev_modified(moments, zeros, zeros)
 
 
 def chebyshev_modified(nu, a, b):
@@ -197,11 +203,11 @@ def chebyshev_modified(nu, a, b):
 
     n = m // 2
 
-    alpha = numpy.empty(n)
-    beta = numpy.empty(n)
+    alpha = numpy.empty(n, dtype=a.dtype)
+    beta = numpy.empty(n, dtype=a.dtype)
     # Actually overkill. One could alternatively make sigma a list, and store
     # the shrinking rows there, only ever keeping the last two.
-    sigma = numpy.empty((n, 2*n))
+    sigma = numpy.empty((n, 2*n), dtype=a.dtype)
 
     if n > 0:
         k = 0
