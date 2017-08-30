@@ -122,7 +122,10 @@ def test_jacobi(dtype):
     if dtype == sympy.Rational:
         a = sympy.Rational(1, 1)
         b = sympy.Rational(1, 1)
-        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(
+                n, a, b,
+                mode='sympy'
+                )
         assert all([a == 0 for a in alpha])
         assert beta[0] == sympy.Rational(4, 3)
         assert beta[1] == sympy.Rational(1, 5)
@@ -170,7 +173,7 @@ def test_gauss(mode):
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
         points, weights = orthopy.gauss_from_coefficients(
-                *orthopy.jacobi_recurrence_coefficients(n, a, b),
+                *orthopy.jacobi_recurrence_coefficients(n, a, b, mode=mode),
                 mode=mode
                 )
 
@@ -187,7 +190,7 @@ def test_gauss(mode):
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
         points, weights = orthopy.gauss_from_coefficients(
-                *orthopy.jacobi_recurrence_coefficients(n, a, b),
+                *orthopy.jacobi_recurrence_coefficients(n, a, b, mode='sympy'),
                 mode=mode,
                 decimal_places=50
                 )

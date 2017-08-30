@@ -42,7 +42,7 @@ from scipy.linalg import eig_banded
 import sympy
 
 
-def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=16):
+def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
     '''Compute the Gauss nodes and weights from the recurrence coefficients
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
@@ -300,7 +300,7 @@ def chebyshev_modified(nu, a, b):
     return alpha, beta
 
 
-def jacobi_recurrence_coefficients(n, a, b, dtype=sympy.Rational):
+def jacobi_recurrence_coefficients(n, a, b, mode='numpy'):
     '''Generate the recurrence coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
@@ -315,7 +315,8 @@ def jacobi_recurrence_coefficients(n, a, b, dtype=sympy.Rational):
     '''
     assert a > -1.0 or b > -1.0
 
-    if isinstance(a, sympy.Rational):
+    if mode == 'sympy':
+        assert isinstance(a, sympy.Rational)
         if n == 0:
             return [], []
 
@@ -349,6 +350,7 @@ def jacobi_recurrence_coefficients(n, a, b, dtype=sympy.Rational):
             ]
         beta = [mu, B1] + B
     else:
+        assert mode == 'numpy'
         if n == 0:
             return numpy.array([]), numpy.array([])
 
