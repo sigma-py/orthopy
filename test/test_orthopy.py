@@ -3,6 +3,8 @@
 from distutils.version import LooseVersion
 
 import math
+
+from mpmath import mp
 import numpy
 import orthopy
 import pytest
@@ -190,19 +192,18 @@ def test_gauss(mode):
                 decimal_places=50
                 )
 
-        # TODO 50 decimal places for this?
-        tol = 1.0e-16
-        s = sympy.sqrt(5.0 + 2*sympy.sqrt(10.0/7.0)) / 3.0
-        t = sympy.sqrt(5.0 - 2*sympy.sqrt(10.0/7.0)) / 3.0
+        tol = 1.0e-50
+        s = mp.sqrt(5 + 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
+        t = mp.sqrt(5 - 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
         assert abs(points[0] + s) < tol
         assert abs(points[1] + t) < tol
         assert abs(points[2] + 0.0) < tol
         assert abs(points[3] - t) < tol
         assert abs(points[4] - s) < tol
 
-        u = 128.0/225.0
-        v = (322.0 + 13 * sympy.sqrt(70)) / 900.0
-        w = (322.0 - 13 * sympy.sqrt(70)) / 900.0
+        u = mp.mpf(128) / mp.mpf(225)
+        v = (322 + 13 * mp.sqrt(70)) / 900
+        w = (322 - 13 * mp.sqrt(70)) / 900
         assert abs(weights[0] - w) < tol
         assert abs(weights[1] - v) < tol
         assert abs(weights[2] - u) < tol
