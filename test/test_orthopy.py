@@ -112,18 +112,32 @@ def test_chebyshev_modified(tol=1.0e-14):
     return
 
 
-def test_jacobi(tol=1.0e-14):
+@pytest.mark.parametrize(
+    'dtype', ['numpy', 'sympy']
+    )
+def test_jacobi(dtype):
     n = 5
-    a = 1.0
-    b = 1.0
-    alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
-
-    assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 4.0/3.0) < tol
-    assert abs(beta[1] - 1.0/5.0) < tol
-    assert abs(beta[2] - 8.0/35.0) < tol
-    assert abs(beta[3] - 5.0/21.0) < tol
-    assert abs(beta[4] - 8.0/33.0) < tol
+    if dtype == sympy.Rational:
+        a = sympy.Rational(1, 1)
+        b = sympy.Rational(1, 1)
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
+        assert all([a == 0 for a in alpha])
+        assert beta[0] == sympy.Rational(4, 3)
+        assert beta[1] == sympy.Rational(1, 5)
+        assert beta[2] == sympy.Rational(8, 35)
+        assert beta[3] == sympy.Rational(5, 21)
+        assert beta[4] == sympy.Rational(8, 33)
+    else:
+        a = 1.0
+        b = 1.0
+        tol = 1.0e-14
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
+        assert numpy.all(abs(alpha) < tol)
+        assert abs(beta[0] - 4.0/3.0) < tol
+        assert abs(beta[1] - 1.0/5.0) < tol
+        assert abs(beta[2] - 8.0/35.0) < tol
+        assert abs(beta[3] - 5.0/21.0) < tol
+        assert abs(beta[4] - 8.0/33.0) < tol
     return
 
 
@@ -303,6 +317,6 @@ def test_show():
 
 
 if __name__ == '__main__':
-    test_chebyshev()
+    test_jacobi(dtype=sympy.Rational)
     # test_show()
     # test_recurrence_coefficients_xk(5)
