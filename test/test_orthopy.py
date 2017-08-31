@@ -429,11 +429,19 @@ def test_stieltjes():
 #     return
 
 
-def test_xk():
+@pytest.mark.parametrize(
+    'k', [0, 2, 4]
+    )
+def test_xk(k):
     n = 10
 
-    moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 2*n)
+    moments = orthopy.compute_moments(lambda x: x**k, -1, +1, 2*n)
     alpha, beta = orthopy.chebyshev(moments)
+
+    assert (alpha == 0).all()
+    assert beta[0] == moments[0]
+    assert beta[1] == sympy.Rational(k+1, k+3)
+    assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
     points, weights = orthopy.gauss_from_coefficients(
             numpy.array([sympy.N(a) for a in alpha], dtype=float),
             numpy.array([sympy.N(b) for b in beta], dtype=float)
@@ -466,4 +474,4 @@ def test_xk():
 
 
 if __name__ == '__main__':
-    test_xk()
+    test_xk(2)
