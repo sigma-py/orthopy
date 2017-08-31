@@ -182,12 +182,11 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     except AttributeError:  # 'float' object has no attribute 'shape'
         vals = numpy.empty(n+1)
 
-    vals[0] = 1.0
-    # pylint: disable=len-as-condition
-    if len(alpha) > 0:
+    vals[0] = 1
+    if n > 0:
         vals[1] = (t - alpha[0]) * vals[0]
-        for k in range(1, n):
-            vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
+    for k in range(2, n):
+        vals[k] = (t - alpha[k-1]) * vals[k-1] - beta[k-1] * vals[k-2]
     return vals[-1]
 
 
@@ -213,15 +212,43 @@ def golub_welsch(moments):
     Rd = R.diagonal()
     q = R.diagonal(1) / Rd[:-1]
 
-    alpha = numpy.zeros(n)
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    # TODO don't square here, but adapt _gauss to accept squared values at
-    #      input
+    # TODO don't square here, but adapt _gauss to accept square-rooted values
+    #      as input
     beta = numpy.hstack([
         Rd[0], Rd[1:-1] / Rd[:-2]
         ])**2
+    return alpha, beta
+
+
+def stieltjes(w, a, b, n):
+    t = sympy.Symbol('t')
+
+    alpha = n * [None]
+    beta = n * [None]
+    mu = n * [None]
+    pi = n * [None]
+
+    k = 0
+    pi[k] = 1
+    mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+    alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+    beta[k] = mu[0]  # not used, by convection mu[0]
+
+    k = 1
+    pi[k] = (t - alpha[k-1]) * pi[k-1]
+    mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+    alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+    beta[k] = mu[k] / mu[k-1]
+
+    for k in range(2, n):
+        pi[k] = (t - alpha[k-1]) * pi[k-1] - beta[k-1] * pi[k-2]
+        mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+        alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+        beta[k] = mu[k] / mu[k-1]
+
     return alpha, beta
 
 
@@ -234,7 +261,7 @@ def chebyshev(moments):
     '''
     m = len(moments)
     assert m % 2 == 0
-    if isinstance(moments[0], sympy.Rational):
+    if isinstance(moments[0], tuple(sympy.core.all_classes)):
         dtype = sympy.Rational
     else:
         dtype = moments.dtype
@@ -273,12 +300,12 @@ def chebyshev_modified(nu, a, b):
             - (alpha[k-1] - a[L]) * sigma[k-1, L]
             + b[L] * sigma[k-1, L-1]
             )
-        alpha[k] = (
+        alpha[k] = sympy.simplify(
             a[k]
             + sigma[k, k+1]/sigma[k, k]
             - sigma[k-1, k]/sigma[k-1, k-1]
             )
-        beta[k] = sigma[k, k] / sigma[k-1, k-1]
+        beta[k] = sympy.simplify(sigma[k, k] / sigma[k-1, k-1])
 
     for k in range(2, n):
         L = numpy.arange(k, 2*n-k)
@@ -314,7 +341,6 @@ def jacobi_recurrence_coefficients(n, a, b, mode='numpy'):
     assert a > -1.0 or b > -1.0
 
     if mode == 'sympy':
-        assert isinstance(a, sympy.Rational)
         if n == 0:
             return [], []
 

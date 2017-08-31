@@ -403,5 +403,30 @@ def test_compute_moments():
     return
 
 
+def test_stieltjes():
+    alpha0, beta0 = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
+    alpha1, beta1 = orthopy.jacobi_recurrence_coefficients(
+            5, 0, 0, mode='sympy'
+            )
+    assert alpha0 == alpha1
+    assert beta0 == beta1
+    return
+
+
+# def test_expt3():
+#     '''Full example from Gautschi's "How to and how not to" article.
+#     '''
+#     moments = orthopy.compute_moments(
+#             lambda x: sympy.exp(-x**3/3),
+#             0, sympy.oo,
+#             31
+#             )
+#     print(moments)
+#     alpha, beta = orthopy.chebyshev(moments)
+#     print(alpha)
+#     print(beta)
+#
+#     return
+
 if __name__ == '__main__':
-    test_compute_moments()
+    test_stieltjes()
