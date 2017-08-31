@@ -28,67 +28,75 @@ def recurrence_coefficients_jacobi(n, a, b, mode='sympy'):
     assert a > -1.0 or b > -1.0
 
     if mode == 'sympy':
-        if n == 0:
-            return [], []
-
-        assert n > 1
-
-        mu = 2**(a+b+1) * sympy.Rational(
-            sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
-            )
-        nu = sympy.Rational(b-a, a+b+2)
-
-        if n == 1:
-            return nu, mu
-
-        N = range(1, n)
-
-        nab = [2*nn + a + b for nn in N]
-
-        alpha = [nu] + [
-            sympy.Rational(b**2 - a**2, val * (val + 2)) for val in nab
-            ]
-
-        N = N[1:]
-        nab = nab[1:]
-        B1 = sympy.Rational(4 * (a+1) * (b+1), (a+b+2)**2 * (a+b+3))
-        B = [
-            sympy.Rational(
-                4 * (nn+a) * (nn+b) * nn * (nn+a+b),
-                val**2 * (val+1) * (val-1)
-                )
-            for nn, val in zip(N, nab)
-            ]
-        beta = [mu, B1] + B
-
-        alpha = numpy.array(alpha)
-        beta = numpy.array(beta)
+        alpha, beta = _recurrence_coefficients_jacobi_sympy(n, a, b)
     else:
         assert mode == 'numpy'
-        if n == 0:
-            return numpy.array([]), numpy.array([])
+        alpha, beta = _recurrence_coefficients_jacobi_numpy(n, a, b)
+    return alpha, beta
 
-        assert n > 1
 
-        mu = 2.0**(a+b+1.0) \
-            * numpy.exp(
-                math.lgamma(a+1.0) + math.lgamma(b+1.0) - math.lgamma(a+b+2.0)
-                )
-        nu = (b-a) / (a+b+2.0)
+def _recurrence_coefficients_jacobi_sympy(n, a, b):
+    if n == 0:
+        return [], []
 
-        if n == 1:
-            return nu, mu
+    assert n > 1
 
-        N = numpy.arange(1, n)
+    mu = 2**(a+b+1) * sympy.Rational(
+        sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
+        )
+    nu = sympy.Rational(b-a, a+b+2)
 
-        nab = 2.0*N + a + b
-        alpha = numpy.hstack([nu, (b**2 - a**2) / (nab * (nab + 2.0))])
-        N = N[1:]
-        nab = nab[1:]
-        B1 = 4.0 * (a+1.0) * (b+1.0) / ((a+b+2.0)**2.0 * (a+b+3.0))
-        B = (
-            4.0 * (N+a) * (N+b) * N * (N+a+b)
-            / (nab**2.0 * (nab+1.0) * (nab-1.0))
+    if n == 1:
+        return nu, mu
+
+    N = range(1, n)
+
+    nab = [2*nn + a + b for nn in N]
+
+    alpha = [nu] + [
+        sympy.Rational(b**2 - a**2, val * (val + 2)) for val in nab
+        ]
+
+    N = N[1:]
+    nab = nab[1:]
+    B1 = sympy.Rational(4 * (a+1) * (b+1), (a+b+2)**2 * (a+b+3))
+    B = [
+        sympy.Rational(
+            4 * (nn+a) * (nn+b) * nn * (nn+a+b),
+            val**2 * (val+1) * (val-1)
             )
-        beta = numpy.hstack((mu, B1, B))
+        for nn, val in zip(N, nab)
+        ]
+    beta = [mu, B1] + B
+
+    return numpy.array(alpha), numpy.array(beta)
+
+
+def _recurrence_coefficients_jacobi_numpy(n, a, b):
+    if n == 0:
+        return numpy.array([]), numpy.array([])
+
+    assert n > 1
+
+    mu = 2.0**(a+b+1.0) \
+        * numpy.exp(
+            math.lgamma(a+1.0) + math.lgamma(b+1.0) - math.lgamma(a+b+2.0)
+            )
+    nu = (b-a) / (a+b+2.0)
+
+    if n == 1:
+        return nu, mu
+
+    N = numpy.arange(1, n)
+
+    nab = 2.0*N + a + b
+    alpha = numpy.hstack([nu, (b**2 - a**2) / (nab * (nab + 2.0))])
+    N = N[1:]
+    nab = nab[1:]
+    B1 = 4.0 * (a+1.0) * (b+1.0) / ((a+b+2.0)**2.0 * (a+b+3.0))
+    B = (
+        4.0 * (N+a) * (N+b) * N * (N+a+b)
+        / (nab**2.0 * (nab+1.0) * (nab-1.0))
+        )
+    beta = numpy.hstack((mu, B1, B))
     return alpha, beta

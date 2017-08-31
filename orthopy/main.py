@@ -42,63 +42,79 @@ def gauss_from_coefficients(alpha, beta, mode='sympy', decimal_places=32):
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
-    # pylint: disable=too-many-locals
-    def sympy_tridiag(a, b):
-        '''Creates the tridiagonal sympy matrix tridiag(b, a, b).
-        '''
-        n = len(a)
-        assert n == len(b)
-        A = [[0 for _ in range(n)] for _ in range(n)]
-        for i in range(n):
-            A[i][i] = a[i]
-        for i in range(n-1):
-            A[i][i+1] = b[i+1]
-            A[i+1][i] = b[i+1]
-        return sympy.Matrix(A)
 
     if mode == 'sympy':
-        assert isinstance(alpha[0], sympy.Rational)
-        # Construct the triadiagonal matrix [sqrt(beta), alpha, sqrt(beta)]
-        A = sympy_tridiag(alpha, [sympy.sqrt(bta) for bta in beta])
-
-        # Extract points and weights from eigenproblem
-        x = []
-        w = []
-        for item in A.eigenvects():
-            val, multiplicity, vec = item
-            assert multiplicity == 1
-            assert len(vec) == 1
-            vec = vec[0]
-            x.append(val)
-            norm2 = sum([v**2 for v in vec])
-            w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
-        # sort by x
-        order = sorted(range(len(x)), key=lambda i: x[i])
-        x = [x[i] for i in order]
-        w = [w[i] for i in order]
+        x, w = _gauss_from_coefficients_sympy(alpha, beta)
     elif mode == 'mpmath':
-        mp.dps = decimal_places
-        A = sympy_tridiag(
-                [mp.mpf(a) for a in alpha],
-                [mp.sqrt(bta) for bta in beta]
-                )
-        x, Q = mp.eigsy(A)
-
-        # nx1 matrix -> list of sympy floats
-        x = numpy.array([sympy.Float(xx) for xx in x])
-
-        w = numpy.array([
-            beta[0] * mp.power(Q[0, i], 2)
-            for i in range(Q.shape[1])
-            ])
+        x, w = _gauss_from_coefficients_mpmath(alpha, beta, decimal_places)
     else:
         assert mode == 'numpy'
-        assert isinstance(alpha, numpy.ndarray)
-        assert isinstance(beta, numpy.ndarray)
-        A = numpy.vstack((numpy.sqrt(beta), alpha))
-        # TODO keep an eye on https://github.com/scipy/scipy/pull/7810
-        x, V = eig_banded(A, lower=False)
-        w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+        x, w = _gauss_from_coefficients_numpy(alpha, beta)
+    return x, w
+
+
+def _sympy_tridiag(a, b):
+    '''Creates the tridiagonal sympy matrix tridiag(b, a, b).
+    '''
+    n = len(a)
+    assert n == len(b)
+    A = [[0 for _ in range(n)] for _ in range(n)]
+    for i in range(n):
+        A[i][i] = a[i]
+    for i in range(n-1):
+        A[i][i+1] = b[i+1]
+        A[i+1][i] = b[i+1]
+    return sympy.Matrix(A)
+
+
+def _gauss_from_coefficients_sympy(alpha, beta):
+    assert isinstance(alpha[0], sympy.Rational)
+    # Construct the triadiagonal matrix [sqrt(beta), alpha, sqrt(beta)]
+    A = _sympy_tridiag(alpha, [sympy.sqrt(bta) for bta in beta])
+
+    # Extract points and weights from eigenproblem
+    x = []
+    w = []
+    for item in A.eigenvects():
+        val, multiplicity, vec = item
+        assert multiplicity == 1
+        assert len(vec) == 1
+        vec = vec[0]
+        x.append(val)
+        norm2 = sum([v**2 for v in vec])
+        w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+    # sort by x
+    order = sorted(range(len(x)), key=lambda i: x[i])
+    x = [x[i] for i in order]
+    w = [w[i] for i in order]
+    return x, w
+
+
+def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
+    mp.dps = decimal_places
+    A = _sympy_tridiag(
+            [mp.mpf(a) for a in alpha],
+            [mp.sqrt(bta) for bta in beta]
+            )
+    x, Q = mp.eigsy(A)
+
+    # nx1 matrix -> list of sympy floats
+    x = numpy.array([sympy.Float(xx) for xx in x])
+
+    w = numpy.array([
+        beta[0] * mp.power(Q[0, i], 2)
+        for i in range(Q.shape[1])
+        ])
+    return x, w
+
+
+def _gauss_from_coefficients_numpy(alpha, beta):
+    assert isinstance(alpha, numpy.ndarray)
+    assert isinstance(beta, numpy.ndarray)
+    A = numpy.vstack((numpy.sqrt(beta), alpha))
+    # TODO keep an eye on https://github.com/scipy/scipy/pull/7810
+    x, V = eig_banded(A, lower=False)
+    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
     return x, w
 
 
