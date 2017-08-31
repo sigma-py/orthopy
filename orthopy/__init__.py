@@ -17,6 +17,7 @@ from .__about__ import (
 from .main import *
 from .poly_classes import *
 from .rc import *
+from .tools import *
 
 try:
     import pipdate
