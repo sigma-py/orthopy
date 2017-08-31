@@ -65,8 +65,7 @@ the weight function `x^2` on the interval `[-1, +1]`.
   2. From the moments, we generate the recurrence coefficients of our custom
      orthogonal polynomials. There are a few choices to accomplish this:
 
-       * `golub_welsch`: uses Choleskey at its core; can be numerically
-         unstable
+       * `golub_welsch`: uses Cholesky at its core; can be numerically unstable
        * `stieltjes`: moments not even needed here, but can also be numerically
          unstable
        * `chebyshev`: can be used if you chose monomials in the first step;
