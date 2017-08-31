@@ -66,15 +66,21 @@ alpha, beta = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
 ```
 will recover the Legendre coefficients.
 
-The input `golub_welsch` and `chebyshev{_modified}` is an array of _moments_,
+The input of `golub_welsch` and `chebyshev{_modified}` is an array of _moments_,
 i.e., the integrals
 ```
 integral(w(x) p_k(x) dx)
 ```
 with `p_k(x)` either the monomials `x^k` (for Golub-Welsch and Chebyshev), or
 a known set of orthogonal polynomials (for modified Chebyshev). Depending on
-your weight function, the moments may have an analytic representation.
+your weight function, the moments may have an analytic representation. In any
+case, you can try
+```
+orthopy.compute_moments(w, a, b, n)
+```
+for computing the moments symbolically.
 
+With the moments at hand:
 ```python
 import orthopy
 
