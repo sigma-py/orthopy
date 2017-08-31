@@ -408,19 +408,6 @@ def jacobi_recurrence_coefficients(n, a, b, mode='numpy'):
     return alpha, beta
 
 
-def recurrence_coefficients_xk(k, n):
-    '''Recurrence coefficients for `int_{-1}^{+1} |x|^k f(x) dx`.
-    '''
-    assert k == 2
-    alpha = numpy.zeros(n)
-    k = numpy.arange(n)
-    beta = numpy.empty(n)
-    beta[0] = 2/3
-    beta[1::2] = (k[1::2]+2)**2 / ((2*k[1::2]+2)**2 - 1)
-    beta[2::2] = k[2::2]**2 / ((2*k[2::2]+2)**2 - 1)
-    return alpha, beta
-
-
 def check_coefficients(moments, alpha, beta):
     '''In his article [3], Walter Gautschi suggests a method for checking if a
     Gauss quadrature rule is sane. This method implements test #3 for the

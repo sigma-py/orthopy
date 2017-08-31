@@ -149,24 +149,6 @@ def test_jacobi(dtype):
 
 
 @pytest.mark.parametrize(
-    'n', [2, 5, 17]
-    )
-def test_recurrence_coefficients_xk(n, tol=1.0e-14):
-    # generate the coefficients by hand
-    modified_moments = numpy.zeros(2*n)
-    modified_moments[0] = 2.0/3.0
-    modified_moments[2] = 8.0/45.0
-    a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
-    alpha0, beta0 = orthopy.chebyshev_modified(modified_moments, a, b)
-
-    alpha1, beta1 = orthopy.recurrence_coefficients_xk(2, n)
-
-    assert numpy.max(numpy.abs(alpha0 - alpha1)) < tol
-    assert numpy.max(numpy.abs(beta0 - beta1)) < tol
-    return
-
-
-@pytest.mark.parametrize(
     'mode', ['sympy', 'numpy', 'mpmath']
     )
 def test_gauss(mode):
