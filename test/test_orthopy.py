@@ -179,13 +179,17 @@ def test_gauss(mode):
                 mode=mode
                 )
 
-        assert points[0] == -sympy.sqrt(sympy.Rational(3, 5))
-        assert points[1] == 0
-        assert points[2] == +sympy.sqrt(sympy.Rational(3, 5))
+        assert points == [
+            -sympy.sqrt(sympy.Rational(3, 5)),
+            0,
+            +sympy.sqrt(sympy.Rational(3, 5)),
+            ]
 
-        assert weights[0] == sympy.Rational(5, 9)
-        assert weights[1] == sympy.Rational(8, 9)
-        assert weights[2] == sympy.Rational(5, 9)
+        assert weights == [
+            sympy.Rational(5, 9),
+            sympy.Rational(8, 9),
+            sympy.Rational(5, 9),
+            ]
 
     elif mode == 'mpmath':
         n = 5
@@ -437,4 +441,4 @@ def test_stieltjes():
 
 
 if __name__ == '__main__':
-    test_expt3()
+    test_stieltjes()

@@ -47,12 +47,13 @@ def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
+    # pylint: disable=too-many-locals
     def sympy_tridiag(a, b):
         '''Creates the tridiagonal sympy matrix tridiag(b, a, b).
         '''
         n = len(a)
         assert n == len(b)
-        A = [[0 for j in range(n)] for i in range(n)]
+        A = [[0 for _ in range(n)] for _ in range(n)]
         for i in range(n):
             A[i][i] = a[i]
         for i in range(n-1):
@@ -450,7 +451,7 @@ def check_coefficients(moments, alpha, beta):
     return errors_alpha, errors_beta
 
 
-def compute_moments(w, a, b, n, polynomial_class=None):
+def compute_moments(w, a, b, n, polynomial_class=lambda k, x: x**k):
     '''Symbolically calculate the first n+1 moments
 
       int_a^b w(x) P_k(x) dx
@@ -460,10 +461,6 @@ def compute_moments(w, a, b, n, polynomial_class=None):
     function with the signature `p(k, x)`, e.g.,
     `sympy.polys.orthopolys.legendre_poly`.
     '''
-    if polynomial_class is None:
-        def polynomial_class(k, x):
-            return x**k
-
     x = sympy.Symbol('x')
     return [
         sympy.integrate(w(x) * polynomial_class(k, x), (x, a, b))
