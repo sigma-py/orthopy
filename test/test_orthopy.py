@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-from __future__ import division
+from __future__ import division, print_function
 
 from distutils.version import LooseVersion
 
@@ -368,15 +368,9 @@ def test_compute_moments():
         moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5)]
         ).all()
 
-    def legendre_scaled(k, x):
-        return (
-            sympy.Rational(2**k * sympy.factorial(k)**2, sympy.factorial(2*k))
-            * sympy.polys.orthopolys.legendre_poly(k, x)
-            )
-
     moments = orthopy.compute_moments(
             lambda x: 1, -1, +1, 5,
-            polynomial_class=legendre_scaled
+            polynomial_class=orthopy.legendre
             )
     assert (moments == [2, 0, 0, 0, 0]).all()
 
@@ -452,18 +446,9 @@ def test_xk(k):
 
     # a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0, 0, mode='sympy')
 
-    # def legendre_scaled(k, x):
-    #     return (
-    #         sympy.Rational(
-    #             2**k * sympy.factorial(k)**2,
-    #             sympy.factorial(2*k)
-    #             )
-    #         * sympy.polys.orthopolys.legendre_poly(k, x)
-    #         )
-
     # moments = orthopy.compute_moments(
     #         lambda x: x**2, -1, +1, 2*n,
-    #         polynomial_class=legendre_scaled
+    #         polynomial_class=orthopy.legendre
     #         )
     # alpha, beta = orthopy.chebyshev_modified(moments, a, b)
     # points, weights = orthopy.gauss_from_coefficients(

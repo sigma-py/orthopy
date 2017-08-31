@@ -15,6 +15,8 @@ from .__about__ import (
 
 # pylint: disable=wildcard-import
 from .main import *
+from .poly_classes import *
+from .rc import *
 
 try:
     import pipdate
