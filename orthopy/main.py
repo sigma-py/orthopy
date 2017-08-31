@@ -40,7 +40,7 @@ from scipy.linalg import eig_banded
 import sympy
 
 
-def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
+def gauss_from_coefficients(alpha, beta, mode='sympy', decimal_places=32):
     '''Compute the Gauss nodes and weights from the recurrence coefficients
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
