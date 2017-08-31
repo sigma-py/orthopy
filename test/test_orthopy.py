@@ -184,6 +184,7 @@ def test_gauss(mode):
                 )
 
         tol = 1.0e-50
+        mp.dps = 50
         s = mp.sqrt(5 + 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
         t = mp.sqrt(5 - 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
         assert abs(points[0] + s) < tol
