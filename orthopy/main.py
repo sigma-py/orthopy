@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# pylint: disable=too-few-public-methods
 '''
 [1] Gene H. Golub and John H. Welsch,
     Calculation of Gauss Quadrature Rules,
@@ -33,7 +32,6 @@ from __future__ import division
 
 from mpmath import mp
 import numpy
-# pylint: disable=no-name-in-module
 import scipy
 from scipy.linalg import eig_banded
 import sympy
