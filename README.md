@@ -31,7 +31,7 @@ points, weights = orthopy.gauss_from_coefficients(alpha, beta)
 alpha, beta = orthopy.coefficients_from_gauss(points, weights)
 ```
 
-#### Recursion coefficients of classical weight functions
+#### Recurrence coefficients of classical weight functions
 
 The recurrence coefficients of Gauss rules for the weight function
 `w(x) = (1-x)^a * (1+x)^b` with any `a` or `b` are explicitly known. Retrieve
@@ -50,7 +50,7 @@ alpha, beta = orthopy.jacobi_recurrence_coefficients(5, 0.0, 0.0)
 points, weights = orthopy.gauss_from_coefficients(alpha, beta)
 ```
 
-#### Recursion coefficients for your own weight function
+#### Recurrence coefficients for your own weight function
 
 A couple of algorithms are implemented for that, particularly
 
