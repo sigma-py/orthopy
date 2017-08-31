@@ -35,6 +35,7 @@ setup(
         'numpy',
         'pipdate',
         'scipy',
+        'sympy',
         ],
     description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
