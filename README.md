@@ -75,6 +75,8 @@ the weight function `x^2` on the interval `[-1, +1]`.
          monomials in the first step; stable if the `polynomial_class` was
          chosen wisely
 
+       Since we have computed modified moments in step one, let's use the
+       latter method:
        ```python
        a, b = orthopy.recurrence_coefficients_legendre(20)
        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
@@ -83,13 +85,13 @@ the weight function `x^2` on the interval `[-1, +1]`.
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
        [2/3, 3/5, 4/35, 25/63, 16/99, 49/143, 12/65, 27/85, 64/323, 121/399]
        ```
-       (Note that, since everything is done symbolically here in this example,
+       (Note that, since everything is done symbolically in this example,
        we could have used Stieltjes's or Chebyshev's unmodified method; the
        results are the same.)
 
   3. Lastly, we generate the Gauss points and weights from `alpha` and `beta`.
-     Since symbolic computation can take _very_ long even for small examples,
-     we chose `mpmath` mode with 30 decimal digits
+     Since symbolic computation can take _very_ long even for small sizes, we
+     choose the `mpmath` mode with 30 decimal digits
      ```python
      points, weights = \
          orthopy.gauss_from_coefficients(alpha, beta, mode='mpmath', decimal_places=30)
@@ -105,18 +107,18 @@ the weight function `x^2` on the interval `[-1, +1]`.
       ['0.730152005574049324093416252031'],
       ['0.887062599768095299075157769304'],
       ['0.978228658146056992803938001123']])
-    ```
-    ```
-      [0.0532709947237135572432759986252,
-       0.0988166881454075626728761840589,
-       0.0993154007474139787312043384226,
-       0.0628365763465911675266984722740,
-       0.0190936733702070671592783399524,
-       0.0190936733702070671592783399524,
-       0.0628365763465911675266984722744,
-       0.0993154007474139787312043384225,
-       0.0988166881454075626728761840592,
-       0.0532709947237135572432759986251]
+     ```
+     ```
+       [0.0532709947237135572432759986252,
+        0.0988166881454075626728761840589,
+        0.0993154007474139787312043384226,
+        0.0628365763465911675266984722740,
+        0.0190936733702070671592783399524,
+        0.0190936733702070671592783399524,
+        0.0628365763465911675266984722744,
+        0.0993154007474139787312043384225,
+        0.0988166881454075626728761840592,
+        0.0532709947237135572432759986251]
      ```
      Congratulations! Your Gaussian quadrature rule.
 
