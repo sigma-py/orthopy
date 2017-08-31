@@ -85,12 +85,12 @@ def gauss_from_coefficients(alpha, beta, mode='sympy', decimal_places=32):
         x, Q = mp.eigsy(A)
 
         # nx1 matrix -> list of sympy floats
-        x = [sympy.Float(xx) for xx in x]
+        x = numpy.array([sympy.Float(xx) for xx in x])
 
-        w = [
+        w = numpy.array([
             beta[0] * mp.power(Q[0, i], 2)
             for i in range(Q.shape[1])
-            ]
+            ])
     else:
         assert mode == 'numpy'
         assert isinstance(alpha, numpy.ndarray)

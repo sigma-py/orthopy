@@ -67,11 +67,13 @@ def test_chebyshev(dtype):
         alpha, beta = orthopy.chebyshev(moments)
 
         assert all([a == 0 for a in alpha])
-        assert beta[0] == sympy.Rational(2, 3)
-        assert beta[1] == sympy.Rational(3, 5)
-        assert beta[2] == sympy.Rational(4, 35)
-        assert beta[3] == sympy.Rational(25, 63)
-        assert beta[4] == sympy.Rational(16, 99)
+        assert (beta == [
+            sympy.Rational(2, 3),
+            sympy.Rational(3, 5),
+            sympy.Rational(4, 35),
+            sympy.Rational(25, 63),
+            sympy.Rational(16, 99),
+            ]).all()
     else:
         assert dtype == numpy.float
         tol = 1.0e-14
@@ -81,11 +83,10 @@ def test_chebyshev(dtype):
         alpha, beta = orthopy.chebyshev(moments)
 
         assert numpy.all(abs(alpha) < tol)
-        assert abs(beta[0] - 2.0/3.0) < tol
-        assert abs(beta[1] - 3.0/5.0) < tol
-        assert abs(beta[2] - 4.0/35.0) < tol
-        assert abs(beta[3] - 25.0/63.0) < tol
-        assert abs(beta[4] - 16.0/99.0) < tol
+        assert numpy.all(
+            abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0,  16.0/99.0])
+            < tol
+            )
     return
 
 
@@ -108,11 +109,10 @@ def test_chebyshev_modified(tol=1.0e-14):
     alpha, beta = orthopy.chebyshev_modified(moments, a, b)
 
     assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 2.0/3.0) < tol
-    assert abs(beta[1] - 3.0/5.0) < tol
-    assert abs(beta[2] - 4.0/35.0) < tol
-    assert abs(beta[3] - 25.0/63.0) < tol
-    assert abs(beta[4] - 16.0/99.0) < tol
+    assert numpy.all(
+        abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0,  16.0/99.0])
+        < tol
+        )
     return
 
 
@@ -129,22 +129,23 @@ def test_jacobi(dtype):
                 mode='sympy'
                 )
         assert all([a == 0 for a in alpha])
-        assert beta[0] == sympy.Rational(4, 3)
-        assert beta[1] == sympy.Rational(1, 5)
-        assert beta[2] == sympy.Rational(8, 35)
-        assert beta[3] == sympy.Rational(5, 21)
-        assert beta[4] == sympy.Rational(8, 33)
+        assert (beta == [
+            sympy.Rational(4, 3),
+            sympy.Rational(1, 5),
+            sympy.Rational(8, 35),
+            sympy.Rational(5, 21),
+            sympy.Rational(8, 33),
+            ]).all()
     else:
         a = 1.0
         b = 1.0
         tol = 1.0e-14
         alpha, beta = orthopy.recurrence_coefficients_jacobi(n, a, b)
         assert numpy.all(abs(alpha) < tol)
-        assert abs(beta[0] - 4.0/3.0) < tol
-        assert abs(beta[1] - 1.0/5.0) < tol
-        assert abs(beta[2] - 8.0/35.0) < tol
-        assert abs(beta[3] - 5.0/21.0) < tol
-        assert abs(beta[4] - 8.0/33.0) < tol
+        assert numpy.all(
+            abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0,  8.0/33.0])
+            < tol
+            )
     return
 
 
@@ -187,20 +188,12 @@ def test_gauss(mode):
         mp.dps = 50
         s = mp.sqrt(5 + 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
         t = mp.sqrt(5 - 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
-        assert abs(points[0] + s) < tol
-        assert abs(points[1] + t) < tol
-        assert abs(points[2] + 0.0) < tol
-        assert abs(points[3] - t) < tol
-        assert abs(points[4] - s) < tol
+        assert (abs(points - [-s, -t, 0.0, +t, +s]) < tol).all()
 
         u = mp.mpf(128) / mp.mpf(225)
         v = (322 + 13 * mp.sqrt(70)) / 900
         w = (322 - 13 * mp.sqrt(70)) / 900
-        assert abs(weights[0] - w) < tol
-        assert abs(weights[1] - v) < tol
-        assert abs(weights[2] - u) < tol
-        assert abs(weights[3] - v) < tol
-        assert abs(weights[4] - w) < tol
+        assert (abs(weights - [w, v, u, v, w]) < tol).all()
 
     else:
         assert mode == 'numpy'
@@ -214,20 +207,12 @@ def test_gauss(mode):
 
         s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
         t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
-        assert abs(points[0] + s) < tol
-        assert abs(points[1] + t) < tol
-        assert abs(points[2] + 0.0) < tol
-        assert abs(points[3] - t) < tol
-        assert abs(points[4] - s) < tol
+        assert (abs(points - [-s, -t, 0.0, +t, +s]) < tol).all()
 
         u = 128.0/225.0
         v = (322.0 + 13 * math.sqrt(70)) / 900.0
         w = (322.0 - 13 * math.sqrt(70)) / 900.0
-        assert abs(weights[0] - w) < tol
-        assert abs(weights[1] - v) < tol
-        assert abs(weights[2] - u) < tol
-        assert abs(weights[3] - v) < tol
-        assert abs(weights[4] - w) < tol
+        assert (abs(weights - [w, v, u, v, w]) < tol).all()
     return
 
 
