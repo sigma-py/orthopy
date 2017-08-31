@@ -63,10 +63,7 @@ def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
     if mode == 'sympy':
         assert isinstance(alpha[0], sympy.Rational)
         # Construct the triadiagonal matrix [sqrt(beta), alpha, sqrt(beta)]
-        A = sympy_tridiag(
-                alpha,
-                [sympy.sqrt(bta) for bta in beta]
-                )
+        A = sympy_tridiag(alpha, [sympy.sqrt(bta) for bta in beta])
 
         # Extract points and weights from eigenproblem
         x = []
@@ -99,6 +96,7 @@ def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
         assert isinstance(alpha, numpy.ndarray)
         assert isinstance(beta, numpy.ndarray)
         A = numpy.vstack((numpy.sqrt(beta), alpha))
+        # TODO keep an eye on https://github.com/scipy/scipy/pull/7810
         x, V = eig_banded(A, lower=False)
         w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
     return x, w
@@ -426,18 +424,23 @@ def check_coefficients(moments, alpha, beta):
     return errors_alpha, errors_beta
 
 
-def compute_moments(w, a, b, n, polynomial_class='monomials'):
+def compute_moments(w, a, b, n, polynomial_class=None):
     '''Symbolically calculate the first n+1 moments
 
       int_a^b w(x) P_k(x) dx
 
     where `P_k` is the `k`th polynomials of a specified class. The default
-    settings are monomials, i.e., `P_k(x)=x^k`.
+    settings are monomials, i.e., `P_k(x)=x^k`, but you can provide any
+    function with the signature `p(k, x)`, e.g.,
+    `sympy.polys.orthopolys.legendre_poly`.
     '''
-    assert polynomial_class == 'monomials'
+    if polynomial_class is None:
+        def polynomial_class(k, x):
+            return x**k
+
     x = sympy.Symbol('x')
     return [
-        sympy.integrate(w(x) * x**k, (x, a, b))
+        sympy.integrate(w(x) * polynomial_class(k, x), (x, a, b))
         for k in range(n+1)
         ]
 

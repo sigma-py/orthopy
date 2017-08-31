@@ -377,6 +377,29 @@ def test_show():
 def test_compute_moments():
     moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
     assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5), 0]
+
+    moments = orthopy.compute_moments(
+            lambda x: 1, -1, +1, 5,
+            polynomial_class=sympy.polys.orthopolys.legendre_poly
+            )
+    assert moments == [2, 0, 0, 0, 0, 0]
+
+    # Example from Gautschi's "How to and how not to" article
+    moments = orthopy.compute_moments(
+            lambda x: sympy.exp(-x**3/3),
+            0, sympy.oo,
+            5
+            )
+    one_third = sympy.Rational(1, 3)
+    two_thirds = sympy.Rational(2, 3)
+    assert moments == [
+        3**one_third*sympy.gamma(one_third)/3,
+        3**two_thirds*sympy.gamma(two_thirds)/3,
+        1,
+        3**one_third*sympy.gamma(4 * one_third),
+        3**two_thirds*sympy.gamma(5 * one_third),
+        3
+        ]
     return
 
 
