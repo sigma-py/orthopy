@@ -301,12 +301,12 @@ def chebyshev_modified(nu, a, b):
             - (alpha[k-1] - a[L]) * sigma[k-1, L]
             + b[L] * sigma[k-1, L-1]
             )
-        alpha[k] = sympy.simplify(
+        alpha[k] = (
             a[k]
             + sigma[k, k+1]/sigma[k, k]
             - sigma[k-1, k]/sigma[k-1, k-1]
             )
-        beta[k] = sympy.simplify(sigma[k, k] / sigma[k-1, k-1])
+        beta[k] = sigma[k, k] / sigma[k-1, k-1]
 
     for k in range(2, n):
         L = numpy.arange(k, 2*n-k)
@@ -374,6 +374,9 @@ def jacobi_recurrence_coefficients(n, a, b, mode='numpy'):
             for nn, val in zip(N, nab)
             ]
         beta = [mu, B1] + B
+
+        alpha = numpy.array(alpha)
+        beta = numpy.array(beta)
     else:
         assert mode == 'numpy'
         if n == 0:
@@ -459,13 +462,14 @@ def compute_moments(w, a, b, n, polynomial_class=lambda k, x: x**k):
     where `P_k` is the `k`th polynomials of a specified class. The default
     settings are monomials, i.e., `P_k(x)=x^k`, but you can provide any
     function with the signature `p(k, x)`, e.g.,
-    `sympy.polys.orthopolys.legendre_poly`.
+    `sympy.polys.orthopolys.legendre_poly` scaled by the inverse of its leading
+    coefficient `(2n)! / 2^n / (n!)^2`.
     '''
     x = sympy.Symbol('x')
-    return [
+    return numpy.array([
         sympy.integrate(w(x) * polynomial_class(k, x), (x, a, b))
         for k in range(n)
-        ]
+        ])
 
 
 def show(*args, **kwargs):

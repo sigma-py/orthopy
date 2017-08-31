@@ -384,9 +384,15 @@ def test_compute_moments():
     moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
     assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5)]
 
+    def legendre_scaled(k, x):
+        return (
+            sympy.Rational(2**k * sympy.factorial(k)**2, sympy.factorial(2*k))
+            * sympy.polys.orthopolys.legendre_poly(k, x)
+            )
+
     moments = orthopy.compute_moments(
             lambda x: 1, -1, +1, 5,
-            polynomial_class=sympy.polys.orthopolys.legendre_poly
+            polynomial_class=legendre_scaled
             )
     assert moments == [2, 0, 0, 0, 0]
 
@@ -440,17 +446,35 @@ def test_stieltjes():
 
 
 def test_xk():
-    n = 5
-    a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0, 0, mode='sympy')
+    n = 10
 
-    moments = orthopy.compute_moments(
-            lambda x: x**2, -1, +1, 2*n,
-            polynomial_class=sympy.polys.orthopolys.legendre_poly
+    moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 2*n)
+    alpha, beta = orthopy.chebyshev(moments)
+    points, weights = orthopy.gauss_from_coefficients(
+            numpy.array([sympy.N(a) for a in alpha], dtype=float),
+            numpy.array([sympy.N(b) for b in beta], dtype=float)
             )
-    alpha, beta = orthopy.chebyshev_modified(moments, a, b)
-    print(alpha)
-    print(beta)
-    exit(1)
+
+    # a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0, 0, mode='sympy')
+
+    # def legendre_scaled(k, x):
+    #     return (
+    #         sympy.Rational(
+    #             2**k * sympy.factorial(k)**2,
+    #             sympy.factorial(2*k)
+    #             )
+    #         * sympy.polys.orthopolys.legendre_poly(k, x)
+    #         )
+
+    # moments = orthopy.compute_moments(
+    #         lambda x: x**2, -1, +1, 2*n,
+    #         polynomial_class=legendre_scaled
+    #         )
+    # alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+    # points, weights = orthopy.gauss_from_coefficients(
+    #         numpy.array([sympy.N(a) for a in alpha], dtype=float),
+    #         numpy.array([sympy.N(b) for b in beta], dtype=float)
+    #         )
     return
 
 
