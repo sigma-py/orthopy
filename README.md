@@ -16,6 +16,9 @@ pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
 (defined by their _recurrence coefficients_ `alpha` and `beta`) are closely
 related. This module provides tools for working with them.
 
+_Note that most function have a `sympy` and `mpmath` mode for symbolic and
+arbitrary precision computation, respectively._
+
 Some examples:
 
 #### Transform between a Gaussian schemes and recurrence coefficients
