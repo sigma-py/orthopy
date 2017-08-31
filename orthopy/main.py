@@ -452,7 +452,7 @@ def check_coefficients(moments, alpha, beta):
 
 
 def compute_moments(w, a, b, n, polynomial_class=lambda k, x: x**k):
-    '''Symbolically calculate the first n+1 moments
+    '''Symbolically calculate the first n moments
 
       int_a^b w(x) P_k(x) dx
 
@@ -464,7 +464,7 @@ def compute_moments(w, a, b, n, polynomial_class=lambda k, x: x**k):
     x = sympy.Symbol('x')
     return [
         sympy.integrate(w(x) * polynomial_class(k, x), (x, a, b))
-        for k in range(n+1)
+        for k in range(n)
         ]
 
 

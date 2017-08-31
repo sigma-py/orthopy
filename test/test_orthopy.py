@@ -382,13 +382,13 @@ def test_show():
 
 def test_compute_moments():
     moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
-    assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5), 0]
+    assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5)]
 
     moments = orthopy.compute_moments(
             lambda x: 1, -1, +1, 5,
             polynomial_class=sympy.polys.orthopolys.legendre_poly
             )
-    assert moments == [2, 0, 0, 0, 0, 0]
+    assert moments == [2, 0, 0, 0, 0]
 
     # Example from Gautschi's "How to and how not to" article
     moments = orthopy.compute_moments(
@@ -404,7 +404,6 @@ def test_compute_moments():
         1,
         3**one_third*sympy.gamma(4 * one_third),
         3**two_thirds*sympy.gamma(5 * one_third),
-        3
         ]
     return
 
@@ -440,5 +439,20 @@ def test_stieltjes():
 #     return
 
 
+def test_xk():
+    n = 5
+    a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0, 0, mode='sympy')
+
+    moments = orthopy.compute_moments(
+            lambda x: x**2, -1, +1, 2*n,
+            polynomial_class=sympy.polys.orthopolys.legendre_poly
+            )
+    alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+    print(alpha)
+    print(beta)
+    exit(1)
+    return
+
+
 if __name__ == '__main__':
-    test_stieltjes()
+    test_xk()
