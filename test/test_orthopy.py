@@ -84,7 +84,7 @@ def test_chebyshev(dtype):
 
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
-            abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0,  16.0/99.0])
+            abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0, 16.0/99.0])
             < tol
             )
     return
@@ -110,7 +110,7 @@ def test_chebyshev_modified(tol=1.0e-14):
 
     assert numpy.all(abs(alpha) < tol)
     assert numpy.all(
-        abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0,  16.0/99.0])
+        abs(beta - [2.0/3.0, 3.0/5.0, 4.0/35.0, 25.0/63.0, 16.0/99.0])
         < tol
         )
     return
@@ -143,7 +143,7 @@ def test_jacobi(dtype):
         alpha, beta = orthopy.recurrence_coefficients_jacobi(n, a, b)
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
-            abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0,  8.0/33.0])
+            abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0, 8.0/33.0])
             < tol
             )
     return
