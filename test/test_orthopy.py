@@ -458,4 +458,4 @@ def test_xk(k):
 
 
 if __name__ == '__main__':
-    test_xk(2)
+    test_gauss('mpmath')
