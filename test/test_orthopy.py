@@ -439,6 +439,9 @@ def test_xk():
             numpy.array([sympy.N(b) for b in beta], dtype=float)
             )
 
+    print(points)
+    print(weights)
+
     # a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0, 0, mode='sympy')
 
     # def legendre_scaled(k, x):
