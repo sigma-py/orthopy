@@ -185,7 +185,7 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     vals[0] = 1
     if n > 0:
         vals[1] = (t - alpha[0]) * vals[0]
-    for k in range(2, n):
+    for k in range(2, n+1):
         vals[k] = (t - alpha[k-1]) * vals[k-1] - beta[k-1] * vals[k-2]
     return vals[-1]
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 #
+from __future__ import division
+
 from distutils.version import LooseVersion
 
 import math
@@ -416,17 +418,23 @@ def test_stieltjes():
 # def test_expt3():
 #     '''Full example from Gautschi's "How to and how not to" article.
 #     '''
-#     moments = orthopy.compute_moments(
+#     # moments = orthopy.compute_moments(
+#     #         lambda x: sympy.exp(-x**3/3),
+#     #         0, sympy.oo,
+#     #         31
+#     #         )
+#     # print(moments)
+#     # alpha, beta = orthopy.chebyshev(moments)
+#
+#     alpha, beta = orthopy.stieltjes(
 #             lambda x: sympy.exp(-x**3/3),
 #             0, sympy.oo,
-#             31
+#             5
 #             )
-#     print(moments)
-#     alpha, beta = orthopy.chebyshev(moments)
 #     print(alpha)
 #     print(beta)
-#
 #     return
 
+
 if __name__ == '__main__':
-    test_stieltjes()
+    test_expt3()
