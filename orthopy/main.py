@@ -29,23 +29,77 @@
     Inverse Problems, 1987, Volume 3, Number 4,
     <https://doi.org/10.1088/0266-5611/3/4/010>.
 '''
+from __future__ import division
+
 import math
 
+from mpmath import mp
 import numpy
 # pylint: disable=no-name-in-module
+import scipy
 from scipy.linalg.lapack import get_lapack_funcs
+from scipy.linalg import eig_banded
+import sympy
 
 
-def gauss_from_coefficients(alpha, beta):
+def gauss_from_coefficients(alpha, beta, mode='numpy', decimal_places=32):
     '''Compute the Gauss nodes and weights from the recurrence coefficients
     associated with a set of orthogonal polynomials. See [2] and
     <http://www.scientificpython.net/pyblog/radau-quadrature>.
     '''
-    from scipy.linalg import eig_banded
-    import scipy
-    A = numpy.vstack((numpy.sqrt(beta), alpha))
-    x, V = eig_banded(A, lower=False)
-    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+    # pylint: disable=too-many-locals
+    def sympy_tridiag(a, b):
+        '''Creates the tridiagonal sympy matrix tridiag(b, a, b).
+        '''
+        n = len(a)
+        assert n == len(b)
+        A = [[0 for _ in range(n)] for _ in range(n)]
+        for i in range(n):
+            A[i][i] = a[i]
+        for i in range(n-1):
+            A[i][i+1] = b[i+1]
+            A[i+1][i] = b[i+1]
+        return sympy.Matrix(A)
+
+    if mode == 'sympy':
+        assert isinstance(alpha[0], sympy.Rational)
+        # Construct the triadiagonal matrix [sqrt(beta), alpha, sqrt(beta)]
+        A = sympy_tridiag(alpha, [sympy.sqrt(bta) for bta in beta])
+
+        # Extract points and weights from eigenproblem
+        x = []
+        w = []
+        for item in A.eigenvects():
+            val, multiplicity, vec = item
+            assert multiplicity == 1
+            assert len(vec) == 1
+            vec = vec[0]
+            x.append(val)
+            norm2 = sum([v**2 for v in vec])
+            w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        # sort by x
+        order = sorted(range(len(x)), key=lambda i: x[i])
+        x = [x[i] for i in order]
+        w = [w[i] for i in order]
+    elif mode == 'mpmath':
+        mp.dps = decimal_places
+        A = sympy_tridiag(
+                [mp.mpf(a) for a in alpha],
+                [mp.sqrt(bta) for bta in beta]
+                )
+        x, Q = mp.eigsy(A)
+        w = [
+            beta[0] * mp.power(Q[0, i], 2)
+            for i in range(Q.shape[1])
+            ]
+    else:
+        assert mode == 'numpy'
+        assert isinstance(alpha, numpy.ndarray)
+        assert isinstance(beta, numpy.ndarray)
+        A = numpy.vstack((numpy.sqrt(beta), alpha))
+        # TODO keep an eye on https://github.com/scipy/scipy/pull/7810
+        x, V = eig_banded(A, lower=False)
+        w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
     return x, w
 
 
@@ -129,12 +183,11 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     except AttributeError:  # 'float' object has no attribute 'shape'
         vals = numpy.empty(n+1)
 
-    vals[0] = 1.0
-    # pylint: disable=len-as-condition
-    if len(alpha) > 0:
+    vals[0] = 1
+    if n > 0:
         vals[1] = (t - alpha[0]) * vals[0]
-        for k in range(1, n):
-            vals[k+1] = (t - alpha[k]) * vals[k] - beta[k] * vals[k-1]
+    for k in range(2, n+1):
+        vals[k] = (t - alpha[k-1]) * vals[k-1] - beta[k-1] * vals[k-2]
     return vals[-1]
 
 
@@ -160,15 +213,43 @@ def golub_welsch(moments):
     Rd = R.diagonal()
     q = R.diagonal(1) / Rd[:-1]
 
-    alpha = numpy.zeros(n)
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    # TODO don't square here, but adapt _gauss to accept squared values at
-    #      input
+    # TODO don't square here, but adapt _gauss to accept square-rooted values
+    #      as input
     beta = numpy.hstack([
         Rd[0], Rd[1:-1] / Rd[:-2]
         ])**2
+    return alpha, beta
+
+
+def stieltjes(w, a, b, n):
+    t = sympy.Symbol('t')
+
+    alpha = n * [None]
+    beta = n * [None]
+    mu = n * [None]
+    pi = n * [None]
+
+    k = 0
+    pi[k] = 1
+    mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+    alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+    beta[k] = mu[0]  # not used, by convection mu[0]
+
+    k = 1
+    pi[k] = (t - alpha[k-1]) * pi[k-1]
+    mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+    alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+    beta[k] = mu[k] / mu[k-1]
+
+    for k in range(2, n):
+        pi[k] = (t - alpha[k-1]) * pi[k-1] - beta[k-1] * pi[k-2]
+        mu[k] = sympy.integrate(pi[k]**2 * w(t), (t, a, b))
+        alpha[k] = sympy.integrate(t * pi[k]**2 * w(t), (t, a, b)) / mu[k]
+        beta[k] = mu[k] / mu[k-1]
+
     return alpha, beta
 
 
@@ -181,7 +262,12 @@ def chebyshev(moments):
     '''
     m = len(moments)
     assert m % 2 == 0
-    return chebyshev_modified(moments, numpy.zeros(m), numpy.zeros(m))
+    if isinstance(moments[0], tuple(sympy.core.all_classes)):
+        dtype = sympy.Rational
+    else:
+        dtype = moments.dtype
+    zeros = numpy.zeros(m, dtype=dtype)
+    return chebyshev_modified(moments, zeros, zeros)
 
 
 def chebyshev_modified(nu, a, b):
@@ -195,11 +281,11 @@ def chebyshev_modified(nu, a, b):
 
     n = m // 2
 
-    alpha = numpy.empty(n)
-    beta = numpy.empty(n)
+    alpha = numpy.empty(n, dtype=a.dtype)
+    beta = numpy.empty(n, dtype=a.dtype)
     # Actually overkill. One could alternatively make sigma a list, and store
     # the shrinking rows there, only ever keeping the last two.
-    sigma = numpy.empty((n, 2*n))
+    sigma = numpy.empty((n, 2*n), dtype=a.dtype)
 
     if n > 0:
         k = 0
@@ -215,12 +301,12 @@ def chebyshev_modified(nu, a, b):
             - (alpha[k-1] - a[L]) * sigma[k-1, L]
             + b[L] * sigma[k-1, L-1]
             )
-        alpha[k] = (
+        alpha[k] = sympy.simplify(
             a[k]
             + sigma[k, k+1]/sigma[k, k]
             - sigma[k-1, k]/sigma[k-1, k-1]
             )
-        beta[k] = sigma[k, k] / sigma[k-1, k-1]
+        beta[k] = sympy.simplify(sigma[k, k] / sigma[k-1, k-1])
 
     for k in range(2, n):
         L = numpy.arange(k, 2*n-k)
@@ -240,7 +326,7 @@ def chebyshev_modified(nu, a, b):
     return alpha, beta
 
 
-def jacobi_recurrence_coefficients(n, a, b):
+def jacobi_recurrence_coefficients(n, a, b, mode='numpy'):
     '''Generate the recurrence coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
@@ -254,29 +340,81 @@ def jacobi_recurrence_coefficients(n, a, b):
     https://github.com/gregvw/orthopoly-quadrature/blob/master/rec_jacobi.pyx
     '''
     assert a > -1.0 or b > -1.0
-    if n == 0:
-        return numpy.array([]), numpy.array([])
 
-    assert n > 1
+    if mode == 'sympy':
+        if n == 0:
+            return [], []
 
-    mu = 2.0**(a+b+1.0) \
-        * numpy.exp(
-            math.lgamma(a+1.0) + math.lgamma(b+1.0) - math.lgamma(a+b+2.0)
+        assert n > 1
+
+        mu = 2**(a+b+1) * sympy.Rational(
+            sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
             )
-    nu = (b-a) / (a+b+2.0)
+        nu = sympy.Rational(b-a, a+b+2)
 
-    if n == 1:
-        return nu, mu
+        if n == 1:
+            return nu, mu
 
-    N = numpy.arange(1, n)
+        N = range(1, n)
 
-    nab = 2.0*N + a + b
-    alpha = numpy.hstack([nu, (b**2 - a**2) / (nab * (nab + 2.0))])
-    N = N[1:]
-    nab = nab[1:]
-    B1 = 4.0 * (a+1.0) * (b+1.0) / ((a+b+2.0)**2.0 * (a+b+3.0))
-    B = 4.0 * (N+a) * (N+b) * N * (N+a+b) / (nab**2.0 * (nab+1.0) * (nab-1.0))
-    beta = numpy.hstack((mu, B1, B))
+        nab = [2*nn + a + b for nn in N]
+
+        alpha = [nu] + [
+            sympy.Rational(b**2 - a**2, val * (val + 2)) for val in nab
+            ]
+
+        N = N[1:]
+        nab = nab[1:]
+        B1 = sympy.Rational(4 * (a+1) * (b+1), (a+b+2)**2 * (a+b+3))
+        B = [
+            sympy.Rational(
+                4 * (nn+a) * (nn+b) * nn * (nn+a+b),
+                val**2 * (val+1) * (val-1)
+                )
+            for nn, val in zip(N, nab)
+            ]
+        beta = [mu, B1] + B
+    else:
+        assert mode == 'numpy'
+        if n == 0:
+            return numpy.array([]), numpy.array([])
+
+        assert n > 1
+
+        mu = 2.0**(a+b+1.0) \
+            * numpy.exp(
+                math.lgamma(a+1.0) + math.lgamma(b+1.0) - math.lgamma(a+b+2.0)
+                )
+        nu = (b-a) / (a+b+2.0)
+
+        if n == 1:
+            return nu, mu
+
+        N = numpy.arange(1, n)
+
+        nab = 2.0*N + a + b
+        alpha = numpy.hstack([nu, (b**2 - a**2) / (nab * (nab + 2.0))])
+        N = N[1:]
+        nab = nab[1:]
+        B1 = 4.0 * (a+1.0) * (b+1.0) / ((a+b+2.0)**2.0 * (a+b+3.0))
+        B = (
+            4.0 * (N+a) * (N+b) * N * (N+a+b)
+            / (nab**2.0 * (nab+1.0) * (nab-1.0))
+            )
+        beta = numpy.hstack((mu, B1, B))
+    return alpha, beta
+
+
+def recurrence_coefficients_xk(k, n):
+    '''Recurrence coefficients for `int_{-1}^{+1} |x|^k f(x) dx`.
+    '''
+    assert k == 2
+    alpha = numpy.zeros(n)
+    k = numpy.arange(n)
+    beta = numpy.empty(n)
+    beta[0] = 2/3
+    beta[1::2] = (k[1::2]+2)**2 / ((2*k[1::2]+2)**2 - 1)
+    beta[2::2] = k[2::2]**2 / ((2*k[2::2]+2)**2 - 1)
     return alpha, beta
 
 
@@ -311,6 +449,23 @@ def check_coefficients(moments, alpha, beta):
         errors_beta[k] = abs(beta[k] - D[k+1]*D[k-1]/D[k]**2)
 
     return errors_alpha, errors_beta
+
+
+def compute_moments(w, a, b, n, polynomial_class=lambda k, x: x**k):
+    '''Symbolically calculate the first n+1 moments
+
+      int_a^b w(x) P_k(x) dx
+
+    where `P_k` is the `k`th polynomials of a specified class. The default
+    settings are monomials, i.e., `P_k(x)=x^k`, but you can provide any
+    function with the signature `p(k, x)`, e.g.,
+    `sympy.polys.orthopolys.legendre_poly`.
+    '''
+    x = sympy.Symbol('x')
+    return [
+        sympy.integrate(w(x) * polynomial_class(k, x), (x, a, b))
+        for k in range(n+1)
+        ]
 
 
 def show(*args, **kwargs):

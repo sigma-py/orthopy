@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 #
+from __future__ import division
+
 from distutils.version import LooseVersion
 
 import math
+
+from mpmath import mp
 import numpy
 import orthopy
 import pytest
 import scipy
 from scipy.special import legendre
+import sympy
 
 
 def test_golub_welsch(tol=1.0e-14):
@@ -38,8 +43,11 @@ def test_golub_welsch(tol=1.0e-14):
     return
 
 
-def test_chebyshev(tol=1.0e-14):
-    alpha = 2.0
+@pytest.mark.parametrize(
+    'dtype', [numpy.float, sympy.Rational]
+    )
+def test_chebyshev(dtype):
+    alpha = 2
 
     # Get the moment corresponding to the weight function omega(x) =
     # x^alpha:
@@ -49,16 +57,35 @@ def test_chebyshev(tol=1.0e-14):
     #                                     \ 2/(alpha+k+1) if k is even.
     #
     n = 5
-    k = numpy.arange(2*n)
-    moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
-    alpha, beta = orthopy.chebyshev(moments)
 
-    assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 2.0/3.0) < tol
-    assert abs(beta[1] - 3.0/5.0) < tol
-    assert abs(beta[2] - 4.0/35.0) < tol
-    assert abs(beta[3] - 25.0/63.0) < tol
-    assert abs(beta[4] - 16.0/99.0) < tol
+    if dtype == sympy.Rational:
+        moments = [
+            sympy.Rational(1.0 + (-1.0)**kk, kk + alpha + 1)
+            for kk in range(2*n)
+            ]
+
+        alpha, beta = orthopy.chebyshev(moments)
+
+        assert all([a == 0 for a in alpha])
+        assert beta[0] == sympy.Rational(2, 3)
+        assert beta[1] == sympy.Rational(3, 5)
+        assert beta[2] == sympy.Rational(4, 35)
+        assert beta[3] == sympy.Rational(25, 63)
+        assert beta[4] == sympy.Rational(16, 99)
+    else:
+        assert dtype == numpy.float
+        tol = 1.0e-14
+        k = numpy.arange(2*n)
+        moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
+
+        alpha, beta = orthopy.chebyshev(moments)
+
+        assert numpy.all(abs(alpha) < tol)
+        assert abs(beta[0] - 2.0/3.0) < tol
+        assert abs(beta[1] - 3.0/5.0) < tol
+        assert abs(beta[2] - 4.0/35.0) < tol
+        assert abs(beta[3] - 25.0/63.0) < tol
+        assert abs(beta[4] - 16.0/99.0) < tol
     return
 
 
@@ -89,43 +116,135 @@ def test_chebyshev_modified(tol=1.0e-14):
     return
 
 
-def test_jacobi(tol=1.0e-14):
+@pytest.mark.parametrize(
+    'dtype', [numpy.float, sympy.Rational]
+    )
+def test_jacobi(dtype):
     n = 5
-    a = 1.0
-    b = 1.0
-    alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
-
-    assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 4.0/3.0) < tol
-    assert abs(beta[1] - 1.0/5.0) < tol
-    assert abs(beta[2] - 8.0/35.0) < tol
-    assert abs(beta[3] - 5.0/21.0) < tol
-    assert abs(beta[4] - 8.0/33.0) < tol
+    if dtype == sympy.Rational:
+        a = sympy.Rational(1, 1)
+        b = sympy.Rational(1, 1)
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(
+                n, a, b,
+                mode='sympy'
+                )
+        assert all([a == 0 for a in alpha])
+        assert beta[0] == sympy.Rational(4, 3)
+        assert beta[1] == sympy.Rational(1, 5)
+        assert beta[2] == sympy.Rational(8, 35)
+        assert beta[3] == sympy.Rational(5, 21)
+        assert beta[4] == sympy.Rational(8, 33)
+    else:
+        a = 1.0
+        b = 1.0
+        tol = 1.0e-14
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
+        assert numpy.all(abs(alpha) < tol)
+        assert abs(beta[0] - 4.0/3.0) < tol
+        assert abs(beta[1] - 1.0/5.0) < tol
+        assert abs(beta[2] - 8.0/35.0) < tol
+        assert abs(beta[3] - 5.0/21.0) < tol
+        assert abs(beta[4] - 8.0/33.0) < tol
     return
 
 
-def test_gauss(tol=1.0e-14):
-    n = 5
-    points, weights = orthopy.gauss_from_coefficients(
-            *orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
-            )
+@pytest.mark.parametrize(
+    'n', [2, 5, 17]
+    )
+def test_recurrence_coefficients_xk(n, tol=1.0e-14):
+    # generate the coefficients by hand
+    modified_moments = numpy.zeros(2*n)
+    modified_moments[0] = 2.0/3.0
+    modified_moments[2] = 8.0/45.0
+    a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
+    alpha0, beta0 = orthopy.chebyshev_modified(modified_moments, a, b)
 
-    s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
-    t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
-    assert abs(points[0] + s) < tol
-    assert abs(points[1] + t) < tol
-    assert abs(points[2] + 0.0) < tol
-    assert abs(points[3] - t) < tol
-    assert abs(points[4] - s) < tol
+    alpha1, beta1 = orthopy.recurrence_coefficients_xk(2, n)
 
-    u = 128.0/225.0
-    v = (322.0 + 13 * math.sqrt(70)) / 900.0
-    w = (322.0 - 13 * math.sqrt(70)) / 900.0
-    assert abs(weights[0] - w) < tol
-    assert abs(weights[1] - v) < tol
-    assert abs(weights[2] - u) < tol
-    assert abs(weights[3] - v) < tol
-    assert abs(weights[4] - w) < tol
+    assert numpy.max(numpy.abs(alpha0 - alpha1)) < tol
+    assert numpy.max(numpy.abs(beta0 - beta1)) < tol
+    return
+
+
+@pytest.mark.parametrize(
+    'mode', ['sympy', 'numpy', 'mpmath']
+    )
+def test_gauss(mode):
+    if mode == 'sympy':
+        n = 3
+        a = sympy.Rational(0, 1)
+        b = sympy.Rational(0, 1)
+        points, weights = orthopy.gauss_from_coefficients(
+                *orthopy.jacobi_recurrence_coefficients(n, a, b, mode=mode),
+                mode=mode
+                )
+
+        assert points == [
+            -sympy.sqrt(sympy.Rational(3, 5)),
+            0,
+            +sympy.sqrt(sympy.Rational(3, 5)),
+            ]
+
+        assert weights == [
+            sympy.Rational(5, 9),
+            sympy.Rational(8, 9),
+            sympy.Rational(5, 9),
+            ]
+
+    elif mode == 'mpmath':
+        n = 5
+        a = sympy.Rational(0, 1)
+        b = sympy.Rational(0, 1)
+        points, weights = orthopy.gauss_from_coefficients(
+                *orthopy.jacobi_recurrence_coefficients(n, a, b, mode='sympy'),
+                mode=mode,
+                decimal_places=50
+                )
+
+        tol = 1.0e-50
+        s = mp.sqrt(5 + 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
+        t = mp.sqrt(5 - 2*mp.sqrt(mp.mpf(10)/mp.mpf(7))) / 3
+        assert abs(points[0] + s) < tol
+        assert abs(points[1] + t) < tol
+        assert abs(points[2] + 0.0) < tol
+        assert abs(points[3] - t) < tol
+        assert abs(points[4] - s) < tol
+
+        u = mp.mpf(128) / mp.mpf(225)
+        v = (322 + 13 * mp.sqrt(70)) / 900
+        w = (322 - 13 * mp.sqrt(70)) / 900
+        assert abs(weights[0] - w) < tol
+        assert abs(weights[1] - v) < tol
+        assert abs(weights[2] - u) < tol
+        assert abs(weights[3] - v) < tol
+        assert abs(weights[4] - w) < tol
+
+    else:
+        assert mode == 'numpy'
+        n = 5
+        tol = 1.0e-14
+        alpha, beta = orthopy.jacobi_recurrence_coefficients(n, 0.0, 0.0)
+        points, weights = orthopy.gauss_from_coefficients(
+                alpha, beta,
+                mode=mode
+                )
+
+        s = math.sqrt(5.0 + 2*math.sqrt(10.0/7.0)) / 3.0
+        t = math.sqrt(5.0 - 2*math.sqrt(10.0/7.0)) / 3.0
+        assert abs(points[0] + s) < tol
+        assert abs(points[1] + t) < tol
+        assert abs(points[2] + 0.0) < tol
+        assert abs(points[3] - t) < tol
+        assert abs(points[4] - s) < tol
+
+        u = 128.0/225.0
+        v = (322.0 + 13 * math.sqrt(70)) / 900.0
+        w = (322.0 - 13 * math.sqrt(70)) / 900.0
+        assert abs(weights[0] - w) < tol
+        assert abs(weights[1] - v) < tol
+        assert abs(weights[2] - u) < tol
+        assert abs(weights[3] - v) < tol
+        assert abs(weights[4] - w) < tol
     return
 
 
@@ -261,5 +380,65 @@ def test_show():
     return
 
 
+def test_compute_moments():
+    moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
+    assert moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5), 0]
+
+    moments = orthopy.compute_moments(
+            lambda x: 1, -1, +1, 5,
+            polynomial_class=sympy.polys.orthopolys.legendre_poly
+            )
+    assert moments == [2, 0, 0, 0, 0, 0]
+
+    # Example from Gautschi's "How to and how not to" article
+    moments = orthopy.compute_moments(
+            lambda x: sympy.exp(-x**3/3),
+            0, sympy.oo,
+            5
+            )
+    one_third = sympy.Rational(1, 3)
+    two_thirds = sympy.Rational(2, 3)
+    assert moments == [
+        3**one_third*sympy.gamma(one_third)/3,
+        3**two_thirds*sympy.gamma(two_thirds)/3,
+        1,
+        3**one_third*sympy.gamma(4 * one_third),
+        3**two_thirds*sympy.gamma(5 * one_third),
+        3
+        ]
+    return
+
+
+def test_stieltjes():
+    alpha0, beta0 = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
+    alpha1, beta1 = orthopy.jacobi_recurrence_coefficients(
+            5, 0, 0, mode='sympy'
+            )
+    assert alpha0 == alpha1
+    assert beta0 == beta1
+    return
+
+
+# def test_expt3():
+#     '''Full example from Gautschi's "How to and how not to" article.
+#     '''
+#     # moments = orthopy.compute_moments(
+#     #         lambda x: sympy.exp(-x**3/3),
+#     #         0, sympy.oo,
+#     #         31
+#     #         )
+#     # print(moments)
+#     # alpha, beta = orthopy.chebyshev(moments)
+#
+#     alpha, beta = orthopy.stieltjes(
+#             lambda x: sympy.exp(-x**3/3),
+#             0, sympy.oo,
+#             5
+#             )
+#     print(alpha)
+#     print(beta)
+#     return
+
+
 if __name__ == '__main__':
-    test_show()
+    test_stieltjes()

@@ -16,9 +16,12 @@ pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
 (defined by their _recurrence coefficients_ `alpha` and `beta`) are closely
 related. This module provides tools for working with them.
 
+_Note that most function have a `sympy` and `mpmath` mode for symbolic and
+arbitrary precision computation, respectively._
+
 Some examples:
 
-#### Transform between a Gaussian and recurrence coefficients
+#### Transform between a Gaussian schemes and recurrence coefficients
 ```python
 import orthopy
 
@@ -51,10 +54,20 @@ points, weights = orthopy.gauss_from_coefficients(alpha, beta)
 
 A couple of algorithms are implemented for that, particularly
 
-  * Golub-Welsch and
+  * Stieltjes, and
+  * Golub-Welsch,
   * (modified) Chebyshev.
 
-The input to all of those methods is an array of _moments_, i.e., the integrals
+The method `stieltjes` does symbolic computation, its input arguments are the
+weight function, the integration limits, and the desired number of
+coefficients. For example,
+```python
+alpha, beta = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
+```
+will recover the Legendre coefficients.
+
+The input `golub_welsch` and `chebyshev{_modified}` is an array of _moments_,
+i.e., the integrals
 ```
 integral(w(x) p_k(x) dx)
 ```
