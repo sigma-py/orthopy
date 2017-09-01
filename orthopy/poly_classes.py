@@ -5,11 +5,13 @@
 import sympy
 
 
-def legendre(k, x):
-    '''Legendre polynomials scaled such that the leading term has coefficient
-    1.
+def legendre(k, x, monic=True):
+    '''Legendre polynomials, optionally (default=True) scaled such that the
+    leading term has coefficient 1.
     '''
-    return (
+    coeff = (
         sympy.Rational(2**k * sympy.factorial(k)**2, sympy.factorial(2*k))
-        * sympy.polys.orthopolys.legendre_poly(k, x)
+        if monic
+        else 1
         )
+    return coeff * sympy.polys.orthopolys.legendre_poly(k, x)

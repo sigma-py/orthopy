@@ -5,7 +5,23 @@ from __future__ import division
 import math
 
 import numpy
+import mpmath
 import sympy
+
+
+def recurrence_coefficients_chebyshev1(n, mode='sympy'):
+    alpha = n * [0]
+    beta = n * [sympy.Rational(1, 4)]
+    beta[0] = mpmath.pi
+    beta[1] = sympy.Rational(1, 2)
+    return alpha, beta
+
+
+def recurrence_coefficients_chebyshev2(n, mode='sympy'):
+    alpha = n * [0]
+    beta = n * [sympy.Rational(1, 4)]
+    beta[0] = mpmath.pi / 2
+    return alpha, beta
 
 
 def recurrence_coefficients_legendre(n, mode='sympy'):
