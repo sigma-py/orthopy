@@ -9,7 +9,7 @@ import mpmath
 import sympy
 
 
-def recurrence_coefficients_chebyshev1(n, mode='sympy'):
+def chebyshev1(n):
     alpha = n * [0]
     beta = n * [sympy.Rational(1, 4)]
     beta[0] = mpmath.pi
@@ -17,18 +17,28 @@ def recurrence_coefficients_chebyshev1(n, mode='sympy'):
     return alpha, beta
 
 
-def recurrence_coefficients_chebyshev2(n, mode='sympy'):
+def chebyshev2(n):
     alpha = n * [0]
     beta = n * [sympy.Rational(1, 4)]
     beta[0] = mpmath.pi / 2
     return alpha, beta
 
 
-def recurrence_coefficients_legendre(n, mode='sympy'):
-    return recurrence_coefficients_jacobi(n, 0, 0, mode=mode)
+def laguerre(n):
+    alpha = [
+        (-1)**k * sympy.factorial(k) * (2*k+1)
+        for k in range(n)
+        ]
+    beta = [k*(k+1) for k in range(n)]
+    beta[0] = 1
+    return alpha, beta
 
 
-def recurrence_coefficients_jacobi(n, a, b, mode='sympy'):
+def legendre(n, mode='sympy'):
+    return jacobi(n, 0, 0, mode=mode)
+
+
+def jacobi(n, a, b, mode='sympy'):
     '''Generate the recurrence coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
@@ -44,14 +54,14 @@ def recurrence_coefficients_jacobi(n, a, b, mode='sympy'):
     assert a > -1.0 or b > -1.0
 
     if mode == 'sympy':
-        alpha, beta = _recurrence_coefficients_jacobi_sympy(n, a, b)
+        alpha, beta = _jacobi_sympy(n, a, b)
     else:
         assert mode == 'numpy'
-        alpha, beta = _recurrence_coefficients_jacobi_numpy(n, a, b)
+        alpha, beta = _jacobi_numpy(n, a, b)
     return alpha, beta
 
 
-def _recurrence_coefficients_jacobi_sympy(n, a, b):
+def _jacobi_sympy(n, a, b):
     if n == 0:
         return [], []
 
@@ -88,7 +98,7 @@ def _recurrence_coefficients_jacobi_sympy(n, a, b):
     return numpy.array(alpha), numpy.array(beta)
 
 
-def _recurrence_coefficients_jacobi_numpy(n, a, b):
+def _jacobi_numpy(n, a, b):
     if n == 0:
         return numpy.array([]), numpy.array([])
 
