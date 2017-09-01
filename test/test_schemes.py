@@ -65,17 +65,13 @@ def test_laguerre():
 
 
 def test_laguerre_generalized():
-    points, weights = orthopy.schemes.laguerre_generalized(
-            2, a=1, decimal_places=51
-            )
+    orthopy.schemes.laguerre_generalized(2, a=1, decimal_places=51)
     # TODO get reference values
     return
 
 
 def test_hermite():
-    points, weights = orthopy.schemes.hermite(
-            4, decimal_places=51
-            )
+    points, weights = orthopy.schemes.hermite(4, decimal_places=51)
 
     tol = 1.0e-50
 
