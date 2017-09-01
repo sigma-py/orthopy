@@ -19,6 +19,18 @@ related. This module provides tools for working with them.
 _Note that most functions have a `sympy` and `mpmath` mode for symbolic and
 arbitrary precision computation, respectively._
 
+### Classical schemes
+
+With orthopy, it's easy to regenerate classical Gauss quadrature schemes are
+listed in, e.g., [Stroud & Secrest](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ).
+
+Some examples:
+```python
+points, weights = orthopy.schemes.legendre(96, decimal_places=30)
+points, weights = orthopy.schemes.hermite(14, decimal_places=20)
+points, weights = orthopy.schemes.laguerre(13, decimal_places=50)
+```
+
 ### Generating your own Gauss quadrature in three simple steps
 
 You have a measure (or, more colloquially speaking, a domain and a nonnegative
@@ -27,6 +39,16 @@ Great, here's how to do it.
 
 As an example, let's try and generate the Gauss quadrature with 10 points for
 the weight function `x^2` on the interval `[-1, +1]`.
+
+TLDR:
+```python
+import orthopy
+moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 20)
+alpha, beta = orthopy.chebyshev(moments)
+points, weights = orthopy.schemes.custom(alpha, beta, decimal_places=30)
+```
+
+Some explanations:
 
   1. You need to compute the first `2*n` _moments_ of your measure
      ```
@@ -93,7 +115,7 @@ the weight function `x^2` on the interval `[-1, +1]`.
      choose the `mpmath` mode with 30 decimal digits
      ```python
      points, weights = \
-         orthopy.gauss_from_coefficients(alpha, beta, mode='mpmath', decimal_places=30)
+         orthopy.schemes.custom(alpha, beta, mode='mpmath', decimal_places=30)
      ```
      ```
      [-0.978228658146056992803938001123,
@@ -120,6 +142,7 @@ the weight function `x^2` on the interval `[-1, +1]`.
         0.0532709947237135572432759986251]
      ```
      Congratulations! Your Gaussian quadrature rule.
+
 
 ### Other tools
 

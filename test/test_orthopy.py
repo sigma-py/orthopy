@@ -157,7 +157,7 @@ def test_gauss(mode):
         n = 3
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
-        points, weights = orthopy.gauss_from_coefficients(
+        points, weights = orthopy.schemes.custom(
                 *orthopy.recurrence_coefficients.jacobi(n, a, b, mode=mode),
                 mode=mode
                 )
@@ -178,7 +178,7 @@ def test_gauss(mode):
         n = 5
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
-        points, weights = orthopy.gauss_from_coefficients(
+        points, weights = orthopy.schemes.custom(
                 *orthopy.recurrence_coefficients.jacobi(n, a, b, mode='sympy'),
                 mode=mode,
                 decimal_places=50
@@ -200,7 +200,7 @@ def test_gauss(mode):
         n = 5
         tol = 1.0e-14
         alpha, beta = orthopy.recurrence_coefficients.legendre(n, mode=mode)
-        points, weights = orthopy.gauss_from_coefficients(
+        points, weights = orthopy.schemes.custom(
                 alpha, beta,
                 mode=mode
                 )
@@ -222,7 +222,7 @@ def test_gauss(mode):
     )
 def test_jacobi_reconstruction(tol=1.0e-14):
     alpha1, beta1 = orthopy.recurrence_coefficients.jacobi(4, 2.0, 1.0)
-    points, weights = orthopy.gauss_from_coefficients(alpha1, beta1)
+    points, weights = orthopy.schemes.custom(alpha1, beta1)
 
     alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
 
@@ -420,7 +420,7 @@ def test_xk(k):
     assert beta[0] == moments[0]
     assert beta[1] == sympy.Rational(k+1, k+3)
     assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
-    points, weights = orthopy.gauss_from_coefficients(
+    points, weights = orthopy.schemes.custom(
             numpy.array([sympy.N(a) for a in alpha], dtype=float),
             numpy.array([sympy.N(b) for b in beta], dtype=float),
             mode='numpy'
@@ -436,7 +436,7 @@ def test_xk(k):
     #         polynomial_class=orthopy.legendre
     #         )
     # alpha, beta = orthopy.chebyshev_modified(moments, a, b)
-    # points, weights = orthopy.gauss_from_coefficients(
+    # points, weights = orthopy.schemes.custom(
     #         numpy.array([sympy.N(a) for a in alpha], dtype=float),
     #         numpy.array([sympy.N(b) for b in beta], dtype=float)
     #         )
