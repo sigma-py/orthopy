@@ -37,7 +37,7 @@ def chebyshev1(k, x, monic=True):
     scaled such that the leading term has coefficient 1.
     '''
     return jacobi(
-            -sympy.Rational(1, 2), -sympy.Rational(1, 2), x, monic=monic
+            -sympy.Rational(1, 2), -sympy.Rational(1, 2), k, x, monic=monic
             )
 
 
@@ -46,7 +46,7 @@ def chebyshev2(k, x, monic=True):
     scaled such that the leading term has coefficient 1.
     '''
     return jacobi(
-            sympy.Rational(1, 2), sympy.Rational(1, 2), x, monic=monic
+            sympy.Rational(1, 2), sympy.Rational(1, 2), k, x, monic=monic
             )
 
 
