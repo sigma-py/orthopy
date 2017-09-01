@@ -91,6 +91,7 @@ def _gauss_from_coefficients_sympy(alpha, beta):
 
 
 def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
+    # TODO follow up on https://github.com/fredrik-johansson/mpmath/issues/366
     mp.dps = decimal_places
     A = _sympy_tridiag(
             [mp.mpf(a) for a in alpha],
