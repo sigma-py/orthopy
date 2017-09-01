@@ -36,6 +36,8 @@ import scipy
 from scipy.linalg import eig_banded
 import sympy
 
+from .tridiag_eigen import tridiag_eigen
+
 
 def gauss_from_coefficients(alpha, beta, mode='sympy', decimal_places=32):
     '''Compute the Gauss nodes and weights from the recurrence coefficients
@@ -93,19 +95,18 @@ def _gauss_from_coefficients_sympy(alpha, beta):
 def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
     # TODO follow up on https://github.com/fredrik-johansson/mpmath/issues/366
     mp.dps = decimal_places
-    A = _sympy_tridiag(
-            [mp.mpf(a) for a in alpha],
-            [mp.sqrt(bta) for bta in beta]
-            )
-    x, Q = mp.eigsy(A)
+
+    # Create vector cut of the first value of beta
+    n = len(alpha)
+    b = mp.zeros(n, 1)
+    for i in range(n-1):
+        b[i] = mp.sqrt(beta[i+1])
+
+    x, w = tridiag_eigen(mp.matrix(alpha), b, m=1)
 
     # nx1 matrix -> list of sympy floats
     x = numpy.array([sympy.Float(xx) for xx in x])
-
-    w = numpy.array([
-        beta[0] * mp.power(Q[0, i], 2)
-        for i in range(Q.shape[1])
-        ])
+    w = numpy.array([beta[0] * mp.power(ww, 2) for ww in w])
     return x, w
 
 
