@@ -24,11 +24,8 @@ def chebyshev2(n):
 
 
 def laguerre(n):
-    alpha = [
-        (-1)**k * sympy.factorial(k) * (2*k+1)
-        for k in range(n)
-        ]
-    beta = [k*(k+1) for k in range(n)]
+    alpha = [(2*k+1) for k in range(n)]
+    beta = [k**2 for k in range(n)]
     beta[0] = 1
     return alpha, beta
 

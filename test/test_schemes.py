@@ -49,5 +49,20 @@ def test_chebyshev2():
     return
 
 
+def test_laguerre():
+    points, weights = orthopy.schemes.laguerre(2, decimal_places=51)
+
+    tol = 1.0e-50
+
+    x1 = 2 - mp.sqrt(2)
+    x2 = 2 + mp.sqrt(2)
+    assert (abs(points - [x1, x2]) < tol).all()
+
+    w1 = (2 + mp.sqrt(2)) / 4
+    w2 = (2 - mp.sqrt(2)) / 4
+    assert (abs(weights - [w1, w2]) < tol).all()
+    return
+
+
 if __name__ == '__main__':
-    test_chebyshev2()
+    test_laguerre()
