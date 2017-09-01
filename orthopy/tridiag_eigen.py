@@ -15,6 +15,7 @@ def tridiag_eigen(in_d, in_e, m=None):
     to be used until the latter is part of the public interface of mpmath (see
     <https://github.com/fredrik-johansson/mpmath/issues/366>).
     '''
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     d = in_d.copy()
     e = in_e.copy()
 
