@@ -112,7 +112,7 @@ Some explanations:
 
   3. Lastly, we generate the Gauss points and weights from `alpha` and `beta`.
      Since symbolic computation can take _very_ long even for small sizes, we
-     choose the `mpmath` mode with 30 decimal digits
+     choose the `mpmath` mode (default) with 30 decimal digits
      ```python
      points, weights = \
          orthopy.schemes.custom(alpha, beta, mode='mpmath', decimal_places=30)
@@ -176,6 +176,7 @@ Some explanations:
 
 ### Relevant publications
 
+ * [A.H. Stroud and D. Secrest, Gaussian Quadrature Formulas, 1966, Prentice Hall, Series in Automatic Computation](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ)
  * [Gene H. Golub and John H. Welsch, Calculation of Gauss Quadrature Rules, Mathematics of Computation, Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10](https://dx.doi.org/10.2307/2004418)
  * [W. Gautschi, On Generating Orthogonal Polynomials, SIAM J. Sci. and Stat. Comput., 3(3), 289–317](https://doi.org/10.1137/0903018)
  * [W. Gautschi, How and how not to check Gaussian quadrature formulae, BIT Numerical Mathematics, June 1983, Volume 23, Issue 2, pp 209–216](https://doi.org/10.1007/BF02218441)
