@@ -443,16 +443,5 @@ def test_xk(k):
     return
 
 
-def test_classical_schemes():
-    points, weights = orthopy.schemes.legendre(5, decimal_places=50)
-    print(points)
-    print(weights)
-    print
-    points, weights = orthopy.schemes.jacobi(2.0, 3.0, 5, decimal_places=50)
-    print(points)
-    print(weights)
-    return
-
-
 if __name__ == '__main__':
-    test_classical_schemes()
+    test_xk()
