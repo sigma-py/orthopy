@@ -64,5 +64,30 @@ def test_laguerre():
     return
 
 
+def test_laguerre_generalized():
+    points, weights = orthopy.schemes.laguerre_generalized(
+            2, a=1, decimal_places=51
+            )
+    # TODO get reference values
+    return
+
+
+def test_hermite():
+    points, weights = orthopy.schemes.hermite(
+            4, decimal_places=51
+            )
+
+    tol = 1.0e-50
+
+    x1 = mp.sqrt((3 - mp.sqrt(6)) / 2)
+    x2 = mp.sqrt((3 + mp.sqrt(6)) / 2)
+    assert (abs(points - [-x2, -x1, +x1, +x2]) < tol).all()
+
+    w1 = mp.sqrt(mp.pi) / 4 / (3 - mp.sqrt(6))
+    w2 = mp.sqrt(mp.pi) / 4 / (3 + mp.sqrt(6))
+    assert (abs(weights - [w2, w1, w1, w2]) < tol).all()
+    return
+
+
 if __name__ == '__main__':
-    test_laguerre()
+    test_hermite()

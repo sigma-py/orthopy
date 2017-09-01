@@ -24,9 +24,20 @@ def chebyshev2(n):
 
 
 def laguerre(n):
-    alpha = [(2*k+1) for k in range(n)]
-    beta = [k**2 for k in range(n)]
-    beta[0] = 1
+    return laguerre_generalized(n, 0)
+
+
+def laguerre_generalized(n, a):
+    alpha = [(2*k+1+a) for k in range(n)]
+    beta = [k*(k+a) for k in range(n)]
+    beta[0] = sympy.gamma(a+1)
+    return alpha, beta
+
+
+def hermite(n):
+    alpha = n * [0]
+    beta = [sympy.Rational(k, 2) for k in range(n)]
+    beta[0] = sympy.sqrt(sympy.pi)
     return alpha, beta
 
 

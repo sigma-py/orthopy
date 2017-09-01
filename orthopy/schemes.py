@@ -49,3 +49,20 @@ def laguerre(n, decimal_places):
             alpha, beta, mode='mpmath',
             decimal_places=decimal_places
             )
+
+
+def laguerre_generalized(n, a, decimal_places):
+    alpha, beta = recurrence_coefficients.laguerre_generalized(n, a)
+    return gauss_from_coefficients(
+            alpha, beta, mode='mpmath',
+            decimal_places=decimal_places
+            )
+
+
+def hermite(n, decimal_places):
+    alpha, beta = recurrence_coefficients.hermite(n)
+    beta[0] = sympy.N(beta[0], decimal_places)
+    return gauss_from_coefficients(
+            alpha, beta, mode='mpmath',
+            decimal_places=decimal_places
+            )
