@@ -2,12 +2,12 @@
 
 Python tools for orthogonal polynomials and Gaussian quadrature.
 
-![](https://nschloe.github.io/orthopy/orthopy.png)
-
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
+
+![](https://nschloe.github.io/orthopy/orthopy.png)
 
 Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
@@ -16,105 +16,169 @@ pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
 (defined by their _recurrence coefficients_ `alpha` and `beta`) are closely
 related. This module provides tools for working with them.
 
-_Note that most function have a `sympy` and `mpmath` mode for symbolic and
+_Note that most functions have a `sympy` and `mpmath` mode for symbolic and
 arbitrary precision computation, respectively._
 
+### Classical schemes
+
+With orthopy, it's easy to regenerate classical Gauss quadrature schemes are
+listed in, e.g., [Stroud & Secrest](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ).
+
 Some examples:
+```python
+points, weights = orthopy.schemes.legendre(96, decimal_places=30)
+points, weights = orthopy.schemes.hermite(14, decimal_places=20)
+points, weights = orthopy.schemes.laguerre(13, decimal_places=50)
+```
 
-#### Transform between a Gaussian schemes and recurrence coefficients
+### Generating your own Gauss quadrature in three simple steps
+
+You have a measure (or, more colloquially speaking, a domain and a nonnegative
+weight function) and would like to generate the matching Gauss quadrature?
+Great, here's how to do it.
+
+As an example, let's try and generate the Gauss quadrature with 10 points for
+the weight function `x^2` on the interval `[-1, +1]`.
+
+TLDR:
 ```python
 import orthopy
-
-# alpha = ...
-# beta = ...
-points, weights = orthopy.gauss_from_coefficients(alpha, beta)
-alpha, beta = orthopy.coefficients_from_gauss(points, weights)
+moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 20)
+alpha, beta = orthopy.chebyshev(moments)
+points, weights = orthopy.schemes.custom(alpha, beta, decimal_places=30)
 ```
 
-#### Recursion coefficients of classical weight functions
+Some explanations:
 
-The recurrence coefficients of Gauss rules for the weight function
-`w(x) = (1-x)^a * (1+x)^b` with any `a` or `b` are explicitly known. Retrieve
-them with
-```python
-import orthopy
+  1. You need to compute the first `2*n` _moments_ of your measure
+     ```
+     integral(w(x) p_k(x) dx)
+     ```
+     with a particular set of polynomials `p_k`. A common choice are the
+     monomials `x^k`. You can do that by hand or use
+     ```python
+     moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 20)
+     ```
+     ```
+     [2/3, 0, 2/5, 0, 2/7, 0, 2/9, 0, 2/11, 0, 2/13, 0, 2/15, 0, 2/17, 0, 2/19, 0, 2/21, 0]
+     ```
+     Note that the moments have all been computed symbolically here.
 
-alpha, beta = orthopy.jacobi_recurrence_coefficients(n, a, b)
-```
-Of course, it's easy to generate the corresponding Gaussian rule; for example
-for Gauss-Legendre of order 5:
-```python
-import orthopy
+     If you have the moments in floating point (for example because you need to
+     compute the scheme fast), it makes sense to think about the numerical
+     implications here. That's because the map to the recurrence coefficients
+     (step 2) can be _very_ ill-conditioned, meaning that small round-off
+     errors can lead to an unusable scheme.
+     For further computation, it's numerically beneficial if the moments are
+     either 0 or in the same order of magnitude. The above numbers are alright,
+     but if you want to max it out, we could try Legendre polynomials for
+     `p_k`:
+     ```python
+     moments = orthopy.compute_moments(
+         lambda x: x**2, -1, +1, 20,
+         polynomial_class=orthopy.legendre
+         )
+     ```
+     ```
+     [2/3, 0, 8/45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+     ```
+     Better!
 
-alpha, beta = orthopy.jacobi_recurrence_coefficients(5, 0.0, 0.0)
-points, weights = orthopy.gauss_from_coefficients(alpha, beta)
-```
+  2. From the moments, we generate the recurrence coefficients of our custom
+     orthogonal polynomials. There are a few choices to accomplish this:
 
-#### Recursion coefficients for your own weight function
+       * `golub_welsch`: uses Cholesky at its core; can be numerically unstable
+       * `stieltjes`: moments not even needed here, but can also be numerically
+         unstable
+       * `chebyshev`: can be used if you chose monomials in the first step;
+         again, potentially numerically unstable
+       * `chebyshev_modified`: to be used if you chose something other than
+         monomials in the first step; stable if the `polynomial_class` was
+         chosen wisely
 
-A couple of algorithms are implemented for that, particularly
+       Since we have computed modified moments in step one, let's use the
+       latter method:
+       ```python
+       a, b = orthopy.recurrence_coefficients_legendre(20)
+       alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+       ```
+       ```
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+       [2/3, 3/5, 4/35, 25/63, 16/99, 49/143, 12/65, 27/85, 64/323, 121/399]
+       ```
+       (Note that, since everything is done symbolically in this example,
+       we could have used Stieltjes's or Chebyshev's unmodified method; the
+       results are the same.)
 
-  * Stieltjes, and
-  * Golub-Welsch,
-  * (modified) Chebyshev.
+  3. Lastly, we generate the Gauss points and weights from `alpha` and `beta`.
+     Since symbolic computation can take _very_ long even for small sizes, we
+     choose the `mpmath` mode (default) with 30 decimal digits
+     ```python
+     points, weights = \
+         orthopy.schemes.custom(alpha, beta, mode='mpmath', decimal_places=30)
+     ```
+     ```
+     [-0.978228658146056992803938001123,
+      -0.887062599768095299075157769304,
+      -0.730152005574049324093416252031,
+      -0.519096129206811815925725669458,
+      -0.269543155952344972331531985401,
+      0.2695431559523449723315319854,
+      0.519096129206811815925725669458,
+      0.730152005574049324093416252031,
+      0.887062599768095299075157769304,
+      0.978228658146056992803938001123]
+     ```
+     ```
+       [0.0532709947237135572432759986252,
+        0.0988166881454075626728761840589,
+        0.0993154007474139787312043384226,
+        0.0628365763465911675266984722740,
+        0.0190936733702070671592783399524,
+        0.0190936733702070671592783399524,
+        0.0628365763465911675266984722744,
+        0.0993154007474139787312043384225,
+        0.0988166881454075626728761840592,
+        0.0532709947237135572432759986251]
+     ```
+     Congratulations! Your Gaussian quadrature rule.
 
-The method `stieltjes` does symbolic computation, its input arguments are the
-weight function, the integration limits, and the desired number of
-coefficients. For example,
-```python
-alpha, beta = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
-```
-will recover the Legendre coefficients.
 
-The input `golub_welsch` and `chebyshev{_modified}` is an array of _moments_,
-i.e., the integrals
-```
-integral(w(x) p_k(x) dx)
-```
-with `p_k(x)` either the monomials `x^k` (for Golub-Welsch and Chebyshev), or
-a known set of orthogonal polynomials (for modified Chebyshev). Depending on
-your weight function, the moments may have an analytic representation.
+### Other tools
 
-```python
-import orthopy
+ * Transforming Gaussian points and weights back to recurrence coefficients:
+   ```python
+   alpha, beta = orthopy.coefficients_from_gauss(points, weights)
+   ```
 
-# Modified moments of `int x^2 p_k(x) dx` with Legendre polynomials.
-# Almost all moments are 0.
-n = 5
-moments = numpy.zeros(2*n)
-moments[0] = 2.0/3.0
-moments[2] = 8.0/45.0
+ * Recurrence coefficients of Jacobi polynomials `w(x) = (1-x)^a * (1+x)^b`
+   with any `a` or `b` are explicitly given:
+   ```python
+   alpha, beta = orthopy.recurrence_coefficients_jacobi(n, a, b)
+   ```
 
-a, b = orthopy.jacobi_recurrence_coefficients(2*n, 0.0, 0.0)
-alpha, beta = orthopy.chebyshev_modified(moments, a, b)
-```
+ * The Gautschi test: [As recommended by
+   Gautschi](https://doi.org/10.1007/BF02218441), you can test your
+   moment-based scheme with
+   ```python
+   err = orthopy.check_coefficients(moments, alpha, beta)
+   ```
+ * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
+   computing the weighted sum of orthogonal polynomials:
+   ```python
+   vals = orthopy.clenshaw(a, alpha, beta, t)
+   ```
 
-Be aware of the fact that Golub-Welsch and unmodified Chebyshev are _very_
-ill-conditioned, so don't push `n` too far! In any case, [as recommended by
-Gautschi](https://doi.org/10.1007/BF02218441), you can test your
-moment-based scheme with
-```python
-import orthopy
-orthopy.check_coefficients(moments, alpha, beta)
-```
-
-#### Other tools
-
-* [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
-  computing the weighted sum of orthogonal polynomials:
-  ```python
-  import orthopy
-  vals = orthopy.clenshaw(a, alpha, beta, t)
-  ```
-* Evaluate orthogonal polynomials (at many points at once):
-  ```python
-  import orthopy
-  vals = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
-  ```
+ * Evaluate orthogonal polynomials (at many points at once):
+   ```python
+   vals = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
+   ```
 
 ### Relevant publications
 
+ * [A.H. Stroud and D. Secrest, Gaussian Quadrature Formulas, 1966, Prentice Hall, Series in Automatic Computation](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ)
  * [Gene H. Golub and John H. Welsch, Calculation of Gauss Quadrature Rules, Mathematics of Computation, Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10](https://dx.doi.org/10.2307/2004418)
+ * [W. Gautschi, On Generating Orthogonal Polynomials, SIAM J. Sci. and Stat. Comput., 3(3), 289–317](https://doi.org/10.1137/0903018)
  * [W. Gautschi, How and how not to check Gaussian quadrature formulae, BIT Numerical Mathematics, June 1983, Volume 23, Issue 2, pp 209–216](https://doi.org/10.1007/BF02218441)
  * [D. Boley and G.H. Golub, A survey of matrix inverse eigenvalue problems, Inverse Problems, 1987, Volume 3, Number 4](https://doi.org/10.1088/0266-5611/3/4/010)
  * [W. Gautschi, Algorithm 726: ORTHPOL–a package of routines for generating orthogonal polynomials and Gauss-type quadrature rules, ACM Transactions on Mathematical Software (TOMS), Volume 20, Issue 1, March 1994, Pages 21-62](http://doi.org/10.1145/174603.174605)
