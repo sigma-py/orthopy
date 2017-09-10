@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 from mpmath import mp
+from mpmath.matrices.eigen_symmetric import tridiag_eigen
 import numpy
 import scipy
 from scipy.linalg import eig_banded
 import sympy
 
 from . import recurrence_coefficients
-from .tridiag_eigen import tridiag_eigen
 
 
 def custom(alpha, beta, mode='mpmath', decimal_places=32):
@@ -64,7 +64,6 @@ def _gauss_from_coefficients_sympy(alpha, beta):
 
 
 def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
-    # TODO follow up on https://github.com/fredrik-johansson/mpmath/issues/366
     mp.dps = decimal_places
 
     # Create vector cut of the first value of beta
@@ -73,11 +72,14 @@ def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
     for i in range(n-1):
         b[i] = mp.sqrt(beta[i+1])
 
-    x, w = tridiag_eigen(mp.matrix(alpha), b, m=1)
+    z = mp.zeros(1, n)
+    z[0, 0] = 1
+    d = mp.matrix(alpha)
+    tridiag_eigen(mp, d, b, z)
 
     # nx1 matrix -> list of sympy floats
-    x = numpy.array([sympy.Float(xx) for xx in x])
-    w = numpy.array([beta[0] * mp.power(ww, 2) for ww in w])
+    x = numpy.array([sympy.Float(xx) for xx in d])
+    w = numpy.array([beta[0] * mp.power(ww, 2) for ww in z])
     return x, w
 
 
