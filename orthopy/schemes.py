@@ -55,7 +55,9 @@ def _gauss_from_coefficients_sympy(alpha, beta):
         vec = vec[0]
         x.append(val)
         norm2 = sum([v**2 for v in vec])
-        w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        # simplifiction takes really long
+        # w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        w.append(beta[0] * vec[0]**2 / norm2)
     # sort by x
     order = sorted(range(len(x)), key=lambda i: x[i])
     x = [x[i] for i in order]
