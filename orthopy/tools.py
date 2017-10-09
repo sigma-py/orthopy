@@ -14,6 +14,10 @@ def coefficients_from_gauss(points, weights):
     n = len(points)
     assert n == len(weights)
 
+    flt = numpy.vectorize(float)
+    points = flt(points)
+    weights = flt(weights)
+
     A = numpy.zeros((n+1, n+1))
 
     # In sytrd, the _last_ row/column of Q are e, so put the values there.

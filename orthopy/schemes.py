@@ -55,7 +55,9 @@ def _gauss_from_coefficients_sympy(alpha, beta):
         vec = vec[0]
         x.append(val)
         norm2 = sum([v**2 for v in vec])
-        w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        # simplifiction takes really long
+        # w.append(sympy.simplify(beta[0] * vec[0]**2 / norm2))
+        w.append(beta[0] * vec[0]**2 / norm2)
     # sort by x
     order = sorted(range(len(x)), key=lambda i: x[i])
     x = [x[i] for i in order]
@@ -86,10 +88,18 @@ def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
 def _gauss_from_coefficients_numpy(alpha, beta):
     assert isinstance(alpha, numpy.ndarray)
     assert isinstance(beta, numpy.ndarray)
-    A = numpy.vstack((numpy.sqrt(beta), alpha))
-    # TODO keep an eye on https://github.com/scipy/scipy/pull/7810
-    x, V = eig_banded(A, lower=False)
-    w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+
+    # eigh_tridiagonal is only available from scipy 1.0.0
+    try:
+        from scipy.linalg import eigh_tridiagonal
+    except ImportError:
+        # Use eig_banded
+        x, V = eig_banded(numpy.vstack((numpy.sqrt(beta), alpha)), lower=False)
+        w = beta[0]*scipy.real(scipy.power(V[0, :], 2))
+    else:
+        x, V = eigh_tridiagonal(alpha, numpy.sqrt(beta[1:]))
+        w = beta[0] * V[0, :]**2
+
     return x, w
 
 

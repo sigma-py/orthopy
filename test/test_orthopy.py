@@ -327,24 +327,43 @@ def test_gautschi_how_to_and_how_not_to():
     return
 
 
-def test_show():
+def test_logo():
     import matplotlib.pyplot as plt
 
-    for n in range(6):
-        moments = numpy.zeros(2*n)
-        # pylint: disable=len-as-condition
-        if len(moments) > 0:
-            moments[0] = 2.0/3.0
-        if len(moments) > 2:
-            moments[2] = 8.0/45.0
+    max_n = 6
+    moments = numpy.zeros(2*max_n)
+    moments[0] = 2.0 / 3.0
+    moments[2] = 8.0 / 45.0
+    for n in range(max_n):
         a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
-        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+        alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
         orthopy.plot(alpha, beta, -1.0, +1.0, normalized=True)
 
     plt.xlim(-1, +1)
     plt.ylim(-2, +2)
     plt.grid()
+    plt.tick_params(
+            axis='both',
+            which='both',
+            left='off',
+            labelleft='off',
+            bottom='off',
+            labelbottom='off',
+            )
+    plt.gca().set_aspect(0.25)
     plt.show()
+    # plt.savefig('logo.png', transparent=True)
+    return
+
+
+def test_show():
+    n = 6
+    moments = numpy.zeros(2*n)
+    moments[0] = 2.0 / 3.0
+    moments[2] = 8.0 / 45.0
+    a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
+    alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
+    orthopy.show(alpha, beta, -1.0, +1.0)
     return
 
 
@@ -420,14 +439,11 @@ def test_xk(k):
     assert beta[0] == moments[0]
     assert beta[1] == sympy.Rational(k+1, k+3)
     assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
-    points, weights = orthopy.schemes.custom(
-            numpy.array([sympy.N(a) for a in alpha], dtype=float),
-            numpy.array([sympy.N(b) for b in beta], dtype=float),
-            mode='numpy'
-            )
-
-    print(points)
-    print(weights)
+    orthopy.schemes.custom(
+        numpy.array([sympy.N(a) for a in alpha], dtype=float),
+        numpy.array([sympy.N(b) for b in beta], dtype=float),
+        mode='numpy'
+        )
 
     # a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='sympy')
 
@@ -444,4 +460,5 @@ def test_xk(k):
 
 
 if __name__ == '__main__':
-    test_gauss('mpmath')
+    # test_gauss('mpmath')
+    test_logo()
