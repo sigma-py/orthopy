@@ -327,23 +327,30 @@ def test_gautschi_how_to_and_how_not_to():
     return
 
 
-def test_show():
+def test_logo():
     import matplotlib.pyplot as plt
 
-    for n in range(6):
-        moments = numpy.zeros(2*n)
-        # pylint: disable=len-as-condition
-        if len(moments) > 0:
-            moments[0] = 2.0/3.0
-        if len(moments) > 2:
-            moments[2] = 8.0/45.0
+    max_n = 6
+    moments = numpy.zeros(2*max_n)
+    moments[0] = 2.0 / 3.0
+    moments[2] = 8.0 / 45.0
+    for n in range(max_n):
         a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
-        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+        alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
         orthopy.plot(alpha, beta, -1.0, +1.0, normalized=True)
 
     plt.xlim(-1, +1)
     plt.ylim(-2, +2)
     plt.grid()
+    plt.tick_params(
+            axis='both',
+            which='both',
+            left='off',
+            labelleft='off',
+            bottom='off',
+            labelbottom='off',
+            )
+    plt.gca().set_aspect(0.25)
     plt.show()
     return
 
@@ -426,9 +433,6 @@ def test_xk(k):
             mode='numpy'
             )
 
-    print(points)
-    print(weights)
-
     # a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='sympy')
 
     # moments = orthopy.compute_moments(
@@ -444,4 +448,5 @@ def test_xk(k):
 
 
 if __name__ == '__main__':
-    test_gauss('mpmath')
+    # test_gauss('mpmath')
+    test_logo()
