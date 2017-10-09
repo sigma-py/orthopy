@@ -9,9 +9,11 @@ jobs:
       - image: ubuntu:17.04
     steps:
       - run: apt-get update
-      - run: apt-get install -y git python-pip python-numpy python-matplotlib python-scipy
+      - run: apt-get install -y git python-pip
       - run: pip2 install -U pytest pytest-cov pylint
       - checkout
+      # Can be removed once scipy 1.0.0 is out:
+      - run: pip2 install scipy==1.0.0rc1
       - run: pip2 install .
       # lint
       - run: pylint orthopy/
@@ -25,12 +27,12 @@ jobs:
 
 #   # python3:
 #   build:
-#     working_directory: ~/frentos
+#     working_directory: ~/orthopy
 #     docker:
 #       - image: ubuntu:17.04
 #     steps:
 #       - run: apt-get update
-#       - run: apt-get install -y libcgal-dev libeigen3-dev pandoc python3-numpy python3-pip
+#       - run: apt-get install -y libcgal-dev libeigen3-dev pandoc python3-pip
 #       - run: pip3 install -U pytest pytest-cov pylint meshio
 #       - checkout
 #       # install
