@@ -439,11 +439,11 @@ def test_xk(k):
     assert beta[0] == moments[0]
     assert beta[1] == sympy.Rational(k+1, k+3)
     assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
-    points, weights = orthopy.schemes.custom(
-            numpy.array([sympy.N(a) for a in alpha], dtype=float),
-            numpy.array([sympy.N(b) for b in beta], dtype=float),
-            mode='numpy'
-            )
+    orthopy.schemes.custom(
+        numpy.array([sympy.N(a) for a in alpha], dtype=float),
+        numpy.array([sympy.N(b) for b in beta], dtype=float),
+        mode='numpy'
+        )
 
     # a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='sympy')
 
@@ -462,5 +462,3 @@ def test_xk(k):
 if __name__ == '__main__':
     # test_gauss('mpmath')
     test_logo()
-    import matplotlib.pyplot as plt
-    plt.savefig('logo.png', transparent=True)
