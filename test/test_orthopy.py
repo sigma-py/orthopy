@@ -352,6 +352,18 @@ def test_logo():
             )
     plt.gca().set_aspect(0.25)
     plt.show()
+    # plt.savefig('logo.png', transparent=True)
+    return
+
+
+def test_show():
+    n = 6
+    moments = numpy.zeros(2*n)
+    moments[0] = 2.0 / 3.0
+    moments[2] = 8.0 / 45.0
+    a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
+    alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
+    orthopy.show(alpha, beta, -1.0, +1.0)
     return
 
 
@@ -450,3 +462,5 @@ def test_xk(k):
 if __name__ == '__main__':
     # test_gauss('mpmath')
     test_logo()
+    import matplotlib.pyplot as plt
+    plt.savefig('logo.png', transparent=True)
