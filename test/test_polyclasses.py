@@ -11,20 +11,28 @@ def test_legendre():
 
 
 def test_jacobi():
-    val = orthopy.poly_classes.jacobi(1, 1, 4, 1)
-    assert val == sympy.Rational(1, 23156733600)
+    val = orthopy.poly_classes.jacobi(4, 1, 1, 5, monic=False)
+    assert val == 7985
+    val = orthopy.poly_classes.jacobi(4, 1, 1, 5)
+    assert val == sympy.Rational(1597, 4631346720)
     return
 
 
 def test_chebyshev1():
+    val = orthopy.poly_classes.chebyshev1(4, 1, monic=False)
+    assert val == sympy.Rational(35, 128)
+
     val = orthopy.poly_classes.chebyshev1(4, 1)
-    assert val == sympy.Rational(1, 567567000)
+    assert val == sympy.Rational(1, 2075673600)
     return
 
 
 def test_chebyshev2():
+    val = orthopy.poly_classes.chebyshev2(4, 1, monic=False)
+    assert val == sympy.Rational(315, 128)
+
     val = orthopy.poly_classes.chebyshev2(4, 1)
-    assert val == sympy.Rational(1, 7718911200)
+    assert val == sympy.Rational(1, 3136573440)
     return
 
 

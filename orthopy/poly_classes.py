@@ -17,7 +17,7 @@ def legendre(k, x, monic=True):
     return coeff * sympy.polys.orthopolys.legendre_poly(k, x)
 
 
-def jacobi(a, b, k, x, monic=True):
+def jacobi(k, a, b, x, monic=True):
     '''Jacobi polynomials, optionally (default=True) scaled such that the
     leading term has coefficient 1.
     '''
@@ -29,7 +29,7 @@ def jacobi(a, b, k, x, monic=True):
         if monic
         else 1
         )
-    return coeff * sympy.polys.orthopolys.legendre_poly(k, x)
+    return coeff * sympy.polys.orthopolys.jacobi_poly(k, a, b, x)
 
 
 def chebyshev1(k, x, monic=True):
@@ -37,7 +37,7 @@ def chebyshev1(k, x, monic=True):
     scaled such that the leading term has coefficient 1.
     '''
     return jacobi(
-            -sympy.Rational(1, 2), -sympy.Rational(1, 2), k, x, monic=monic
+            k, -sympy.Rational(1, 2), -sympy.Rational(1, 2), x, monic=monic
             )
 
 
@@ -46,7 +46,7 @@ def chebyshev2(k, x, monic=True):
     scaled such that the leading term has coefficient 1.
     '''
     return jacobi(
-            sympy.Rational(1, 2), sympy.Rational(1, 2), k, x, monic=monic
+            k, sympy.Rational(1, 2), sympy.Rational(1, 2), x, monic=monic
             )
 
 
