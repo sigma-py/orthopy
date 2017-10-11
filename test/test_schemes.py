@@ -85,5 +85,22 @@ def test_hermite():
     return
 
 
+def test_jacobi():
+    points, weights = orthopy.schemes.jacobi(
+            4, 1, 1, decimal_places=51
+            )
+
+    tol = 1.0e-50
+
+    x1 = mp.sqrt((7 - 2*mp.sqrt(7)) / 21)
+    x2 = mp.sqrt((7 + 2*mp.sqrt(7)) / 21)
+    assert (abs(points - [-x2, -x1, +x1, +x2]) < tol).all()
+
+    w1 = (5 + mp.sqrt(7)) / 15
+    w2 = (5 - mp.sqrt(7)) / 15
+    assert (abs(weights - [w2, w1, w1, w2]) < tol).all()
+    return
+
+
 if __name__ == '__main__':
     test_hermite()
