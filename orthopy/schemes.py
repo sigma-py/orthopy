@@ -108,7 +108,7 @@ def legendre(n, decimal_places):
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
-def jacobi(a, b, n, decimal_places):
+def jacobi(n, a, b, decimal_places):
     alpha, beta = recurrence_coefficients.jacobi(n, a, b, mode='sympy')
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
