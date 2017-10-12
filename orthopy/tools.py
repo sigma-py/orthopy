@@ -80,16 +80,12 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     '''Evaluate the ortogonal polynomial defined by its recurrence coefficients
     alpha, beta at the point(s) t.
     '''
-    n = len(alpha)
-    assert len(beta) == n
-
-    vals0 = 1
-    if n > 0:
-        vals1 = (t - alpha[0]) * vals0
-    for k in range(2, n+1):
-        vals2 = (t - alpha[k-1]) * vals1 - beta[k-1] * vals0
+    vals1 = 0
+    vals2 = 1
+    for alpha_k, beta_k in zip(alpha, beta):
         vals0 = vals1
         vals1 = vals2
+        vals2 = (t - alpha_k) * vals1 - beta_k * vals0
     return vals2
 
 
