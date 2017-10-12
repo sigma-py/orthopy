@@ -31,4 +31,4 @@ def test_legendre(n, val0, val1, val2):
 
 
 if __name__ == '__main__':
-    test_legendre(0, 1, 1)
+    test_legendre(0, 1, 1, 1)
