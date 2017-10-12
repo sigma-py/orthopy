@@ -80,8 +80,16 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     '''Evaluate the ortogonal polynomial defined by its recurrence coefficients
     alpha, beta at the point(s) t.
     '''
-    vals1 = 0
-    vals2 = 1
+    try:
+        vals1 = numpy.zeros(t.shape, dtype=int)
+    except AttributeError:
+        vals1 = 0
+
+    try:
+        vals2 = numpy.ones(t.shape, dtype=int)
+    except AttributeError:
+        vals2 = 1
+
     for alpha_k, beta_k in zip(alpha, beta):
         vals0 = vals1
         vals1 = vals2

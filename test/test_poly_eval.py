@@ -1,26 +1,32 @@
 # -*- coding: utf-8 -*-
 #
-from __future__ import division, print_function
-
+import numpy
 import orthopy
 import pytest
-import sympy
+from sympy import Rational
 
 
-@pytest.mark.parametrize('n, val1, val2', [
-    (0, 1, 1),
-    (1, sympy.Rational(1, 2), 1),
+@pytest.mark.parametrize('n, val0, val1, val2', [
+    (0, 1, 1, 1),
+    (1, 0, Rational(1, 2), 1),
+    (2, -Rational(1, 3), -Rational(1, 12), Rational(2, 3)),
+    (3, 0, -Rational(7, 40), Rational(2, 5)),
+    (4, Rational(3, 35), -Rational(37, 560), Rational(8, 35)),
     # Not normalized! (normalized: 23/256, 1)
-    (5, sympy.Rational(23, 2016), sympy.Rational(8, 63)),
+    (5, 0, Rational(23, 2016), Rational(8, 63)),
     ]
     )
-def test_legendre(n, val1, val2):
+def test_legendre(n, val0, val1, val2):
     alpha, beta = orthopy.recurrence_coefficients.legendre(n)
-    x = sympy.Rational(1, 2)
+
+    # Test evaluation of one value
+    val = orthopy.tools.evaluate_orthogonal_polynomial(alpha, beta, 0)
+    assert val == val0
+
+    # Test evaluation of multiple values
+    x = numpy.array([Rational(1, 2), 1])
     val = orthopy.tools.evaluate_orthogonal_polynomial(alpha, beta, x)
-    assert val == val1
-    val = orthopy.tools.evaluate_orthogonal_polynomial(alpha, beta, 1)
-    assert val == val2
+    assert all(val == numpy.array([val1, val2]))
     return
 
 
