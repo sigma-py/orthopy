@@ -80,20 +80,21 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     '''Evaluate the ortogonal polynomial defined by its recurrence coefficients
     alpha, beta at the point(s) t.
     '''
-    n = len(alpha)
-    assert len(beta) == n
+    try:
+        vals1 = numpy.zeros(t.shape, dtype=int)
+    except AttributeError:
+        vals1 = 0
 
     try:
-        vals = numpy.empty((n+1,) + t.shape)
-    except AttributeError:  # 'float' object has no attribute 'shape'
-        vals = numpy.empty(n+1)
+        vals2 = numpy.ones(t.shape, dtype=int)
+    except AttributeError:
+        vals2 = 1
 
-    vals[0] = 1
-    if n > 0:
-        vals[1] = (t - alpha[0]) * vals[0]
-    for k in range(2, n+1):
-        vals[k] = (t - alpha[k-1]) * vals[k-1] - beta[k-1] * vals[k-2]
-    return vals[-1]
+    for alpha_k, beta_k in zip(alpha, beta):
+        vals0 = vals1
+        vals1 = vals2
+        vals2 = (t - alpha_k) * vals1 - beta_k * vals0
+    return vals2
 
 
 def check_coefficients(moments, alpha, beta):

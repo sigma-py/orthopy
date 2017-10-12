@@ -72,15 +72,13 @@ def _jacobi_sympy(n, a, b):
     if n == 0:
         return [], []
 
-    assert n > 1
-
     mu = 2**(a+b+1) * sympy.Rational(
         sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
         )
     nu = sympy.Rational(b-a, a+b+2)
 
     if n == 1:
-        return nu, mu
+        return [nu], [mu]
 
     N = range(1, n)
 
@@ -109,8 +107,6 @@ def _jacobi_numpy(n, a, b):
     if n == 0:
         return numpy.array([]), numpy.array([])
 
-    assert n > 1
-
     mu = 2.0**(a+b+1.0) \
         * numpy.exp(
             math.lgamma(a+1.0) + math.lgamma(b+1.0) - math.lgamma(a+b+2.0)
@@ -118,7 +114,7 @@ def _jacobi_numpy(n, a, b):
     nu = (b-a) / (a+b+2.0)
 
     if n == 1:
-        return nu, mu
+        return numpy.array([nu]), numpy.array([mu])
 
     N = numpy.arange(1, n)
 
