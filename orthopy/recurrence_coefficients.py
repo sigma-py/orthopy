@@ -72,15 +72,13 @@ def _jacobi_sympy(n, a, b):
     if n == 0:
         return [], []
 
-    assert n > 1
-
     mu = 2**(a+b+1) * sympy.Rational(
         sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
         )
     nu = sympy.Rational(b-a, a+b+2)
 
     if n == 1:
-        return nu, mu
+        return [nu], [mu]
 
     N = range(1, n)
 
