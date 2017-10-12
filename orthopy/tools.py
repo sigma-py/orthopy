@@ -83,17 +83,14 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
     n = len(alpha)
     assert len(beta) == n
 
-    try:
-        vals = numpy.empty((n+1,) + t.shape)
-    except AttributeError:  # 'float' object has no attribute 'shape'
-        vals = numpy.empty(n+1)
-
-    vals[0] = 1
+    vals0 = 1
     if n > 0:
-        vals[1] = (t - alpha[0]) * vals[0]
+        vals1 = (t - alpha[0]) * vals0
     for k in range(2, n+1):
-        vals[k] = (t - alpha[k-1]) * vals[k-1] - beta[k-1] * vals[k-2]
-    return vals[-1]
+        vals2 = (t - alpha[k-1]) * vals1 - beta[k-1] * vals0
+        vals0 = vals1
+        vals1 = vals2
+    return vals2
 
 
 def check_coefficients(moments, alpha, beta):
