@@ -77,7 +77,7 @@ def clenshaw(a, alpha, beta, t):
 
 
 def evaluate_orthogonal_polynomial(alpha, beta, t):
-    '''Evaluate the ortogonal polynomial defined by its recurrence coefficients
+    '''Evaluate the orthogonal polynomial defined by its recurrence coefficients
     alpha, beta at the point(s) t.
     '''
     try:
