@@ -24,7 +24,7 @@ def jacobi(k, a, b, x, monic=True):
     coeff = (
         sympy.Rational(
             2**k * sympy.factorial(k) * sympy.gamma(k + a + b + 1),
-            sympy.gamma(2**k + a + b + 1)
+            sympy.gamma(2*k + a + b + 1)
             )
         if monic
         else 1
