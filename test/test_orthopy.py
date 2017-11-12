@@ -104,7 +104,7 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments = numpy.zeros(2*n)
     moments[0] = 2.0/3.0
     moments[2] = 8.0/45.0
-    a, b = orthopy.recurrence_coefficients.legendre(2*n)
+    a, b, _ = orthopy.recurrence_coefficients.legendre(2*n)
 
     alpha, beta = orthopy.chebyshev_modified(moments, a, b)
 
@@ -124,7 +124,7 @@ def test_jacobi(dtype):
     if dtype == sympy.Rational:
         a = sympy.Rational(1, 1)
         b = sympy.Rational(1, 1)
-        alpha, beta = orthopy.recurrence_coefficients.jacobi(
+        alpha, beta, _ = orthopy.recurrence_coefficients.jacobi(
                 n, a, b,
                 mode='sympy'
                 )
@@ -140,7 +140,7 @@ def test_jacobi(dtype):
         a = 1.0
         b = 1.0
         tol = 1.0e-14
-        alpha, beta = orthopy.recurrence_coefficients.jacobi(n, a, b)
+        alpha, beta, _ = orthopy.recurrence_coefficients.jacobi(n, a, b)
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
             abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0, 8.0/33.0])
@@ -157,10 +157,9 @@ def test_gauss(mode):
         n = 3
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
-        points, weights = orthopy.schemes.custom(
-                *orthopy.recurrence_coefficients.jacobi(n, a, b, mode=mode),
-                mode=mode
-                )
+        alpha, beta, _ = \
+            orthopy.recurrence_coefficients.jacobi(n, a, b, mode=mode)
+        points, weights = orthopy.schemes.custom(alpha, beta, mode=mode)
 
         assert points == [
             -sympy.sqrt(sympy.Rational(3, 5)),
@@ -178,8 +177,10 @@ def test_gauss(mode):
         n = 5
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
+        alpha, beta, _ = \
+            orthopy.recurrence_coefficients.jacobi(n, a, b, mode='sympy')
         points, weights = orthopy.schemes.custom(
-                *orthopy.recurrence_coefficients.jacobi(n, a, b, mode='sympy'),
+                alpha, beta,
                 mode=mode,
                 decimal_places=50
                 )
@@ -199,7 +200,7 @@ def test_gauss(mode):
         assert mode == 'numpy'
         n = 5
         tol = 1.0e-14
-        alpha, beta = orthopy.recurrence_coefficients.legendre(n, mode=mode)
+        alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n, mode=mode)
         points, weights = orthopy.schemes.custom(
                 alpha, beta,
                 mode=mode
@@ -233,7 +234,7 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 def test_eval(tol=1.0e-14):
     n = 5
-    alpha, beta = orthopy.recurrence_coefficients.legendre(n)
+    alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n)
     t = 1.0
     value = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
 
@@ -247,7 +248,7 @@ def test_eval(tol=1.0e-14):
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    alpha, beta = orthopy.recurrence_coefficients.legendre(n)
+    alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n)
     t = 1.0
 
     a = numpy.ones(n+1)
@@ -335,7 +336,7 @@ def test_logo():
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
     for n in range(max_n):
-        a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
+        a, b, _ = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
         alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
         orthopy.plot(alpha, beta, -1.0, +1.0, normalized=True)
 
@@ -361,7 +362,7 @@ def test_show():
     moments = numpy.zeros(2*n)
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
-    a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
+    a, b, _ = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
     alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
     orthopy.show(alpha, beta, -1.0, +1.0)
     return
@@ -399,7 +400,8 @@ def test_compute_moments():
 
 def test_stieltjes():
     alpha0, beta0 = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
-    alpha1, beta1 = orthopy.recurrence_coefficients.legendre(5, mode='sympy')
+    alpha1, beta1, _ = \
+        orthopy.recurrence_coefficients.legendre(5, mode='sympy')
     assert (alpha0 == alpha1).all()
     assert (beta0 == beta1).all()
     return

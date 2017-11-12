@@ -45,7 +45,7 @@ def legendre(n, mode='sympy'):
     return jacobi(n, 0, 0, mode=mode)
 
 
-def jacobi(n, a, b, mode='sympy'):
+def jacobi(n, a, b, normalization='monic', mode='sympy'):
     '''Generate the recurrence coefficients alpha_k, beta_k
 
     P_{k+1}(x) = (x-alpha_k)*P_{k}(x) - beta_k P_{k-1}(x)
@@ -61,51 +61,63 @@ def jacobi(n, a, b, mode='sympy'):
     assert a > -1.0 or b > -1.0
 
     if mode == 'sympy':
-        alpha, beta = _jacobi_sympy(n, a, b)
+        alpha, beta, gamma = \
+            _jacobi_sympy(n, a, b, normalization=normalization)
     else:
         assert mode == 'numpy'
-        alpha, beta = _jacobi_numpy(n, a, b)
-    return alpha, beta
+        alpha, beta, gamma = \
+            _jacobi_numpy(n, a, b, normalization=normalization)
+    return alpha, beta, gamma
 
 
-def _jacobi_sympy(n, a, b):
+def _jacobi_sympy(n, a, b, normalization):
+
     if n == 0:
-        return [], []
+        return [], [], []
 
-    mu = 2**(a+b+1) * sympy.Rational(
-        sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
-        )
-    nu = sympy.Rational(b-a, a+b+2)
-
-    if n == 1:
-        return [nu], [mu]
-
-    N = range(1, n)
-
-    nab = [2*nn + a + b for nn in N]
-
-    alpha = [nu] + [
-        sympy.Rational(b**2 - a**2, val * (val + 2)) for val in nab
-        ]
-
-    N = N[1:]
-    nab = nab[1:]
-    B1 = sympy.Rational(4 * (a+1) * (b+1), (a+b+2)**2 * (a+b+3))
-    B = [
-        sympy.Rational(
-            4 * (nn+a) * (nn+b) * nn * (nn+a+b),
-            val**2 * (val+1) * (val-1)
+    if normalization == 'monic':
+        mu = 2**(a+b+1) * sympy.Rational(
+            sympy.gamma(a+1) * sympy.gamma(b+1), sympy.gamma(a+b+2)
             )
-        for nn, val in zip(N, nab)
-        ]
-    beta = [mu, B1] + B
+        nu = sympy.Rational(b-a, a+b+2)
 
-    return numpy.array(alpha), numpy.array(beta)
+        if n == 1:
+            return [nu], [mu], [1]
+
+        N = range(1, n)
+
+        nab = [2*nn + a + b for nn in N]
+
+        alpha = [nu] + [
+            sympy.Rational(b**2 - a**2, val * (val + 2)) for val in nab
+            ]
+
+        N = N[1:]
+        nab = nab[1:]
+        B1 = sympy.Rational(4 * (a+1) * (b+1), (a+b+2)**2 * (a+b+3))
+        B = [
+            sympy.Rational(
+                4 * (nn+a) * (nn+b) * nn * (nn+a+b),
+                val**2 * (val+1) * (val-1)
+                )
+            for nn, val in zip(N, nab)
+            ]
+        beta = [mu, B1] + B
+
+        out = numpy.array(alpha), numpy.array(beta), numpy.array(n * [1])
+    elif normalization == 'p(1)=(n+a over a)':
+        assert False
+    else:
+        assert False
+
+    return out
 
 
-def _jacobi_numpy(n, a, b):
+def _jacobi_numpy(n, a, b, normalization):
+    assert normalization == 'monic'
+
     if n == 0:
-        return numpy.array([]), numpy.array([])
+        return numpy.array([]), numpy.array([]), numpy.array([])
 
     mu = 2.0**(a+b+1.0) \
         * numpy.exp(
@@ -128,4 +140,6 @@ def _jacobi_numpy(n, a, b):
         / (nab**2.0 * (nab+1.0) * (nab-1.0))
         )
     beta = numpy.hstack((mu, B1, B))
-    return alpha, beta
+
+    gamma = numpy.ones(n)
+    return alpha, beta, gamma

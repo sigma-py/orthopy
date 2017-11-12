@@ -19,12 +19,13 @@ def legendre(n, x, mode='sympy', normalization='monic'):
 def jacobi(n, a, b, x, mode='sympy', normalization='monic'):
     '''Evaluate Jacobi polynomials.
     '''
-    alpha, beta = recurrence_coefficients.jacobi(n, a, b, mode=mode)
+    alpha, beta, gamma = recurrence_coefficients.jacobi(n, a, b, mode=mode)
     out = evaluate_orthogonal_polynomial(alpha, beta, x)
 
     if normalization == 'monic':
         pass
     elif normalization == 'p(1)=(n+a over n)':
+        # alpha P_n = (beta*x + gamma) * P_{n-1} - delta * P_{n-2}
         alpha = sympy.Rational(
             2**n * sympy.factorial(n) * sympy.gamma(n + a + b + 1),
             sympy.gamma(2*n + a + b + 1)
@@ -65,4 +66,25 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
         vals0 = vals1
         vals1 = vals2
         vals2 = (t - alpha_k) * vals1 - beta_k * vals0
+    return vals2
+
+
+def evaluate_orthogonal_polynomial2(alpha, beta, gamma, delta, t):
+    '''Evaluate the orthogonal polynomial defined by its recurrence coefficients
+    alpha, beta at the point(s) t.
+    '''
+    try:
+        vals1 = numpy.zeros(t.shape, dtype=int)
+    except AttributeError:
+        vals1 = 0
+
+    try:
+        vals2 = numpy.ones(t.shape, dtype=int)
+    except AttributeError:
+        vals2 = 1
+
+    for alpha_k, beta_k, gamma_k, delta_k in zip(alpha, beta, gamma, delta):
+        vals0 = vals1
+        vals1 = vals2
+        vals2 = (beta_k * t - gamma_k) * vals1 - delta_k * vals0
     return vals2

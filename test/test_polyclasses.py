@@ -14,7 +14,7 @@ def test_jacobi():
     val = orthopy.poly_classes.jacobi(4, 1, 1, 5, monic=False)
     assert val == 7985
     val = orthopy.poly_classes.jacobi(4, 1, 1, 5)
-    assert val == sympy.Rational(1597, 4631346720)
+    assert val == sympy.Rational(12776, 21)
     return
 
 
@@ -23,7 +23,7 @@ def test_chebyshev1():
     assert val == sympy.Rational(35, 128)
 
     val = orthopy.poly_classes.chebyshev1(4, 1)
-    assert val == sympy.Rational(1, 2075673600)
+    assert val == sympy.Rational(1, 8)
     return
 
 
@@ -32,7 +32,7 @@ def test_chebyshev2():
     assert val == sympy.Rational(315, 128)
 
     val = orthopy.poly_classes.chebyshev2(4, 1)
-    assert val == sympy.Rational(1, 3136573440)
+    assert val == sympy.Rational(5, 16)
     return
 
 

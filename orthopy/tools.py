@@ -145,7 +145,7 @@ def plot(alpha, beta, t0, t1, normalized=False):
     vals = evaluate_orthogonal_polynomial(alpha, beta, t)
     if normalized:
         # Make sure the function passes through (1, 1)
-        vals /= vals[-1]
+        vals = vals / vals[-1]
 
     plt.plot(t, vals)
     return

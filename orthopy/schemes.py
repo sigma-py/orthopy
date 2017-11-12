@@ -104,12 +104,12 @@ def _gauss_from_coefficients_numpy(alpha, beta):
 
 
 def legendre(n, decimal_places):
-    alpha, beta = recurrence_coefficients.legendre(n, mode='sympy')
+    alpha, beta, _ = recurrence_coefficients.legendre(n, mode='sympy')
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def jacobi(n, a, b, decimal_places):
-    alpha, beta = recurrence_coefficients.jacobi(n, a, b, mode='sympy')
+    alpha, beta, _ = recurrence_coefficients.jacobi(n, a, b, mode='sympy')
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
