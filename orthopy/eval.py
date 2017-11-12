@@ -9,34 +9,15 @@ from . import recurrence_coefficients
 
 
 def legendre(n, x, mode='sympy', normalization='monic'):
-    '''Evaluate
+    '''Evaluate Legendre polynomials.
     '''
-    alpha, beta = recurrence_coefficients.legendre(n, mode=mode)
-    out = evaluate_orthogonal_polynomial(alpha, beta, x)
-
-    if normalization == 'monic':
-        pass
-    elif normalization == 'p(1)=1':
-        alpha = sympy.Rational(
-            2**n * sympy.factorial(n)**2,
-            sympy.factorial(2*n)
-            )
-        out = out / alpha
-    else:
-        assert normalization == '||p**2||=1', \
-            'Unknown normalization \'{}\'.'.format(normalization)
-        alpha = sympy.Rational(
-            2**n * sympy.factorial(n)**2,
-            sympy.factorial(2*n)
-            )
-        alpha *= sympy.sqrt(sympy.Rational(2, 2*n+1))
-        out = out / alpha
-
-    return out
+    if normalization == 'p(1)=1':
+        normalization = 'p(1)=(n+a over n)'
+    return jacobi(n, 0, 0, x, mode=mode, normalization=normalization)
 
 
 def jacobi(n, a, b, x, mode='sympy', normalization='monic'):
-    '''Evaluate
+    '''Evaluate Jacobi polynomials.
     '''
     alpha, beta = recurrence_coefficients.jacobi(n, a, b, mode=mode)
     out = evaluate_orthogonal_polynomial(alpha, beta, x)
@@ -56,10 +37,11 @@ def jacobi(n, a, b, x, mode='sympy', normalization='monic'):
             2**n * sympy.factorial(n) * sympy.gamma(n + a + b + 1),
             sympy.gamma(2*n + a + b + 1)
             )
-        alpha *= \
-            sympy.Rational(2**(a+b+1), 2*n+a+b+1) \
-            * sympy.gamma(n+a+1) * sympy.gamma(n+b+1) / sympy.gamma(n+a+b+1) \
+        alpha *= sympy.sqrt(
+            sympy.Rational(2**(a+b+1), 2*n+a+b+1)
+            * sympy.gamma(n+a+1) * sympy.gamma(n+b+1) / sympy.gamma(n+a+b+1)
             / sympy.factorial(n)
+            )
         out = out / alpha
 
     return out

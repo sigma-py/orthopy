@@ -120,12 +120,12 @@ def test_jacobi_p11(n, y):
 
 
 @pytest.mark.parametrize('n, y', [
-    (0, [Rational(15, 16), Rational(15, 16), Rational(15, 16)]),
-    (1, [Rational(5, 16), Rational(45, 32), Rational(5, 2)]),
-    (2, [-Rational(35, 64), Rational(315, 256), Rational(175, 32)]),
-    (3, [-Rational(21, 64), Rational(147, 512), Rational(21, 2)]),
-    (4, [Rational(63, 128), -Rational(1701, 2048), Rational(147, 8)]),
-    (5, [Rational(45, 128), -Rational(4995, 4096), 30]),
+    (0, [sqrt(15)/4, sqrt(15)/4, sqrt(15)/4]),
+    (1, [sqrt(10)/8, 9*sqrt(10)/16, sqrt(10)]),
+    (2, [-sqrt(35)/8, 9*sqrt(35)/32, 5*sqrt(35)/4]),
+    (3, [-sqrt(210)/32, 7*sqrt(210)/256, sqrt(210)]),
+    (4, [3*sqrt(210)/64, -81*sqrt(210)/1024, 7*sqrt(210)/4]),
+    (5, [3*sqrt(105)/64, -333*sqrt(105)/2048, 4*sqrt(105)]),
     ]
     )
 def test_jacobi_pnorm1(n, y):
@@ -134,13 +134,9 @@ def test_jacobi_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     y2 = orthopy.eval.jacobi(n, a, b, x[2], normalization='||p**2||=1')
-    print(n)
-    print(y2)
     assert y2 == y[2]
 
-    # Test evaluation of multiple values
     val = orthopy.eval.jacobi(n, a, b, x, normalization='||p**2||=1')
-    print(val)
     assert all(val == y)
     return
 
