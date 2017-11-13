@@ -234,9 +234,9 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 def test_eval(tol=1.0e-14):
     n = 5
-    alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n)
+    alpha, beta, c = orthopy.recurrence_coefficients.legendre(n)
     t = 1.0
-    value = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
+    value = orthopy.evaluate_orthogonal_polynomial(t, alpha, beta, c)
 
     # Evaluating the Legendre polynomial in this way is rather unstable, so
     # don't go too far with n.
@@ -336,9 +336,11 @@ def test_logo():
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
     for n in range(max_n):
-        a, b, _ = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
-        alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
-        orthopy.plot(alpha, beta, -1.0, +1.0, normalized=True)
+        a, b, c = orthopy.recurrence_coefficients.legendre(
+            2*n, mode='numpy', normalization='p(1)=1'
+            )
+        alpha, beta, c = orthopy.chebyshev_modified(moments[:2*n], a, b, c)
+        orthopy.plot(alpha, beta, c, -1.0, +1.0)
 
     plt.xlim(-1, +1)
     plt.ylim(-2, +2)
@@ -362,9 +364,9 @@ def test_show():
     moments = numpy.zeros(2*n)
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
-    a, b, _ = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
+    a, b, c = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
     alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
-    orthopy.show(alpha, beta, -1.0, +1.0)
+    orthopy.show(alpha, beta, c, -1.0, +1.0)
     return
 
 

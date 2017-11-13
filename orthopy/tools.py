@@ -76,9 +76,13 @@ def clenshaw(a, alpha, beta, t):
     return phi0 * a[0] + phi1 * b[1] - beta[1] * phi0 * b[2]
 
 
-def evaluate_orthogonal_polynomial(alpha, beta, t):
+def evaluate_orthogonal_polynomial(t, alpha, beta, c):
     '''Evaluate the orthogonal polynomial defined by its recurrence coefficients
-    alpha, beta at the point(s) t.
+    alpha, beta, and c at the point(s) t.
+
+    Note that beta[0] must provide the (constant) value of P_0(x). (It doesn't
+    occur in the recurrence itself and is in other implementations set to the
+    integral of the weight function over the domain.)
     '''
     try:
         vals1 = numpy.zeros(t.shape, dtype=int)
@@ -86,14 +90,15 @@ def evaluate_orthogonal_polynomial(alpha, beta, t):
         vals1 = 0
 
     try:
-        vals2 = numpy.ones(t.shape, dtype=int)
+        vals2 = beta[0] * numpy.ones(t.shape, dtype=int)
     except AttributeError:
-        vals2 = 1
+        vals2 = beta[0]
 
-    for alpha_k, beta_k in zip(alpha, beta):
+    for alpha_k, beta_k, c_k in zip(alpha, beta, c):
         vals0 = vals1
         vals1 = vals2
-        vals2 = (t - alpha_k) * vals1 - beta_k * vals0
+        print('a', c_k, alpha_k, vals1)
+        vals2 = (c_k * t - alpha_k) * vals1 - beta_k * vals0
     return vals2
 
 
@@ -137,15 +142,10 @@ def show(*args, **kwargs):
     return
 
 
-def plot(alpha, beta, t0, t1, normalized=False):
+def plot(alpha, beta, c, t0, t1):
     import matplotlib.pyplot as plt
-
     n = 1000
     t = numpy.linspace(t0, t1, n)
-    vals = evaluate_orthogonal_polynomial(alpha, beta, t)
-    if normalized:
-        # Make sure the function passes through (1, 1)
-        vals = vals / vals[-1]
-
+    vals = evaluate_orthogonal_polynomial(t, alpha, beta, c)
     plt.plot(t, vals)
     return

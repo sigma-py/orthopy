@@ -111,6 +111,7 @@ def test_jacobi_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     y2 = orthopy.eval.jacobi(n, a, b, x[2], normalization='p(1)=(n+a over n)')
+    print(n)
     assert y2 == y[2]
 
     # Test evaluation of multiple values
