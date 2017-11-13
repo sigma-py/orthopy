@@ -118,19 +118,13 @@ def _jacobi_sympy(n, a, b, normalization):
         if n == 0:
             return [], [beta0], []
 
-        alpha0 = sympy.Rational(b-a, a+b+2)
-        alpha = [alpha0]
-        if n > 0:
-            N = 1
-            alpha.append(
-                sympy.Rational(b**2 - a**2, (2*N+a+b) * (2*N+a+b+2))
-                )
-        alpha += [
+        alpha0 = sympy.Rational(b-a, a+b+2) * sympy.Rational(a+b+2, 2)
+        alpha = [alpha0] + [
             sympy.Rational(
                 (b**2 - a**2) * (2*N+a+b-1),
                 2*N * (N+a+b) * (2*N+a+b-2)
                 )
-            for N in range(2, n)
+            for N in range(2, n+1)
             ]
 
         beta = [beta0] + [
@@ -141,7 +135,7 @@ def _jacobi_sympy(n, a, b, normalization):
             for N in range(2, n+1)
             ]
 
-        c0 = 1
+        c0 = sympy.Rational(a+b+2, 2)
         c = [c0] + [
             sympy.Rational(
                 (2*N+a+b-1) * (2*N+a+b),
@@ -174,7 +168,10 @@ def _jacobi_sympy(n, a, b, normalization):
             sympy.Rational(
                 (b**2 - a**2) * (2*N+a+b-1),
                 2*N * (N+a+b) * (2*N+a+b-2)
-                )
+                ) * sympy.sqrt(sympy.Rational(
+                    (2*N+a+b+1) * (N+a+b) * N,
+                    (N+a) * (N+b) * (2*N+a+b-1)
+                    ))
             for N in range(2, n)
             ]
 
