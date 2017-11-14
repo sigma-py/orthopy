@@ -115,7 +115,7 @@ def test_jacobi_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.recurrence_coefficients.jacobi(
-            n, alpha=3, beta=2, standardization='p(1)=(n+a over n)'
+            n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)'
             )
 
     y2 = orthopy.evaluate_orthogonal_polynomial(x[2], *out)

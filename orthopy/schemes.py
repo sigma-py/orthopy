@@ -116,7 +116,7 @@ def jacobi(n, a, b, decimal_places):
 def chebyshev1(n, decimal_places):
     # There are explicit representations, too, but for the sake of consistency
     # go for the recurrence coefficients approach here.
-    _, _, alpha, beta = recurrence_coefficients.chebyshev1(n)
+    _, _, alpha, beta = recurrence_coefficients.chebyshev1(n, 'monic')
     beta[0] = sympy.N(beta[0], decimal_places)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
@@ -124,7 +124,7 @@ def chebyshev1(n, decimal_places):
 def chebyshev2(n, decimal_places):
     # There are explicit representations, too, but for the sake of consistency
     # go for the recurrence coefficients approach here.
-    _, _, alpha, beta = recurrence_coefficients.chebyshev2(n)
+    _, _, alpha, beta = recurrence_coefficients.chebyshev2(n, 'monic')
     beta[0] = sympy.N(beta[0], decimal_places)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
