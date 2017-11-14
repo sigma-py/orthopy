@@ -60,7 +60,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
     with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     '''
-    c0 = sympy.Rational(
+    int_1 = sympy.Rational(
         2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
         sympy.gamma(alpha+beta+2)
         )
@@ -86,7 +86,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
         #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
         # ```
         c = [
-            c0 if N == 0 else
+            int_1 if N == 0 else
             sympy.Rational(
                 4 * (N+alpha) * (N+beta) * N * (N+alpha+beta),
                 (2*N+alpha+beta)**2 * (2*N+alpha+beta+1) * (2*N+alpha+beta-1)
@@ -116,7 +116,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
             ]
 
         c = [
-            c0 if N == 0 else
+            int_1 if N == 0 else
             sympy.Rational(
                 2 * (N+alpha) * (N+beta) * (2*N+alpha+beta+2),
                 2*(N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
@@ -128,7 +128,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
         assert standardization == '||p**2||=1', \
             'Unknown standardization \'{}\'.'.format(standardization)
 
-        p0 = sympy.sqrt(1 / c0)
+        p0 = sympy.sqrt(1 / int_1)
 
         a = [
             sympy.Rational(2*N+alpha+beta+2, 2) * sympy.sqrt(sympy.Rational(
@@ -149,7 +149,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
             ]
 
         c = [
-            c0 if N == 0 else
+            int_1 if N == 0 else
             sympy.Rational(2*N+alpha+beta+2, 2*N+alpha+beta)
             * sympy.sqrt(sympy.Rational(
                 N * (N+alpha) * (N+beta) * (N+alpha+beta)
