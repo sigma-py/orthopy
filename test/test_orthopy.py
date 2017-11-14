@@ -104,9 +104,13 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments = numpy.zeros(2*n)
     moments[0] = 2.0/3.0
     moments[2] = 8.0/45.0
-    a, b, _ = orthopy.recurrence_coefficients.legendre(2*n)
+    p0, a, b, c = orthopy.recurrence_coefficients.legendre(2*n)
 
-    alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+    print(moments)
+    print(b)
+    print(c)
+
+    alpha, beta = orthopy.chebyshev_modified(moments, b, c)
 
     assert numpy.all(abs(alpha) < tol)
     assert numpy.all(
@@ -124,10 +128,7 @@ def test_jacobi(dtype):
     if dtype == sympy.Rational:
         a = sympy.Rational(1, 1)
         b = sympy.Rational(1, 1)
-        alpha, beta, _ = orthopy.recurrence_coefficients.jacobi(
-                n, a, b,
-                mode='sympy'
-                )
+        _, _, alpha, beta = orthopy.recurrence_coefficients.jacobi(n, a, b)
         assert all([a == 0 for a in alpha])
         assert (beta == [
             sympy.Rational(4, 3),
@@ -140,7 +141,7 @@ def test_jacobi(dtype):
         a = 1.0
         b = 1.0
         tol = 1.0e-14
-        alpha, beta, _ = orthopy.recurrence_coefficients.jacobi(n, a, b)
+        _, _, alpha, beta = orthopy.recurrence_coefficients.jacobi(n, a, b)
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
             abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0, 8.0/33.0])
@@ -157,8 +158,8 @@ def test_gauss(mode):
         n = 3
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
-        alpha, beta, _ = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, mode=mode)
+        _, _, alpha, beta = \
+            orthopy.recurrence_coefficients.jacobi(n, a, b)
         points, weights = orthopy.schemes.custom(alpha, beta, mode=mode)
 
         assert points == [
@@ -177,8 +178,7 @@ def test_gauss(mode):
         n = 5
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
-        alpha, beta, _ = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, mode='sympy')
+        _, _, alpha, beta = orthopy.recurrence_coefficients.jacobi(n, a, b)
         points, weights = orthopy.schemes.custom(
                 alpha, beta,
                 mode=mode,
@@ -200,7 +200,8 @@ def test_gauss(mode):
         assert mode == 'numpy'
         n = 5
         tol = 1.0e-14
-        alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n, mode=mode)
+        _, _, alpha, beta = orthopy.recurrence_coefficients.legendre(n)
+        beta = numpy.array([float(b) for b in beta])
         points, weights = orthopy.schemes.custom(
                 alpha, beta,
                 mode=mode
@@ -234,9 +235,9 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 def test_eval(tol=1.0e-14):
     n = 5
-    alpha, beta, c = orthopy.recurrence_coefficients.legendre(n)
+    p0, a, b, c = orthopy.recurrence_coefficients.legendre(n)
     t = 1.0
-    value = orthopy.evaluate_orthogonal_polynomial(t, alpha, beta, c)
+    value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     # Evaluating the Legendre polynomial in this way is rather unstable, so
     # don't go too far with n.
@@ -248,7 +249,7 @@ def test_eval(tol=1.0e-14):
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    alpha, beta, _ = orthopy.recurrence_coefficients.legendre(n)
+    _, _, alpha, beta = orthopy.recurrence_coefficients.legendre(n)
     t = 1.0
 
     a = numpy.ones(n+1)
@@ -336,11 +337,11 @@ def test_logo():
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
     for n in range(max_n):
-        a, b, c = orthopy.recurrence_coefficients.legendre(
-            2*n, mode='numpy', normalization='p(1)=1'
+        _, _, b, c = orthopy.recurrence_coefficients.legendre(
+            2*n, normalization='p(1)=1'
             )
-        alpha, beta, c = orthopy.chebyshev_modified(moments[:2*n], a, b, c)
-        orthopy.plot(alpha, beta, c, -1.0, +1.0)
+        alpha, beta = orthopy.chebyshev_modified(moments[:2*n], b, c)
+        orthopy.plot(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
 
     plt.xlim(-1, +1)
     plt.ylim(-2, +2)
@@ -364,9 +365,9 @@ def test_show():
     moments = numpy.zeros(2*n)
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
-    a, b, c = orthopy.recurrence_coefficients.legendre(2*n, mode='numpy')
-    alpha, beta = orthopy.chebyshev_modified(moments[:2*n], a, b)
-    orthopy.show(alpha, beta, c, -1.0, +1.0)
+    _, _, b, c = orthopy.recurrence_coefficients.legendre(2*n)
+    alpha, beta = orthopy.chebyshev_modified(moments[:2*n], b, c)
+    orthopy.show(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
     return
 
 
@@ -402,8 +403,7 @@ def test_compute_moments():
 
 def test_stieltjes():
     alpha0, beta0 = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
-    alpha1, beta1, _ = \
-        orthopy.recurrence_coefficients.legendre(5, mode='sympy')
+    _, _, alpha1, beta1 = orthopy.recurrence_coefficients.legendre(5)
     assert (alpha0 == alpha1).all()
     assert (beta0 == beta1).all()
     return
