@@ -14,7 +14,6 @@ from .__about__ import (
     )
 
 # pylint: disable=wildcard-import
-from . import eval
 from . import recurrence_coefficients
 from . import schemes
 from .main import *

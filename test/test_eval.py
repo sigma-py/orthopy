@@ -18,12 +18,14 @@ from sympy import Rational, sqrt
 def test_legendre_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
+    out = orthopy.recurrence_coefficients.legendre(n)
+
     # Test evaluation of one value
-    y0 = orthopy.eval.legendre(n, x[0])
+    y0 = orthopy.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.eval.legendre(n, x)
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -40,12 +42,12 @@ def test_legendre_monic(n, y):
 def test_legendre_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    # Test evaluation of one value
-    y0 = orthopy.eval.legendre(n, x[0], standardization='p(1)=1')
+    out = orthopy.recurrence_coefficients.legendre(n, standardization='p(1)=1')
+
+    y0 = orthopy.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    # Test evaluation of multiple values
-    val = orthopy.eval.legendre(n, x, standardization='p(1)=1')
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -64,12 +66,14 @@ def test_legendre_p11(n, y):
 def test_legendre_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    # Test evaluation of one value
-    y0 = orthopy.eval.legendre(n, x[0], standardization='||p**2||=1')
+    out = orthopy.recurrence_coefficients.legendre(
+            n, standardization='||p**2||=1'
+            )
+
+    y0 = orthopy.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    # Test evaluation of multiple values
-    val = orthopy.eval.legendre(n, x, standardization='||p**2||=1')
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -84,14 +88,16 @@ def test_legendre_pnorm1(n, y):
     ]
     )
 def test_jacobi_monic(n, y):
-    a = 3
-    b = 2
     x = numpy.array([0, Rational(1, 2), 1])
 
-    y2 = orthopy.eval.jacobi(n, a, b, x[2])
+    out = orthopy.recurrence_coefficients.jacobi(
+            n, alpha=3, beta=2, standardization='monic'
+            )
+
+    y2 = orthopy.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.eval.jacobi(n, a, b, x)
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -106,15 +112,16 @@ def test_jacobi_monic(n, y):
     ]
     )
 def test_jacobi_p11(n, y):
-    a = 3
-    b = 2
     x = numpy.array([0, Rational(1, 2), 1])
 
-    y2 = orthopy.eval.jacobi(n, a, b, x[2], standardization='p(1)=(n+a over n)')
+    out = orthopy.recurrence_coefficients.jacobi(
+            n, alpha=3, beta=2, standardization='p(1)=(n+a over n)'
+            )
+
+    y2 = orthopy.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    # Test evaluation of multiple values
-    val = orthopy.eval.jacobi(n, a, b, x, standardization='p(1)=(n+a over n)')
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -129,15 +136,16 @@ def test_jacobi_p11(n, y):
     ]
     )
 def test_jacobi_pnorm1(n, y):
-    a = 3
-    b = 2
     x = numpy.array([0, Rational(1, 2), 1])
 
-    y2 = orthopy.eval.jacobi(n, a, b, x[2], standardization='||p**2||=1')
-    print(n)
+    out = orthopy.recurrence_coefficients.jacobi(
+            n, alpha=3, beta=2, standardization='||p**2||=1'
+            )
+
+    y2 = orthopy.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.eval.jacobi(n, a, b, x, standardization='||p**2||=1')
+    val = orthopy.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
