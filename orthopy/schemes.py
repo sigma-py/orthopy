@@ -104,19 +104,19 @@ def _gauss_from_coefficients_numpy(alpha, beta):
 
 
 def legendre(n, decimal_places):
-    alpha, beta = recurrence_coefficients.legendre(n, mode='sympy')
+    _, _, alpha, beta = recurrence_coefficients.legendre(n, 'monic')
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def jacobi(n, a, b, decimal_places):
-    alpha, beta = recurrence_coefficients.jacobi(n, a, b, mode='sympy')
+    _, _, alpha, beta = recurrence_coefficients.jacobi(n, a, b, 'monic')
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def chebyshev1(n, decimal_places):
     # There are explicit representations, too, but for the sake of consistency
     # go for the recurrence coefficients approach here.
-    alpha, beta = recurrence_coefficients.chebyshev1(n)
+    _, _, alpha, beta = recurrence_coefficients.chebyshev1(n, 'monic')
     beta[0] = sympy.N(beta[0], decimal_places)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
@@ -124,22 +124,22 @@ def chebyshev1(n, decimal_places):
 def chebyshev2(n, decimal_places):
     # There are explicit representations, too, but for the sake of consistency
     # go for the recurrence coefficients approach here.
-    alpha, beta = recurrence_coefficients.chebyshev2(n)
+    _, _, alpha, beta = recurrence_coefficients.chebyshev2(n, 'monic')
     beta[0] = sympy.N(beta[0], decimal_places)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def laguerre(n, decimal_places):
-    alpha, beta = recurrence_coefficients.laguerre(n)
+    _, _, alpha, beta = recurrence_coefficients.laguerre(n)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def laguerre_generalized(n, a, decimal_places):
-    alpha, beta = recurrence_coefficients.laguerre_generalized(n, a)
+    _, _, alpha, beta = recurrence_coefficients.laguerre_generalized(n, a)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def hermite(n, decimal_places):
-    alpha, beta = recurrence_coefficients.hermite(n)
+    _, _, alpha, beta = recurrence_coefficients.hermite(n)
     beta[0] = sympy.N(beta[0], decimal_places)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)

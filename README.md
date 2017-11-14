@@ -5,15 +5,16 @@ Python tools for orthogonal polynomials and Gaussian quadrature.
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
+[![awesome](https://img.shields.io/badge/awesome-yes-brightgreen.svg)](https://img.shields.io/badge/awesome-yes-brightgreen.svg)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
 
 ![](https://nschloe.github.io/orthopy/orthopy.png)
 
 Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
-pi_{k+1}(x) = (x - alpha[k]) * pi_k(x) - beta[k] * pi_{k-1}(x)
+pi_{k+1}(x) = (a[k] x - b[k]) * pi_k(x) - c[k] * pi_{k-1}(x)
 ```
-(defined by their _recurrence coefficients_ `alpha` and `beta`) are closely
+(defined by their _recurrence coefficients_ `a`, `b`, `c`) are closely
 related. This module provides tools for working with them.
 
 _Note that most functions have a `sympy` and `mpmath` mode for symbolic and
@@ -71,7 +72,7 @@ Some explanations:
      errors can lead to an unusable scheme.
      For further computation, it's numerically beneficial if the moments are
      either 0 or in the same order of magnitude. The above numbers are alright,
-     but if you want to max it out, we could try Legendre polynomials for
+     but if you want to max it out, you could try Legendre polynomials for
      `p_k`:
      ```python
      moments = orthopy.compute_moments(
@@ -99,7 +100,7 @@ Some explanations:
        Since we have computed modified moments in step one, let's use the
        latter method:
        ```python
-       a, b = orthopy.recurrence_coefficients_legendre(20)
+       _, _, a, b = orthopy.recurrence_coefficients.legendre(20, 'monic')
        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
        ```
        ```
@@ -151,11 +152,14 @@ Some explanations:
    alpha, beta = orthopy.coefficients_from_gauss(points, weights)
    ```
 
- * Recurrence coefficients of Jacobi polynomials `w(x) = (1-x)^a * (1+x)^b`
-   with any `a` or `b` are explicitly given:
+ * Recurrence coefficients of Jacobi polynomials
+   `w(x) = (1-x)^alpha * (1+x)^beta` with any `alpha` or `beta` are explicitly
+   given:
    ```python
-   alpha, beta = orthopy.recurrence_coefficients_jacobi(n, a, b)
+   p0, a, b, c = orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
    ```
+   Possible choices for the standardization are `'monic'`,
+   `'p(1)=(n+alpha over n)'`, and `'||p**2||=1`.
 
  * The Gautschi test: [As recommended by
    Gautschi](https://doi.org/10.1007/BF02218441), you can test your
