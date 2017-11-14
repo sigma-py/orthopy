@@ -47,11 +47,11 @@ def hermite(n):
     return p0, a, b, c
 
 
-def legendre(n, standardization='monic'):
-    return jacobi(n, 0, 0, standardization=standardization)
+def legendre(n, standardization):
+    return jacobi(n, 0, 0, standardization)
 
 
-def jacobi(n, alpha, beta, standardization='monic'):
+def jacobi(n, alpha, beta, standardization):
     '''Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)

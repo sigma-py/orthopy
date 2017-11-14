@@ -18,7 +18,7 @@ from sympy import Rational, sqrt
 def test_legendre_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.recurrence_coefficients.legendre(n)
+    out = orthopy.recurrence_coefficients.legendre(n, 'monic')
 
     # Test evaluation of one value
     y0 = orthopy.evaluate_orthogonal_polynomial(x[0], *out)

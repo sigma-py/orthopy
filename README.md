@@ -100,7 +100,7 @@ Some explanations:
        Since we have computed modified moments in step one, let's use the
        latter method:
        ```python
-       a, b = orthopy.recurrence_coefficients_legendre(20)
+       _, _, a, b = orthopy.recurrence_coefficients.legendre(20, 'monic')
        alpha, beta = orthopy.chebyshev_modified(moments, a, b)
        ```
        ```
@@ -156,17 +156,10 @@ Some explanations:
    `w(x) = (1-x)^alpha * (1+x)^beta` with any `alpha` or `beta` are explicitly
    given:
    ```python
-   p0, a, b, c = orthopy.recurrence_coefficients.jacobi(n, a, b)
+   p0, a, b, c = orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
    ```
-   This will return the monic polynomials where `a=1`. You can explicitly
-   specify the standardization to something else, e.g.,
-   ```python
-   p0, a, b, c = orthopy.recurrence_coefficients.jacobi(
-                    n, a, b, standardization='||p**2||=1'
-                    )
-   ```
-   Possible choices are `'monic'`, `'p(1)=(n+alpha over n)'`, and
-   `'||p**2||=1`.
+   Possible choices for the standardization are `'monic'`,
+   `'p(1)=(n+alpha over n)'`, and `'||p**2||=1`.
 
  * The Gautschi test: [As recommended by
    Gautschi](https://doi.org/10.1007/BF02218441), you can test your
