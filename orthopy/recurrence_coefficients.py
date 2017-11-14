@@ -52,25 +52,27 @@ def legendre(n, normalization='monic'):
 
 
 def jacobi(n, alpha, beta, normalization='monic'):
-    '''Generate the recurrence coefficients alpha_k, beta_k
+    '''Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
 
     for the Jacobi polynomials which are orthogonal on [-1, 1]
-    with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta].
-
-    Adapted from the MATLAB code by Dirk Laurie and Walter Gautschi
-    http://www.cs.purdue.edu/archives/2002/wxg/codes/r_jacobi.m
-    and from Greg van Winckel's
-    https://github.com/gregvw/orthopoly-quadrature/blob/master/rec_jacobi.pyx
+    with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
+    <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     '''
     if normalization == 'monic':
         p0 = 1
 
-        if n == 0:
-            return p0, [], [], []
+        a = numpy.ones(n, dtype=int)
 
-        b0 = sympy.Rational(beta-alpha, alpha+beta+2)
+        b = [
+            sympy.Rational(beta-alpha, alpha+beta+2) if N == 0 else
+            sympy.Rational(
+                beta**2 - alpha**2,
+                (2*N+alpha+beta) * (2*N+alpha+beta+2)
+                )
+            for N in range(n)
+            ]
 
         # c[0] is not used in the actual recurrence, but is often defined
         # as the integral of the weight function of the domain, i.e.,
@@ -82,72 +84,49 @@ def jacobi(n, alpha, beta, normalization='monic'):
             2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
             sympy.gamma(alpha+beta+2)
             )
-
-        if n == 1:
-            return p0, [1], [b0], [c0]
-
-        a = numpy.ones(n, dtype=int)
-
-        N = range(1, n)
-
-        nab = [2*nn + alpha + beta for nn in N]
-
-        b = [b0] + [
-            sympy.Rational(beta**2 - alpha**2, val * (val + 2)) for val in nab
-            ]
-
-        N = N[1:]
-        nab = nab[1:]
-        C1 = sympy.Rational(
-            4 * (alpha+1) * (beta+1),
-            (alpha+beta+2)**2 * (alpha+beta+3)
-            )
-        C = [
+        c = [
+            c0 if N == 0 else
             sympy.Rational(
-                4 * (nn+alpha) * (nn+beta) * nn * (nn+alpha+beta),
-                val**2 * (val+1) * (val-1)
+                4 * (N+alpha) * (N+beta) * N * (N+alpha+beta),
+                (2*N+alpha+beta)**2 * (2*N+alpha+beta+1) * (2*N+alpha+beta-1)
                 )
-            for nn, val in zip(N, nab)
+            for N in range(n)
             ]
-        c = [c0, C1] + C
 
-        out = p0, a, numpy.array(b), numpy.array(c)
     elif normalization == 'p(1)=(n+a over n)' \
             or (alpha == 0 and normalization == 'p(1)=1'):
         p0 = 1
-        if n == 0:
-            return p0, numpy.array([]), numpy.array([]), numpy.array([])
 
         a = [
             sympy.Rational(
-                (2*N+alpha+beta-1) * (2*N+alpha+beta),
-                2*N * (N+alpha+beta)
+                (2*N+alpha+beta+1) * (2*N+alpha+beta+2),
+                2*(N+1) * (N+alpha+beta+1)
                 )
-            for N in range(1, n+1)
+            for N in range(n)
             ]
 
         b = [
-            sympy.Rational(beta-alpha, 2) if N == 1 else
+            sympy.Rational(beta-alpha, 2) if N == 0 else
             sympy.Rational(
-                (beta**2 - alpha**2) * (2*N+alpha+beta-1),
-                2*N * (N+alpha+beta) * (2*N+alpha+beta-2)
+                (beta**2 - alpha**2) * (2*N+alpha+beta+1),
+                2*(N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
                 )
-            for N in range(1, n+1)
+            for N in range(n)
             ]
 
         c0 = sympy.Rational(
             2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
             sympy.gamma(alpha+beta+2)
             )
-        c = [c0] + [
+        c = [
+            c0 if N == 0 else
             sympy.Rational(
-                2 * (N+alpha-1) * (N+beta-1) * (2*N+alpha+beta),
-                2*N * (N+alpha+beta) * (2*N+alpha+beta-2)
+                2 * (N+alpha) * (N+beta) * (2*N+alpha+beta+2),
+                2*(N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
                 )
-            for N in range(2, n+1)
+            for N in range(n)
             ]
 
-        out = p0, numpy.array(a), numpy.array(b), numpy.array(c)
     else:
         assert normalization == '||p**2||=1', \
             'Unknown normalization \'{}\'.'.format(normalization)
@@ -157,49 +136,38 @@ def jacobi(n, alpha, beta, normalization='monic'):
             2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1)
             ))
 
-        if n == 0:
-            return p0, [], [], []
-
         a = [
-            sympy.Rational(2*N+alpha+beta, 2) * sympy.sqrt(sympy.Rational(
-                    (2*N+alpha+beta-1) * (2*N+alpha+beta+1),
-                    N * (N+alpha) * (N+beta) * (N+alpha+beta)
+            sympy.Rational(2*N+alpha+beta+2, 2) * sympy.sqrt(sympy.Rational(
+                    (2*N+alpha+beta+1) * (2*N+alpha+beta+3),
+                    (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
                     ))
-            for N in range(1, n+1)
+            for N in range(n)
             ]
 
-        b0 = sympy.Rational(beta-alpha, 2) \
-            * sympy.sqrt(
-                sympy.Rational(
-                    (alpha+beta+3) * (alpha+beta+1),
-                    (1+alpha) * (1+beta) * (alpha+beta+1)
-                    ))
-        b = [b0] + [
-            sympy.Rational(
-                beta**2 - alpha**2,
-                2 * (2*N+alpha+beta-2)
-                ) * sympy.sqrt(sympy.Rational(
-                    (2*N+alpha+beta+1) * (2*N+alpha+beta-1),
-                    N * (N+alpha) * (N+beta) * (N+alpha+beta)
-                    ))
-            for N in range(2, n+1)
+        b = [(
+                sympy.Rational(beta-alpha, 2) if N == 0 else
+                sympy.Rational(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
+            ) * sympy.sqrt(sympy.Rational(
+                (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
+                (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
+                ))
+            for N in range(n)
             ]
 
         c0 = sympy.Rational(
             2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
             sympy.gamma(alpha+beta+2)
             )
-        c = [c0] + [
-            sympy.Rational(2*N+alpha+beta, 2*N+alpha+beta-2)
+        c = [
+            c0 if N == 0 else
+            sympy.Rational(2*N+alpha+beta+2, 2*N+alpha+beta)
             * sympy.sqrt(sympy.Rational(
-                (N-1) * (N+alpha-1) * (N+beta-1) * (N+alpha+beta-1)
-                * (2*N+alpha+beta+1),
                 N * (N+alpha) * (N+beta) * (N+alpha+beta)
-                * (2*N+alpha+beta-3)
+                * (2*N+alpha+beta+3),
+                (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
+                * (2*N+alpha+beta-1)
                 ))
-            for N in range(2, n+1)
+            for N in range(n)
             ]
 
-        out = p0, numpy.array(a), numpy.array(b), numpy.array(c)
-
-    return out
+    return p0, numpy.array(a), numpy.array(b), numpy.array(c)
