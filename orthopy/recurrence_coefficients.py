@@ -60,6 +60,11 @@ def jacobi(n, alpha, beta, standardization='monic'):
     with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     '''
+    c0 = sympy.Rational(
+        2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
+        sympy.gamma(alpha+beta+2)
+        )
+
     if standardization == 'monic':
         p0 = 1
 
@@ -80,10 +85,6 @@ def jacobi(n, alpha, beta, standardization='monic'):
         # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
         #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
         # ```
-        c0 = sympy.Rational(
-            2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
-            sympy.gamma(alpha+beta+2)
-            )
         c = [
             c0 if N == 0 else
             sympy.Rational(
@@ -114,10 +115,6 @@ def jacobi(n, alpha, beta, standardization='monic'):
             for N in range(n)
             ]
 
-        c0 = sympy.Rational(
-            2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
-            sympy.gamma(alpha+beta+2)
-            )
         c = [
             c0 if N == 0 else
             sympy.Rational(
@@ -131,10 +128,7 @@ def jacobi(n, alpha, beta, standardization='monic'):
         assert standardization == '||p**2||=1', \
             'Unknown standardization \'{}\'.'.format(standardization)
 
-        p0 = sympy.sqrt(sympy.Rational(
-            sympy.gamma(alpha+beta+2),
-            2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1)
-            ))
+        p0 = sympy.sqrt(1 / c0)
 
         a = [
             sympy.Rational(2*N+alpha+beta+2, 2) * sympy.sqrt(sympy.Rational(
@@ -154,10 +148,6 @@ def jacobi(n, alpha, beta, standardization='monic'):
             for N in range(n)
             ]
 
-        c0 = sympy.Rational(
-            2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1),
-            sympy.gamma(alpha+beta+2)
-            )
         c = [
             c0 if N == 0 else
             sympy.Rational(2*N+alpha+beta+2, 2*N+alpha+beta)
