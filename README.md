@@ -72,7 +72,7 @@ Some explanations:
      errors can lead to an unusable scheme.
      For further computation, it's numerically beneficial if the moments are
      either 0 or in the same order of magnitude. The above numbers are alright,
-     but if you want to max it out, we could try Legendre polynomials for
+     but if you want to max it out, you could try Legendre polynomials for
      `p_k`:
      ```python
      moments = orthopy.compute_moments(

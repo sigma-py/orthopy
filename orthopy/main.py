@@ -101,7 +101,7 @@ def chebyshev(moments):
     algorithm (see, e.g., [2]) for computing the associated recurrence
     coefficients.
 
-    Ill-conditioned, see [2].
+    WARNING: Ill-conditioned, see [2].
     '''
     m = len(moments)
     assert m % 2 == 0
