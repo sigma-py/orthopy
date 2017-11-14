@@ -47,11 +47,11 @@ def hermite(n):
     return p0, a, b, c
 
 
-def legendre(n, normalization='monic'):
-    return jacobi(n, 0, 0, normalization=normalization)
+def legendre(n, standardization='monic'):
+    return jacobi(n, 0, 0, standardization=standardization)
 
 
-def jacobi(n, alpha, beta, normalization='monic'):
+def jacobi(n, alpha, beta, standardization='monic'):
     '''Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
@@ -60,7 +60,7 @@ def jacobi(n, alpha, beta, normalization='monic'):
     with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     '''
-    if normalization == 'monic':
+    if standardization == 'monic':
         p0 = 1
 
         a = numpy.ones(n, dtype=int)
@@ -93,8 +93,8 @@ def jacobi(n, alpha, beta, normalization='monic'):
             for N in range(n)
             ]
 
-    elif normalization == 'p(1)=(n+a over n)' \
-            or (alpha == 0 and normalization == 'p(1)=1'):
+    elif standardization == 'p(1)=(n+a over n)' \
+            or (alpha == 0 and standardization == 'p(1)=1'):
         p0 = 1
 
         a = [
@@ -128,8 +128,8 @@ def jacobi(n, alpha, beta, normalization='monic'):
             ]
 
     else:
-        assert normalization == '||p**2||=1', \
-            'Unknown normalization \'{}\'.'.format(normalization)
+        assert standardization == '||p**2||=1', \
+            'Unknown standardization \'{}\'.'.format(standardization)
 
         p0 = sympy.sqrt(sympy.Rational(
             sympy.gamma(alpha+beta+2),

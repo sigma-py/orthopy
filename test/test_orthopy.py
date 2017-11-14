@@ -338,7 +338,7 @@ def test_logo():
     moments[2] = 8.0 / 45.0
     for n in range(max_n):
         _, _, b, c = orthopy.recurrence_coefficients.legendre(
-            2*n, normalization='p(1)=1'
+            2*n, standardization='p(1)=1'
             )
         alpha, beta = orthopy.chebyshev_modified(moments[:2*n], b, c)
         orthopy.plot(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)

@@ -41,11 +41,11 @@ def test_legendre_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     # Test evaluation of one value
-    y0 = orthopy.eval.legendre(n, x[0], normalization='p(1)=1')
+    y0 = orthopy.eval.legendre(n, x[0], standardization='p(1)=1')
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.eval.legendre(n, x, normalization='p(1)=1')
+    val = orthopy.eval.legendre(n, x, standardization='p(1)=1')
     assert all(val == y)
     return
 
@@ -65,11 +65,11 @@ def test_legendre_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     # Test evaluation of one value
-    y0 = orthopy.eval.legendre(n, x[0], normalization='||p**2||=1')
+    y0 = orthopy.eval.legendre(n, x[0], standardization='||p**2||=1')
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.eval.legendre(n, x, normalization='||p**2||=1')
+    val = orthopy.eval.legendre(n, x, standardization='||p**2||=1')
     assert all(val == y)
     return
 
@@ -110,11 +110,11 @@ def test_jacobi_p11(n, y):
     b = 2
     x = numpy.array([0, Rational(1, 2), 1])
 
-    y2 = orthopy.eval.jacobi(n, a, b, x[2], normalization='p(1)=(n+a over n)')
+    y2 = orthopy.eval.jacobi(n, a, b, x[2], standardization='p(1)=(n+a over n)')
     assert y2 == y[2]
 
     # Test evaluation of multiple values
-    val = orthopy.eval.jacobi(n, a, b, x, normalization='p(1)=(n+a over n)')
+    val = orthopy.eval.jacobi(n, a, b, x, standardization='p(1)=(n+a over n)')
     assert all(val == y)
     return
 
@@ -133,11 +133,11 @@ def test_jacobi_pnorm1(n, y):
     b = 2
     x = numpy.array([0, Rational(1, 2), 1])
 
-    y2 = orthopy.eval.jacobi(n, a, b, x[2], normalization='||p**2||=1')
+    y2 = orthopy.eval.jacobi(n, a, b, x[2], standardization='||p**2||=1')
     print(n)
     assert y2 == y[2]
 
-    val = orthopy.eval.jacobi(n, a, b, x, normalization='||p**2||=1')
+    val = orthopy.eval.jacobi(n, a, b, x, standardization='||p**2||=1')
     assert all(val == y)
     return
 
