@@ -137,6 +137,7 @@ def show(*args, **kwargs):
     return
 
 
+# pylint: disable=too-many-arguments
 def plot(p0, a, b, c, t0, t1):
     import matplotlib.pyplot as plt
     n = 1000

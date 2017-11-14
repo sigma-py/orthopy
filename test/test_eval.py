@@ -151,4 +151,4 @@ def test_jacobi_pnorm1(n, y):
 
 
 if __name__ == '__main__':
-    test_legendre_monic(0, 1, 1, 1)
+    test_legendre_monic(0, [1, 1, 1])

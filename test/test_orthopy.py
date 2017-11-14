@@ -104,11 +104,7 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments = numpy.zeros(2*n)
     moments[0] = 2.0/3.0
     moments[2] = 8.0/45.0
-    p0, a, b, c = orthopy.recurrence_coefficients.legendre(2*n)
-
-    print(moments)
-    print(b)
-    print(c)
+    _, _, b, c = orthopy.recurrence_coefficients.legendre(2*n)
 
     alpha, beta = orthopy.chebyshev_modified(moments, b, c)
 
@@ -201,6 +197,7 @@ def test_gauss(mode):
         n = 5
         tol = 1.0e-14
         _, _, alpha, beta = orthopy.recurrence_coefficients.legendre(n)
+        alpha = numpy.array([float(a) for a in alpha])
         beta = numpy.array([float(b) for b in beta])
         points, weights = orthopy.schemes.custom(
                 alpha, beta,
@@ -223,7 +220,7 @@ def test_gauss(mode):
     reason='Requires SciPy 1.0'
     )
 def test_jacobi_reconstruction(tol=1.0e-14):
-    alpha1, beta1 = orthopy.recurrence_coefficients.jacobi(4, 2.0, 1.0)
+    _, _, alpha1, beta1 = orthopy.recurrence_coefficients.jacobi(4, 2, 1)
     points, weights = orthopy.schemes.custom(alpha1, beta1)
 
     alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
