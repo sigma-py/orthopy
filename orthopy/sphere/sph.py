@@ -2,11 +2,11 @@
 #
 import numpy
 
-from .alp import alp_tree
+from .. import line
 
 
 def sph_tree(n, theta, phi):
-    return alp_tree(
+    return line.alp_tree(
         n, numpy.cos(theta), phi,
         normalization='complex spherical'
         )
