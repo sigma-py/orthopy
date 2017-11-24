@@ -122,7 +122,7 @@ def test_triangle_orth(x, tol=1.0e-12):
 #     return
 
 
-def test_show():
+def test_show(n=5, r=2):
     # plot the triangle
     alpha = numpy.pi * numpy.array([3.0/6.0, 7.0/6.0, 11.0/6.0])
     corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
@@ -130,7 +130,7 @@ def test_show():
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.triangle.orth_tree(10, bary, 'normal')[10][7]
+        return orthopy.triangle.orth_tree(n, bary, 'normal')[n][r]
 
     orthopy.triangle.show(corners, f)
     return
