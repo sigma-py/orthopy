@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+import matplotlib.tri
 import matplotlib.pyplot as plt
 import numpy
 
@@ -34,13 +35,12 @@ def plot(corners, f, n=100):
     # plot the points
     # plt.plot(X[:, 0], X[:, 1], 'xk')
 
-    vals = f(bary)
-
     x = numpy.array(X[:, 0])
     y = numpy.array(X[:, 1])
-    z = numpy.array(vals, dtype=float)
+    z = numpy.array(f(bary), dtype=float)
 
-    plt.tricontourf(x, y, z)
+    triang = matplotlib.tri.Triangulation(x, y)
+    plt.tripcolor(triang, z, shading='flat')
     plt.colorbar()
 
     # triangle outlines

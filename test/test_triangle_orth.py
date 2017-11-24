@@ -132,7 +132,10 @@ def test_show(n=5, r=2):
     def f(bary):
         return orthopy.triangle.orth_tree(n, bary, 'normal')[n][r]
 
-    orthopy.triangle.show(corners, f)
+    # orthopy.triangle.show(corners, f)
+    orthopy.triangle.plot(corners, f)
+    import matplotlib.pyplot as plt
+    plt.savefig('triangle.png', transparent=True)
     return
 
 
