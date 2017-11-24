@@ -11,7 +11,7 @@ domains.
 
 ### Line segment
 
-![](https://nschloe.github.io/orthopy/orthopy.png)
+![](https://nschloe.github.io/orthopy/line-segment.png)
 
 Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
