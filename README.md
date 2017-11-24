@@ -35,15 +35,6 @@ points, weights = orthopy.line.schemes.hermite(14, decimal_places=20)
 points, weights = orthopy.line.schemes.laguerre(13, decimal_places=50)
 ```
 
-Evaluate the entire _associated Legendre_ tree up to a given level at once:
-```python
-vals = orthopy.line.alp_tree(
-    n, x,
-    normalization='full',
-    with_condon_shortley_phase=True
-    )
-```
-
 #### Generating your own Gauss quadrature in three simple steps
 
 You have a measure (or, more colloquially speaking, a domain and a nonnegative
@@ -190,17 +181,28 @@ Some explanations:
    vals = orthopy.line.evaluate_orthogonal_polynomial(alpha, beta, t)
    ```
 
+ * Evaluate the entire _associated Legendre_ tree up to a given level at once:
+   ```python
+   vals = orthopy.line.alp_tree(
+       n, x,
+       normalization='full',
+       with_condon_shortley_phase=True
+       )
+   ```
+   The implementation is numerically stable.
+
 ### Triangle
 
 <img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
 
 Just like in one dimension, orthogonal polynomials can be defined for any
 domain and weight function. orthopy provides the means for
-computing orthogonal/-normal polynomials for the triangle.
+computing orthogonal/-normal polynomials for the triangle. The implementation
+is recurrent and numerically stable.
 ```python
 vals = orthopy.triangle.orth_tree(4, x, 'normal')
 ```
-Available standardization are `'normal'` (normalized polynomials, i.e.,
+Available standardizations are `'normal'` (normalized polynomials, i.e.,
 `||p^2||=1`) and `'1'` where the polynomial is `1` in at least one corner of
 the triangle.
 
@@ -208,6 +210,7 @@ the triangle.
 ### Sphere
 
 Evaluate the entire _spherical harmonics_ tree up to a given level at once.
+Again, the implementation is numerically stable.
 ```python
 vals = orthopy.sphere.sph_tree(n, x)
 ```
