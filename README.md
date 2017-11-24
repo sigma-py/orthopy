@@ -183,7 +183,7 @@ Some explanations:
 
 ### Triangle
 
-![](https://nschloe.github.io/orthopy/triangle21.png)
+![](https://nschloe.github.io/orthopy/triangle.png)
 
 Just like in one dimension, orthogonal polynomials can be defined for any
 domain and weight function. orthopy provides the means for
