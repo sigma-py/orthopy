@@ -1,7 +1,7 @@
 # orthopy
 
-Python tools for orthogonal polynomials and Gaussian quadrature for multiple
-domains.
+Python tools for orthogonal polynomials and Gaussian quadrature for
+[lines](#line-segment), [triangles][#triangle], and [spheres][#sphere].
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
