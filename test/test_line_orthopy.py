@@ -30,7 +30,7 @@ def test_golub_welsch(tol=1.0e-14):
     n = 5
     k = numpy.arange(2*n+1)
     moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
-    alpha, beta = orthopy.golub_welsch(moments)
+    alpha, beta = orthopy.line.golub_welsch(moments)
 
     assert numpy.all(abs(alpha) < tol)
     assert abs(beta[0] - 2.0/3.0) < tol
@@ -39,7 +39,7 @@ def test_golub_welsch(tol=1.0e-14):
     assert abs(beta[3] - 25.0/63.0) < tol
     assert abs(beta[4] - 16.0/99.0) < tol
 
-    orthopy.check_coefficients(moments, alpha, beta)
+    orthopy.line.check_coefficients(moments, alpha, beta)
     return
 
 
@@ -64,7 +64,7 @@ def test_chebyshev(dtype):
             for kk in range(2*n)
             ]
 
-        alpha, beta = orthopy.chebyshev(moments)
+        alpha, beta = orthopy.line.chebyshev(moments)
 
         assert all([a == 0 for a in alpha])
         assert (beta == [
@@ -80,7 +80,7 @@ def test_chebyshev(dtype):
         k = numpy.arange(2*n)
         moments = (1.0 + (-1.0)**k) / (k + alpha + 1)
 
-        alpha, beta = orthopy.chebyshev(moments)
+        alpha, beta = orthopy.line.chebyshev(moments)
 
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
@@ -104,9 +104,10 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments = numpy.zeros(2*n)
     moments[0] = 2.0/3.0
     moments[2] = 8.0/45.0
-    _, _, b, c = orthopy.recurrence_coefficients.legendre(2*n, 'monic')
+    _, _, b, c = \
+        orthopy.line.recurrence_coefficients.legendre(2*n, 'monic')
 
-    alpha, beta = orthopy.chebyshev_modified(moments, b, c)
+    alpha, beta = orthopy.line.chebyshev_modified(moments, b, c)
 
     assert numpy.all(abs(alpha) < tol)
     assert numpy.all(
@@ -125,7 +126,9 @@ def test_jacobi(dtype):
         a = sympy.Rational(1, 1)
         b = sympy.Rational(1, 1)
         _, _, alpha, beta = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
+            orthopy.line.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
         assert all([a == 0 for a in alpha])
         assert (beta == [
             sympy.Rational(4, 3),
@@ -139,7 +142,9 @@ def test_jacobi(dtype):
         b = 1.0
         tol = 1.0e-14
         _, _, alpha, beta = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
+            orthopy.line.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
             abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0, 8.0/33.0])
@@ -157,8 +162,11 @@ def test_gauss(mode):
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
         _, _, alpha, beta = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
-        points, weights = orthopy.schemes.custom(alpha, beta, mode=mode)
+            orthopy.line.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
+        points, weights = \
+            orthopy.line.schemes.custom(alpha, beta, mode=mode)
 
         assert points == [
             -sympy.sqrt(sympy.Rational(3, 5)),
@@ -177,8 +185,10 @@ def test_gauss(mode):
         a = sympy.Rational(0, 1)
         b = sympy.Rational(0, 1)
         _, _, alpha, beta = \
-            orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
-        points, weights = orthopy.schemes.custom(
+            orthopy.line.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
+        points, weights = orthopy.line.schemes.custom(
                 alpha, beta,
                 mode=mode,
                 decimal_places=50
@@ -200,10 +210,10 @@ def test_gauss(mode):
         n = 5
         tol = 1.0e-14
         _, _, alpha, beta = \
-            orthopy.recurrence_coefficients.legendre(n, 'monic')
+            orthopy.line.recurrence_coefficients.legendre(n, 'monic')
         alpha = numpy.array([float(a) for a in alpha])
         beta = numpy.array([float(b) for b in beta])
-        points, weights = orthopy.schemes.custom(
+        points, weights = orthopy.line.schemes.custom(
                 alpha, beta,
                 mode=mode
                 )
@@ -225,10 +235,11 @@ def test_gauss(mode):
     )
 def test_jacobi_reconstruction(tol=1.0e-14):
     _, _, alpha1, beta1 = \
-        orthopy.recurrence_coefficients.jacobi(4, 2, 1, 'monic')
-    points, weights = orthopy.schemes.custom(alpha1, beta1)
+        orthopy.line.recurrence_coefficients.jacobi(4, 2, 1, 'monic')
+    points, weights = orthopy.line.schemes.custom(alpha1, beta1)
 
-    alpha2, beta2 = orthopy.coefficients_from_gauss(points, weights)
+    alpha2, beta2 = \
+        orthopy.line.coefficients_from_gauss(points, weights)
 
     assert numpy.all(abs(alpha1 - alpha2) < tol)
     assert numpy.all(abs(beta1 - beta2) < tol)
@@ -243,8 +254,9 @@ def test_jacobi_reconstruction(tol=1.0e-14):
     )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.recurrence_coefficients.legendre(n, 'monic')
-    value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+    p0, a, b, c = \
+        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+    value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert value == ref
 
@@ -269,8 +281,9 @@ def test_eval(t, ref, tol=1.0e-14):
     )
 def test_eval_vec(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.recurrence_coefficients.legendre(n, 'monic')
-    value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+    p0, a, b, c = \
+        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+    value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert (value == ref).all()
 
@@ -283,11 +296,12 @@ def test_eval_vec(t, ref, tol=1.0e-14):
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    _, _, alpha, beta = orthopy.recurrence_coefficients.legendre(n, 'monic')
+    _, _, alpha, beta = \
+        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
     t = 1.0
 
     a = numpy.ones(n+1)
-    value = orthopy.clenshaw(a, alpha, beta, t)
+    value = orthopy.line.clenshaw(a, alpha, beta, t)
 
     ref = math.fsum([
             numpy.polyval(legendre(i, monic=True), t)
@@ -352,11 +366,11 @@ def test_gautschi_how_to_and_how_not_to():
         for k in range(2*n)
         ])
 
-    alpha, beta = orthopy.coefficients_from_gauss(points, weights)
-    # alpha, beta = orthopy.chebyshev(moments)
+    alpha, beta = orthopy.line.coefficients_from_gauss(points, weights)
+    # alpha, beta = orthopy.line.chebyshev(moments)
 
     errors_alpha, errors_beta = \
-        orthopy.check_coefficients(moments, alpha, beta)
+        orthopy.line.check_coefficients(moments, alpha, beta)
 
     assert numpy.max(errors_alpha) > 1.0e-2
     assert numpy.max(errors_beta) > 1.0e-2
@@ -371,11 +385,12 @@ def test_logo():
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
     for n in range(max_n):
-        _, _, b, c = orthopy.recurrence_coefficients.legendre(
+        _, _, b, c = orthopy.line.recurrence_coefficients.legendre(
             2*n, standardization='p(1)=1'
             )
-        alpha, beta = orthopy.chebyshev_modified(moments[:2*n], b, c)
-        orthopy.plot(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
+        alpha, beta = \
+            orthopy.line.chebyshev_modified(moments[:2*n], b, c)
+        orthopy.line.plot(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
 
     plt.xlim(-1, +1)
     plt.ylim(-2, +2)
@@ -399,26 +414,27 @@ def test_show():
     moments = numpy.zeros(2*n)
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
-    _, _, b, c = orthopy.recurrence_coefficients.legendre(2*n, 'monic')
-    alpha, beta = orthopy.chebyshev_modified(moments[:2*n], b, c)
-    orthopy.show(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
+    _, _, b, c = \
+        orthopy.line.recurrence_coefficients.legendre(2*n, 'monic')
+    alpha, beta = orthopy.line.chebyshev_modified(moments[:2*n], b, c)
+    orthopy.line.show(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
     return
 
 
 def test_compute_moments():
-    moments = orthopy.compute_moments(lambda x: 1, -1, +1, 5)
+    moments = orthopy.line.compute_moments(lambda x: 1, -1, +1, 5)
     assert (
         moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5)]
         ).all()
 
-    moments = orthopy.compute_moments(
+    moments = orthopy.line.compute_moments(
             lambda x: 1, -1, +1, 5,
-            polynomial_class=orthopy.legendre
+            polynomial_class=orthopy.line.legendre
             )
     assert (moments == [2, 0, 0, 0, 0]).all()
 
     # Example from Gautschi's "How to and how not to" article
-    moments = orthopy.compute_moments(
+    moments = orthopy.line.compute_moments(
             lambda x: sympy.exp(-x**3/3),
             0, sympy.oo,
             5
@@ -437,8 +453,9 @@ def test_compute_moments():
 
 
 def test_stieltjes():
-    alpha0, beta0 = orthopy.stieltjes(lambda t: 1, -1, +1, 5)
-    _, _, alpha1, beta1 = orthopy.recurrence_coefficients.legendre(5, 'monic')
+    alpha0, beta0 = orthopy.line.stieltjes(lambda t: 1, -1, +1, 5)
+    _, _, alpha1, beta1 = \
+        orthopy.line.recurrence_coefficients.legendre(5, 'monic')
     assert (alpha0 == alpha1).all()
     assert (beta0 == beta1).all()
     return
@@ -447,15 +464,15 @@ def test_stieltjes():
 # def test_expt3():
 #     '''Full example from Gautschi's "How to and how not to" article.
 #     '''
-#     # moments = orthopy.compute_moments(
+#     # moments = orthopy.line.compute_moments(
 #     #         lambda x: sympy.exp(-x**3/3),
 #     #         0, sympy.oo,
 #     #         31
 #     #         )
 #     # print(moments)
-#     # alpha, beta = orthopy.chebyshev(moments)
+#     # alpha, beta = orthopy.line.chebyshev(moments)
 #
-#     alpha, beta = orthopy.stieltjes(
+#     alpha, beta = orthopy.line.stieltjes(
 #             lambda x: sympy.exp(-x**3/3),
 #             0, sympy.oo,
 #             5
@@ -471,27 +488,30 @@ def test_stieltjes():
 def test_xk(k):
     n = 10
 
-    moments = orthopy.compute_moments(lambda x: x**k, -1, +1, 2*n)
-    alpha, beta = orthopy.chebyshev(moments)
+    moments = orthopy.line.compute_moments(lambda x: x**k, -1, +1, 2*n)
+    alpha, beta = orthopy.line.chebyshev(moments)
 
     assert (alpha == 0).all()
     assert beta[0] == moments[0]
     assert beta[1] == sympy.Rational(k+1, k+3)
     assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
-    orthopy.schemes.custom(
+    orthopy.line.schemes.custom(
         numpy.array([sympy.N(a) for a in alpha], dtype=float),
         numpy.array([sympy.N(b) for b in beta], dtype=float),
         mode='numpy'
         )
 
-    # a, b = orthopy.recurrence_coefficients.legendre(2*n, mode='sympy')
+    # a, b = \
+    #     orthopy.line.recurrence_coefficients.legendre(
+    #             2*n, mode='sympy'
+    #             )
 
-    # moments = orthopy.compute_moments(
+    # moments = orthopy.line.compute_moments(
     #         lambda x: x**2, -1, +1, 2*n,
-    #         polynomial_class=orthopy.legendre
+    #         polynomial_class=orthopy.line.legendre
     #         )
-    # alpha, beta = orthopy.chebyshev_modified(moments, a, b)
-    # points, weights = orthopy.schemes.custom(
+    # alpha, beta = orthopy.line.chebyshev_modified(moments, a, b)
+    # points, weights = orthopy.line.schemes.custom(
     #         numpy.array([sympy.N(a) for a in alpha], dtype=float),
     #         numpy.array([sympy.N(b) for b in beta], dtype=float)
     #         )

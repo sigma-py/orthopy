@@ -1,38 +1,41 @@
 # orthopy
 
-Python tools for orthogonal polynomials and Gaussian quadrature.
+Python tools for orthogonal polynomials and Gaussian quadrature for
+[lines](#line-segment), [triangles](#triangle), and [spheres](#sphere).
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
-[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![awesome](https://img.shields.io/badge/awesome-yes-brightgreen.svg)](https://img.shields.io/badge/awesome-yes-brightgreen.svg)
+[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
 
-![](https://nschloe.github.io/orthopy/orthopy.png)
+_All functions in this module are fully vectorized and, where possible and
+practical, return results in exact arithmetic._
+
+### Line segment
+
+![](https://nschloe.github.io/orthopy/line-segment.png)
 
 Gaussian quadrature schemes and orthogonal polynomials of the form
 ```
 pi_{k+1}(x) = (a[k] x - b[k]) * pi_k(x) - c[k] * pi_{k-1}(x)
 ```
 (defined by their _recurrence coefficients_ `a`, `b`, `c`) are closely
-related. This module provides tools for working with them.
+related. orthopy provides tools for working with them.
 
-_Note that most functions have a `sympy` and `mpmath` mode for symbolic and
-arbitrary precision computation, respectively._
-
-### Classical schemes
+#### Classical schemes
 
 With orthopy, it's easy to regenerate classical Gauss quadrature schemes are
 listed in, e.g., [Stroud & Secrest](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ).
 
 Some examples:
 ```python
-points, weights = orthopy.schemes.legendre(96, decimal_places=30)
-points, weights = orthopy.schemes.hermite(14, decimal_places=20)
-points, weights = orthopy.schemes.laguerre(13, decimal_places=50)
+points, weights = orthopy.line.schemes.legendre(96, decimal_places=30)
+points, weights = orthopy.line.schemes.hermite(14, decimal_places=20)
+points, weights = orthopy.line.schemes.laguerre(13, decimal_places=50)
 ```
 
-### Generating your own Gauss quadrature in three simple steps
+#### Generating your own Gauss quadrature in three simple steps
 
 You have a measure (or, more colloquially speaking, a domain and a nonnegative
 weight function) and would like to generate the matching Gauss quadrature?
@@ -44,9 +47,9 @@ the weight function `x^2` on the interval `[-1, +1]`.
 TLDR:
 ```python
 import orthopy
-moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 20)
-alpha, beta = orthopy.chebyshev(moments)
-points, weights = orthopy.schemes.custom(alpha, beta, decimal_places=30)
+moments = orthopy.line.compute_moments(lambda x: x**2, -1, +1, 20)
+alpha, beta = orthopy.line.chebyshev(moments)
+points, weights = orthopy.line.schemes.custom(alpha, beta, decimal_places=30)
 ```
 
 Some explanations:
@@ -58,7 +61,7 @@ Some explanations:
      with a particular set of polynomials `p_k`. A common choice are the
      monomials `x^k`. You can do that by hand or use
      ```python
-     moments = orthopy.compute_moments(lambda x: x**2, -1, +1, 20)
+     moments = orthopy.line.compute_moments(lambda x: x**2, -1, +1, 20)
      ```
      ```
      [2/3, 0, 2/5, 0, 2/7, 0, 2/9, 0, 2/11, 0, 2/13, 0, 2/15, 0, 2/17, 0, 2/19, 0, 2/21, 0]
@@ -75,9 +78,9 @@ Some explanations:
      but if you want to max it out, you could try Legendre polynomials for
      `p_k`:
      ```python
-     moments = orthopy.compute_moments(
+     moments = orthopy.line.compute_moments(
          lambda x: x**2, -1, +1, 20,
-         polynomial_class=orthopy.legendre
+         polynomial_class=orthopy.line.legendre
          )
      ```
      ```
@@ -100,8 +103,8 @@ Some explanations:
        Since we have computed modified moments in step one, let's use the
        latter method:
        ```python
-       _, _, a, b = orthopy.recurrence_coefficients.legendre(20, 'monic')
-       alpha, beta = orthopy.chebyshev_modified(moments, a, b)
+       _, _, a, b = orthopy.line.recurrence_coefficients.legendre(20, 'monic')
+       alpha, beta = orthopy.line.chebyshev_modified(moments, a, b)
        ```
        ```
        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -116,7 +119,7 @@ Some explanations:
      choose the `mpmath` mode (default) with 30 decimal digits
      ```python
      points, weights = \
-         orthopy.schemes.custom(alpha, beta, mode='mpmath', decimal_places=30)
+         orthopy.line.schemes.custom(alpha, beta, mode='mpmath', decimal_places=30)
      ```
      ```
      [-0.978228658146056992803938001123,
@@ -145,18 +148,18 @@ Some explanations:
      Congratulations! Your Gaussian quadrature rule.
 
 
-### Other tools
+#### Other tools
 
  * Transforming Gaussian points and weights back to recurrence coefficients:
    ```python
-   alpha, beta = orthopy.coefficients_from_gauss(points, weights)
+   alpha, beta = orthopy.line.coefficients_from_gauss(points, weights)
    ```
 
  * Recurrence coefficients of Jacobi polynomials
    `w(x) = (1-x)^alpha * (1+x)^beta` with any `alpha` or `beta` are explicitly
    given:
    ```python
-   p0, a, b, c = orthopy.recurrence_coefficients.jacobi(n, a, b, 'monic')
+   p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(n, a, b, 'monic')
    ```
    Possible choices for the standardization are `'monic'`,
    `'p(1)=(n+alpha over n)'`, and `'||p**2||=1`.
@@ -165,18 +168,53 @@ Some explanations:
    Gautschi](https://doi.org/10.1007/BF02218441), you can test your
    moment-based scheme with
    ```python
-   err = orthopy.check_coefficients(moments, alpha, beta)
+   err = orthopy.line.check_coefficients(moments, alpha, beta)
    ```
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
    ```python
-   vals = orthopy.clenshaw(a, alpha, beta, t)
+   vals = orthopy.line.clenshaw(a, alpha, beta, t)
    ```
 
  * Evaluate orthogonal polynomials (at many points at once):
    ```python
-   vals = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
+   vals = orthopy.line.evaluate_orthogonal_polynomial(alpha, beta, t)
    ```
+
+ * Evaluate the entire _associated Legendre_ tree up to a given level at once:
+   ```python
+   vals = orthopy.line.alp_tree(
+       n, x,
+       normalization='full',
+       with_condon_shortley_phase=True
+       )
+   ```
+   The implementation is numerically stable.
+
+### Triangle
+
+<img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
+
+Just like in one dimension, orthogonal polynomials can be defined for any
+domain and weight function. orthopy provides the means for
+computing orthogonal/-normal polynomials for the triangle. The implementation
+is recurrent and numerically stable.
+```python
+vals = orthopy.triangle.orth_tree(4, x, 'normal')
+```
+Available standardizations are `'normal'` (normalized polynomials, i.e.,
+`||p^2||=1`) and `'1'` where the polynomial is `1` in at least one corner of
+the triangle.
+
+
+### Sphere
+
+Evaluate the entire _spherical harmonics_ tree up to a given level at once.
+Again, the implementation is numerically stable.
+```python
+vals = orthopy.sphere.sph_tree(n, x)
+```
+
 
 ### Relevant publications
 

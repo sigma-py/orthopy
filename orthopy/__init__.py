@@ -13,12 +13,9 @@ from .__about__ import (
     __status__,
     )
 
-# pylint: disable=wildcard-import
-from . import recurrence_coefficients
-from . import schemes
-from .main import *
-from .poly_classes import *
-from .tools import *
+from . import line
+from . import sphere
+from . import triangle
 
 try:
     import pipdate
