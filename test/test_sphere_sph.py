@@ -4,8 +4,8 @@ from __future__ import division
 
 import numpy
 from numpy import sqrt, pi, exp
+import orthopy
 import pytest
-import specialpy
 
 
 def sph_exact2(theta, phi):
@@ -43,7 +43,7 @@ def sph_exact2(theta, phi):
     )
 def test_spherical_harmonics(theta, phi, tol=1.0e-8):
     L = 2
-    vals = specialpy.sph_tree(L, theta, phi)
+    vals = orthopy.sphere.sph_tree(L, theta, phi)
     exacts = sph_exact2(theta, phi)
 
     for val, ex in zip(vals, exacts):

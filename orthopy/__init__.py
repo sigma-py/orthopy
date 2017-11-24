@@ -14,6 +14,8 @@ from .__about__ import (
     )
 
 from . import line_segment
+from . import sphere
+from . import triangle
 
 try:
     import pipdate

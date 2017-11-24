@@ -8,7 +8,7 @@ from scipy.special import binom
 
 
 # pylint: disable=too-many-arguments
-def triangle_orth_tree(n, bary, standardization):
+def orth_tree(n, bary, standardization):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`

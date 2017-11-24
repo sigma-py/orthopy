@@ -7,16 +7,15 @@ import orthopy
 # import quadpy
 import pytest
 import scipy.special
-import specialpy
 
 
 def op(i, j, x, y):
-    p0, a, b, c = orthopy.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
             i, 0, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val1 = orthopy.tools.evaluate_orthogonal_polynomial(
+    val1 = orthopy.line_segment.tools.evaluate_orthogonal_polynomial(
             (x-y)/(x+y), p0, a, b, c
             )
 
@@ -30,12 +29,12 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    p0, a, b, c = orthopy.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
             j, 2*i+1, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val2 = orthopy.tools.evaluate_orthogonal_polynomial(
+    val2 = orthopy.line_segment.tools.evaluate_orthogonal_polynomial(
             1-2*(x+y), p0, a, b, c
             )
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
@@ -88,7 +87,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     bary = numpy.array([
         x[0], x[1], 1.0-x[0]-x[1]
         ])
-    vals = specialpy.triangle_orth_tree(L, bary, 'normal')
+    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
 
     # print('tree:')
     # for ex in vals:
@@ -111,7 +110,7 @@ def test_triangle_orth(x, tol=1.0e-12):
 #         bary = numpy.array([
 #             x[0], x[1], 1.0-x[0]-x[1]
 #             ])
-#         tree = specialpy.triangle_orth_tree(n, bary, 'normal')
+#         tree = orthopy.triangle.orth_tree(n, bary, 'normal')
 #         for t in tree:
 #             t *= t
 #         return numpy.concatenate(tree)
@@ -131,9 +130,9 @@ def test_show():
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return specialpy.triangle_orth_tree(10, bary, 'normal')[10][7]
+        return orthopy.triangle.orth_tree(10, bary, 'normal')[10][7]
 
-    specialpy.show(corners, f)
+    orthopy.triangle.show(corners, f)
     return
 
 
