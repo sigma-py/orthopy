@@ -391,15 +391,16 @@ def test_compute_moments():
             0, sympy.oo,
             5
             )
-    one_third = sympy.Rational(1, 3)
-    two_thirds = sympy.Rational(2, 3)
-    assert (moments == [
-        3**one_third*sympy.gamma(one_third)/3,
-        3**two_thirds*sympy.gamma(two_thirds)/3,
-        1,
-        3**one_third*sympy.gamma(4 * one_third),
-        3**two_thirds*sympy.gamma(5 * one_third),
-        ]).all()
+
+    reference = [
+        3**sympy.Rational(n-2, 3) * sympy.gamma(sympy.Rational(n+1, 3))
+        for n in range(5)
+        ]
+
+    assert numpy.all([
+        sympy.simplify(m - r) == 0
+        for m, r in zip(moments, reference)
+        ])
     return
 
 
