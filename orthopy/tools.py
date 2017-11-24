@@ -95,7 +95,12 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     for a_k, b_k, c_k in zip(a, b, c):
         vals0 = vals1
         vals1 = vals2
-        vals2 = (a_k * t - b_k) * vals1 - c_k * vals0
+        # Use numpy.multiply to work around
+        # <https://github.com/sympy/sympy/issues/13637>.
+        vals2 = (
+            + numpy.multiply(numpy.multiply(a_k, t) - b_k, vals1)
+            - numpy.multiply(c_k, vals0)
+            )
 
     return vals2
 

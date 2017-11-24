@@ -254,9 +254,13 @@ def test_eval(t, tol=1.0e-14):
 @pytest.mark.parametrize(
     't, ref', [
         (
+            numpy.array([1]),
+            numpy.array([sympy.Rational(8, 63)])
+        ),
+        (
             numpy.array([1, 2]),
             numpy.array([sympy.Rational(8, 63), sympy.Rational(1486, 63)])
-        )
+        ),
         ],
     )
 def test_eval_vec(t, ref, tol=1.0e-14):
