@@ -236,18 +236,22 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    't', [1]
+    't, ref', [
+        (sympy.Rational(1, 2), sympy.Rational(23, 2016)),
+        (1, sympy.Rational(8, 63)),
+        ]
     )
-def test_eval(t, tol=1.0e-14):
+def test_eval(t, ref, tol=1.0e-14):
     n = 5
     p0, a, b, c = orthopy.recurrence_coefficients.legendre(n, 'monic')
     value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
+    assert value == ref
+
     # Evaluating the Legendre polynomial in this way is rather unstable, so
     # don't go too far with n.
-    ref = numpy.polyval(legendre(n, monic=True), t)
-
-    assert abs(value - ref) < tol
+    approx_ref = numpy.polyval(legendre(n, monic=True), t)
+    assert abs(value - approx_ref) < tol
     return
 
 
