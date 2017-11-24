@@ -63,6 +63,12 @@ def jacobi(n, alpha, beta, standardization):
 
         a = numpy.ones(n, dtype=int)
 
+        # work around bug <https://github.com/sympy/sympy/issues/13618>
+        if isinstance(alpha, numpy.int64):
+            alpha = int(alpha)
+        if isinstance(beta, numpy.int64):
+            beta = int(beta)
+
         b = [
             sympy.Rational(beta-alpha, alpha+beta+2) if N == 0 else
             sympy.Rational(
@@ -97,6 +103,12 @@ def jacobi(n, alpha, beta, standardization):
             or (alpha == 0 and standardization == 'p(1)=1'):
         p0 = 1
 
+        # work around bug <https://github.com/sympy/sympy/issues/13618>
+        if isinstance(alpha, numpy.int64):
+            alpha = int(alpha)
+        if isinstance(beta, numpy.int64):
+            beta = int(beta)
+
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
         a = [
             sympy.Rational(alpha+beta+2, 2) if N == 0 else
@@ -119,8 +131,8 @@ def jacobi(n, alpha, beta, standardization):
         c = [
             int_1 if N == 0 else
             sympy.Rational(
-                2 * (N+alpha) * (N+beta) * (2*N+alpha+beta+2),
-                2*(N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
+                (N+alpha) * (N+beta) * (2*N+alpha+beta+2),
+                (N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
                 )
             for N in range(n)
             ]
@@ -147,12 +159,12 @@ def jacobi(n, alpha, beta, standardization):
         b = [(
                 sympy.Rational(beta-alpha, 2) if N == 0 else
                 sympy.Rational(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
-            ) * sympy.sqrt(sympy.Rational(
-                (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
-                (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
-                ))
-            for N in range(n)
-            ]
+             ) * sympy.sqrt(sympy.Rational(
+                    (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
+                    (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
+                    ))
+             for N in range(n)
+             ]
 
         c = [
             int_1 if N == 0 else
