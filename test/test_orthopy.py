@@ -235,17 +235,49 @@ def test_jacobi_reconstruction(tol=1.0e-14):
     return
 
 
-def test_eval(tol=1.0e-14):
+@pytest.mark.parametrize(
+    't, ref', [
+        (sympy.Rational(1, 2), sympy.Rational(23, 2016)),
+        (1, sympy.Rational(8, 63)),
+        ]
+    )
+def test_eval(t, ref, tol=1.0e-14):
     n = 5
     p0, a, b, c = orthopy.recurrence_coefficients.legendre(n, 'monic')
-    t = 1.0
     value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+
+    assert value == ref
 
     # Evaluating the Legendre polynomial in this way is rather unstable, so
     # don't go too far with n.
-    ref = numpy.polyval(legendre(n, monic=True), t)
+    approx_ref = numpy.polyval(legendre(n, monic=True), t)
+    assert abs(value - approx_ref) < tol
+    return
 
-    assert abs(value - ref) < tol
+
+@pytest.mark.parametrize(
+    't, ref', [
+        (
+            numpy.array([1]),
+            numpy.array([sympy.Rational(8, 63)])
+        ),
+        (
+            numpy.array([1, 2]),
+            numpy.array([sympy.Rational(8, 63), sympy.Rational(1486, 63)])
+        ),
+        ],
+    )
+def test_eval_vec(t, ref, tol=1.0e-14):
+    n = 5
+    p0, a, b, c = orthopy.recurrence_coefficients.legendre(n, 'monic')
+    value = orthopy.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+
+    assert (value == ref).all()
+
+    # Evaluating the Legendre polynomial in this way is rather unstable, so
+    # don't go too far with n.
+    approx_ref = numpy.polyval(legendre(n, monic=True), t)
+    assert (abs(value - approx_ref) < tol).all()
     return
 
 
@@ -391,15 +423,16 @@ def test_compute_moments():
             0, sympy.oo,
             5
             )
-    one_third = sympy.Rational(1, 3)
-    two_thirds = sympy.Rational(2, 3)
-    assert (moments == [
-        3**one_third*sympy.gamma(one_third)/3,
-        3**two_thirds*sympy.gamma(two_thirds)/3,
-        1,
-        3**one_third*sympy.gamma(4 * one_third),
-        3**two_thirds*sympy.gamma(5 * one_third),
-        ]).all()
+
+    reference = [
+        3**sympy.Rational(n-2, 3) * sympy.gamma(sympy.Rational(n+1, 3))
+        for n in range(5)
+        ]
+
+    assert numpy.all([
+        sympy.simplify(m - r) == 0
+        for m, r in zip(moments, reference)
+        ])
     return
 
 

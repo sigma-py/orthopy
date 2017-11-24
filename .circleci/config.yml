@@ -2,17 +2,37 @@ version: 2
 
 jobs:
 
-  # python2:
+  # # python2:
+  # build:
+  #   working_directory: ~/orthopy
+  #   docker:
+  #     - image: ubuntu:17.10
+  #   steps:
+  #     - run: apt-get update
+  #     - run: apt-get install -y git python-pip
+  #     - run: pip2 install -U pytest pytest-cov pylint
+  #     - checkout
+  #     - run: pip2 install .
+  #     # lint
+  #     - run: pylint orthopy/
+  #     - run: pylint test/*.py
+  #     # The tests
+  #     - run: cd test/ && MPLBACKEND=Agg pytest --cov orthopy
+  #     # submit to codecov
+  #     - run: apt-get install -y curl
+  #     - run: bash <(curl -s https://codecov.io/bash)
+
+  # python3:
   build:
     working_directory: ~/orthopy
     docker:
       - image: ubuntu:17.10
     steps:
       - run: apt-get update
-      - run: apt-get install -y git python-pip
-      - run: pip2 install -U pytest pytest-cov pylint
+      - run: apt-get install -y git python3-pip
+      - run: pip3 install -U pytest pytest-cov pylint
       - checkout
-      - run: pip2 install .
+      - run: pip3 install .
       # lint
       - run: pylint orthopy/
       - run: pylint test/*.py
@@ -21,24 +41,6 @@ jobs:
       # submit to codecov
       - run: apt-get install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
-
-
-#   # python3:
-#   build:
-#     working_directory: ~/orthopy
-#     docker:
-#       - image: ubuntu:17.10
-#     steps:
-#       - run: apt-get update
-#       - run: apt-get install -y libcgal-dev libeigen3-dev pandoc python3-pip
-#       - run: pip3 install -U pytest pytest-cov pylint meshio
-#       - checkout
-#       # install
-#       - run: pip3 install .
-#       # lint
-#       - run: pylint setup.py
-#       # The actual test
-#       - run: cd test/ && pytest
 
 # workflow builds don't support forked PRs yet, cf.
 # <https://circleci.com/docs/2.0/faq/#can-i-build-fork-prs-using-workflows>.
