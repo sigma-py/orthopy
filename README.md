@@ -1,12 +1,15 @@
 # orthopy
 
-Python tools for orthogonal polynomials and Gaussian quadrature.
+Python tools for orthogonal polynomials and Gaussian quadrature for multiple
+domains.
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
-[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![awesome](https://img.shields.io/badge/awesome-yes-brightgreen.svg)](https://img.shields.io/badge/awesome-yes-brightgreen.svg)
+[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
+
+### Line segment
 
 ![](https://nschloe.github.io/orthopy/orthopy.png)
 
@@ -20,7 +23,7 @@ related. This module provides tools for working with them.
 _Note that most functions have a `sympy` and `mpmath` mode for symbolic and
 arbitrary precision computation, respectively._
 
-### Classical schemes
+#### Classical schemes
 
 With orthopy, it's easy to regenerate classical Gauss quadrature schemes are
 listed in, e.g., [Stroud & Secrest](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ).
@@ -32,7 +35,7 @@ points, weights = orthopy.schemes.hermite(14, decimal_places=20)
 points, weights = orthopy.schemes.laguerre(13, decimal_places=50)
 ```
 
-### Generating your own Gauss quadrature in three simple steps
+#### Generating your own Gauss quadrature in three simple steps
 
 You have a measure (or, more colloquially speaking, a domain and a nonnegative
 weight function) and would like to generate the matching Gauss quadrature?
@@ -145,7 +148,7 @@ Some explanations:
      Congratulations! Your Gaussian quadrature rule.
 
 
-### Other tools
+#### Other tools
 
  * Transforming Gaussian points and weights back to recurrence coefficients:
    ```python
@@ -177,6 +180,40 @@ Some explanations:
    ```python
    vals = orthopy.evaluate_orthogonal_polynomial(alpha, beta, t)
    ```
+
+### Triangle
+
+Just like in one dimension, orthogonal polynomials can be defined for any
+domain and weight function. orthopy provides the means for
+computing orthogonal/-normal polynomials for the triangle.
+```python
+vals = orthopy.triangle.orth_tree(4, x, 'normal')
+```
+Available standardization are `'normal'` (normalized polynomials, i.e.,
+`||p^2||=1`) and `'1'` where the polynomial is `1` in at least one corner of
+the triangle.
+
+
+### Sphere
+
+* Evaluate the entire _associated Legendre_ tree up to a given level at once.
+  ```python
+  vals = orthopy.sphere.alp_tree(
+      n, x,
+      normalization='full',
+      with_condon_shortley_phase=True
+      )
+  ```
+  Fully vectorized in `x`, meaning that you can provide floats or array-like
+  structures.
+
+* Evaluate the entire _spherical harmonics_ tree up to a given level at once.
+  ```python
+  vals = orthopy.sphere.sph_tree(n, x)
+  ```
+  Fully vectorized in `x`, meaning that you can provide floats or array-like
+  structures.
+
 
 ### Relevant publications
 
