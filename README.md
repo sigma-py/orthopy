@@ -183,6 +183,8 @@ Some explanations:
 
 ### Triangle
 
+![](https://nschloe.github.io/orthopy/triangle21.png)
+
 Just like in one dimension, orthogonal polynomials can be defined for any
 domain and weight function. orthopy provides the means for
 computing orthogonal/-normal polynomials for the triangle.
