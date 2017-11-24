@@ -10,12 +10,12 @@ import scipy.special
 
 
 def op(i, j, x, y):
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(
             i, 0, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val1 = orthopy.line_segment.tools.evaluate_orthogonal_polynomial(
+    val1 = orthopy.line.tools.evaluate_orthogonal_polynomial(
             (x-y)/(x+y), p0, a, b, c
             )
 
@@ -29,12 +29,12 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(
             j, 2*i+1, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val2 = orthopy.line_segment.tools.evaluate_orthogonal_polynomial(
+    val2 = orthopy.line.tools.evaluate_orthogonal_polynomial(
             1-2*(x+y), p0, a, b, c
             )
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))

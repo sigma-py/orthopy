@@ -9,6 +9,9 @@ domains.
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
 
+_All functions in this module are fully vectorized and, where possible and
+practical, return results in exact arithmetic._
+
 ### Line segment
 
 ![](https://nschloe.github.io/orthopy/line-segment.png)
@@ -18,10 +21,7 @@ Gaussian quadrature schemes and orthogonal polynomials of the form
 pi_{k+1}(x) = (a[k] x - b[k]) * pi_k(x) - c[k] * pi_{k-1}(x)
 ```
 (defined by their _recurrence coefficients_ `a`, `b`, `c`) are closely
-related. This module provides tools for working with them.
-
-_Note that most functions have a `sympy` and `mpmath` mode for symbolic and
-arbitrary precision computation, respectively._
+related. orthopy provides tools for working with them.
 
 #### Classical schemes
 
@@ -30,9 +30,9 @@ listed in, e.g., [Stroud & Secrest](https://books.google.de/books/about/Gaussian
 
 Some examples:
 ```python
-points, weights = orthopy.schemes.legendre(96, decimal_places=30)
-points, weights = orthopy.schemes.hermite(14, decimal_places=20)
-points, weights = orthopy.schemes.laguerre(13, decimal_places=50)
+points, weights = orthopy.line.schemes.legendre(96, decimal_places=30)
+points, weights = orthopy.line.schemes.hermite(14, decimal_places=20)
+points, weights = orthopy.line.schemes.laguerre(13, decimal_places=50)
 ```
 
 #### Generating your own Gauss quadrature in three simple steps

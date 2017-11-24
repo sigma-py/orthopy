@@ -18,14 +18,14 @@ from sympy import Rational, sqrt
 def test_legendre_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.legendre(n, 'monic')
+    out = orthopy.line.recurrence_coefficients.legendre(n, 'monic')
 
     # Test evaluation of one value
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -42,14 +42,14 @@ def test_legendre_monic(n, y):
 def test_legendre_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.legendre(
+    out = orthopy.line.recurrence_coefficients.legendre(
             n, standardization='p(1)=1'
             )
 
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -68,14 +68,14 @@ def test_legendre_p11(n, y):
 def test_legendre_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.legendre(
+    out = orthopy.line.recurrence_coefficients.legendre(
             n, standardization='||p**2||=1'
             )
 
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -92,14 +92,14 @@ def test_legendre_pnorm1(n, y):
 def test_jacobi_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='monic'
             )
 
-    y2 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -116,14 +116,14 @@ def test_jacobi_monic(n, y):
 def test_jacobi_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)'
             )
 
-    y2 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -140,14 +140,14 @@ def test_jacobi_p11(n, y):
 def test_jacobi_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='||p**2||=1'
             )
 
-    y2 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 

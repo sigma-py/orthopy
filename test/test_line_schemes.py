@@ -6,7 +6,7 @@ import orthopy
 
 def test_legendre():
     points, weights = \
-        orthopy.line_segment.schemes.legendre(4, decimal_places=50)
+        orthopy.line.schemes.legendre(4, decimal_places=50)
 
     tol = 1.0e-50
 
@@ -22,7 +22,7 @@ def test_legendre():
 
 def test_chebyshev1():
     points, weights = \
-        orthopy.line_segment.schemes.chebyshev1(4, decimal_places=51)
+        orthopy.line.schemes.chebyshev1(4, decimal_places=51)
 
     tol = 1.0e-50
 
@@ -38,7 +38,7 @@ def test_chebyshev1():
 
 def test_chebyshev2():
     points, weights = \
-        orthopy.line_segment.schemes.chebyshev2(4, decimal_places=51)
+        orthopy.line.schemes.chebyshev2(4, decimal_places=51)
 
     tol = 1.0e-50
 
@@ -54,7 +54,7 @@ def test_chebyshev2():
 
 def test_laguerre():
     points, weights = \
-        orthopy.line_segment.schemes.laguerre(2, decimal_places=51)
+        orthopy.line.schemes.laguerre(2, decimal_places=51)
 
     tol = 1.0e-50
 
@@ -69,7 +69,7 @@ def test_laguerre():
 
 
 def test_laguerre_generalized():
-    orthopy.line_segment.schemes.laguerre_generalized(
+    orthopy.line.schemes.laguerre_generalized(
             2, a=1, decimal_places=51
             )
     # TODO get reference values
@@ -78,7 +78,7 @@ def test_laguerre_generalized():
 
 def test_hermite():
     points, weights = \
-        orthopy.line_segment.schemes.hermite(4, decimal_places=51)
+        orthopy.line.schemes.hermite(4, decimal_places=51)
 
     tol = 1.0e-50
 
@@ -93,7 +93,7 @@ def test_hermite():
 
 
 def test_jacobi():
-    points, weights = orthopy.line_segment.schemes.jacobi(
+    points, weights = orthopy.line.schemes.jacobi(
             4, 1, 1, decimal_places=51
             )
 

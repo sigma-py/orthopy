@@ -13,7 +13,7 @@ from .__about__ import (
     __status__,
     )
 
-from . import line_segment
+from . import line
 from . import sphere
 from . import triangle
 
