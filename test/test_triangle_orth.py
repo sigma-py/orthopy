@@ -4,7 +4,7 @@ from __future__ import division
 
 import numpy
 import orthopy
-# import quadpy
+import quadpy
 import pytest
 import scipy.special
 
@@ -100,26 +100,33 @@ def test_triangle_orth(x, tol=1.0e-12):
     return
 
 
-# TODO
-# def test_orthonormal():
-#     '''Make sure that the polynomials are orthonormal
-#     '''
-#     n = 4
-#
-#     def f(x):
-#         bary = numpy.array([
-#             x[0], x[1], 1.0-x[0]-x[1]
-#             ])
-#         tree = orthopy.triangle.orth_tree(n, bary, 'normal')
-#         for t in tree:
-#             t *= t
-#         return numpy.concatenate(tree)
-#
-#     # Choose a scheme of order 2*n.
-#     triangle = numpy.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
-#     val = quadpy.integrate.triangle(f, triangle, quadpy.triangle.Dunavant(8))
-#
-#     return
+def test_orthonormal(tol=1.0e-14):
+    '''Make sure that the polynomials are orthonormal
+    '''
+    n = 4
+    # Choose a scheme of order 2*n.
+    scheme = quadpy.triangle.Dunavant(8)
+
+    triangle = numpy.array([[0, 0], [1, 0], [0, 1]])
+
+    # normality
+    def ff(x):
+        bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
+        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+        return tree * tree
+
+    val = quadpy.triangle.integrate(ff, triangle, scheme)
+    assert numpy.all(abs(val - 1) < tol)
+
+    # orthogonality
+    def f_shift(x):
+        bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
+        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+        return tree * numpy.roll(tree, 1, axis=0)
+
+    val = quadpy.triangle.integrate(f_shift, triangle, scheme)
+    assert numpy.all(abs(val) < tol)
+    return
 
 
 def test_show(n=2, r=1):
