@@ -3,7 +3,6 @@
 from __future__ import division
 
 import numpy
-from scipy.special import binom
 
 
 # pylint: disable=too-many-arguments
@@ -99,19 +98,19 @@ def _standardization_normal(n, bary):
         #   int_T P_{n, r}^2 =
         #       int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}^2(w) (1-w)^(r+s+1) dw.
         #
-        # The Legendre integral is 1/(2*r+1).
+        # From this, one gets
         #
-        # TODO simplify
-        return numpy.sum([
-            (-1)**(i+j)
-            * binom(n+r+1, i) * binom(n-r, i)
-            * binom(n+r+1, j) * binom(n-r, j)
-            / binom(2*n+1, i+j)
-            for i in range(n-r+1)
-            for j in range(n-r+1)
-            ]) / (2*r+1) / (2*n+2)
+        #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2)
+        #       sum_{i=0}^{n-r} sum_{j=0}^{n-r}
+        #           (-1)**(i+j) * binom(n+r+1, i) * binom(n-r, i)
+        #                       * binom(n+r+1, j) * binom(n-r, j)
+        #                       / binom(2*n+1, i+j)
+        #
+        # The Legendre integral is 1/(2*r+1) and, astonishingly, the double sum
+        # is always 1.
+        return 1 / (2*r+1) / (2*n+2)
 
-    out = [[numpy.full(bary.shape[1:], 1.0 / numpy.sqrt(norm2(0, 0)))]]
+    out = [[numpy.full(bary.shape[1:], 1 / numpy.sqrt(norm2(0, 0)))]]
 
     u, v, w = bary
 
