@@ -7,6 +7,7 @@ import orthopy
 # import quadpy
 import pytest
 import scipy.special
+import sympy
 
 
 def op(i, j, x, y):
@@ -85,7 +86,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     # print
 
     bary = numpy.array([
-        x[0], x[1], 1.0-x[0]-x[1]
+        x[0], x[1], 1-x[0]-x[1]
         ])
     vals = orthopy.triangle.orth_tree(L, bary, 'normal')
 
@@ -100,25 +101,56 @@ def test_triangle_orth(x, tol=1.0e-12):
     return
 
 
-# TODO
-# def test_orthonormal():
+def test_triangle_orth_exact():
+    x = numpy.array([sympy.Rational(1, 3), sympy.Rational(1, 7)])
+
+    L = 2
+    exacts = [
+        [sympy.sqrt(2)],
+        [-sympy.Rational(8, 7), 8*sympy.sqrt(3)/21],
+        [-197*sympy.sqrt(6)/441,
+         -136*sympy.sqrt(2)/147,
+         -26*sympy.sqrt(30)/441],
+        ]
+
+    bary = numpy.array([
+        x[0], x[1], 1-x[0]-x[1]
+        ])
+    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
+
+    for val, ex in zip(vals, exacts):
+        for v, e in zip(val, ex):
+            assert v == e
+    return
+
+
+# TODO reenable
+# def test_orthonormal(tol=1.0e-14):
 #     '''Make sure that the polynomials are orthonormal
 #     '''
 #     n = 4
-#
-#     def f(x):
-#         bary = numpy.array([
-#             x[0], x[1], 1.0-x[0]-x[1]
-#             ])
-#         tree = orthopy.triangle.orth_tree(n, bary, 'normal')
-#         for t in tree:
-#             t *= t
-#         return numpy.concatenate(tree)
-#
 #     # Choose a scheme of order 2*n.
-#     triangle = numpy.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
-#     val = quadpy.integrate.triangle(f, triangle, quadpy.triangle.Dunavant(8))
+#     scheme = quadpy.triangle.Dunavant(8)
 #
+#     triangle = numpy.array([[0, 0], [1, 0], [0, 1]])
+#
+#     # normality
+#     def ff(x):
+#         bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
+#         tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+#         return tree * tree
+#
+#     val = quadpy.triangle.integrate(ff, triangle, scheme)
+#     assert numpy.all(abs(val - 1) < tol)
+#
+#     # orthogonality
+#     def f_shift(x):
+#         bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
+#         tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+#         return tree * numpy.roll(tree, 1, axis=0)
+#
+#     val = quadpy.triangle.integrate(f_shift, triangle, scheme)
+#     assert numpy.all(abs(val) < tol)
 #     return
 
 
