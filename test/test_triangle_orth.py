@@ -7,6 +7,7 @@ import orthopy
 import quadpy
 import pytest
 import scipy.special
+import sympy
 
 
 def op(i, j, x, y):
@@ -85,7 +86,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     # print
 
     bary = numpy.array([
-        x[0], x[1], 1.0-x[0]-x[1]
+        x[0], x[1], 1-x[0]-x[1]
         ])
     vals = orthopy.triangle.orth_tree(L, bary, 'normal')
 
@@ -97,6 +98,29 @@ def test_triangle_orth(x, tol=1.0e-12):
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+    return
+
+
+def test_triangle_orth_exact():
+    x = numpy.array([sympy.Rational(1, 3), sympy.Rational(1, 7)])
+
+    L = 2
+    exacts = [
+        [sympy.sqrt(2)],
+        [-sympy.Rational(8, 7), 8*sympy.sqrt(3)/21],
+        [-197*sympy.sqrt(6)/441,
+         -136*sympy.sqrt(2)/147,
+         -26*sympy.sqrt(30)/441],
+        ]
+
+    bary = numpy.array([
+        x[0], x[1], 1-x[0]-x[1]
+        ])
+    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
+
+    for val, ex in zip(vals, exacts):
+        for v, e in zip(val, ex):
+            assert v == e
     return
 
 
