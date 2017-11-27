@@ -124,6 +124,29 @@ def test_triangle_orth_exact():
     return
 
 
+def test_triangle_orth_1_exact():
+    x = numpy.array([sympy.Rational(1, 3), sympy.Rational(1, 7)])
+
+    L = 2
+    exacts = [
+        [1],
+        [-sympy.Rational(4, 7), sympy.Rational(4, 21)],
+        [-sympy.Rational(197, 441),
+         -sympy.Rational(136, 441),
+         -sympy.Rational(26, 441)],
+        ]
+
+    bary = numpy.array([
+        x[0], x[1], 1-x[0]-x[1]
+        ])
+    vals = orthopy.triangle.orth_tree(L, bary, '1')
+
+    for val, ex in zip(vals, exacts):
+        for v, e in zip(val, ex):
+            assert v == e
+    return
+
+
 # TODO reenable
 # def test_orthonormal(tol=1.0e-14):
 #     '''Make sure that the polynomials are orthonormal
