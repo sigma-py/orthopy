@@ -3,6 +3,7 @@
 from __future__ import division
 
 import numpy
+import sympy
 
 
 # pylint: disable=too-many-arguments
@@ -46,7 +47,8 @@ def alp_tree(
     # pylint: disable=too-many-statements,too-many-locals
     assert numpy.all(numpy.abs(x) <= 1.0)
 
-    sqrt1mx2 = numpy.sqrt(1 - x**2)
+    sqrt = numpy.vectorize(sympy.sqrt)
+    sqrt1mx2 = sqrt(1 - x**2)
 
     e = numpy.ones_like(x)
 
