@@ -9,6 +9,7 @@ import sympy
 from sympy import sqrt, pi
 
 
+# pylint: disable=too-many-locals
 def sph_exact2(theta, phi):
     try:
         assert numpy.all(theta.shape == phi.shape)
@@ -23,6 +24,7 @@ def sph_exact2(theta, phi):
     sin_theta = sin(theta)
     cos_theta = cos(theta)
 
+    # pylint: disable=invalid-unary-operand-type
     y1m1 = +sin_theta * exp(-1j*phi) * sqrt(3 / pi / 2) / 2
     y1_0 = +cos_theta * sqrt(3 / pi) / 2
     y1p1 = -sin_theta * exp(+1j*phi) * sqrt(3 / pi / 2) / 2

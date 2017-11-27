@@ -16,6 +16,7 @@ def P4_exact(x):
 
     p0_0 = 1
     #
+    # pylint: disable=invalid-unary-operand-type
     p1p1 = -sqrt1mx2
     p1_0 = x
     p1m1 = -p1p1/2
@@ -63,12 +64,10 @@ numpy.random.seed(10)
         numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
         ]
     )
-def test_unnormalized(x, tol=1.0e-12):
+def test_unnormalized(x):
     L = 4
     vals = orthopy.line.alp_tree(L, x)
     exacts = P4_exact(x)
-
-    print(vals)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -120,7 +119,7 @@ def test_spherical(x):
         numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
         ]
     )
-def test_full(x, tol=1.0e-12):
+def test_full(x):
     L = 4
     vals = orthopy.line.alp_tree(L, x, normalization='full')
     exacts = P4_exact(x)
