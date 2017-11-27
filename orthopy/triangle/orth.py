@@ -6,7 +6,6 @@ import numpy
 import sympy
 
 
-# pylint: disable=too-many-arguments
 def orth_tree(n, bary, standardization):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
