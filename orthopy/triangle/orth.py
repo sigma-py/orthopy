@@ -38,6 +38,12 @@ def orth_tree(n, bary, standardization):
                 (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
                 )
 
+        def gamma2(n):
+            return numpy.array([sympy.Rational(
+                (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
+                ) for r in range(n-1)
+                ])
+
         def delta(n):
             return sympy.Rational(2*n-1, n)
 
@@ -87,6 +93,13 @@ def orth_tree(n, bary, standardization):
                 (n-r) * (n+r+1) * (2*n-1)
                 ) * sympy.sqrt(sympy.Rational(n+1, n-1))
 
+        def gamma2(n):
+            return numpy.array([sympy.Rational(
+                (n-r-1) * (n+r) * (2*n+1),
+                (n-r) * (n+r+1) * (2*n-1)
+                ) for r in range(n-1)
+                ]) * sympy.sqrt(sympy.Rational(n+1, n-1))
+
         def delta(n):
             return sympy.sqrt(sympy.Rational((2*n+1) * (n+1) * (2*n-1), n**3))
 
@@ -95,7 +108,7 @@ def orth_tree(n, bary, standardization):
                 (2*n+1) * (n+1) * (n-1), (2*n-3) * n**2
                 ))
 
-    out = [[numpy.full(bary.shape[1:], p0)]]
+    out = [numpy.array([numpy.full(bary.shape[1:], p0)])]
 
     u, v, w = bary
 
@@ -106,15 +119,12 @@ def orth_tree(n, bary, standardization):
             out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
             for r in range(L)
             ],
-            [
-            out[L-1][L-1] * (u-v) * delta(L)
-            ]])
+            [out[L-1][L-1] * (u-v) * delta(L)],
+            ])
             )
 
         if L > 1:
-            for r in range(L-1):
-                out[-1][r] -= out[L-2][r] * gamma(L, r)
-
+            out[-1][:L-1] -= (out[L-2].T * gamma2(L)).T
             out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
     print('zz')
 
