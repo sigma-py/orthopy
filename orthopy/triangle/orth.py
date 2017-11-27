@@ -27,18 +27,19 @@ def orth_tree(n, bary, standardization):
     if standardization == '1':
         p0 = 1
 
-        def alpha(n, r):
-            return sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+        def alpha(n):
+            return numpy.array([
+                sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+                for r in range(L)
+                ])
 
-        def beta(n, r):
-            return sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+        def beta(n):
+            return numpy.array([
+                sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+                for r in range(L)
+                ])
 
-        def gamma(n, r):
-            return sympy.Rational(
-                (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
-                )
-
-        def gamma2(n):
+        def gamma(n):
             return numpy.array([sympy.Rational(
                 (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
                 ) for r in range(n-1)
@@ -80,20 +81,20 @@ def orth_tree(n, bary, standardization):
         assert standardization == 'normal'
         p0 = sympy.sqrt(2)
 
-        def alpha(n, r):
-            return sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
+        def alpha(n):
+            return numpy.array([
+                sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
+                for r in range(L)
+                ])
 
-        def beta(n, r):
-            return sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1)) \
+        def beta(n):
+            return numpy.array([
+                sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
                 * sympy.sqrt((n+1)*n)
+                for r in range(L)
+                ])
 
-        def gamma(n, r):
-            return sympy.Rational(
-                (n-r-1) * (n+r) * (2*n+1),
-                (n-r) * (n+r+1) * (2*n-1)
-                ) * sympy.sqrt(sympy.Rational(n+1, n-1))
-
-        def gamma2(n):
+        def gamma(n):
             return numpy.array([sympy.Rational(
                 (n-r-1) * (n+r) * (2*n+1),
                 (n-r) * (n+r+1) * (2*n-1)
@@ -112,20 +113,15 @@ def orth_tree(n, bary, standardization):
 
     u, v, w = bary
 
-    print('aa', n)
-
     for L in range(1, n+1):
-        out.append(numpy.concatenate([[
-            out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
-            for r in range(L)
-            ],
+        out.append(numpy.concatenate([
+            out[L-1] * (numpy.multiply.outer(alpha(L), 1-2*w).T - beta(L)).T,
             [out[L-1][L-1] * (u-v) * delta(L)],
             ])
             )
 
         if L > 1:
-            out[-1][:L-1] -= (out[L-2].T * gamma2(L)).T
+            out[-1][:L-1] -= (out[L-2].T * gamma(L)).T
             out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
-    print('zz')
 
     return out
