@@ -6,7 +6,8 @@ import numpy
 import sympy
 
 
-def orth_tree(n, bary, standardization):
+# pylint: disable=too-many-locals
+def orth_tree(n, bary, standardization, symbolic=False):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
@@ -25,18 +26,25 @@ def orth_tree(n, bary, standardization):
     <https://doi.org/10.3390/math4020025>.
     '''
     if standardization == '1':
-        out = [[numpy.full(bary.shape[1:], 1)]]
+        p0 = 1
 
-        def alpha(n, r):
-            return sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+        def alpha(n):
+            return numpy.array([
+                sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+                for r in range(n)
+                ])
 
-        def beta(n, r):
-            return sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+        def beta(n):
+            return numpy.array([
+                sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+                for r in range(n)
+                ])
 
-        def gamma(n, r):
-            return sympy.Rational(
+        def gamma(n):
+            return numpy.array([sympy.Rational(
                 (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
-                )
+                ) for r in range(n-1)
+                ])
 
         def delta(n):
             return sympy.Rational(2*n-1, n)
@@ -72,21 +80,27 @@ def orth_tree(n, bary, standardization):
         #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
         #
         assert standardization == 'normal'
+        p0 = sympy.sqrt(2)
 
-        out = [[numpy.full(bary.shape[1:], sympy.sqrt(2))]]
+        def alpha(n):
+            return numpy.array([
+                sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
+                for r in range(n)
+                ])
 
-        def alpha(n, r):
-            return sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
-
-        def beta(n, r):
-            return sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1)) \
+        def beta(n):
+            return numpy.array([
+                sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
                 * sympy.sqrt((n+1)*n)
+                for r in range(n)
+                ])
 
-        def gamma(n, r):
-            return sympy.Rational(
+        def gamma(n):
+            return numpy.array([sympy.Rational(
                 (n-r-1) * (n+r) * (2*n+1),
                 (n-r) * (n+r+1) * (2*n-1)
-                ) * sympy.sqrt(sympy.Rational(n+1, n-1))
+                ) for r in range(n-1)
+                ]) * sympy.sqrt(sympy.Rational(n+1, n-1))
 
         def delta(n):
             return sympy.sqrt(sympy.Rational((2*n+1) * (n+1) * (2*n-1), n**3))
@@ -96,28 +110,39 @@ def orth_tree(n, bary, standardization):
                 (2*n+1) * (n+1) * (n-1), (2*n-3) * n**2
                 ))
 
+    out = [numpy.array([numpy.full(bary.shape[1:], p0)])]
+
+    flt = numpy.vectorize(float)
+    if not symbolic:
+        out[0] = flt(out[0])
+
     u, v, w = bary
 
-    if n > 0:
-        L = 1
-        out.append([
-            out[0][0] * (alpha(L, 0) * (1-2*w) - beta(L, 0)),
-            out[0][0] * (u-v) * delta(L),
-            ])
+    for L in range(1, n+1):
+        a = alpha(L)
+        b = beta(L)
+        d = delta(L)
 
-    for L in range(2, n+1):
-        out.append([
-            + out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
-            - out[L-2][r] * gamma(L, r)
-            for r in range(L-1)
-            ] +
-            [
-            out[L-1][L-1] * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
-            ] +
-            [
-            + out[L-1][L-1] * (u-v) * delta(L)
-            - out[L-2][L-2] * (u+v)**2 * epsilon(L)
-            ]
+        if not symbolic:
+            a = flt(a)
+            b = flt(b)
+            d = flt(d)
+
+        out.append(numpy.concatenate([
+            out[L-1] * (numpy.multiply.outer(a, 1-2*w).T - b).T,
+            [out[L-1][L-1] * (u-v) * d],
+            ])
             )
+
+        if L > 1:
+            c = gamma(L)
+            e = epsilon(L)
+
+            if not symbolic:
+                c = flt(c)
+                e = flt(e)
+
+            out[-1][:L-1] -= (out[L-2].T * c).T
+            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * e
 
     return out
