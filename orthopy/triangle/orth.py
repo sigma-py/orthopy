@@ -6,7 +6,7 @@ import numpy
 import sympy
 
 
-def orth_tree(n, bary, standardization):
+def orth_tree(n, bary, standardization, symbolic=False):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
@@ -111,17 +111,37 @@ def orth_tree(n, bary, standardization):
 
     out = [numpy.array([numpy.full(bary.shape[1:], p0)])]
 
+    flt = numpy.vectorize(float)
+    if not symbolic:
+        out[0] = flt(out[0])
+
     u, v, w = bary
 
     for L in range(1, n+1):
+        a = alpha(L)
+        b = beta(L)
+        d = delta(L)
+
+        if not symbolic:
+            a = flt(a)
+            b = flt(b)
+            d = flt(d)
+
         out.append(numpy.concatenate([
-            out[L-1] * (numpy.multiply.outer(alpha(L), 1-2*w).T - beta(L)).T,
-            [out[L-1][L-1] * (u-v) * delta(L)],
+            out[L-1] * (numpy.multiply.outer(a, 1-2*w).T - b).T,
+            [out[L-1][L-1] * (u-v) * d],
             ])
             )
 
         if L > 1:
-            out[-1][:L-1] -= (out[L-2].T * gamma(L)).T
-            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
+            c = gamma(L)
+            e = epsilon(L)
+
+            if not symbolic:
+                c = flt(c)
+                e = flt(e)
+
+            out[-1][:L-1] -= (out[L-2].T * c).T
+            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * e
 
     return out
