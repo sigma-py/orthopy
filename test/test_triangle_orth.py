@@ -117,7 +117,7 @@ def test_triangle_orth_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
+    vals = orthopy.triangle.orth_tree(L, bary, 'normal', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -143,7 +143,7 @@ def test_triangle_orth_1_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, '1')
+    vals = orthopy.triangle.orth_tree(L, bary, '1', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
