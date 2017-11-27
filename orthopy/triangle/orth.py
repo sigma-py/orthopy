@@ -6,6 +6,7 @@ import numpy
 import sympy
 
 
+# pylint: disable=too-many-locals
 def orth_tree(n, bary, standardization, symbolic=False):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
@@ -30,13 +31,13 @@ def orth_tree(n, bary, standardization, symbolic=False):
         def alpha(n):
             return numpy.array([
                 sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
-                for r in range(L)
+                for r in range(n)
                 ])
 
         def beta(n):
             return numpy.array([
                 sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
-                for r in range(L)
+                for r in range(n)
                 ])
 
         def gamma(n):
@@ -84,14 +85,14 @@ def orth_tree(n, bary, standardization, symbolic=False):
         def alpha(n):
             return numpy.array([
                 sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
-                for r in range(L)
+                for r in range(n)
                 ])
 
         def beta(n):
             return numpy.array([
                 sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
                 * sympy.sqrt((n+1)*n)
-                for r in range(L)
+                for r in range(n)
                 ])
 
         def gamma(n):
