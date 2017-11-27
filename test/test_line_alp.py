@@ -7,7 +7,7 @@ import numpy
 from numpy import sqrt
 import orthopy
 import pytest
-from scipy.special import gammaln
+# import sympy
 
 
 def P4_exact(x):
@@ -69,6 +69,15 @@ def test_unnormalized(x, tol=1.0e-12):
     return
 
 
+def ff(l, m):
+    '''factorial(l-m) / factorial(l+m)
+    '''
+    if m > 0:
+        return 1.0 / numpy.prod([l-m+1+i for i in range(2*m)])
+
+    return numpy.prod([l-abs(m)+1+i for i in range(2*abs(m))])
+
+
 @pytest.mark.parametrize(
     'x', [1.0e-1, 1.0e-4, numpy.random.rand(3, 2)]
     )
@@ -83,11 +92,7 @@ def test_spherical(x, tol=1.0e-12):
     for L in range(len(exacts)):
         for k, m in enumerate(range(-L, L+1)):
             # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
-            exacts[L][k] *= \
-                numpy.sqrt(
-                    (2*L+1) / 4 / numpy.pi
-                    * numpy.exp((gammaln(L-m+1) - gammaln(L+m+1)))
-                    )
+            exacts[L][k] *= numpy.sqrt((2*L+1) / 4 / numpy.pi * ff(L, m))
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -106,11 +111,7 @@ def test_full(x, tol=1.0e-12):
     # pylint: disable=consider-using-enumerate
     for L in range(len(exacts)):
         for k, m in enumerate(range(-L, L+1)):
-            exacts[L][k] *= \
-                numpy.sqrt(
-                    (2*L+1) / 2
-                    * numpy.exp((gammaln(L-m+1) - gammaln(L+m+1)))
-                    )
+            exacts[L][k] *= numpy.sqrt((2*L+1) / 2 * ff(L, m))
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -129,9 +130,7 @@ def test_schmidt(x, tol=1.0e-12):
     # pylint: disable=consider-using-enumerate
     for L in range(len(exacts)):
         for k, m in enumerate(range(-L, L+1)):
-            # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
-            exacts[L][k] *= \
-                2 * numpy.exp(0.5 * (gammaln(L-m+1) - gammaln(L+m+1)))
+            exacts[L][k] *= 2 * numpy.sqrt(ff(L, m))
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
