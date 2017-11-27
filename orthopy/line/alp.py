@@ -50,10 +50,10 @@ def alp_tree(
     sqrt = numpy.vectorize(sympy.sqrt)
     sqrt1mx2 = sqrt(1 - x**2)
 
-    e = numpy.ones_like(x)
+    e = numpy.ones_like(x, dtype=int)
 
     if normalization is None:
-        alpha = 1.0
+        alpha = 1
         out = [[alpha * e]]
 
         def z0_factor(L):
@@ -131,24 +131,24 @@ def alp_tree(
         assert normalization == 'schmidt', \
             'Unknown normalization \'{}\'.'.format(normalization)
 
-        alpha = 2.0
+        alpha = 2
         out = [[alpha * e]]
 
         def z0_factor(L):
-            return numpy.sqrt((2*L-1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L-1, 2*L))
 
         def z1_factor(L):
-            return numpy.sqrt((2*L-1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L-1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
-            d = numpy.sqrt((L+m) * (L-m))
+            d = sqrt((L+m) * (L-m))
             return (2*L-1) / d
 
         def C1(L):
             m = numpy.arange(-L+2, L-1)
-            d = numpy.sqrt((L+m) * (L-m))
-            return numpy.sqrt((L+m-1) * (L-m-1)) / d
+            d = sqrt((L+m) * (L-m))
+            return sqrt((L+m-1) * (L-m-1)) / d
 
     if with_condon_shortley_phase:
         def z1_factor_CSP(L):

@@ -73,7 +73,7 @@ def ff(l, m):
     '''factorial(l-m) / factorial(l+m)
     '''
     if m > 0:
-        return sympy.Rational(1 / sympy.prod([l-m+1+i for i in range(2*m)]))
+        return sympy.Rational(1, sympy.prod([l-m+1+i for i in range(2*m)]))
 
     return sympy.prod([l-abs(m)+1+i for i in range(2*abs(m))])
 
@@ -96,11 +96,6 @@ def test_spherical(x, tol=1.0e-12):
     for L in range(len(exacts)):
         for k, m in enumerate(range(-L, L+1)):
             # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
-            print(exacts[L][k])
-            try:
-                print(exacts[L][k].dtype)
-            except AttributeError:
-                pass
             exacts[L][k] *= sympy.sqrt(
                     sympy.Rational(2*L+1, 4) / sympy.pi * ff(L, m)
                     )
@@ -153,14 +148,9 @@ def test_schmidt(x, tol=1.0e-12):
         for k, m in enumerate(range(-L, L+1)):
             exacts[L][k] *= 2 * sympy.sqrt(ff(L, m))
 
-    print(exacts)
-    print()
-    print(vals)
-    exit(1)
-
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+            assert numpy.all(v == e)
     return
 
 
