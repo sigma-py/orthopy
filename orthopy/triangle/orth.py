@@ -71,48 +71,45 @@ def _standardization_1(n, bary):
 
 
 def _standardization_normal(n, bary):
+    '''The coefficients here are based on the insight that
 
+      int_T P_{n, r}^2 =
+          int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}^2(w) (1-w)^(r+s+1) dw.
+
+    For reference, see
+    page 219 (and the reference to Gould, 1972) in
+
+     Farouki, Goodman, Sauer,
+     Construction of orthogonal bases for polynomials in Bernstein form
+     on triangular and simplex domains,
+     Computer Aided Geometric Design 20 (2003) 209–230.
+
+    From this, one gets
+
+      int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2)
+          sum_{i=0}^{n-r} sum_{j=0}^{n-r}
+              (-1)**(i+j) * binom(n+r+1, i) * binom(n-r, i)
+                          * binom(n+r+1, j) * binom(n-r, j)
+                          / binom(2*n+1, i+j)
+
+    The Legendre integral is 1/(2*r+1) and, astonishingly, the double sum
+    is always 1, hence
+
+      int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
+    '''
     def alpha(n, r):
-        return sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+        return sympy.Rational(2*n+1, (n-r) * (n+r+1)) \
+            * sympy.sqrt((n+1)*n)
 
     def beta(n, r):
-        return sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+        return sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1)) \
+            * sympy.sqrt((n+1)*n)
 
     def gamma(n, r):
         return sympy.Rational(
             (n-r-1) * (n+r) * (2*n+1),
             (n-r) * (n+r+1) * (2*n-1)
-            )
-
-    def norm2(n, r):
-        '''||P_{n,r}||^2 of the polynomials scaled as in the standardization-1
-        case.
-        '''
-        # This probably has a much simpler representation. For reference, see
-        # page 219 (and the reference to Gould, 1972) in
-        #
-        #  Farouki, Goodman, Sauer,
-        #  Construction of orthogonal bases for polynomials in Bernstein form
-        #  on triangular and simplex domains,
-        #  Computer Aided Geometric Design 20 (2003) 209–230.
-        #
-        # The below expression is actually derived with the help of this
-        # article, in particular the insight that
-        #
-        #   int_T P_{n, r}^2 =
-        #       int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}^2(w) (1-w)^(r+s+1) dw.
-        #
-        # From this, one gets
-        #
-        #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2)
-        #       sum_{i=0}^{n-r} sum_{j=0}^{n-r}
-        #           (-1)**(i+j) * binom(n+r+1, i) * binom(n-r, i)
-        #                       * binom(n+r+1, j) * binom(n-r, j)
-        #                       / binom(2*n+1, i+j)
-        #
-        # The Legendre integral is 1/(2*r+1) and, astonishingly, the double sum
-        # is always 1.
-        return sympy.Rational(1, (2*r+1) * (2*n+2))
+            ) * sympy.sqrt(sympy.Rational(n+1, n-1))
 
     out = [[numpy.full(bary.shape[1:], sympy.sqrt(2))]]
 
@@ -126,25 +123,20 @@ def _standardization_normal(n, bary):
 
     for L in range(2, n+1):
         out.append([
-            +out[L-1][r]
-            * (alpha(L, r) * (1-2*w) - beta(L, r))
-            * sympy.sqrt(norm2(L-1, r) / norm2(L, r))
-            - out[L-2][r]
-            * gamma(L, r) * sympy.sqrt(norm2(L-2, r) / norm2(L, r))
+            + out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
+            - out[L-2][r] * gamma(L, r)
             for r in range(L-1)
             ] +
             [
-            out[L-1][L-1]
-            * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
-            * sympy.sqrt(sympy.Rational(L+1, L))
+            out[L-1][L-1] * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
             ] +
             [
             + out[L-1][L-1]
             * sympy.Rational(1, L) * (u-v)
-            * sympy.sqrt(sympy.Rational((2*L+1) * (2*L+2) * (2*L-1), (2*L)))
+            * sympy.sqrt(sympy.Rational((2*L+1) * (L+1) * (2*L-1), L))
             - out[L-2][L-2]
             * sympy.Rational(L-1, L) * (u+v)**2
-            * sympy.sqrt(sympy.Rational((2*L+1) * (2*L+2), (2*L-3) * (2*L-2)))
+            * sympy.sqrt(sympy.Rational((2*L+1) * (L+1), (2*L-3) * (L-1)))
             ]
             )
     return out
