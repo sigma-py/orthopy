@@ -89,24 +89,30 @@ def alp_tree(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     elif normalization == 'complex spherical':
-        alpha = 1.0 / 2 / numpy.sqrt(numpy.pi)
-        out = [[alpha * numpy.ones_like(x, dtype=complex)]]
+        alpha = 1 / sympy.sqrt(sympy.pi) / 2
+        out = [[e * alpha]]
 
         def z0_factor(L):
-            return numpy.sqrt((2*L+1)/(2*L)) * sqrt1mx2 * numpy.exp(-1j * phi)
+            return (
+                sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
+                * sympy.exp(-1j * phi)
+                )
 
         def z1_factor(L):
-            return numpy.sqrt((2*L+1)/(2*L)) * sqrt1mx2 * numpy.exp(+1j * phi)
+            return (
+                sqrt1mx2 * sympy.sqrt(sympy.Rational(2*L+1, 2*L))
+                * sympy.exp(+1j * phi)
+                )
 
         def C0(L):
             m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((2*L-1) / d)
+            d = (L+m) * (L-m)
+            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
 
         def C1(L):
             m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((L+m-1) * (L-m-1) / (2*L-3) / d)
+            d = (L+m) * (L-m)
+            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     elif normalization == 'full':
         alpha = 1 / sqrt(2)
