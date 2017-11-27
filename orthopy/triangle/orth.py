@@ -25,7 +25,7 @@ def orth_tree(n, bary, standardization):
     <https://doi.org/10.3390/math4020025>.
     '''
     if standardization == '1':
-        out = [[numpy.full(bary.shape[1:], 1)]]
+        p0 = 1
 
         def alpha(n, r):
             return sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
@@ -72,8 +72,7 @@ def orth_tree(n, bary, standardization):
         #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
         #
         assert standardization == 'normal'
-
-        out = [[numpy.full(bary.shape[1:], sympy.sqrt(2))]]
+        p0 = sympy.sqrt(2)
 
         def alpha(n, r):
             return sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
@@ -96,28 +95,27 @@ def orth_tree(n, bary, standardization):
                 (2*n+1) * (n+1) * (n-1), (2*n-3) * n**2
                 ))
 
+    out = [[numpy.full(bary.shape[1:], p0)]]
+
     u, v, w = bary
 
-    if n > 0:
-        L = 1
-        out.append([
-            out[0][0] * (alpha(L, 0) * (1-2*w) - beta(L, 0)),
-            out[0][0] * (u-v) * delta(L),
-            ])
+    print('aa', n)
 
-    for L in range(2, n+1):
-        out.append([
-            + out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
-            - out[L-2][r] * gamma(L, r)
-            for r in range(L-1)
-            ] +
+    for L in range(1, n+1):
+        out.append(numpy.concatenate([[
+            out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
+            for r in range(L)
+            ],
             [
-            out[L-1][L-1] * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
-            ] +
-            [
-            + out[L-1][L-1] * (u-v) * delta(L)
-            - out[L-2][L-2] * (u+v)**2 * epsilon(L)
-            ]
+            out[L-1][L-1] * (u-v) * delta(L)
+            ]])
             )
+
+        if L > 1:
+            for r in range(L-1):
+                out[-1][r] -= out[L-2][r] * gamma(L, r)
+
+            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
+    print('zz')
 
     return out
