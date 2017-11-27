@@ -33,38 +33,41 @@ def orth_tree(n, bary, standardization):
 
 
 def _standardization_1(n, bary):
-    out = [numpy.full(bary.shape[1:], 1.0)]
 
     def alpha(n, r):
-        return n*(2*n+1) / (n-r) / (n+r+1)
+        return sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
 
     def beta(n, r):
-        return n * (2*r+1)**2 / (n-r) / (n+r+1) / (2*n-1)
+        return sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
 
     def gamma(n, r):
-        return (n-r-1) * (n+r) * (2*n+1) / (n-r) / (n+r+1) / (2*n-1)
+        return sympy.Rational(
+            (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
+            )
 
     u, v, w = bary
+
+    out = [[numpy.full(bary.shape[1:], 1)]]
 
     if n > 0:
         L = 1
         out.append([
-            (alpha(L, 0) * (1-2*w) - beta(L, 0)) * out[0][0],
-            (2*L-1)/L * (u-v) * out[0][0],
+            out[0][0] * (alpha(L, 0) * (1-2*w) - beta(L, 0)),
+            out[0][0] * (u-v) * sympy.Rational(2*L-1, L),
             ])
 
     for L in range(2, n+1):
         out.append([
-            + (alpha(L, r) * (1-2*w) - beta(L, r)) * out[L-1][r]
-            - gamma(L, r) * out[L-2][r]
+            + out[L-1][r] * (alpha(L, r) * (1-2*w) - beta(L, r))
+            - out[L-2][r] * gamma(L, r)
             for r in range(L-1)
             ] +
             [
-            (alpha(L, L-1) * (1-2*w) - beta(L, L-1)) * out[L-1][L-1]
+            out[L-1][L-1] * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
             ] +
             [
-            + (2*L-1)/L * (u-v) * out[L-1][L-1]
-            - (L-1)/L * (u+v)**2 * out[L-2][L-2]
+            + out[L-1][L-1] * sympy.Rational(2*L-1, L) * (u-v)
+            - out[L-2][L-2] * sympy.Rational(L-1, L) * (u+v)**2
             ]
             )
     return out
