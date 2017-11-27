@@ -57,15 +57,22 @@ numpy.random.seed(10)
 
 
 @pytest.mark.parametrize(
-    'x', [1.0e-1, 1.0e-4, numpy.random.rand(3, 2)]
+    'x', [
+        sympy.Rational(1, 10),
+        sympy.Rational(1, 1000),
+        numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
+        ]
     )
 def test_unnormalized(x, tol=1.0e-12):
     L = 4
     vals = orthopy.line.alp_tree(L, x)
     exacts = P4_exact(x)
+
+    print(vals)
+
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+            assert numpy.all(v == e)
     return
 
 
@@ -85,7 +92,7 @@ def ff(l, m):
         numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
         ]
     )
-def test_spherical(x, tol=1.0e-12):
+def test_spherical(x):
     '''Test spherical harmonic normalization.
     '''
     L = 4
@@ -102,7 +109,7 @@ def test_spherical(x, tol=1.0e-12):
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+            assert numpy.all(v == e)
     return
 
 
@@ -127,7 +134,7 @@ def test_full(x, tol=1.0e-12):
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+            assert numpy.all(v == e)
     return
 
 
@@ -138,7 +145,7 @@ def test_full(x, tol=1.0e-12):
         numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
         ]
     )
-def test_schmidt(x, tol=1.0e-12):
+def test_schmidt(x):
     L = 4
     vals = orthopy.line.alp_tree(L, x, normalization='schmidt')
     exacts = P4_exact(x)

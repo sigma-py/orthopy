@@ -54,7 +54,7 @@ def alp_tree(
 
     if normalization is None:
         alpha = 1
-        out = [[alpha * e]]
+        out = [[e * alpha]]
 
         def z0_factor(L):
             return sqrt1mx2 / (2*L)
@@ -63,32 +63,31 @@ def alp_tree(
             return sqrt1mx2 * (2*L-1)
 
         def C0(L):
-            m = numpy.arange(-L+1, L)
-            return (2*L-1) / (L-m)
+            return [sympy.Rational(2*L-1, L-m) for m in range(-L+1, L)]
 
         def C1(L):
-            m = numpy.arange(-L+2, L-1)
-            return (L-1+m) / (L-m)
+            return [sympy.Rational(L-1+m, L-m) for m in range(-L+2, L-1)]
 
     elif normalization == 'spherical':
-        alpha = 1.0 / 2 / numpy.sqrt(numpy.pi)
-        out = [[alpha * e]]
+        alpha = 1 / (2*sympy.sqrt(sympy.pi))
+        out = [[e * alpha]]
 
         def z0_factor(L):
-            return numpy.sqrt((2*L+1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
 
         def z1_factor(L):
-            return numpy.sqrt((2*L+1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((2*L-1) / d)
+            d = (L+m) * (L-m)
+            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
 
         def C1(L):
             m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((L+m-1) * (L-m-1) / (2*L-3) / d)
+            d = (L+m) * (L-m)
+            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
+
     elif normalization == 'complex spherical':
         alpha = 1.0 / 2 / numpy.sqrt(numpy.pi)
         out = [[alpha * numpy.ones_like(x, dtype=complex)]]
@@ -108,25 +107,27 @@ def alp_tree(
             m = numpy.arange(-L+2, L-1)
             d = (L+m) * (L-m) / (2*L+1)
             return numpy.sqrt((L+m-1) * (L-m-1) / (2*L-3) / d)
+
     elif normalization == 'full':
-        alpha = numpy.sqrt(0.5)
-        out = [[alpha * e]]
+        alpha = 1 / sqrt(2)
+        out = [[e * alpha]]
 
         def z0_factor(L):
-            return numpy.sqrt((2*L+1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
 
         def z1_factor(L):
-            return numpy.sqrt((2*L+1) / (2*L)) * sqrt1mx2
+            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((2*L-1) / d)
+            d = (L+m) * (L-m)
+            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
 
         def C1(L):
             m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m) / (2*L+1)
-            return numpy.sqrt((L+m-1) * (L-m-1) / (2*L-3) / d)
+            d = (L+m) * (L-m)
+            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
+
     else:
         assert normalization == 'schmidt', \
             'Unknown normalization \'{}\'.'.format(normalization)
