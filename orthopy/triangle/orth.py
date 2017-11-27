@@ -98,8 +98,7 @@ def _standardization_normal(n, bary):
       int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
     '''
     def alpha(n, r):
-        return sympy.Rational(2*n+1, (n-r) * (n+r+1)) \
-            * sympy.sqrt((n+1)*n)
+        return sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
 
     def beta(n, r):
         return sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1)) \
@@ -111,14 +110,23 @@ def _standardization_normal(n, bary):
             (n-r) * (n+r+1) * (2*n-1)
             ) * sympy.sqrt(sympy.Rational(n+1, n-1))
 
+    def delta(n):
+        return sympy.sqrt(sympy.Rational((2*n+1) * (n+1) * (2*n-1), n**3))
+
+    def epsilon(n):
+        return sympy.sqrt(sympy.Rational(
+            (2*L+1) * (L+1) * (L-1), (2*L-3) * L**2
+            ))
+
     out = [[numpy.full(bary.shape[1:], sympy.sqrt(2))]]
 
     u, v, w = bary
 
     if n > 0:
+        L = 1
         out.append([
-            out[0][0] * (3*(1-2*w) - 1) / sympy.sqrt(2),
-            out[0][0] * (u-v) * sympy.sqrt(6),
+            out[0][0] * (alpha(L, 0) * (1-2*w) - beta(L, 0)),
+            out[0][0] * (u-v) * delta(L),
             ])
 
     for L in range(2, n+1):
@@ -131,12 +139,8 @@ def _standardization_normal(n, bary):
             out[L-1][L-1] * (alpha(L, L-1) * (1-2*w) - beta(L, L-1))
             ] +
             [
-            + out[L-1][L-1]
-            * sympy.Rational(1, L) * (u-v)
-            * sympy.sqrt(sympy.Rational((2*L+1) * (L+1) * (2*L-1), L))
-            - out[L-2][L-2]
-            * sympy.Rational(L-1, L) * (u+v)**2
-            * sympy.sqrt(sympy.Rational((2*L+1) * (L+1), (2*L-3) * (L-1)))
+            + out[L-1][L-1] * (u-v) * delta(L)
+            - out[L-2][L-2] * (u+v)**2 * epsilon(L)
             ]
             )
     return out
