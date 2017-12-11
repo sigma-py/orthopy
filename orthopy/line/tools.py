@@ -80,10 +80,7 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     '''Evaluate the orthogonal polynomial defined by its recurrence coefficients
     a, b, and c at the point(s) t.
     '''
-    try:
-        vals1 = numpy.zeros_like(t, dtype=int)
-    except AttributeError:
-        vals1 = 0
+    vals1 = numpy.zeros_like(t, dtype=int)
 
     # Wait for <https://github.com/sympy/sympy/issues/13637> to be resolved so
     # one can use `full` in all cases.

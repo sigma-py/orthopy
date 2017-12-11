@@ -66,7 +66,7 @@ numpy.random.seed(10)
     )
 def test_unnormalized(x):
     L = 4
-    vals = orthopy.line.alp_tree(L, x)
+    vals = orthopy.line.alp_tree(L, x, symbolic=True)
     exacts = P4_exact(x)
 
     for val, ex in zip(vals, exacts):
@@ -95,7 +95,9 @@ def test_spherical(x):
     '''Test spherical harmonic normalization.
     '''
     L = 4
-    vals = orthopy.line.alp_tree(L, x, normalization='spherical')
+    vals = orthopy.line.alp_tree(
+            L, x, normalization='spherical', symbolic=True
+            )
     exacts = P4_exact(x)
 
     # pylint: disable=consider-using-enumerate
@@ -121,7 +123,7 @@ def test_spherical(x):
     )
 def test_full(x):
     L = 4
-    vals = orthopy.line.alp_tree(L, x, normalization='full')
+    vals = orthopy.line.alp_tree(L, x, normalization='full', symbolic=True)
     exacts = P4_exact(x)
 
     # pylint: disable=consider-using-enumerate
@@ -146,7 +148,7 @@ def test_full(x):
     )
 def test_schmidt(x):
     L = 4
-    vals = orthopy.line.alp_tree(L, x, normalization='schmidt')
+    vals = orthopy.line.alp_tree(L, x, normalization='schmidt', symbolic=True)
     exacts = P4_exact(x)
 
     # pylint: disable=consider-using-enumerate
@@ -165,7 +167,8 @@ def test_show():
     x = numpy.linspace(-1.0, +1.0, 500)
     vals = orthopy.line.alp_tree(
             L, x, normalization='full',
-            with_condon_shortley_phase=False
+            with_condon_shortley_phase=False,
+            symbolic=True
             )
 
     for val in vals[L]:
