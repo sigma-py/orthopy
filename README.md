@@ -162,7 +162,7 @@ Some explanations:
    p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(n, a, b, 'monic')
    ```
    Possible choices for the standardization are `'monic'`,
-   `'p(1)=(n+alpha over n)'`, and `'||p**2||=1`.
+   `'p(1)=(n+alpha over n)'`, and `'normal`.
 
  * The Gautschi test: [As recommended by
    Gautschi](https://doi.org/10.1007/BF02218441), you can test your
@@ -202,9 +202,9 @@ is recurrent and numerically stable.
 ```python
 vals = orthopy.triangle.orth_tree(4, x, 'normal', symbolic=False)
 ```
-Available standardizations are `'normal'` (normalized polynomials, i.e.,
-`||p||=1`) and `'1'` where the polynomial is `1` in at least one corner of
-the triangle.
+Available standardizations are `'normal'` (normalized polynomials, i.e., the
+integral of the squared function equals 1) and `'1'` where the polynomial is
+`1` in at least one corner of the triangle.
 
 If `symbolic=True` is specified, all computations are performed
 symbolically. This can be used, for example, to get the classical

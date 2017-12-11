@@ -138,7 +138,7 @@ def jacobi(n, alpha, beta, standardization):
             ]
 
     else:
-        assert standardization == '||p**2||=1', \
+        assert standardization == 'normal', \
             'Unknown standardization \'{}\'.'.format(standardization)
 
         p0 = sympy.sqrt(1 / int_1)
