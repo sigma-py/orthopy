@@ -232,7 +232,7 @@ print(sympy.expand(tree[3][1]))
 Evaluate the entire _spherical harmonics_ tree up to a given level at once.
 Again, the implementation is numerically stable.
 ```python
-vals = orthopy.sphere.sph_tree(n, x)
+vals = orthopy.sphere.sph_tree(n, x, symbolic=False)
 ```
 
 

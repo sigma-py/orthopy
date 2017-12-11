@@ -9,7 +9,8 @@ import sympy
 # pylint: disable=too-many-arguments
 def alp_tree(
         n, x, phi=None, normalization=None,
-        with_condon_shortley_phase=True
+        with_condon_shortley_phase=True,
+        symbolic=False
         ):
     '''Evaluates the entire tree of associated Legendre polynomials up to depth
     n.
@@ -47,14 +48,17 @@ def alp_tree(
     # pylint: disable=too-many-statements,too-many-locals
     assert numpy.all(numpy.abs(x) <= 1.0)
 
-    sqrt = numpy.vectorize(sympy.sqrt)
+    exp = sympy.exp if symbolic else numpy.exp
+    pi = sympy.pi if symbolic else numpy.pi
+    sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
+
     sqrt1mx2 = sqrt(1 - x**2)
 
     e = numpy.ones_like(x, dtype=int)
 
     if normalization is None:
         alpha = 1
-        out = [[e * alpha]]
 
         def z0_factor(L):
             return sqrt1mx2 / (2*L)
@@ -63,20 +67,19 @@ def alp_tree(
             return sqrt1mx2 * (2*L-1)
 
         def C0(L):
-            return [sympy.Rational(2*L-1, L-m) for m in range(-L+1, L)]
+            return [frac(2*L-1, L-m) for m in range(-L+1, L)]
 
         def C1(L):
-            return [sympy.Rational(L-1+m, L-m) for m in range(-L+2, L-1)]
+            return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
 
     elif normalization == 'spherical':
-        alpha = 1 / (2*sympy.sqrt(sympy.pi))
-        out = [[e * alpha]]
+        alpha = 1 / (2*sqrt(pi))
 
         def z0_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
 
         def z1_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
@@ -89,19 +92,17 @@ def alp_tree(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     elif normalization == 'complex spherical':
-        alpha = 1 / sympy.sqrt(sympy.pi) / 2
-        out = [[e * alpha]]
+        alpha = 1 / sqrt(pi) / 2
 
         def z0_factor(L):
             return (
-                sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
-                * sympy.exp(-1j * phi)
+                sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) * exp(-1j * phi)
                 )
 
         def z1_factor(L):
             return (
-                sqrt1mx2 * sympy.sqrt(sympy.Rational(2*L+1, 2*L))
-                * sympy.exp(+1j * phi)
+                sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
+                * exp(+1j * phi)
                 )
 
         def C0(L):
@@ -116,13 +117,12 @@ def alp_tree(
 
     elif normalization == 'full':
         alpha = 1 / sqrt(2)
-        out = [[e * alpha]]
 
         def z0_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
 
         def z1_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L+1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
@@ -139,13 +139,12 @@ def alp_tree(
             'Unknown normalization \'{}\'.'.format(normalization)
 
         alpha = 2
-        out = [[alpha * e]]
 
         def z0_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L-1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L))
 
         def z1_factor(L):
-            return sqrt1mx2 * sqrt(sympy.Rational(2*L-1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L))
 
         def C0(L):
             m = numpy.arange(-L+1, L)
@@ -164,6 +163,7 @@ def alp_tree(
         z1_factor_CSP = z1_factor
 
     # Here comes the actual loop.
+    out = [[e * alpha]]
     for L in range(1, n+1):
         out.append(
             numpy.concatenate([

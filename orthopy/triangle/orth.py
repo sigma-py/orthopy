@@ -25,32 +25,35 @@ def orth_tree(n, bary, standardization, symbolic=False):
     Mathematics 2016, 4(2), 25,
     <https://doi.org/10.3390/math4020025>.
     '''
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+
     if standardization == '1':
         p0 = 1
 
         def alpha(n):
             return numpy.array([
-                sympy.Rational(n*(2*n+1), (n-r) * (n+r+1))
+                frac(n*(2*n+1), (n-r) * (n+r+1))
                 for r in range(n)
                 ])
 
         def beta(n):
             return numpy.array([
-                sympy.Rational(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+                frac(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
                 for r in range(n)
                 ])
 
         def gamma(n):
-            return numpy.array([sympy.Rational(
+            return numpy.array([frac(
                 (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
                 ) for r in range(n-1)
                 ])
 
         def delta(n):
-            return sympy.Rational(2*n-1, n)
+            return frac(2*n-1, n)
 
         def epsilon(n):
-            return sympy.Rational(n-1, n)
+            return frac(n-1, n)
 
     else:
         # The coefficients here are based on the insight that
@@ -80,69 +83,49 @@ def orth_tree(n, bary, standardization, symbolic=False):
         #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
         #
         assert standardization == 'normal'
-        p0 = sympy.sqrt(2)
+        p0 = sqrt(2)
 
         def alpha(n):
             return numpy.array([
-                sympy.Rational(2*n+1, (n-r) * (n+r+1)) * sympy.sqrt((n+1)*n)
+                frac(2*n+1, (n-r) * (n+r+1)) * sqrt((n+1)*n)
                 for r in range(n)
                 ])
 
         def beta(n):
             return numpy.array([
-                sympy.Rational((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
-                * sympy.sqrt((n+1)*n)
+                frac((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
+                * sqrt((n+1)*n)
                 for r in range(n)
                 ])
 
         def gamma(n):
-            return numpy.array([sympy.Rational(
+            return numpy.array([frac(
                 (n-r-1) * (n+r) * (2*n+1),
                 (n-r) * (n+r+1) * (2*n-1)
                 ) for r in range(n-1)
-                ]) * sympy.sqrt(sympy.Rational(n+1, n-1))
+                ]) * sqrt(frac(n+1, n-1))
 
         def delta(n):
-            return sympy.sqrt(sympy.Rational((2*n+1) * (n+1) * (2*n-1), n**3))
+            return sqrt(frac((2*n+1) * (n+1) * (2*n-1), n**3))
 
         def epsilon(n):
-            return sympy.sqrt(sympy.Rational(
+            return sqrt(frac(
                 (2*n+1) * (n+1) * (n-1), (2*n-3) * n**2
                 ))
 
     out = [numpy.array([numpy.full(bary.shape[1:], p0)])]
 
-    flt = numpy.vectorize(float)
-    if not symbolic:
-        out[0] = flt(out[0])
-
     u, v, w = bary
 
     for L in range(1, n+1):
-        a = alpha(L)
-        b = beta(L)
-        d = delta(L)
-
-        if not symbolic:
-            a = flt(a)
-            b = flt(b)
-            d = flt(d)
-
         out.append(numpy.concatenate([
-            out[L-1] * (numpy.multiply.outer(a, 1-2*w).T - b).T,
-            [out[L-1][L-1] * (u-v) * d],
+            out[L-1] * (numpy.multiply.outer(alpha(L), 1-2*w).T - beta(L)).T,
+            [out[L-1][L-1] * (u-v) * delta(L)],
             ])
             )
 
         if L > 1:
-            c = gamma(L)
-            e = epsilon(L)
-
-            if not symbolic:
-                c = flt(c)
-                e = flt(e)
-
-            out[-1][:L-1] -= (out[L-2].T * c).T
-            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * e
+            out[-1][:L-1] -= (out[L-2].T * gamma(L)).T
+            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
 
     return out

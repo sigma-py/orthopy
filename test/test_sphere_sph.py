@@ -54,11 +54,28 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.sph_tree(L, theta, phi)
+    vals = orthopy.sphere.sph_tree(L, theta, phi, symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(numpy.array(sympy.simplify(v - e)) == 0)
+    return
+
+
+@pytest.mark.parametrize(
+    'theta,phi', [
+        (1.0e-1, 16.0/5.0),
+        (1.0e-4, 7.0e-5),
+        ]
+    )
+def test_spherical_harmonics_numpy(theta, phi):
+    L = 2
+    exacts = sph_exact2(theta, phi)
+    vals = orthopy.sphere.sph_tree(L, theta, phi)
+
+    cmplx = numpy.vectorize(complex)
+    for val, ex in zip(vals, exacts):
+        assert numpy.all(abs(val - cmplx(ex)) < 1.0e-12)
     return
 
 
