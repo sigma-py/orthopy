@@ -73,7 +73,7 @@ def alp_tree(
             return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
 
     elif normalization == 'spherical':
-        alpha = 1 / (2*sqrt(pi))
+        alpha = 1 / sqrt(4*pi)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
@@ -92,18 +92,15 @@ def alp_tree(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     elif normalization == 'complex spherical':
-        alpha = 1 / sqrt(pi) / 2
+        alpha = 1 / sqrt(4*pi)
+
+        exp_iphi = exp(+1j * phi)
 
         def z0_factor(L):
-            return (
-                sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) * exp(-1j * phi)
-                )
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) / exp_iphi
 
         def z1_factor(L):
-            return (
-                sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
-                * exp(+1j * phi)
-                )
+            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) * exp_iphi
 
         def C0(L):
             m = numpy.arange(-L+1, L)
