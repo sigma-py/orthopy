@@ -5,12 +5,40 @@ from __future__ import division
 import numpy
 import orthopy
 import pytest
+import quadpy
 import sympy
 from sympy import sqrt, pi
 
 
+def test_orthonormal(tol=1.0e-13):
+    '''Make sure that the polynomials are orthonormal.
+    '''
+    n = 4
+    # Choose a scheme of order at least 2*n.
+    scheme = quadpy.sphere.Lebedev(9)
+
+    # normality
+    def ff(azimuthal, polar):
+        tree = numpy.concatenate(orthopy.sphere.sph_tree(n, polar, azimuthal))
+        return tree * numpy.conjugate(tree)
+
+    val = quadpy.sphere.integrate_spherical(ff, rule=scheme)
+    assert numpy.all(abs(val - 1) < tol)
+
+    # orthogonality
+    def f_shift(azimuthal, polar):
+        tree = numpy.concatenate(orthopy.sphere.sph_tree(n, polar, azimuthal))
+        return tree * numpy.roll(tree, 1, axis=0)
+
+    val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
+    assert numpy.all(abs(val) < tol)
+    return
+
+
 # pylint: disable=too-many-locals
 def sph_exact2(theta, phi):
+    # Exact values from
+    # <https://en.wikipedia.org/wiki/Table_of_spherical_harmonics>.
     try:
         assert numpy.all(theta.shape == phi.shape)
         y0_0 = numpy.full(theta.shape, sqrt(1 / pi) / 2)
