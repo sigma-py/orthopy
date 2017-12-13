@@ -69,7 +69,7 @@ def test_legendre_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.legendre(
-            n, standardization='||p**2||=1'
+            n, standardization='normal'
             )
 
     y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
@@ -141,7 +141,7 @@ def test_jacobi_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
-            n, alpha=3, beta=2, standardization='||p**2||=1'
+            n, alpha=3, beta=2, standardization='normal'
             )
 
     y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)

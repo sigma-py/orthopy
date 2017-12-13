@@ -5,12 +5,82 @@ from __future__ import division
 import numpy
 import orthopy
 import pytest
+import quadpy
 import sympy
 from sympy import sqrt, pi
 
 
+def test_orthonormality(tol=1.0e-13):
+    '''Make sure that the polynomials are orthonormal.
+    '''
+    n = 4
+    # Choose a scheme of order at least 2*n.
+    scheme = quadpy.sphere.Lebedev(9)
+
+    # normality
+    def ff(azimuthal, polar):
+        tree = numpy.concatenate(
+                orthopy.sphere.sph_tree(
+                    n, polar, azimuthal, normalization='quantum mechanic'
+                    ))
+        return tree * numpy.conjugate(tree)
+
+    val = quadpy.sphere.integrate_spherical(ff, rule=scheme)
+    assert numpy.all(abs(val - 1) < tol)
+
+    # orthogonality
+    def f_shift(azimuthal, polar):
+        tree = numpy.concatenate(
+                orthopy.sphere.sph_tree(
+                    n, polar, azimuthal, normalization='quantum mechanic'
+                    ))
+        return tree * numpy.roll(tree, 1, axis=0)
+
+    val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
+    assert numpy.all(abs(val) < tol)
+    return
+
+
+def test_schmidt_orthonormality(tol=1.0e-12):
+    '''Make sure that the polynomials are orthonormal.
+    '''
+    n = 4
+    # Choose a scheme of order at least 2*n.
+    scheme = quadpy.sphere.Lebedev(9)
+
+    # normality
+    def ff(azimuthal, polar):
+        tree = numpy.concatenate(
+                orthopy.sphere.sph_tree(
+                    n, polar, azimuthal, normalization='schmidt'
+                    ))
+        return tree * numpy.conjugate(tree)
+
+    vals = quadpy.sphere.integrate_spherical(ff, rule=scheme)
+    # split into levels
+    levels = [
+            vals[0:1], vals[1:4], vals[4:9], vals[9:16], vals[16:25]
+            ]
+    for k, level in enumerate(levels):
+        assert numpy.all(abs(level - 4*numpy.pi/(2*k+1)) < tol)
+
+    # orthogonality
+    def f_shift(azimuthal, polar):
+        tree = numpy.concatenate(
+                orthopy.sphere.sph_tree(
+                    n, polar, azimuthal, normalization='schmidt'
+                    ))
+        return tree * numpy.roll(tree, 1, axis=0)
+
+    val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
+    assert numpy.all(abs(val) < tol)
+    return
+
+
 # pylint: disable=too-many-locals
 def sph_exact2(theta, phi):
+    # Exact values from
+    # <https://en.wikipedia.org/wiki/Table_of_spherical_harmonics>.
     try:
         assert numpy.all(theta.shape == phi.shape)
         y0_0 = numpy.full(theta.shape, sqrt(1 / pi) / 2)
@@ -54,7 +124,9 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.sph_tree(L, theta, phi, symbolic=True)
+    vals = orthopy.sphere.sph_tree(
+            L, theta, phi, normalization='quantum mechanic', symbolic=True
+            )
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -71,7 +143,9 @@ def test_spherical_harmonics(theta, phi):
 def test_spherical_harmonics_numpy(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.sph_tree(L, theta, phi)
+    vals = orthopy.sphere.sph_tree(
+            L, theta, phi, normalization='quantum mechanic'
+            )
 
     cmplx = numpy.vectorize(complex)
     for val, ex in zip(vals, exacts):
