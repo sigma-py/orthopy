@@ -91,8 +91,11 @@ def alp_tree(
             d = (L+m) * (L-m)
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
-    elif normalization == 'complex spherical':
-        alpha = 1 / sqrt(4*pi)
+    elif normalization in ['complex spherical', 'complex spherical 1']:
+        # The starting value 1 has the effect of multiplying the entire tree by
+        # sqrt(4*pi). This convention is used in geodesy and and spectral
+        # analysis.
+        alpha = 1 / sqrt(4*pi) if normalization == 'complex spherical' else 1
 
         exp_iphi = exp(+1j * phi)
 
@@ -135,13 +138,18 @@ def alp_tree(
         assert normalization == 'schmidt', \
             'Unknown normalization \'{}\'.'.format(normalization)
 
-        alpha = 2
+        if phi is None:
+            alpha = 2
+            exp_iphi = 1
+        else:
+            alpha = 1
+            exp_iphi = exp(+1j * phi)
 
         def z0_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L)) / exp_iphi
 
         def z1_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L))
+            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L)) * exp_iphi
 
         def C0(L):
             m = numpy.arange(-L+1, L)
