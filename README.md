@@ -7,7 +7,7 @@ Python tools for orthogonal polynomials and Gaussian quadrature for
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
 [![awesome](https://img.shields.io/badge/awesome-yes-brightgreen.svg)](https://img.shields.io/badge/awesome-yes-brightgreen.svg)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars&maxAge=2592000)](https://github.com/nschloe/orthopy)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars)](https://github.com/nschloe/orthopy)
 
 _All functions in this module are fully vectorized and, where possible and
 practical, return results in exact arithmetic._
@@ -229,11 +229,15 @@ print(sympy.expand(tree[3][1]))
 
 ### Sphere
 
+<img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
+
 Evaluate the entire _spherical harmonics_ tree up to a given level at once.
 Again, the implementation is numerically stable.
 ```python
 vals = orthopy.sphere.sph_tree(n, x, symbolic=False)
 ```
+Note that spherical harmonics are complex-valued in general. The above plot
+only shows the absolute value of SPH(5, 3).
 
 
 ### Relevant publications
