@@ -153,8 +153,18 @@ def test_spherical_harmonics_numpy(theta, phi):
     return
 
 
+def test_write():
+    def sph22(polar, azimuthal):
+        out = orthopy.sphere.sph_tree(
+            5, polar, azimuthal, normalization='quantum mechanic'
+            )[5][3]
+        # out = numpy.arctan2(numpy.imag(out), numpy.real(out))
+        out = abs(out)
+        return out
+
+    orthopy.sphere.write('sph.vtu', sph22)
+    return
+
+
 if __name__ == '__main__':
-    test_spherical_harmonics(
-        # 1.0e-1, 3.2e-1
-        1.0e-4, 0.7e-4
-        )
+    test_write()
