@@ -5,6 +5,8 @@ from __future__ import division
 import numpy
 import sympy
 
+from ..line.recurrence_coefficients import legendre
+
 
 # pylint: disable=too-many-locals
 def orth_tree(n, X, symbolic=False):
@@ -16,43 +18,24 @@ def orth_tree(n, X, symbolic=False):
         (0, 0)
         (0, 1)   (1, 1)
         (0, 2)   (1, 2)   (2, 2)
-          ...      ...      ...
+         ...      ...      ...
     '''
-    exit(1)
-    p0 = sympy.Rational(1, 4)
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+
+    _, a, b, c = legendre(n+1, 'normal', symbolic=symbolic)
+
+    p0 = sqrt(frac(1, 4))
     out = [numpy.array([numpy.full(X.shape[1:], p0)])]
-
-    flt = numpy.vectorize(float)
-    if not symbolic:
-        out[0] = flt(out[0])
-
-    x, y = X
-
     for L in range(1, n+1):
-        a = alpha(L)
-        b = beta(L)
-        d = delta(L)
-
-        if not symbolic:
-            a = flt(a)
-            b = flt(b)
-            d = flt(d)
-
         out.append(numpy.concatenate([
-            out[L-1] * (numpy.multiply.outer(a, 1-2*w).T - b).T,
-            [out[L-1][L-1] * (u-v) * d],
+            out[L-1] * (a[L] * X[0] - b[L]),
+            [out[L-1][-1] * (a[L] * X[1] - b[L])],
             ])
             )
 
         if L > 1:
-            c = gamma(L)
-            e = epsilon(L)
-
-            if not symbolic:
-                c = flt(c)
-                e = flt(e)
-
-            out[-1][:L-1] -= (out[L-2].T * c).T
-            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * e
+            out[-1][:L-1] -= out[L-2] * c[L]
+            out[-1][-1] -= out[L-2][L-2] * c[L]
 
     return out

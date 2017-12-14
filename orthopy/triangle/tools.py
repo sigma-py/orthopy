@@ -30,13 +30,13 @@ def plot(corners, f, n=100):
     bary = numpy.array(partition(3, n)).T / n
     X = numpy.sum([
         numpy.outer(bary[k], corners[:, k]) for k in range(3)
-        ], axis=0)
+        ], axis=0).T
 
     # plot the points
-    # plt.plot(X[:, 0], X[:, 1], 'xk')
+    # plt.plot(X[0], X[1], 'xk')
 
-    x = numpy.array(X[:, 0])
-    y = numpy.array(X[:, 1])
+    x = numpy.array(X[0])
+    y = numpy.array(X[1])
     z = numpy.array(f(bary), dtype=float)
 
     triang = matplotlib.tri.Triangulation(x, y)
