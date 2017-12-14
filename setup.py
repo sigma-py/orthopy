@@ -37,6 +37,9 @@ setup(
         'scipy',
         'sympy',
         ],
+    extras_require={
+        'sphere-plot': ['meshzoo', 'meshio'],
+        },
     description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
     license=about['__license__'],
