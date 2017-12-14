@@ -18,7 +18,9 @@ from sympy import Rational, sqrt
 def test_legendre_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+    out = orthopy.line.recurrence_coefficients.legendre(
+            n, 'monic', symbolic=True
+            )
 
     # Test evaluation of one value
     y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
@@ -69,7 +71,7 @@ def test_legendre_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.legendre(
-            n, standardization='normal'
+            n, standardization='normal', symbolic=True
             )
 
     y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
@@ -93,7 +95,7 @@ def test_jacobi_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
-            n, alpha=3, beta=2, standardization='monic'
+            n, alpha=3, beta=2, standardization='monic', symbolic=True
             )
 
     y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
@@ -117,7 +119,8 @@ def test_jacobi_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
-            n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)'
+            n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)',
+            symbolic=True
             )
 
     y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
@@ -141,7 +144,7 @@ def test_jacobi_pnorm1(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
-            n, alpha=3, beta=2, standardization='normal'
+            n, alpha=3, beta=2, standardization='normal', symbolic=True
             )
 
     y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
