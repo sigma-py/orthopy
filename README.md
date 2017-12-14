@@ -229,11 +229,15 @@ print(sympy.expand(tree[3][1]))
 
 ### Sphere
 
+<img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
+
 Evaluate the entire _spherical harmonics_ tree up to a given level at once.
 Again, the implementation is numerically stable.
 ```python
 vals = orthopy.sphere.sph_tree(n, x, symbolic=False)
 ```
+Note that spherical harmonics are complex-valued in general. The above plot
+only shows the absolute value of SPH(5, 3).
 
 
 ### Relevant publications
