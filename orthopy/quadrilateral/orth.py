@@ -37,7 +37,7 @@ def orth_tree(n, X, symbolic=True):
             )
 
         if L > 1:
-            out[-1][:-1] -= out[L-2] * c[L]
+            out[-1][:L-1] -= out[L-2] * c[L]
             out[-1][-1] -= out[L-2][L-2] * c[L]
 
     return out
