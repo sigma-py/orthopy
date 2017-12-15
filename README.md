@@ -226,6 +226,15 @@ print(sympy.expand(tree[3][1]))
 42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2 + 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
 ```
 
+### Quadrilateral
+
+<img src="https://nschloe.github.io/orthopy/quad.png" width="25%">
+
+```python
+vals = orthopy.triangle.orth_tree(4, x, symbolic=False)
+```
+All polynomials are normalized on the quadrilateral.
+
 
 ### Sphere
 
