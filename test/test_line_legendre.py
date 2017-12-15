@@ -138,4 +138,4 @@ def test_orthogonality(n=4, tol=1.0e-13):
 
 
 if __name__ == '__main__':
-    test_orthogonality()
+    test_normality()
