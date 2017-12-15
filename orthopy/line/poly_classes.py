@@ -15,6 +15,7 @@ def legendre(k, x, standardization='monic', symbolic=True):
     return evaluate_orthogonal_polynomial(x, p0, a, b, c)
 
 
+# pylint: disable=too-many-arguments
 def jacobi(k, a, b, x, standardization='monic', symbolic=True):
     p0, a, b, c = recurrence_coefficients.jacobi(
             k, a, b, standardization, symbolic=symbolic
