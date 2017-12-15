@@ -16,16 +16,26 @@ def test_orthonormal(tol=1.0e-14):
 
     quad = [[[-1.0, -1.0], [+1.0, -1.0]], [[-1.0, +1.0], [+1.0, +1.0]]]
 
-    # normality
+    # integral
     def ff(x):
-        tree = numpy.concatenate(
-                orthopy.quadrilateral.orth_tree(n, x)
-                )
-        return tree * tree
+        return numpy.concatenate(orthopy.quadrilateral.orth_tree(n, x))
 
     val = quadpy.quadrilateral.integrate(ff, quad, scheme)
     print(val)
-    assert numpy.all(abs(val - 1) < tol)
+    assert numpy.all(abs(val[0] - 2.0) < tol)
+    assert numpy.all(abs(val[1:]) < tol)
+    exit(1)
+
+    # # normality
+    # def ff(x):
+    #     tree = numpy.concatenate(
+    #             orthopy.quadrilateral.orth_tree(n, x)
+    #             )
+    #     return tree * tree
+
+    # val = quadpy.quadrilateral.integrate(ff, quad, scheme)
+    # print(val)
+    # assert numpy.all(abs(val - 1) < tol)
 
     # # orthogonality
     # def f_shift(x):
@@ -43,9 +53,15 @@ def test_show(n=2, r=1):
     def f(X):
         return orthopy.quadrilateral.orth_tree(n, X)[n][r]
 
+    val = orthopy.quadrilateral.orth_tree(
+        2, numpy.array([[+1], [0]], dtype=int)
+        )[1][0]
+    print(val)
+    exit(1)
+
     orthopy.quadrilateral.show(f)
     return
 
 
 if __name__ == '__main__':
-    test_show(0, 0)
+    test_show(2, 0)
