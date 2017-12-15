@@ -81,23 +81,14 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     a, b, and c at the point(s) t.
     '''
     vals1 = numpy.zeros_like(t, dtype=int)
-
-    # Wait for <https://github.com/sympy/sympy/issues/13637> to be resolved so
-    # one can use `full` in all cases.
-    try:
-        vals2 = numpy.full(t.shape, p0)
-    except AttributeError:
-        vals2 = p0
+    # The order is important here; see
+    # <https://github.com/sympy/sympy/issues/13637>.
+    vals2 = numpy.ones_like(t) * p0
 
     for a_k, b_k, c_k in zip(a, b, c):
         vals0 = vals1
         vals1 = vals2
-        # Use numpy.multiply to work around
-        # <https://github.com/sympy/sympy/issues/13637>.
-        vals2 = (
-            + numpy.multiply(numpy.multiply(a_k, t) - b_k, vals1)
-            - numpy.multiply(c_k, vals0)
-            )
+        vals2 = vals1 * (t*a_k - b_k) - vals0 * c_k
 
     return vals2
 
