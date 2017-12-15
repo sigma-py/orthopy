@@ -2,6 +2,7 @@
 #
 import numpy
 import orthopy
+import quadpy
 import pytest
 from sympy import Rational, sqrt
 
@@ -82,5 +83,29 @@ def test_legendre_normal(n, y):
     return
 
 
+# TODO
+# def test_orthonormality():
+#     n = 4
+#
+#     # 0 integral
+#     def ff(x):
+#         out = orthopy.line.recurrence_coefficients.legendre(
+#                 n, standardization='normal', symbolic=True
+#                 )
+#         return orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
+#
+#     scheme = quadpy.line_segment.GaussLegendre(10)
+#     val = quadpy.line_segment.integrate(
+#             ff,
+#             numpy.array([[-1], [+1]]),
+#             scheme
+#             )
+#     print(val)
+#     # assert numpy.all(abs(val[0] - 2.0) < tol)
+#     # assert numpy.all(abs(val[1:]) < tol)
+#     exit(1)
+#     return
+
+
 if __name__ == '__main__':
-    test_legendre_monic(0, [1, 1, 1])
+    test_orthonormality()
