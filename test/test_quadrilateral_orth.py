@@ -53,22 +53,16 @@ def test_normality(n=4, tol=1.0e-14):
     return
 
 
-# TODO
-# def test_show(n=2, r=1):
-#     def f(X):
-#         return orthopy.quadrilateral.orth_tree(n, X)[n][r]
-#
-#     val = orthopy.quadrilateral.orth_tree(
-#         2, numpy.array([[+1], [0]], dtype=int)
-#         )[1][0]
-#     print(val)
-#     exit(1)
-#
-#     orthopy.quadrilateral.show(f)
-#     return
+def test_show(n=2, r=1):
+    def f(X):
+        return orthopy.quadrilateral.orth_tree(n, X)[n][r]
+
+    orthopy.quadrilateral.show(f)
+    # orthopy.quadrilateral.plot(f)
+    # import matplotlib.pyplot as plt
+    # plt.savefig('quad.png', transparent=True)
+    return
 
 
 if __name__ == '__main__':
-    test_integral0()
-    test_orthogonality()
-    test_normality()
+    test_show()
