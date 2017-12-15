@@ -88,7 +88,7 @@ def test_integral0(n=4, tol=1.0e-13):
         out = orthopy.line.recurrence_coefficients.legendre(
                 n, standardization='normal', symbolic=False
                 )
-        return orthopy.line.orth_tree(x[0], *out)
+        return orthopy.line.tree(x[0], *out)
 
     scheme = quadpy.line_segment.GaussLegendre(4)
     val = quadpy.line_segment.integrate(
@@ -106,7 +106,7 @@ def test_normality(n=4, tol=1.0e-13):
         out = orthopy.line.recurrence_coefficients.legendre(
                 n, standardization='normal', symbolic=False
                 )
-        vals = numpy.array(orthopy.line.orth_tree(x[0], *out))
+        vals = numpy.array(orthopy.line.tree(x[0], *out))
         return vals**2
 
     scheme = quadpy.line_segment.GaussLegendre(8)
@@ -124,7 +124,7 @@ def test_orthogonality(n=4, tol=1.0e-13):
         out = orthopy.line.recurrence_coefficients.legendre(
                 n, standardization='normal', symbolic=False
                 )
-        vals = numpy.array(orthopy.line.orth_tree(x[0], *out))
+        vals = numpy.array(orthopy.line.tree(x[0], *out))
         return vals * numpy.roll(vals, 1, axis=0)
 
     scheme = quadpy.line_segment.GaussLegendre(8)

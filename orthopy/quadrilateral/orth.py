@@ -8,7 +8,7 @@ from ..line.recurrence_coefficients import legendre
 
 
 # pylint: disable=too-many-locals
-def orth_tree(n, X, symbolic=False):
+def tree(n, X, symbolic=False):
     '''Evaluates the entire tree of orthogonal quadrilateral polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`

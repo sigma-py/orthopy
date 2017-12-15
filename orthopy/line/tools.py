@@ -91,7 +91,7 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     return vals2
 
 
-def orth_tree(t, p0, a, b, c):
+def tree(t, p0, a, b, c):
     out = [numpy.ones_like(t) * p0]
 
     n = len(a)

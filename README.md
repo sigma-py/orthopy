@@ -200,7 +200,7 @@ domain and weight function. orthopy provides the means for
 computing orthogonal/-normal polynomials for the triangle. The implementation
 is recurrent and numerically stable.
 ```python
-vals = orthopy.triangle.orth_tree(4, x, 'normal', symbolic=False)
+vals = orthopy.triangle.tree(4, x, 'normal', symbolic=False)
 ```
 Available standardizations are `'normal'` (normalized polynomials, i.e., the
 integral of the squared function equals 1) and `'1'` where the polynomial is
@@ -216,7 +216,7 @@ import sympy
 
 b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
 
-tree = orthopy.triangle.orth_tree(
+tree = orthopy.triangle.tree(
         3, numpy.array([b0, b1, b2]), 'normal', symbolic=True
         )
 
@@ -231,7 +231,7 @@ print(sympy.expand(tree[3][1]))
 <img src="https://nschloe.github.io/orthopy/quad.png" width="25%">
 
 ```python
-vals = orthopy.triangle.orth_tree(4, x, symbolic=False)
+vals = orthopy.triangle.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized on the quadrilateral.
 

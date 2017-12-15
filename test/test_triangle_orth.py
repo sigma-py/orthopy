@@ -84,7 +84,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
+    vals = orthopy.triangle.tree(L, bary, 'normal')
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -107,7 +107,7 @@ def test_triangle_orth_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, 'normal', symbolic=True)
+    vals = orthopy.triangle.tree(L, bary, 'normal', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -133,7 +133,7 @@ def test_triangle_orth_1_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, '1', symbolic=True)
+    vals = orthopy.triangle.tree(L, bary, '1', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -153,7 +153,7 @@ def test_orthonormal(tol=1.0e-14):
     # normality
     def ff(x):
         bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
-        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+        tree = numpy.concatenate(orthopy.triangle.tree(n, bary, 'normal'))
         return tree * tree
 
     val = quadpy.triangle.integrate(ff, triangle, scheme)
@@ -162,7 +162,7 @@ def test_orthonormal(tol=1.0e-14):
     # orthogonality
     def f_shift(x):
         bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
-        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
+        tree = numpy.concatenate(orthopy.triangle.tree(n, bary, 'normal'))
         return tree * numpy.roll(tree, 1, axis=0)
 
     val = quadpy.triangle.integrate(f_shift, triangle, scheme)
@@ -178,7 +178,7 @@ def test_show(n=2, r=1):
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.triangle.orth_tree(n, bary, 'normal')[n][r]
+        return orthopy.triangle.tree(n, bary, 'normal')[n][r]
 
     orthopy.triangle.show(corners, f)
     # orthopy.triangle.plot(corners, f)

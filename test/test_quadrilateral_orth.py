@@ -12,7 +12,7 @@ def test_integral0(n=4, tol=1.0e-14):
     '''
     def ff(x):
         return numpy.concatenate(
-            orthopy.quadrilateral.orth_tree(n, x, symbolic=False)
+            orthopy.quadrilateral.tree(n, x, symbolic=False)
             )
 
     quad = [[[-1.0, -1.0], [+1.0, -1.0]], [[-1.0, +1.0], [+1.0, +1.0]]]
@@ -26,7 +26,7 @@ def test_integral0(n=4, tol=1.0e-14):
 def test_orthogonality(n=4, tol=1.0e-14):
     def f_shift(x):
         tree = numpy.concatenate(
-                orthopy.quadrilateral.orth_tree(n, x)
+                orthopy.quadrilateral.tree(n, x)
                 )
         return tree * numpy.roll(tree, 1, axis=0)
 
@@ -40,7 +40,7 @@ def test_orthogonality(n=4, tol=1.0e-14):
 def test_normality(n=4, tol=1.0e-14):
     def ff(x):
         tree = numpy.concatenate(
-                orthopy.quadrilateral.orth_tree(n, x)
+                orthopy.quadrilateral.tree(n, x)
                 )
         return tree * tree
 
@@ -49,13 +49,12 @@ def test_normality(n=4, tol=1.0e-14):
     assert scheme.degree >= 2*n
     vals = quadpy.quadrilateral.integrate(ff, quad, scheme)
     assert numpy.all(abs(vals - 1) < tol)
-    exit(1)
     return
 
 
 def test_show(n=2, r=1):
     def f(X):
-        return orthopy.quadrilateral.orth_tree(n, X)[n][r]
+        return orthopy.quadrilateral.tree(n, X)[n][r]
 
     orthopy.quadrilateral.show(f)
     # orthopy.quadrilateral.plot(f)

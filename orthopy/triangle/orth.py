@@ -7,7 +7,7 @@ import sympy
 
 
 # pylint: disable=too-many-locals
-def orth_tree(n, bary, standardization, symbolic=False):
+def tree(n, bary, standardization, symbolic=False):
     '''Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
