@@ -3,8 +3,9 @@
 from __future__ import division
 
 import numpy
-import orthopy
 import quadpy
+
+import orthopy
 
 
 def test_integral0(n=4, tol=1.0e-14):

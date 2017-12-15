@@ -3,12 +3,13 @@
 from __future__ import division
 
 import numpy
-import orthopy
 import quadpy
 import pytest
 import scipy.special
 import sympy
 from sympy import Rational
+
+import orthopy
 
 
 def op(i, j, x, y):

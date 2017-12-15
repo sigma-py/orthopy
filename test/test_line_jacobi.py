@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 import numpy
-import orthopy
 import pytest
 from sympy import Rational, sqrt
+
+import orthopy
 
 
 @pytest.mark.parametrize('n, y', [

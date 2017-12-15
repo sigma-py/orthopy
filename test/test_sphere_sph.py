@@ -3,11 +3,12 @@
 from __future__ import division
 
 import numpy
-import orthopy
 import pytest
 import quadpy
 import sympy
 from sympy import sqrt, pi
+
+import orthopy
 
 
 def test_orthonormality(tol=1.0e-13):
