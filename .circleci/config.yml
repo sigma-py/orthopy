@@ -32,6 +32,7 @@ jobs:
       - run: apt-get install -y git python3-pip
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
+      - run: pip3 install .
       - run: pip3 install .[sphere-plot]
       - run: pip3 install -r test_requirements.txt
       # lint
