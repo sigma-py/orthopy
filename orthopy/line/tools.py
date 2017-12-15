@@ -86,11 +86,21 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     vals2 = numpy.ones_like(t) * p0
 
     for a_k, b_k, c_k in zip(a, b, c):
-        vals0 = vals1
-        vals1 = vals2
+        vals0, vals1 = vals1, vals2
         vals2 = vals1 * (t*a_k - b_k) - vals0 * c_k
-
     return vals2
+
+
+def orth_tree(t, p0, a, b, c):
+    out = [numpy.ones_like(t) * p0]
+
+    n = len(a)
+    for L in range(1, n+1):
+        out.append(out[L-1] * (t*a[L-1] - b[L-1]))
+        if L > 1:
+            out[L] -= out[L-2] * c[L-1]
+
+    return out
 
 
 def check_coefficients(moments, alpha, beta):

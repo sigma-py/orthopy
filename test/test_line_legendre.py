@@ -83,29 +83,59 @@ def test_legendre_normal(n, y):
     return
 
 
-# TODO
-# def test_orthonormality():
-#     n = 4
-#
-#     # 0 integral
-#     def ff(x):
-#         out = orthopy.line.recurrence_coefficients.legendre(
-#                 n, standardization='normal', symbolic=True
-#                 )
-#         return orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
-#
-#     scheme = quadpy.line_segment.GaussLegendre(10)
-#     val = quadpy.line_segment.integrate(
-#             ff,
-#             numpy.array([[-1], [+1]]),
-#             scheme
-#             )
-#     print(val)
-#     # assert numpy.all(abs(val[0] - 2.0) < tol)
-#     # assert numpy.all(abs(val[1:]) < tol)
-#     exit(1)
-#     return
+def test_integral0(n=4, tol=1.0e-13):
+    def ff(x):
+        out = orthopy.line.recurrence_coefficients.legendre(
+                n, standardization='normal', symbolic=False
+                )
+        return orthopy.line.orth_tree(x[0], *out)
+
+    scheme = quadpy.line_segment.GaussLegendre(4)
+    val = quadpy.line_segment.integrate(
+            ff,
+            numpy.array([[-1], [+1]]),
+            scheme
+            )
+    assert numpy.all(abs(val[0] - numpy.sqrt(2.0)) < tol)
+    assert numpy.all(abs(val[1:]) < tol)
+    return
+
+
+def test_normality(n=4, tol=1.0e-13):
+    def ff(x):
+        out = orthopy.line.recurrence_coefficients.legendre(
+                n, standardization='normal', symbolic=False
+                )
+        vals = numpy.array(orthopy.line.orth_tree(x[0], *out))
+        return vals**2
+
+    scheme = quadpy.line_segment.GaussLegendre(8)
+    val = quadpy.line_segment.integrate(
+            ff,
+            numpy.array([[-1], [+1]]),
+            scheme
+            )
+    assert numpy.all(abs(val[0] - 1.0) < tol)
+    return
+
+
+def test_orthogonality(n=4, tol=1.0e-13):
+    def ff(x):
+        out = orthopy.line.recurrence_coefficients.legendre(
+                n, standardization='normal', symbolic=False
+                )
+        vals = numpy.array(orthopy.line.orth_tree(x[0], *out))
+        return vals * numpy.roll(vals, 1, axis=0)
+
+    scheme = quadpy.line_segment.GaussLegendre(8)
+    val = quadpy.line_segment.integrate(
+            ff,
+            numpy.array([[-1], [+1]]),
+            scheme
+            )
+    assert numpy.all(abs(val[0] - 0.0) < tol)
+    return
 
 
 if __name__ == '__main__':
-    test_orthonormality()
+    test_orthogonality()
