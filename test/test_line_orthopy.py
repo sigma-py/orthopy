@@ -8,11 +8,12 @@ import math
 
 from mpmath import mp
 import numpy
-import orthopy
 import pytest
 import scipy
 from scipy.special import legendre
 import sympy
+
+import orthopy
 
 
 def test_golub_welsch(tol=1.0e-14):
