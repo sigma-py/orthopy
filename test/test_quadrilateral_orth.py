@@ -3,7 +3,7 @@
 from __future__ import division
 
 import numpy
-import quadpy
+import sympy
 
 import orthopy
 
@@ -11,45 +11,40 @@ import orthopy
 def test_integral0(n=4, tol=1.0e-14):
     '''Make sure that the polynomials are orthonormal
     '''
-    def ff(x):
-        return numpy.concatenate(
-            orthopy.quadrilateral.tree(n, x, symbolic=False)
+    x = sympy.Symbol('x')
+    y = sympy.Symbol('y')
+    vals = numpy.concatenate(
+            orthopy.quadrilateral.tree(n, numpy.array([x, y]), symbolic=True)
             )
 
-    quad = [[[-1.0, -1.0], [+1.0, -1.0]], [[-1.0, +1.0], [+1.0, +1.0]]]
-    scheme = quadpy.quadrilateral.Dunavant(4)
-    val = quadpy.quadrilateral.integrate(ff, quad, scheme)
-    assert numpy.all(abs(val[0] - 2.0) < tol)
-    assert numpy.all(abs(val[1:]) < tol)
+    assert sympy.integrate(vals[0], (x, -1, +1), (y, -1, +1)) == 2
+    for val in vals[1:]:
+        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
     return
 
 
 def test_orthogonality(n=4, tol=1.0e-14):
-    def f_shift(x):
-        tree = numpy.concatenate(
-                orthopy.quadrilateral.tree(n, x)
-                )
-        return tree * numpy.roll(tree, 1, axis=0)
+    x = sympy.Symbol('x')
+    y = sympy.Symbol('y')
+    tree = numpy.concatenate(
+            orthopy.quadrilateral.tree(n, numpy.array([x, y]), symbolic=True)
+            )
+    vals = tree * numpy.roll(tree, 1, axis=0)
 
-    quad = [[[-1.0, -1.0], [+1.0, -1.0]], [[-1.0, +1.0], [+1.0, +1.0]]]
-    scheme = quadpy.quadrilateral.Dunavant(4)
-    val = quadpy.quadrilateral.integrate(f_shift, quad, scheme)
-    assert numpy.all(abs(val) < tol)
+    for val in vals:
+        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
     return
 
 
 def test_normality(n=4, tol=1.0e-14):
-    def ff(x):
-        tree = numpy.concatenate(
-                orthopy.quadrilateral.tree(n, x)
-                )
-        return tree * tree
+    x = sympy.Symbol('x')
+    y = sympy.Symbol('y')
+    tree = numpy.concatenate(
+            orthopy.quadrilateral.tree(n, numpy.array([x, y]), symbolic=True)
+            )
 
-    quad = [[[-1.0, -1.0], [+1.0, -1.0]], [[-1.0, +1.0], [+1.0, +1.0]]]
-    scheme = quadpy.quadrilateral.Dunavant(4)
-    assert scheme.degree >= 2*n
-    vals = quadpy.quadrilateral.integrate(ff, quad, scheme)
-    assert numpy.all(abs(vals - 1) < tol)
+    for val in tree:
+        assert sympy.integrate(val**2, (x, -1, +1), (y, -1, +1)) == 1
     return
 
 
