@@ -14,6 +14,7 @@ from .__about__ import (
     )
 
 from . import line
+from . import quadrilateral
 from . import sphere
 from . import triangle
 

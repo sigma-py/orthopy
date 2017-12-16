@@ -8,11 +8,12 @@ import math
 
 from mpmath import mp
 import numpy
-import orthopy
 import pytest
 import scipy
 from scipy.special import legendre
 import sympy
+
+import orthopy
 
 
 def test_golub_welsch(tol=1.0e-14):
@@ -163,7 +164,7 @@ def test_gauss(mode):
         b = sympy.Rational(0, 1)
         _, _, alpha, beta = \
             orthopy.line.recurrence_coefficients.jacobi(
-                n, a, b, 'monic'
+                n, a, b, 'monic', symbolic=True
                 )
         points, weights = \
             orthopy.line.schemes.custom(alpha, beta, mode=mode)
@@ -254,8 +255,9 @@ def test_jacobi_reconstruction(tol=1.0e-14):
     )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = \
-        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+    p0, a, b, c = orthopy.line.recurrence_coefficients.legendre(
+            n, 'monic', symbolic=True
+            )
     value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert value == ref
@@ -281,8 +283,9 @@ def test_eval(t, ref, tol=1.0e-14):
     )
 def test_eval_vec(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = \
-        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+    p0, a, b, c = orthopy.line.recurrence_coefficients.legendre(
+            n, 'monic', symbolic=True
+            )
     value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert (value == ref).all()

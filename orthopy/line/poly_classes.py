@@ -8,25 +8,32 @@ from .import recurrence_coefficients
 from .tools import evaluate_orthogonal_polynomial
 
 
-def legendre(k, x, standardization='monic'):
-    p0, a, b, c = recurrence_coefficients.legendre(k, standardization)
+def legendre(k, x, standardization='monic', symbolic=True):
+    p0, a, b, c = recurrence_coefficients.legendre(
+            k, standardization, symbolic=symbolic
+            )
     return evaluate_orthogonal_polynomial(x, p0, a, b, c)
 
 
-def jacobi(k, a, b, x, standardization='monic'):
-    p0, a, b, c = recurrence_coefficients.jacobi(k, a, b, standardization)
+# pylint: disable=too-many-arguments
+def jacobi(k, a, b, x, standardization='monic', symbolic=True):
+    p0, a, b, c = recurrence_coefficients.jacobi(
+            k, a, b, standardization, symbolic=symbolic
+            )
     return evaluate_orthogonal_polynomial(x, p0, a, b, c)
 
 
-def chebyshev1(k, x, standardization='monic'):
+def chebyshev1(k, x, standardization='monic', symbolic=True):
     return jacobi(
-            k, -sympy.Rational(1, 2), -sympy.Rational(1, 2), x, standardization
+            k, -sympy.Rational(1, 2), -sympy.Rational(1, 2), x,
+            standardization, symbolic=symbolic
             )
 
 
-def chebyshev2(k, x, standardization='monic'):
+def chebyshev2(k, x, standardization='monic', symbolic=True):
     return jacobi(
-            k, sympy.Rational(1, 2), sympy.Rational(1, 2), x, standardization
+            k, sympy.Rational(1, 2), sympy.Rational(1, 2), x, standardization,
+            symbolic=symbolic
             )
 
 

@@ -3,48 +3,61 @@
 from __future__ import division
 
 import numpy
+import scipy.special
 import sympy
 
 
-def chebyshev1(n, standardization):
+def chebyshev1(n, standardization, symbolic=False):
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
     return jacobi(
-        n, -sympy.Rational(1, 2), -sympy.Rational(1, 2), standardization
+        n, -frac(1, 2), -frac(1, 2), standardization,
+        symbolic=symbolic
         )
 
 
-def chebyshev2(n, standardization):
+def chebyshev2(n, standardization, symbolic=False):
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
     return jacobi(
-        n, +sympy.Rational(1, 2), +sympy.Rational(1, 2), standardization
+        n, +frac(1, 2), +frac(1, 2), standardization,
+        symbolic=symbolic
         )
 
 
-def laguerre(n):
-    return laguerre_generalized(n, 0)
+def laguerre(n, symbolic=False):
+    return laguerre_generalized(n, 0, symbolic=symbolic)
 
 
-def laguerre_generalized(n, alpha):
+def laguerre_generalized(n, alpha, symbolic=False):
+    gamma = (
+        sympy.gamma if symbolic else
+        lambda x: scipy.special.gamma(float(x))
+        )
     p0 = 1
     a = n * [1]
     b = [(2*k+1+alpha) for k in range(n)]
     c = [k*(k+alpha) for k in range(n)]
-    c[0] = sympy.gamma(alpha+1)
+    c[0] = gamma(alpha+1)
     return p0, a, b, c
 
 
-def hermite(n):
+def hermite(n, symbolic=False):
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+    pi = sympy.pi if symbolic else numpy.pi
+
     p0 = 1
-    a = n * [1]
-    b = n * [0]
-    c = [sympy.Rational(k, 2) for k in range(n)]
-    c[0] = sympy.sqrt(sympy.pi)
+    a = numpy.ones(n, dtype=int)
+    b = numpy.zeros(n, dtype=int)
+    c = [frac(k, 2) for k in range(n)]
+    c[0] = sqrt(pi)
     return p0, a, b, c
 
 
-def legendre(n, standardization):
-    return jacobi(n, 0, 0, standardization)
+def legendre(n, standardization, symbolic=False):
+    return jacobi(n, 0, 0, standardization, symbolic=symbolic)
 
 
-def jacobi(n, alpha, beta, standardization):
+def jacobi(n, alpha, beta, standardization, symbolic=False):
     '''Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
@@ -53,9 +66,16 @@ def jacobi(n, alpha, beta, standardization):
     with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     '''
+    gamma = (
+        sympy.gamma if symbolic else
+        lambda x: scipy.special.gamma(float(x))
+        )
+    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+
     int_1 = (
-        2**(alpha+beta+1) * sympy.gamma(alpha+1) * sympy.gamma(beta+1)
-        / sympy.gamma(alpha+beta+2)
+        2**(alpha+beta+1) * gamma(alpha+1) * gamma(beta+1)
+        / gamma(alpha+beta+2)
         )
 
     if standardization == 'monic':
@@ -70,8 +90,8 @@ def jacobi(n, alpha, beta, standardization):
             beta = int(beta)
 
         b = [
-            sympy.Rational(beta-alpha, alpha+beta+2) if N == 0 else
-            sympy.Rational(
+            frac(beta-alpha, alpha+beta+2) if N == 0 else
+            frac(
                 beta**2 - alpha**2,
                 (2*N+alpha+beta) * (2*N+alpha+beta+2)
                 )
@@ -88,11 +108,11 @@ def jacobi(n, alpha, beta, standardization):
         # division by 0 for alpha=beta=-1/2.
         c = [
             int_1 if N == 0 else
-            sympy.Rational(
+            frac(
                 4 * (1+alpha) * (1+beta),
                 (2+alpha+beta)**2 * (3+alpha+beta)
                 ) if N == 1 else
-            sympy.Rational(
+            frac(
                 4 * (N+alpha) * (N+beta) * N * (N+alpha+beta),
                 (2*N+alpha+beta)**2 * (2*N+alpha+beta+1) * (2*N+alpha+beta-1)
                 )
@@ -111,8 +131,8 @@ def jacobi(n, alpha, beta, standardization):
 
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
         a = [
-            sympy.Rational(alpha+beta+2, 2) if N == 0 else
-            sympy.Rational(
+            frac(alpha+beta+2, 2) if N == 0 else
+            frac(
                 (2*N+alpha+beta+1) * (2*N+alpha+beta+2),
                 2*(N+1) * (N+alpha+beta+1)
                 )
@@ -120,8 +140,8 @@ def jacobi(n, alpha, beta, standardization):
             ]
 
         b = [
-            sympy.Rational(beta-alpha, 2) if N == 0 else
-            sympy.Rational(
+            frac(beta-alpha, 2) if N == 0 else
+            frac(
                 (beta**2 - alpha**2) * (2*N+alpha+beta+1),
                 2*(N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
                 )
@@ -130,7 +150,7 @@ def jacobi(n, alpha, beta, standardization):
 
         c = [
             int_1 if N == 0 else
-            sympy.Rational(
+            frac(
                 (N+alpha) * (N+beta) * (2*N+alpha+beta+2),
                 (N+1) * (N+alpha+beta+1) * (2*N+alpha+beta)
                 )
@@ -141,15 +161,15 @@ def jacobi(n, alpha, beta, standardization):
         assert standardization == 'normal', \
             'Unknown standardization \'{}\'.'.format(standardization)
 
-        p0 = sympy.sqrt(1 / int_1)
+        p0 = sqrt(1 / int_1)
 
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
         a = [
-            sympy.Rational(alpha+beta+2, 2) * sympy.sqrt(sympy.Rational(
+            frac(alpha+beta+2, 2) * sqrt(frac(
                     alpha+beta+3,
                     (alpha+1) * (beta+1)
                     )) if N == 0 else
-            sympy.Rational(2*N+alpha+beta+2, 2) * sympy.sqrt(sympy.Rational(
+            frac(2*N+alpha+beta+2, 2) * sqrt(frac(
                     (2*N+alpha+beta+1) * (2*N+alpha+beta+3),
                     (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
                     ))
@@ -157,9 +177,9 @@ def jacobi(n, alpha, beta, standardization):
             ]
 
         b = [(
-                sympy.Rational(beta-alpha, 2) if N == 0 else
-                sympy.Rational(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
-             ) * sympy.sqrt(sympy.Rational(
+                frac(beta-alpha, 2) if N == 0 else
+                frac(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
+             ) * sqrt(frac(
                     (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
                     (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
                     ))
@@ -168,13 +188,13 @@ def jacobi(n, alpha, beta, standardization):
 
         c = [
             int_1 if N == 0 else
-            sympy.Rational(4+alpha+beta, 2+alpha+beta)
-            * sympy.sqrt(sympy.Rational(
+            frac(4+alpha+beta, 2+alpha+beta)
+            * sqrt(frac(
                 (1+alpha) * (1+beta) * (5+alpha+beta),
                 2 * (2+alpha) * (2+beta) * (2+alpha+beta)
                 )) if N == 1 else
-            sympy.Rational(2*N+alpha+beta+2, 2*N+alpha+beta)
-            * sympy.sqrt(sympy.Rational(
+            frac(2*N+alpha+beta+2, 2*N+alpha+beta)
+            * sqrt(frac(
                 N * (N+alpha) * (N+beta) * (N+alpha+beta)
                 * (2*N+alpha+beta+3),
                 (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)

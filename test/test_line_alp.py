@@ -4,9 +4,10 @@ from __future__ import division
 
 import matplotlib.pyplot as plt
 import numpy
-import orthopy
 import pytest
 import sympy
+
+import orthopy
 
 
 def P4_exact(x):

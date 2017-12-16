@@ -46,12 +46,13 @@ def alp_tree(
             ...       ...       ...     ...       ...
     '''
     # pylint: disable=too-many-statements,too-many-locals
-    assert numpy.all(numpy.abs(x) <= 1.0)
+    # assert numpy.all(numpy.abs(x) <= 1.0)
 
     exp = sympy.exp if symbolic else numpy.exp
     pi = sympy.pi if symbolic else numpy.pi
     sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
     frac = sympy.Rational if symbolic else lambda x, y: x/y
+    imag_unit = sympy.I if symbolic else 1j
 
     sqrt1mx2 = sqrt(1 - x**2)
 
@@ -97,7 +98,7 @@ def alp_tree(
         # analysis.
         alpha = 1 / sqrt(4*pi) if normalization == 'complex spherical' else 1
 
-        exp_iphi = exp(+1j * phi)
+        exp_iphi = exp(imag_unit * phi)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) / exp_iphi
@@ -143,7 +144,7 @@ def alp_tree(
             exp_iphi = 1
         else:
             alpha = 1
-            exp_iphi = exp(+1j * phi)
+            exp_iphi = exp(imag_unit * phi)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L-1, 2*L)) / exp_iphi

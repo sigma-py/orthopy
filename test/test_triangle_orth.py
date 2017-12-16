@@ -3,12 +3,12 @@
 from __future__ import division
 
 import numpy
-import orthopy
-import quadpy
 import pytest
 import scipy.special
 import sympy
 from sympy import Rational
+
+import orthopy
 
 
 def op(i, j, x, y):
@@ -84,7 +84,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, 'normal')
+    vals = orthopy.triangle.tree(L, bary, 'normal')
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -107,7 +107,7 @@ def test_triangle_orth_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, 'normal', symbolic=True)
+    vals = orthopy.triangle.tree(L, bary, 'normal', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -133,7 +133,7 @@ def test_triangle_orth_1_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.orth_tree(L, bary, '1', symbolic=True)
+    vals = orthopy.triangle.tree(L, bary, '1', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -141,32 +141,48 @@ def test_triangle_orth_1_exact():
     return
 
 
-def test_orthonormal(tol=1.0e-14):
+def test_integral0(n=4):
+    b0 = sympy.Symbol('b0')
+    b1 = sympy.Symbol('b1')
+    b = numpy.array([b0, b1, 1-b0-b1])
+    tree = numpy.concatenate(
+        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        )
+
+    assert \
+        sympy.integrate(tree[0], (b0, 0, 1-b1), (b1, 0, 1)) == sympy.sqrt(2)/2
+    for val in tree[1:]:
+        assert sympy.integrate(val, (b0, 0, 1-b1), (b1, 0, 1)) == 0
+    return
+
+
+def test_normality(n=4):
     '''Make sure that the polynomials are orthonormal
     '''
-    n = 4
-    # Choose a scheme of order at least 2*n.
-    scheme = quadpy.triangle.Dunavant(8)
+    b0 = sympy.Symbol('b0')
+    b1 = sympy.Symbol('b1')
+    b = numpy.array([b0, b1, 1-b0-b1])
+    tree = numpy.concatenate(
+        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        )
 
-    triangle = numpy.array([[0, 0], [1, 0], [0, 1]])
+    for val in tree:
+        assert sympy.integrate(val**2, (b0, 0, 1-b1), (b1, 0, 1)) == 1
+    return
 
-    # normality
-    def ff(x):
-        bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
-        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
-        return tree * tree
 
-    val = quadpy.triangle.integrate(ff, triangle, scheme)
-    assert numpy.all(abs(val - 1) < tol)
+def test_orthogonality(n=4):
+    b0 = sympy.Symbol('b0')
+    b1 = sympy.Symbol('b1')
+    b = numpy.array([b0, b1, 1-b0-b1])
+    tree = numpy.concatenate(
+        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        )
 
-    # orthogonality
-    def f_shift(x):
-        bary = numpy.array([x[0], x[1], 1-x[0]-x[1]])
-        tree = numpy.concatenate(orthopy.triangle.orth_tree(n, bary, 'normal'))
-        return tree * numpy.roll(tree, 1, axis=0)
+    shifts = tree * numpy.roll(tree, 1, axis=0)
 
-    val = quadpy.triangle.integrate(f_shift, triangle, scheme)
-    assert numpy.all(abs(val) < tol)
+    for val in shifts:
+        assert sympy.integrate(val, (b0, 0, 1-b1), (b1, 0, 1)) == 0
     return
 
 
@@ -178,7 +194,7 @@ def test_show(n=2, r=1):
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.triangle.orth_tree(n, bary, 'normal')[n][r]
+        return orthopy.triangle.tree(n, bary, 'normal')[n][r]
 
     orthopy.triangle.show(corners, f)
     # orthopy.triangle.plot(corners, f)

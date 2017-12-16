@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-import orthopy
 import sympy
+
+import orthopy
 
 
 def test_legendre():
