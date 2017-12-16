@@ -4,7 +4,6 @@ from __future__ import division
 
 import numpy
 import pytest
-import quadpy
 import sympy
 from sympy import sqrt, pi
 
@@ -12,91 +11,92 @@ import orthopy
 
 
 def test_integral0(n=4, tol=1.0e-13):
-    # Choose a scheme of order at least 2*n.
-    scheme = quadpy.sphere.Lebedev(5)
+    polar = sympy.Symbol('theta', real=True)
+    azimuthal = sympy.Symbol('phi', real=True)
+    tree = numpy.concatenate(
+            orthopy.sphere.sph_tree(
+                n, polar, azimuthal, normalization='quantum mechanic',
+                symbolic=True
+                ))
 
-    # normality
-    def ff(azimuthal, polar):
-        tree = numpy.concatenate(
-                orthopy.sphere.sph_tree(
-                    n, polar, azimuthal, normalization='quantum mechanic'
-                    ))
-        return tree
-
-    vals = quadpy.sphere.integrate_spherical(ff, rule=scheme)
-    assert abs(vals[0] - 2*numpy.sqrt(numpy.pi)) < tol
-    assert numpy.all(abs(vals[1:]) < tol)
+    assert sympy.integrate(
+        tree[0] * sympy.sin(polar), (polar, 0, pi), (azimuthal, 0, 2*pi)
+        ) == 2*sqrt(pi)
+    for val in tree[1:]:
+        assert sympy.integrate(
+            val * sympy.sin(polar), (azimuthal, 0, 2*pi), (polar, 0, pi)
+            ) == 0
     return
 
 
-def test_normality(n=4, tol=1.0e-13):
+def test_normality(n=3, tol=1.0e-13):
     '''Make sure that the polynomials are normal.
     '''
-    # Choose a scheme of order at least 2*n.
-    scheme = quadpy.sphere.Lebedev(9)
+    polar = sympy.Symbol('theta', real=True)
+    azimuthal = sympy.Symbol('phi', real=True)
+    tree = numpy.concatenate(
+            orthopy.sphere.sph_tree(
+                n, polar, azimuthal, normalization='quantum mechanic',
+                symbolic=True
+                ))
 
-    # normality
-    def ff(azimuthal, polar):
-        tree = numpy.concatenate(
-                orthopy.sphere.sph_tree(
-                    n, polar, azimuthal, normalization='quantum mechanic'
-                    ))
-        return tree * numpy.conjugate(tree)
-
-    val = quadpy.sphere.integrate_spherical(ff, rule=scheme)
-    assert numpy.all(abs(val - 1) < tol)
+    for val in tree:
+        integrand = sympy.simplify(
+            val * sympy.conjugate(val) * sympy.sin(polar)
+            )
+        assert sympy.integrate(
+            integrand,
+            (azimuthal, 0, 2*pi), (polar, 0, pi)
+            ) == 1
     return
 
 
-def test_orthogonality(n=4, tol=1.0e-13):
-    def f_shift(azimuthal, polar):
-        tree = numpy.concatenate(
-                orthopy.sphere.sph_tree(
-                    n, polar, azimuthal, normalization='quantum mechanic'
-                    ))
-        return tree * numpy.roll(tree, 1, axis=0)
+@pytest.mark.parametrize(
+    'normalization', ['quantum mechanic', 'schmidt']
+    )
+def test_orthogonality(normalization, n=4, tol=1.0e-13):
+    polar = sympy.Symbol('theta', real=True)
+    azimuthal = sympy.Symbol('phi', real=True)
+    tree = numpy.concatenate(
+            orthopy.sphere.sph_tree(
+                n, polar, azimuthal, normalization=normalization,
+                symbolic=True
+                ))
+    vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
 
-    scheme = quadpy.sphere.Lebedev(9)
-    val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
-    assert numpy.all(abs(val) < tol)
+    for val in vals:
+        integrand = sympy.simplify(val * sympy.sin(polar))
+        assert sympy.integrate(
+            integrand,
+            (azimuthal, 0, 2*pi), (polar, 0, pi)
+            ) == 0
     return
 
 
-def test_schmidt_normality(n=4, tol=1.0e-12):
+def test_schmidt_normality(n=3, tol=1.0e-12):
     '''Make sure that the polynomials are orthonormal.
     '''
-    def ff(azimuthal, polar):
-        tree = numpy.concatenate(
-                orthopy.sphere.sph_tree(
-                    n, polar, azimuthal, normalization='schmidt'
-                    ))
-        return tree * numpy.conjugate(tree)
-
-    # Choose a scheme of order at least 2*n.
-    scheme = quadpy.sphere.Lebedev(9)
-
-    vals = quadpy.sphere.integrate_spherical(ff, rule=scheme)
+    polar = sympy.Symbol('theta', real=True)
+    azimuthal = sympy.Symbol('phi', real=True)
+    tree = numpy.concatenate(
+            orthopy.sphere.sph_tree(
+                n, polar, azimuthal, normalization='schmidt',
+                symbolic=True
+                ))
     # split into levels
     levels = [
-            vals[0:1], vals[1:4], vals[4:9], vals[9:16], vals[16:25]
-            ]
+        tree[0:1], tree[1:4], tree[4:9], tree[9:16], tree[16:25]
+        ]
+
     for k, level in enumerate(levels):
-        assert numpy.all(abs(level - 4*numpy.pi/(2*k+1)) < tol)
-
-    return
-
-
-def test_schmidt_orthogonality(n=4, tol=1.0e-12):
-    def f_shift(azimuthal, polar):
-        tree = numpy.concatenate(
-                orthopy.sphere.sph_tree(
-                    n, polar, azimuthal, normalization='schmidt'
-                    ))
-        return tree * numpy.roll(tree, 1, axis=0)
-
-    scheme = quadpy.sphere.Lebedev(9)
-    val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
-    assert numpy.all(abs(val) < tol)
+        for val in level:
+            integrand = sympy.simplify(
+                val * sympy.conjugate(val) * sympy.sin(polar)
+                )
+            assert sympy.integrate(
+                integrand,
+                (azimuthal, 0, 2*pi), (polar, 0, pi)
+                ) == 4*pi / (2*k+1)
     return
 
 
@@ -117,16 +117,18 @@ def sph_exact2(theta, phi):
     sin_theta = sin(theta)
     cos_theta = cos(theta)
 
+    i = sympy.I
+
     # pylint: disable=invalid-unary-operand-type
-    y1m1 = +sin_theta * exp(-1j*phi) * sqrt(3 / pi / 2) / 2
+    y1m1 = +sin_theta * exp(-i*phi) * sqrt(3 / pi / 2) / 2
     y1_0 = +cos_theta * sqrt(3 / pi) / 2
-    y1p1 = -sin_theta * exp(+1j*phi) * sqrt(3 / pi / 2) / 2
+    y1p1 = -sin_theta * exp(+i*phi) * sqrt(3 / pi / 2) / 2
     #
-    y2m2 = +sin_theta**2 * exp(-1j*2*phi) * sqrt(15 / pi / 2) / 4
-    y2m1 = +(sin_theta * cos_theta * exp(-1j*phi)) * (sqrt(15 / pi / 2) / 2)
+    y2m2 = +sin_theta**2 * exp(-i*2*phi) * sqrt(15 / pi / 2) / 4
+    y2m1 = +(sin_theta * cos_theta * exp(-i*phi)) * (sqrt(15 / pi / 2) / 2)
     y2_0 = +(3*cos_theta**2 - 1) * sqrt(5 / pi) / 4
-    y2p1 = -(sin_theta * cos_theta * exp(+1j*phi)) * (sqrt(15 / pi / 2) / 2)
-    y2p2 = +sin_theta**2 * exp(+1j*2*phi) * sqrt(15 / pi / 2) / 4
+    y2p1 = -(sin_theta * cos_theta * exp(+i*phi)) * (sqrt(15 / pi / 2) / 2)
+    y2p2 = +sin_theta**2 * exp(+i*2*phi) * sqrt(15 / pi / 2) / 4
     return [
         [y0_0],
         [y1m1, y1_0, y1p1],
@@ -190,4 +192,4 @@ def test_write():
 
 
 if __name__ == '__main__':
-    test_write()
+    test_schmidt_normality()
