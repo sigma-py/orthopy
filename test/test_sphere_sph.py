@@ -10,7 +10,7 @@ from sympy import sqrt, pi
 import orthopy
 
 
-def test_integral0(n=4, tol=1.0e-13):
+def test_integral0(n=4):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
@@ -29,7 +29,7 @@ def test_integral0(n=4, tol=1.0e-13):
     return
 
 
-def test_normality(n=3, tol=1.0e-13):
+def test_normality(n=3):
     '''Make sure that the polynomials are normal.
     '''
     polar = sympy.Symbol('theta', real=True)
@@ -54,7 +54,7 @@ def test_normality(n=3, tol=1.0e-13):
 @pytest.mark.parametrize(
     'normalization', ['quantum mechanic', 'schmidt']
     )
-def test_orthogonality(normalization, n=4, tol=1.0e-13):
+def test_orthogonality(normalization, n=4):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
@@ -73,7 +73,7 @@ def test_orthogonality(normalization, n=4, tol=1.0e-13):
     return
 
 
-def test_schmidt_normality(n=3, tol=1.0e-12):
+def test_schmidt_seminormality(n=3):
     '''Make sure that the polynomials are orthonormal.
     '''
     polar = sympy.Symbol('theta', real=True)

@@ -8,7 +8,7 @@ import sympy
 import orthopy
 
 
-def test_integral0(n=4, tol=1.0e-14):
+def test_integral0(n=4):
     '''Make sure that the polynomials are orthonormal
     '''
     x = sympy.Symbol('x')
@@ -23,7 +23,7 @@ def test_integral0(n=4, tol=1.0e-14):
     return
 
 
-def test_orthogonality(n=4, tol=1.0e-14):
+def test_orthogonality(n=4):
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     tree = numpy.concatenate(
@@ -36,7 +36,7 @@ def test_orthogonality(n=4, tol=1.0e-14):
     return
 
 
-def test_normality(n=4, tol=1.0e-14):
+def test_normality(n=4):
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     tree = numpy.concatenate(

@@ -84,7 +84,7 @@ def test_legendre_normal(n, y):
     return
 
 
-def test_integral0(n=4, tol=1.0e-13):
+def test_integral0(n=4):
     x = sympy.Symbol('x')
     rc = orthopy.line.recurrence_coefficients.legendre(
             n, standardization='normal', symbolic=True
@@ -97,7 +97,7 @@ def test_integral0(n=4, tol=1.0e-13):
     return
 
 
-def test_normality(n=4, tol=1.0e-13):
+def test_normality(n=4):
     x = sympy.Symbol('x')
     rc = orthopy.line.recurrence_coefficients.legendre(
             n, standardization='normal', symbolic=True
@@ -109,7 +109,7 @@ def test_normality(n=4, tol=1.0e-13):
     return
 
 
-def test_orthogonality(n=4, tol=1.0e-13):
+def test_orthogonality(n=4):
     x = sympy.Symbol('x')
     rc = orthopy.line.recurrence_coefficients.legendre(
             n, standardization='normal', symbolic=True
