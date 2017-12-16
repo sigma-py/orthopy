@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
 import numpy
-import quadpy
 import pytest
+import sympy
 from sympy import Rational, sqrt
 
 import orthopy
@@ -85,56 +85,40 @@ def test_legendre_normal(n, y):
 
 
 def test_integral0(n=4, tol=1.0e-13):
-    def ff(x):
-        out = orthopy.line.recurrence_coefficients.legendre(
-                n, standardization='normal', symbolic=False
-                )
-        return orthopy.line.tree(x[0], *out)
-
-    scheme = quadpy.line_segment.GaussLegendre(4)
-    val = quadpy.line_segment.integrate(
-            ff,
-            numpy.array([[-1], [+1]]),
-            scheme
+    x = sympy.Symbol('x')
+    rc = orthopy.line.recurrence_coefficients.legendre(
+            n, standardization='normal', symbolic=True
             )
-    assert numpy.all(abs(val[0] - numpy.sqrt(2.0)) < tol)
-    assert numpy.all(abs(val[1:]) < tol)
+    vals = orthopy.line.tree(x, *rc)
+
+    assert sympy.integrate(vals[0], (x, -1, +1)) == sqrt(2)
+    for val in vals[1:]:
+        assert sympy.integrate(val, (x, -1, +1)) == 0
     return
 
 
 def test_normality(n=4, tol=1.0e-13):
-    def ff(x):
-        out = orthopy.line.recurrence_coefficients.legendre(
-                n, standardization='normal', symbolic=False
-                )
-        vals = numpy.array(orthopy.line.tree(x[0], *out))
-        return vals**2
-
-    scheme = quadpy.line_segment.GaussLegendre(8)
-    val = quadpy.line_segment.integrate(
-            ff,
-            numpy.array([[-1], [+1]]),
-            scheme
+    x = sympy.Symbol('x')
+    rc = orthopy.line.recurrence_coefficients.legendre(
+            n, standardization='normal', symbolic=True
             )
-    assert numpy.all(abs(val[0] - 1.0) < tol)
+    vals = orthopy.line.tree(x, *rc)
+
+    for val in vals:
+        assert sympy.integrate(val**2, (x, -1, +1)) == 1
     return
 
 
 def test_orthogonality(n=4, tol=1.0e-13):
-    def ff(x):
-        out = orthopy.line.recurrence_coefficients.legendre(
-                n, standardization='normal', symbolic=False
-                )
-        vals = numpy.array(orthopy.line.tree(x[0], *out))
-        return vals * numpy.roll(vals, 1, axis=0)
-
-    scheme = quadpy.line_segment.GaussLegendre(8)
-    val = quadpy.line_segment.integrate(
-            ff,
-            numpy.array([[-1], [+1]]),
-            scheme
+    x = sympy.Symbol('x')
+    rc = orthopy.line.recurrence_coefficients.legendre(
+            n, standardization='normal', symbolic=True
             )
-    assert numpy.all(abs(val[0] - 0.0) < tol)
+    vals = orthopy.line.tree(x, *rc)
+    out = vals * numpy.roll(vals, 1, axis=0)
+
+    for val in out:
+        assert sympy.integrate(val, (x, -1, +1)) == 0
     return
 
 
