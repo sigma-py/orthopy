@@ -11,10 +11,27 @@ from sympy import sqrt, pi
 import orthopy
 
 
-def test_orthonormality(tol=1.0e-13):
-    '''Make sure that the polynomials are orthonormal.
+def test_integral0(n=4, tol=1.0e-13):
+    # Choose a scheme of order at least 2*n.
+    scheme = quadpy.sphere.Lebedev(5)
+
+    # normality
+    def ff(azimuthal, polar):
+        tree = numpy.concatenate(
+                orthopy.sphere.sph_tree(
+                    n, polar, azimuthal, normalization='quantum mechanic'
+                    ))
+        return tree
+
+    vals = quadpy.sphere.integrate_spherical(ff, rule=scheme)
+    assert abs(vals[0] - 2*numpy.sqrt(numpy.pi)) < tol
+    assert numpy.all(abs(vals[1:]) < tol)
+    return
+
+
+def test_normality(n=4, tol=1.0e-13):
+    '''Make sure that the polynomials are normal.
     '''
-    n = 4
     # Choose a scheme of order at least 2*n.
     scheme = quadpy.sphere.Lebedev(9)
 
@@ -28,8 +45,10 @@ def test_orthonormality(tol=1.0e-13):
 
     val = quadpy.sphere.integrate_spherical(ff, rule=scheme)
     assert numpy.all(abs(val - 1) < tol)
+    return
 
-    # orthogonality
+
+def test_orthogonality(n=4, tol=1.0e-13):
     def f_shift(azimuthal, polar):
         tree = numpy.concatenate(
                 orthopy.sphere.sph_tree(
@@ -37,25 +56,24 @@ def test_orthonormality(tol=1.0e-13):
                     ))
         return tree * numpy.roll(tree, 1, axis=0)
 
+    scheme = quadpy.sphere.Lebedev(9)
     val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
     assert numpy.all(abs(val) < tol)
     return
 
 
-def test_schmidt_orthonormality(tol=1.0e-12):
+def test_schmidt_normality(n=4, tol=1.0e-12):
     '''Make sure that the polynomials are orthonormal.
     '''
-    n = 4
-    # Choose a scheme of order at least 2*n.
-    scheme = quadpy.sphere.Lebedev(9)
-
-    # normality
     def ff(azimuthal, polar):
         tree = numpy.concatenate(
                 orthopy.sphere.sph_tree(
                     n, polar, azimuthal, normalization='schmidt'
                     ))
         return tree * numpy.conjugate(tree)
+
+    # Choose a scheme of order at least 2*n.
+    scheme = quadpy.sphere.Lebedev(9)
 
     vals = quadpy.sphere.integrate_spherical(ff, rule=scheme)
     # split into levels
@@ -65,7 +83,10 @@ def test_schmidt_orthonormality(tol=1.0e-12):
     for k, level in enumerate(levels):
         assert numpy.all(abs(level - 4*numpy.pi/(2*k+1)) < tol)
 
-    # orthogonality
+    return
+
+
+def test_schmidt_orthogonality(n=4, tol=1.0e-12):
     def f_shift(azimuthal, polar):
         tree = numpy.concatenate(
                 orthopy.sphere.sph_tree(
@@ -73,6 +94,7 @@ def test_schmidt_orthonormality(tol=1.0e-12):
                     ))
         return tree * numpy.roll(tree, 1, axis=0)
 
+    scheme = quadpy.sphere.Lebedev(9)
     val = quadpy.sphere.integrate_spherical(f_shift, rule=scheme)
     assert numpy.all(abs(val) < tol)
     return
