@@ -192,4 +192,4 @@ def test_write():
 
 
 if __name__ == '__main__':
-    test_schmidt_normality()
+    test_schmidt_seminormality()
