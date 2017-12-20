@@ -13,7 +13,9 @@ from .__about__ import (
     __status__,
     )
 
+from . import hexahedron
 from . import line
+from . import ncube
 from . import quadrilateral
 from . import sphere
 from . import triangle

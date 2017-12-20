@@ -21,8 +21,8 @@ def tree(n, X, symbolic=False):
     '''
     p0, a, b, c = legendre(n+1, 'normal', symbolic=symbolic)
 
-    p0 **= 2
-    out = [numpy.array([numpy.full(X.shape[1:], p0)])]
+    p0n = p0**2
+    out = [numpy.array([numpy.full(X.shape[1:], p0n)])]
     for L in range(1, n+1):
         alpha = numpy.array([a[L-1-m] for m in range(L)])
         beta = numpy.array([b[L-1-m] for m in range(L)])
