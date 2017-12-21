@@ -55,16 +55,14 @@ def tree(n, X, symbolic=False):
         level = []
         for i in range(dim-1):
             m1 = int(scipy.special.binom(L+dim-i-1, dim-i-1))
-            dat1 = out[L][-m1:]
             if L > 0:
                 m2 = int(scipy.special.binom(L+dim-i-2, dim-i-1))
-                dat2 = out[L-1][-m2:]
             r = 0
             for k in range(L+1):
                 m = int(scipy.special.binom(k+dim-i-2, dim-i-2))
-                val = dat1[r:r+m] * (a[L-k] * X[i] - b[L-k])
+                val = out[L][-m1:][r:r+m] * (a[L-k] * X[i] - b[L-k])
                 if L-k > 0:
-                    val -= dat2[r:r+m] * c[L-k]
+                    val -= out[L-1][-m2:][r:r+m] * c[L-k]
                 r += m
                 level.append(val)
 
