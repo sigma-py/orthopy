@@ -8,7 +8,7 @@ import sympy
 import orthopy
 
 
-def test_integral0(n=2):
+def test_integral0(n=3):
     '''Make sure that the polynomials are orthonormal
     '''
     x = sympy.Symbol('x')
@@ -25,8 +25,6 @@ def test_integral0(n=2):
         assert sympy.integrate(
             val, (x, -1, +1), (y, -1, +1), (z, -1, +1)
             ) == 0
-
-    exit(1)
     return
 
 

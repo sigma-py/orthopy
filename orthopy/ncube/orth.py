@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #
-from __future__ import division
+from __future__ import division, print_function
 
 import numpy
 import scipy.special
+import sympy
 
 from ..line.recurrence_coefficients import legendre
 
@@ -55,30 +56,50 @@ def tree(n, X, symbolic=False):
         # The order of X and a is important here. If X is int and a is
         # sympy, then the product will be sympy for X*a and float for a*X.
         level = []
+        print()
+        print()
+        print()
         print('L={}'.format(L))
         for i in range(dim):
+            print()
+            print('dim: {}'.format(i))
             r = 0
             m1 = int(scipy.special.binom(L+dim-i-2, dim-i-1))
             dat1 = out[L-1][-m1:]
-            print('dat1', dat1)
-            m2 = int(scipy.special.binom(L+dim-i-2, dim-i))
-            dat2 = out[L-2][-m2:]
-            # TODO ugly, replace
+            print('dat1 (len = {}):'.format(len(dat1)))
+            for d1 in dat1:
+                print(d1)
+            print(L, dim, i)
+            if L > 1:
+                m2 = int(scipy.special.binom(L+dim-i-3, dim-i-1))
+                dat2 = out[L-2][-m2:]
+                print('dat2 (len = {}):'.format(len(dat2)))
+                for d2 in dat2:
+                    print(d2)
+            # TODO ugly, replace; perhaps simply add the last element
+            # separately
             num = L if i < dim-1 else 1
-            print('    {}, {}, {}'.format(i, m1, m2))
-            print(level)
+            print('    {}, {}'.format(i, m1))
             for k in range(num):
                 m = int(scipy.special.binom(k+dim-2, dim-2))
                 print('        k = {}, m = {}'.format(k, m))
                 val = dat1[r:r+m] * (a[L-k-1] * X[i] - b[L-k-1])
                 if L-k-1 > 0:
                     print('        ({}, {})'.format(r, r+m))
+                    print(val)
+                    print(dat2[r:r+m])
+                    print(c[L-k-1])
                     val -= dat2[r:r+m] * c[L-k-1]
                 r += m
+                print('final val', val)
                 level.append(val)
 
-        out.append(numpy.concatenate(level))
+        clevel = numpy.concatenate(level)
+        print()
+        print('level:')
+        for k, cl in enumerate(clevel):
+            clevel[k] = sympy.simplify(cl)
+            print(clevel[k])
+        out.append(clevel)
 
-    for o in out:
-        print(o)
     return out
