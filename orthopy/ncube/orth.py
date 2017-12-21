@@ -60,7 +60,7 @@ def tree(n, X, symbolic=False):
         print()
         print()
         print('L={}'.format(L))
-        for i in range(dim):
+        for i in range(dim-1):
             print()
             print('dim: {}'.format(i))
             r = 0
@@ -76,15 +76,13 @@ def tree(n, X, symbolic=False):
                 print('dat2 (len = {}):'.format(len(dat2)))
                 for d2 in dat2:
                     print(d2)
-            # TODO ugly, replace; perhaps simply add the last element
-            # separately
-            num = L if i < dim-1 else 1
             print('    {}, {}'.format(i, m1))
-            for k in range(num):
-                m = int(scipy.special.binom(k+dim-2, dim-2))
+            for k in range(L):
+                print(k, dim, i)
+                m = int(scipy.special.binom(k+dim-i-2, dim-i-2))
                 print('        k = {}, m = {}'.format(k, m))
                 val = dat1[r:r+m] * (a[L-k-1] * X[i] - b[L-k-1])
-                if L-k-1 > 0:
+                if L-k > 1:
                     print('        ({}, {})'.format(r, r+m))
                     print(val)
                     print(dat2[r:r+m])
@@ -93,6 +91,12 @@ def tree(n, X, symbolic=False):
                 r += m
                 print('final val', val)
                 level.append(val)
+
+        # treat the last one separately
+        val = out[L-1][-1] * (a[L-1] * X[-1] - b[L-1])
+        if L > 1:
+            val -= out[L-2][-1] * c[L-1]
+        level.append([val])
 
         clevel = numpy.concatenate(level)
         print()
