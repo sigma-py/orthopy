@@ -8,7 +8,7 @@ import sympy
 import orthopy
 
 
-def test_integral0(n=3):
+def test_integral0(n=4):
     '''Make sure that the polynomials are orthonormal
     '''
     x = sympy.Symbol('x')
@@ -28,31 +28,35 @@ def test_integral0(n=3):
     return
 
 
-# def test_orthogonality(n=4):
-#     x = sympy.Symbol('x')
-#     y = sympy.Symbol('y')
-#     tree = numpy.concatenate(
-#             orthopy.hexahedron.tree(n, numpy.array([x, y]), symbolic=True)
-#             )
-#     vals = tree * numpy.roll(tree, 1, axis=0)
-#
-#     for val in vals:
-#         assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
-#     return
-#
-#
-# def test_normality(n=4):
-#     x = sympy.Symbol('x')
-#     y = sympy.Symbol('y')
-#     tree = numpy.concatenate(
-#             orthopy.hexahedron.tree(n, numpy.array([x, y]), symbolic=True)
-#             )
-#
-#     for val in tree:
-#         assert sympy.integrate(val**2, (x, -1, +1), (y, -1, +1)) == 1
-#     return
-#
-#
+def test_orthogonality(n=4):
+    x = sympy.Symbol('x')
+    y = sympy.Symbol('y')
+    z = sympy.Symbol('z')
+    tree = numpy.concatenate(
+        orthopy.hexahedron.tree(n, numpy.array([x, y, z]), symbolic=True)
+        )
+    vals = tree * numpy.roll(tree, 1, axis=0)
+
+    for val in vals:
+        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 0
+    return
+
+
+def test_normality(n=4):
+    x = sympy.Symbol('x')
+    y = sympy.Symbol('y')
+    z = sympy.Symbol('z')
+    tree = numpy.concatenate(
+        orthopy.hexahedron.tree(n, numpy.array([x, y, z]), symbolic=True)
+        )
+
+    for val in tree:
+        assert sympy.integrate(
+            val**2, (x, -1, +1), (y, -1, +1), (z, -1, +1)
+            ) == 1
+    return
+
+
 # def test_show(n=2, r=1):
 #     def f(X):
 #         return orthopy.hexahedron.tree(n, X)[n][r]
