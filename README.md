@@ -231,7 +231,7 @@ print(sympy.expand(tree[3][1]))
 <img src="https://nschloe.github.io/orthopy/quad.png" width="25%">
 
 ```python
-vals = orthopy.triangle.tree(4, x, symbolic=False)
+vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized on the quadrilateral.
 
@@ -247,6 +247,25 @@ vals = orthopy.sphere.sph_tree(n, x, symbolic=False)
 ```
 Note that spherical harmonics are complex-valued in general. The above plot
 only shows the absolute value of SPH(5, 3).
+
+
+### Hexahedron
+
+<img src="https://nschloe.github.io/orthopy/hexa.png" width="25%">
+
+```python
+vals = orthopy.hexahedron.tree(3, x, symbolic=False)
+```
+All polynomials are normalized on the hexahedron.
+
+
+### n-Cube
+
+```python
+vals = orthopy.ncube.tree(6, x, symbolic=False)
+```
+All polynomials are normalized on the n-dimensional cube. The dimensionality is
+determined by `X.shape[0]`.
 
 
 ### Relevant publications
