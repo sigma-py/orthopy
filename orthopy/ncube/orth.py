@@ -51,29 +51,27 @@ def tree(n, X, symbolic=False):
     out.append(level)
 
     # TODO use a simpler binom implementation
-    for L in range(1, n+1):
-        # The order of X and a is important here. If X is int and a is
-        # sympy, then the product will be sympy for X*a and float for a*X.
+    for L in range(n):
         level = []
         for i in range(dim-1):
+            m1 = int(scipy.special.binom(L+dim-i-1, dim-i-1))
+            dat1 = out[L][-m1:]
+            if L > 0:
+                m2 = int(scipy.special.binom(L+dim-i-2, dim-i-1))
+                dat2 = out[L-1][-m2:]
             r = 0
-            m1 = int(scipy.special.binom(L+dim-i-2, dim-i-1))
-            dat1 = out[L-1][-m1:]
-            if L > 1:
-                m2 = int(scipy.special.binom(L+dim-i-3, dim-i-1))
-                dat2 = out[L-2][-m2:]
-            for k in range(L):
+            for k in range(L+1):
                 m = int(scipy.special.binom(k+dim-i-2, dim-i-2))
-                val = dat1[r:r+m] * (a[L-k-1] * X[i] - b[L-k-1])
-                if L-k > 1:
-                    val -= dat2[r:r+m] * c[L-k-1]
+                val = dat1[r:r+m] * (a[L-k] * X[i] - b[L-k])
+                if L-k > 0:
+                    val -= dat2[r:r+m] * c[L-k]
                 r += m
                 level.append(val)
 
         # treat the last one separately
-        val = out[L-1][-1] * (a[L-1] * X[-1] - b[L-1])
-        if L > 1:
-            val -= out[L-2][-1] * c[L-1]
+        val = out[L][-1] * (a[L] * X[-1] - b[L])
+        if L > 0:
+            val -= out[L-1][-1] * c[L]
         level.append([val])
 
         out.append(numpy.concatenate(level))
