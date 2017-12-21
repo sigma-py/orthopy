@@ -57,16 +57,13 @@ def test_normality(n=4):
     return
 
 
-# def test_show(n=2, r=1):
-#     def f(X):
-#         return orthopy.hexahedron.tree(n, X)[n][r]
-#
-#     orthopy.hexahedron.show(f)
-#     # orthopy.hexahedron.plot(f)
-#     # import matplotlib.pyplot as plt
-#     # plt.savefig('quad.png', transparent=True)
-#     return
+def test_write():
+    orthopy.hexahedron.write(
+        'hexa.vtu',
+        lambda X: orthopy.hexahedron.tree(5, X.T)[5][5]
+        )
+    return
 
 
 if __name__ == '__main__':
-    test_integral0()
+    test_write()
