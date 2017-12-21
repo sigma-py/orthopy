@@ -259,6 +259,15 @@ vals = orthopy.hexahedron.tree(3, x, symbolic=False)
 All polynomials are normalized on the hexahedron.
 
 
+### n-Cube
+
+```python
+vals = orthopy.ncube.tree(6, x, symbolic=False)
+```
+All polynomials are normalized on the n-dimensional cube. The dimensionality is
+determined by `X.shape[0]`.
+
+
 ### Relevant publications
 
  * [A.H. Stroud and D. Secrest, Gaussian Quadrature Formulas, 1966, Prentice Hall, Series in Automatic Computation](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ)
