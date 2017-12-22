@@ -191,6 +191,17 @@ Some explanations:
    ```
    The implementation is numerically stable.
 
+
+### 1D space with weight function exp(-r<sup>2</sup>)
+<img src="https://nschloe.github.io/orthopy/e1r2.png" width="25%">
+
+Hermite polynomials.
+```python
+vals = orthopy.e1r2.tree(4, x, symbolic=False)
+```
+All polynomials are normalized over the measure.
+
+
 ### Triangle
 
 <img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
