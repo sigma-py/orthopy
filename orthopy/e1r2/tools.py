@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib.tri
 import matplotlib.pyplot as plt
 import numpy
+
+from .orth import tree
 
 
 def show(*args, **kwargs):
@@ -11,24 +12,25 @@ def show(*args, **kwargs):
     return
 
 
-def plot(f, n=100):
-    '''Plot function over the standard quadrilateral.
-    '''
-    x = numpy.linspace(-1, +1, n)
-    y = numpy.linspace(-1, +1, n)
-    X, Y = numpy.meshgrid(x, y)
-    XY = numpy.stack([X, Y])
+def plot(L):
+    xlim = [-2.0, +2.0]
+    x = numpy.linspace(xlim[0], xlim[1], 500)
+    vals = tree(L, x)
 
-    z = numpy.array(f(XY), dtype=float)
+    for val in vals:
+        plt.plot(x, val)
 
-    triang = matplotlib.tri.Triangulation(X.flatten(), Y.flatten())
-    plt.tripcolor(triang, z.flatten(), shading='flat')
-    plt.colorbar()
-
-    # quad outlines
-    X = numpy.array([[-1, 1, 1, -1, -1], [-1, -1, 1, 1, -1]])
-    plt.plot(X[0], X[1], '-k')
-
-    plt.gca().set_aspect('equal')
-    plt.axis('off')
+    plt.xlim(*xlim)
+    # plt.ylim(-2, +2)
+    plt.tick_params(
+        axis='both',
+        which='both',
+        bottom='off',
+        top='off',
+        left='off',
+        right='off',
+        labelbottom='off',
+        labelleft='off'
+        )
+    plt.grid()
     return

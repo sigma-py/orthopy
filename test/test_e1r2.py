@@ -20,10 +20,6 @@ def test_integral0(n=4):
         ) == sympy.sqrt(sympy.sqrt(sympy.pi))
 
     for k, val in enumerate(vals[1:]):
-        print(val)
-        print(k+1, sympy.simplify(sympy.integrate(
-            val * sympy.exp(-x**2), (x, -oo, +oo)
-            )))
         assert sympy.integrate(
             val * sympy.exp(-x**2), (x, -oo, +oo)
             ) == 0
@@ -49,22 +45,19 @@ def test_normality(n=4):
         )
 
     for k, val in enumerate(tree):
-        print(k, sympy.integrate(
-            val**2 * sympy.exp(-x**2), (x, -oo, +oo)
-            ))
         assert sympy.integrate(
             val**2 * sympy.exp(-x**2), (x, -oo, +oo)
             ) == 1
     return
 
 
-# def test_write():
-#     orthopy.e1r2.write(
-#         'hexa.vtu',
-#         lambda X: orthopy.e1r2.tree(5, X.T)[5][5]
-#         )
-#     return
+def test_plot():
+    orthopy.e1r2.plot(L=4)
+    return
 
 
-# if __name__ == '__main__':
-#     test_write()
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    test_plot()
+    plt.show()
+    # plt.savefig('e1r2.png', transparent=True)
