@@ -191,6 +191,17 @@ Some explanations:
    ```
    The implementation is numerically stable.
 
+
+### 1D space with weight function exp(-r<sup>2</sup>)
+<img src="https://nschloe.github.io/orthopy/e1r2.png" width="25%">
+
+Hermite polynomials.
+```python
+vals = orthopy.e1r2.tree(4, x, symbolic=False)
+```
+All polynomials are normalized over the measure.
+
+
 ### Triangle
 
 <img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
@@ -236,6 +247,15 @@ vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
 All polynomials are normalized on the quadrilateral.
 
 
+### 2D space with weight function exp(-r<sup>2</sup>)
+<img src="https://nschloe.github.io/orthopy/e2r2.png" width="25%">
+
+```python
+vals = orthopy.e2r2.tree(4, x, symbolic=False)
+```
+All polynomials are normalized over the measure.
+
+
 ### Sphere
 
 <img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
@@ -265,6 +285,14 @@ All polynomials are normalized on the hexahedron.
 vals = orthopy.ncube.tree(6, x, symbolic=False)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
+determined by `X.shape[0]`.
+
+### nD space with weight function exp(-r<sup>2</sup>)
+
+```python
+vals = orthopy.enr2.tree(4, x, symbolic=False)
+```
+All polynomials are normalized over the measure. The dimensionality is
 determined by `X.shape[0]`.
 
 
