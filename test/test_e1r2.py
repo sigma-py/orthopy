@@ -19,7 +19,7 @@ def test_integral0(n=4):
         vals[0] * sympy.exp(-x**2), (x, -oo, +oo)
         ) == sympy.sqrt(sympy.sqrt(sympy.pi))
 
-    for k, val in enumerate(vals[1:]):
+    for val in vals[1:]:
         assert sympy.integrate(
             val * sympy.exp(-x**2), (x, -oo, +oo)
             ) == 0
@@ -44,7 +44,7 @@ def test_normality(n=4):
         orthopy.e1r2.tree(n, numpy.array([x]), symbolic=True)
         )
 
-    for k, val in enumerate(tree):
+    for val in tree:
         assert sympy.integrate(
             val**2 * sympy.exp(-x**2), (x, -oo, +oo)
             ) == 1
