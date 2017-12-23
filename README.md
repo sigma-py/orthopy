@@ -292,7 +292,8 @@ determined by `X.shape[0]`.
 ```python
 vals = orthopy.enr2.tree(4, x, symbolic=False)
 ```
-All polynomials are normalized over the measure.
+All polynomials are normalized over the measure. The dimensionality is
+determined by `X.shape[0]`.
 
 
 ### Relevant publications
