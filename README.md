@@ -287,6 +287,13 @@ vals = orthopy.ncube.tree(6, x, symbolic=False)
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
 
+### nD space with weight function exp(-r<sup>2</sup>)
+
+```python
+vals = orthopy.enr2.tree(4, x, symbolic=False)
+```
+All polynomials are normalized over the measure.
+
 
 ### Relevant publications
 
