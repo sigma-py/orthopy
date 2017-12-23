@@ -58,7 +58,7 @@ def hermite(n, standardization, symbolic=False):
         a = numpy.full(n, 2, dtype=int)
         b = numpy.zeros(n, dtype=int)
         c = [2*k for k in range(n)]
-        c[0] = numpy.nan
+        c[0] = sqrt(pi)  # only used for custom scheme
     else:
         assert standardization == 'normal', \
             'Unknown standardization \'{}\'.'.format(standardization)
