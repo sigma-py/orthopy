@@ -13,6 +13,7 @@ from .__about__ import (
     __status__,
     )
 
+from . import disk
 from . import e1r2
 from . import e2r2
 from . import enr2
