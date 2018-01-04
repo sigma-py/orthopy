@@ -10,7 +10,7 @@ def show(*args, **kwargs):
     return
 
 
-def plot(f, lcar=0.1):
+def plot(f, lcar=1.0e-1):
     '''Plot function over a disk.
     '''
     import pygmsh
@@ -21,9 +21,9 @@ def plot(f, lcar=0.1):
             1.0,
             lcar,
             num_sections=4,
-            compound=True
+            compound=True,
             )
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom)
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom, verbose=False)
 
     x = points[:, 0]
     y = points[:, 1]
@@ -32,9 +32,9 @@ def plot(f, lcar=0.1):
     plt.tripcolor(triang, f(points.T), shading='flat')
     plt.colorbar()
 
-    # # circle outlines
-    # X = numpy.column_stack([corners, corners[:, 0]])
-    # plt.plot(X[0], X[1], '-k')
+    # circle outline
+    circle = plt.Circle((0, 0), 1.0, edgecolor='k', fill=False)
+    plt.gca().add_artist(circle)
 
     plt.gca().set_aspect('equal')
     plt.axis('off')

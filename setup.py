@@ -39,6 +39,7 @@ setup(
         ],
     extras_require={
         'sphere-plot': ['meshzoo', 'meshio'],
+        'disk-plot': ['pygmsh'],
         },
     description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
