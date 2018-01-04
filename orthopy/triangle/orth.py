@@ -59,7 +59,7 @@ def tree(n, bary, standardization, symbolic=False):
         # The coefficients here are based on the insight that
         #
         #   int_T P_{n, r}^2 =
-        #       int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}^2(w) (1-w)^(r+s+1) dw.
+        #       int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}(w)^2 (1-w)^(r+s+1) dw.
         #
         # For reference, see
         # page 219 (and the reference to Gould, 1972) in
@@ -69,7 +69,7 @@ def tree(n, bary, standardization, symbolic=False):
         #  on triangular and simplex domains,
         #  Computer Aided Geometric Design 20 (2003) 209–230.
         #
-        # From this, one gets
+        # The Legendre integral is 1/(2*r+1), and one gets
         #
         #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2)
         #       sum_{i=0}^{n-r} sum_{j=0}^{n-r}
@@ -77,8 +77,7 @@ def tree(n, bary, standardization, symbolic=False):
         #                       * binom(n+r+1, j) * binom(n-r, j)
         #                       / binom(2*n+1, i+j)
         #
-        # The Legendre integral is 1/(2*r+1) and, astonishingly, the double sum
-        # is always 1, hence
+        # Astonishingly, the double sum is always 1, hence
         #
         #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
         #
