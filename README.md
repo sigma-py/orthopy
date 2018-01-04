@@ -247,6 +247,16 @@ vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
 All polynomials are normalized on the quadrilateral.
 
 
+### Disk
+
+<img src="https://nschloe.github.io/orthopy/disk.png" width="25%">
+
+```python
+vals = orthopy.disk.tree(4, x, symbolic=False)
+```
+All polynomials are normalized on the unit disk.
+
+
 ### 2D space with weight function exp(-r<sup>2</sup>)
 <img src="https://nschloe.github.io/orthopy/e2r2.png" width="25%">
 
