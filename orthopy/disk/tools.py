@@ -23,7 +23,7 @@ def plot(f, lcar=1.0e-1):
             num_sections=4,
             compound=True,
             )
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, verbose=False)
+    points, cells, _, _, _ = pygmsh.generate_mesh(geom, verbose=True)
 
     x = points[:, 0]
     y = points[:, 1]

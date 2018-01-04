@@ -74,14 +74,14 @@ def test_normality(n=4):
     return
 
 
-def test_show(n=2, r=1):
+def test_show(n=4, r=3):
     def f(X):
         return orthopy.disk.tree(n, X)[n][r]
 
     orthopy.disk.show(f)
-    # orthopy.disk.plot(f)
+    # orthopy.disk.plot(f, lcar=2.0e-2)
     # import matplotlib.pyplot as plt
-    # plt.savefig('quad.png', transparent=True)
+    # plt.savefig('disk.png', transparent=True)
     return
 
 
