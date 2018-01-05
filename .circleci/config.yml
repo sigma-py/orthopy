@@ -29,10 +29,10 @@ jobs:
       - image: ubuntu:17.10
     steps:
       - run: apt-get update
-      - run: apt-get install -y git python3-pip
+      - run: apt-get install -y git python3-pip gmsh
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
-      - run: pip3 install .[sphere-plot]
+      - run: pip3 install .[sphere-plot,disk-plot]
       - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint orthopy/
