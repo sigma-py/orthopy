@@ -60,9 +60,9 @@ numpy.random.seed(10)
 
 @pytest.mark.parametrize(
     'x', [
-        sympy.Rational(1, 10),
-        sympy.Rational(1, 1000),
-        numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
+        sympy.S(1) / 10,
+        sympy.S(1) / 1000,
+        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
         ]
     )
 def test_unnormalized(x):
@@ -80,16 +80,16 @@ def ff(l, m):
     '''factorial(l-m) / factorial(l+m)
     '''
     if m > 0:
-        return sympy.Rational(1, sympy.prod([l-m+1+i for i in range(2*m)]))
+        return sympy.S(1) / sympy.prod([l-m+1+i for i in range(2*m)])
 
     return sympy.prod([l-abs(m)+1+i for i in range(2*abs(m))])
 
 
 @pytest.mark.parametrize(
     'x', [
-        sympy.Rational(1, 10),
-        sympy.Rational(1, 1000),
-        numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
+        sympy.S(1) / 10,
+        sympy.S(1) / 1000,
+        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
         ]
     )
 def test_spherical(x):
@@ -106,7 +106,7 @@ def test_spherical(x):
         for k, m in enumerate(range(-L, L+1)):
             # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
             exacts[L][k] *= sympy.sqrt(
-                    sympy.Rational(2*L+1, 4) / sympy.pi * ff(L, m)
+                    sympy.S(2*L+1) / (4 * sympy.pi) * ff(L, m)
                     )
 
     for val, ex in zip(vals, exacts):
@@ -117,9 +117,9 @@ def test_spherical(x):
 
 @pytest.mark.parametrize(
     'x', [
-        sympy.Rational(1, 10),
-        sympy.Rational(1, 1000),
-        numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
+        sympy.S(1) / 10,
+        sympy.S(1) / 1000,
+        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
         ]
     )
 def test_full(x):
@@ -131,7 +131,7 @@ def test_full(x):
     for L in range(len(exacts)):
         for k, m in enumerate(range(-L, L+1)):
             exacts[L][k] *= sympy.sqrt(
-                    sympy.Rational(2*L+1, 2) * ff(L, m)
+                    sympy.S(2*L+1) / 2 * ff(L, m)
                     )
 
     for val, ex in zip(vals, exacts):
@@ -142,9 +142,9 @@ def test_full(x):
 
 @pytest.mark.parametrize(
     'x', [
-        sympy.Rational(1, 10),
-        sympy.Rational(1, 1000),
-        numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)])
+        sympy.S(1) / 10,
+        sympy.S(1) / 1000,
+        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
         ]
     )
 def test_schmidt(x):

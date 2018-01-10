@@ -6,7 +6,7 @@ import numpy
 import pytest
 import scipy.special
 import sympy
-from sympy import Rational
+from sympy import S
 
 import orthopy
 
@@ -93,12 +93,12 @@ def test_triangle_orth(x, tol=1.0e-12):
 
 
 def test_triangle_orth_exact():
-    x = numpy.array([Rational(1, 3), Rational(1, 7)])
+    x = numpy.array([S(1)/3, S(1)/7])
 
     L = 2
     exacts = [
         [sympy.sqrt(2)],
-        [-Rational(8, 7), 8*sympy.sqrt(3)/21],
+        [-S(8)/7, 8*sympy.sqrt(3)/21],
         [-197*sympy.sqrt(6)/441,
          -136*sympy.sqrt(2)/147,
          -26*sympy.sqrt(30)/441],
@@ -117,16 +117,16 @@ def test_triangle_orth_exact():
 
 def test_triangle_orth_1_exact():
     x = numpy.array([
-        [Rational(1, 5), Rational(2, 5), Rational(3, 5)],
-        [Rational(1, 7), Rational(2, 7), Rational(3, 7)],
+        [S(1)/5, S(2)/5, S(3)/5],
+        [S(1)/7, S(2)/7, S(3)/7],
         ])
 
     L = 2
     exacts = [
         [[1, 1, 1]],
         [
-            [-Rational(34, 35), Rational(2, 35), Rational(38, 35)],
-            [Rational(2, 35), Rational(4, 35), Rational(6, 35)]
+            [-S(34)/35, S(2)/35, S(38)/35],
+            [S(2)/35, S(4)/35, S(6)/35]
         ],
         ]
 

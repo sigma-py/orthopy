@@ -138,11 +138,11 @@ def sph_exact2(theta, phi):
 
 @pytest.mark.parametrize(
     'theta,phi', [
-        (sympy.Rational(1, 10), sympy.Rational(16, 5)),
-        (sympy.Rational(1, 10000), sympy.Rational(7, 100000)),
+        (sympy.S(1)/10, sympy.S(16)/5),
+        (sympy.S(1)/10000, sympy.S(7)/100000),
         # (
-        #   numpy.array([sympy.Rational(3, 7), sympy.Rational(1, 13)]),
-        #   numpy.array([sympy.Rational(2, 5), sympy.Rational(2, 3)]),
+        #   numpy.array([sympy.S(3)/7, sympy.S(1)/13]),
+        #   numpy.array([sympy.S(2)/5, sympy.S(2)/3]),
         # )
         ]
     )

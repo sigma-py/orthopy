@@ -21,6 +21,8 @@ def recurrence_coefficients(n, symbolic=False):
 
 def recurrence_coefficients_generalized(n, alpha, symbolic=False):
     '''Recurrence coefficients for generalized Laguerre polynomials.
+
+        vals2 = vals1 * (t*a_k - b_k) - vals0 * c_k
     '''
     gamma = (
         sympy.gamma if symbolic else
