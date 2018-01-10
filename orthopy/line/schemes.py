@@ -8,6 +8,7 @@ from scipy.linalg import eig_banded
 import sympy
 
 from . import recurrence_coefficients
+from .. import e1r2
 
 
 def custom(alpha, beta, mode='mpmath', decimal_places=32):
@@ -145,7 +146,7 @@ def laguerre_generalized(n, a, decimal_places):
 
 
 def hermite(n, decimal_places):
-    _, _, alpha, beta = recurrence_coefficients.hermite(
+    _, _, alpha, beta = e1r2.recurrence_coefficients(
             n, standardization='physicist', symbolic=True
             )
     b0 = sympy.N(beta[0], decimal_places)
