@@ -443,10 +443,10 @@ def test_compute_moments():
             5
             )
 
-    reference = [
-        3**(sympy.S(n-2) / 3) * sympy.gamma(sympy.S(n+1) / 3)
-        for n in range(5)
-        ]
+    S = numpy.vectorize(sympy.S)
+    gamma = numpy.vectorize(sympy.gamma)
+    n = numpy.arange(5)
+    reference = 3**(S(n-2) / 3) * gamma(S(n+1) / 3)
 
     assert numpy.all([
         sympy.simplify(m - r) == 0
