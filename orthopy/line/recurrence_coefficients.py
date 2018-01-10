@@ -23,23 +23,6 @@ def chebyshev2(n, standardization, symbolic=False):
         )
 
 
-def laguerre(n, symbolic=False):
-    return laguerre_generalized(n, 0, symbolic=symbolic)
-
-
-def laguerre_generalized(n, alpha, symbolic=False):
-    gamma = (
-        sympy.gamma if symbolic else
-        lambda x: scipy.special.gamma(float(x))
-        )
-    p0 = 1
-    a = n * [1]
-    b = [(2*k+1+alpha) for k in range(n)]
-    c = [k*(k+alpha) for k in range(n)]
-    c[0] = gamma(alpha+1)
-    return p0, a, b, c
-
-
 def legendre(n, standardization, symbolic=False):
     return jacobi(n, 0, 0, standardization, symbolic=symbolic)
 

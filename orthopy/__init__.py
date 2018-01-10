@@ -14,6 +14,7 @@ from .__about__ import (
     )
 
 from . import disk
+from . import e1r
 from . import e1r2
 from . import e2r2
 from . import enr2

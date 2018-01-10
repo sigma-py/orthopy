@@ -5,7 +5,7 @@ from __future__ import division
 import numpy
 import sympy
 
-from ..line import tree as line_tree
+from ..tools import line_tree
 
 
 def recurrence_coefficients(n, standardization, symbolic=False):

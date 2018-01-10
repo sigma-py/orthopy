@@ -91,21 +91,6 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     return vals2
 
 
-def tree(t, p0, a, b, c):
-    n = len(a)
-    assert len(b) == n
-    assert len(c) == n
-
-    out = [numpy.ones_like(t) * p0]
-
-    for L in range(n):
-        out.append(out[L] * (t*a[L] - b[L]))
-        if L > 0:
-            out[L+1] -= out[L-1] * c[L]
-
-    return out
-
-
 def check_coefficients(moments, alpha, beta):
     '''In his article [3], Walter Gautschi suggests a method for checking if a
     Gauss quadrature rule is sane. This method implements test #3 for the
