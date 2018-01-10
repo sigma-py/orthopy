@@ -9,31 +9,32 @@ from ..tools import line_tree
 
 
 def recurrence_coefficients(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+    S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
+    sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
     pi = sympy.pi if symbolic else numpy.pi
 
     # Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the
     # different standardizations.
+    N = numpy.arange(n)
     if standardization in ['probabilist', 'monic']:
         p0 = 1
         a = numpy.ones(n, dtype=int)
         b = numpy.zeros(n, dtype=int)
-        c = [k for k in range(n)]
+        c = N
         c[0] = numpy.nan
     elif standardization == 'physicist':
         p0 = 1
         a = numpy.full(n, 2, dtype=int)
         b = numpy.zeros(n, dtype=int)
-        c = [2*k for k in range(n)]
+        c = 2*N
         c[0] = sqrt(pi)  # only used for custom scheme
     else:
         assert standardization == 'normal', \
             'Unknown standardization \'{}\'.'.format(standardization)
         p0 = 1 / sqrt(sqrt(pi))
-        a = [sqrt(frac(2, k+1)) for k in range(n)]
+        a = sqrt(S(2) / (N+1))
         b = numpy.zeros(n, dtype=int)
-        c = [sqrt(frac(k, k+1)) for k in range(n)]
+        c = sqrt(S(N) / (N+1))
         c[0] = numpy.nan
 
     return p0, a, b, c
