@@ -61,7 +61,7 @@ def test_chebyshev(dtype):
 
     if dtype == sympy.S:
         moments = [
-            sympy.S(1.0 + (-1.0)**kk) / (kk + alpha + 1)
+            sympy.S(1 + (-1)**kk) / (kk + alpha + 1)
             for kk in range(2*n)
             ]
 
