@@ -88,16 +88,16 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         sympy.gamma if symbolic else
         lambda x: scipy.special.gamma(float(x))
         )
-    frac = (
+
+    def rational(x, y):
         # <https://github.com/sympy/sympy/pull/13670>
-        lambda x, y: (
+        return (
             sympy.Rational(x, y)
             if all([isinstance(val, int) for val in [x, y]])
             else x/y
             )
-        if symbolic else
-        lambda x, y: x/y
-        )
+
+    frac = rational if symbolic else lambda x, y: x/y
     sqrt = sympy.sqrt if symbolic else numpy.sqrt
 
     int_1 = (
