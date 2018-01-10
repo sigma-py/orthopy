@@ -3,6 +3,10 @@
 import numpy
 from scipy.linalg.lapack import get_lapack_funcs
 
+from . import recurrence_coefficients
+
+from ..tools import line_tree
+
 
 def coefficients_from_gauss(points, weights):
     '''Given the points and weights of a Gaussian quadrature rule, this method
@@ -74,6 +78,20 @@ def clenshaw(a, alpha, beta, t):
     phi1 = t - alpha[0]
 
     return phi0 * a[0] + phi1 * b[1] - beta[1] * phi0 * b[2]
+
+
+def tree_legendre(n, standardization, X, symbolic=False):
+    args = recurrence_coefficients.legendre(
+            n, standardization, symbolic=symbolic
+            )
+    return line_tree(X, *args)
+
+
+def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
+    args = recurrence_coefficients.jacobi(
+            n, alpha, beta, standardization, symbolic=symbolic
+            )
+    return line_tree(X, *args)
 
 
 def evaluate_orthogonal_polynomial(t, p0, a, b, c):

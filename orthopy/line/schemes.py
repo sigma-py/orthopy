@@ -8,6 +8,7 @@ from scipy.linalg import eig_banded
 import sympy
 
 from . import recurrence_coefficients
+from .. import e1r
 from .. import e1r2
 
 
@@ -135,13 +136,13 @@ def chebyshev2(n, decimal_places):
 
 
 def laguerre(n, decimal_places):
-    _, _, alpha, beta = recurrence_coefficients.laguerre(n, symbolic=True)
+    _, _, alpha, beta = e1r.recurrence_coefficients(n, symbolic=True)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def laguerre_generalized(n, a, decimal_places):
     _, _, alpha, beta = \
-        recurrence_coefficients.laguerre_generalized(n, a, symbolic=True)
+        e1r.recurrence_coefficients_generalized(n, a, symbolic=True)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
