@@ -444,7 +444,7 @@ def test_compute_moments():
             )
 
     reference = [
-        3**sympy.S(n-2) / 3 * sympy.gamma(sympy.S(n+1) / 3)
+        3**(sympy.S(n-2) / 3) * sympy.gamma(sympy.S(n+1) / 3)
         for n in range(5)
         ]
 
