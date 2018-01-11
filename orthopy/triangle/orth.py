@@ -25,35 +25,29 @@ def tree(n, bary, standardization, symbolic=False):
     Mathematics 2016, 4(2), 25,
     <https://doi.org/10.3390/math4020025>.
     '''
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
+    S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
+    sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
 
     if standardization == '1':
         p0 = 1
 
         def alpha(n):
-            return numpy.array([
-                frac(n*(2*n+1), (n-r) * (n+r+1))
-                for r in range(n)
-                ])
+            r = numpy.arange(n)
+            return S(n*(2*n+1)) / ((n-r) * (n+r+1))
 
         def beta(n):
-            return numpy.array([
-                frac(n * (2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
-                for r in range(n)
-                ])
+            r = numpy.arange(n)
+            return S(n * (2*r+1)**2) / ((n-r) * (n+r+1) * (2*n-1))
 
         def gamma(n):
-            return numpy.array([frac(
-                (n-r-1) * (n+r) * (2*n+1), (n-r) * (n+r+1) * (2*n-1)
-                ) for r in range(n-1)
-                ])
+            r = numpy.arange(n-1)
+            return S((n-r-1) * (n+r) * (2*n+1)) / ((n-r) * (n+r+1) * (2*n-1))
 
         def delta(n):
-            return frac(2*n-1, n)
+            return S(2*n-1) / n
 
         def epsilon(n):
-            return frac(n-1, n)
+            return S(n-1) / n
 
     else:
         # The coefficients here are based on the insight that
@@ -85,46 +79,39 @@ def tree(n, bary, standardization, symbolic=False):
         p0 = sqrt(2)
 
         def alpha(n):
-            return numpy.array([
-                frac(2*n+1, (n-r) * (n+r+1)) * sqrt((n+1)*n)
-                for r in range(n)
-                ])
+            r = numpy.arange(n)
+            return sqrt((n+1)*n) * (S(2*n+1) / ((n-r) * (n+r+1)))
 
         def beta(n):
-            return numpy.array([
-                frac((2*r+1)**2, (n-r) * (n+r+1) * (2*n-1))
-                * sqrt((n+1)*n)
-                for r in range(n)
-                ])
+            r = numpy.arange(n)
+            return sqrt((n+1)*n) * S((2*r+1)**2) / ((n-r) * (n+r+1) * (2*n-1))
 
         def gamma(n):
-            return numpy.array([frac(
-                (n-r-1) * (n+r) * (2*n+1),
-                (n-r) * (n+r+1) * (2*n-1)
-                ) for r in range(n-1)
-                ]) * sqrt(frac(n+1, n-1))
+            r = numpy.arange(n-1)
+            return sqrt(S(n+1) / (n-1)) * (
+                S((n-r-1) * (n+r) * (2*n+1)) /
+                ((n-r) * (n+r+1) * (2*n-1))
+                )
 
         def delta(n):
-            return sqrt(frac((2*n+1) * (n+1) * (2*n-1), n**3))
+            return sqrt(S((2*n+1) * (n+1) * (2*n-1)) / n**3)
 
         def epsilon(n):
-            return sqrt(frac(
-                (2*n+1) * (n+1) * (n-1), (2*n-3) * n**2
-                ))
+            return sqrt(S((2*n+1) * (n+1) * (n-1)) / ((2*n-3) * n**2))
 
     u, v, w = bary
 
-    out = [numpy.array([0 * u + p0])]
+    out = [numpy.array([numpy.zeros_like(u) + p0])]
 
     for L in range(1, n+1):
         out.append(numpy.concatenate([
             out[L-1] * (numpy.multiply.outer(alpha(L), 1-2*w).T - beta(L)).T,
-            [out[L-1][L-1] * (u-v) * delta(L)],
+            [delta(L) * out[L-1][L-1] * (u-v)],
             ])
             )
 
         if L > 1:
             out[-1][:L-1] -= (out[L-2].T * gamma(L)).T
-            out[-1][-1] -= out[L-2][L-2] * (u+v)**2 * epsilon(L)
+            out[-1][-1] -= epsilon(L) * out[L-2][L-2] * (u+v)**2
 
     return out
