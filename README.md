@@ -14,6 +14,26 @@ computations are done using recurrence schemes and are numerically stable.
 Furthermore, all functions are fully vectorized and, where possible and
 practical, can return results in _exact_ arithmetic.
 
+#### Symbolic and numerical computation
+
+By default, all operations are performed numerically. However, if
+`symbolic=True` is specified, all computations are performed symbolically. This
+can be used, for example, to get explicit representations of the polynomials:
+```python
+import numpy
+import orthopy
+import sympy
+
+b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
+
+tree = orthopy.triangle.tree(3, numpy.array([b0, b1, b2]), 'normal', symbolic=True)
+
+print(sympy.expand(tree[3][1]))
+```
+```
+42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2 + 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
+```
+
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
 <img src="https://nschloe.github.io/orthopy/line-segment.png" width="25%">
@@ -54,36 +74,13 @@ All polynomials are normalized over the measure.
 
 <img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
 
-Just like in one dimension, orthogonal polynomials can be defined for any
-domain and weight function. orthopy provides the means for
-computing orthogonal/-normal polynomials for the triangle. The implementation
-is recurrent and numerically stable.
 ```python
 vals = orthopy.triangle.tree(4, x, 'normal', symbolic=False)
 ```
-Available standardizations are `'normal'` (normalized polynomials, i.e., the
-integral of the squared function equals 1) and `'1'` where the polynomial is
-`1` in at least one corner of the triangle.
+Available standardizations are
+  * `'normal'` (normalized polynomials, i.e., the integral of the squared function equals 1) and
+  * `'1'` where the polynomial is `1` in at least one corner of the triangle.
 
-If `symbolic=True` is specified, all computations are performed
-symbolically. This can be used, for example, to get the classical
-representations of the polynomials:
-```python
-import numpy
-import orthopy
-import sympy
-
-b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
-
-tree = orthopy.triangle.tree(
-        3, numpy.array([b0, b1, b2]), 'normal', symbolic=True
-        )
-
-print(sympy.expand(tree[3][1]))
-```
-```
-42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2 + 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
-```
 
 ### Quadrilateral
 
@@ -153,15 +150,6 @@ vals = orthopy.enr2.tree(4, x, symbolic=False)
 All polynomials are normalized over the measure. The dimensionality is
 determined by `X.shape[0]`.
 
-
-### Relevant publications
-
- * [A.H. Stroud and D. Secrest, Gaussian Quadrature Formulas, 1966, Prentice Hall, Series in Automatic Computation](https://books.google.de/books/about/Gaussian_quadrature_formulas.html?id=X7M-AAAAIAAJ)
- * [Gene H. Golub and John H. Welsch, Calculation of Gauss Quadrature Rules, Mathematics of Computation, Vol. 23, No. 106 (Apr., 1969), pp. 221-230+s1-s10](https://dx.doi.org/10.2307/2004418)
- * [W. Gautschi, On Generating Orthogonal Polynomials, SIAM J. Sci. and Stat. Comput., 3(3), 289–317](https://doi.org/10.1137/0903018)
- * [W. Gautschi, How and how not to check Gaussian quadrature formulae, BIT Numerical Mathematics, June 1983, Volume 23, Issue 2, pp 209–216](https://doi.org/10.1007/BF02218441)
- * [D. Boley and G.H. Golub, A survey of matrix inverse eigenvalue problems, Inverse Problems, 1987, Volume 3, Number 4](https://doi.org/10.1088/0266-5611/3/4/010)
- * [W. Gautschi, Algorithm 726: ORTHPOL–a package of routines for generating orthogonal polynomials and Gauss-type quadrature rules, ACM Transactions on Mathematical Software (TOMS), Volume 20, Issue 1, March 1994, Pages 21-62](http://doi.org/10.1145/174603.174605)
 
 ### Other tools
 
