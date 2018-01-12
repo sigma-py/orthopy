@@ -152,9 +152,9 @@ def laguerre_generalized(n, a, decimal_places):
 
 
 def hermite(n, decimal_places):
-    _, _, alpha, beta = \
+    _, a, alpha, beta = \
         e1r2.recurrence_coefficients(n, 'physicist', symbolic=True)
-    # print(alpha, beta)
+
     b0 = sympy.N(beta[0], decimal_places)
 
     beta = [b/4 for b in beta]
