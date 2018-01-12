@@ -2,7 +2,7 @@
 #
 from __future__ import division
 
-import scipy.special
+import numpy
 import sympy
 
 from ..tools import line_tree
@@ -22,15 +22,12 @@ def recurrence_coefficients(n, symbolic=False):
 def recurrence_coefficients_generalized(n, alpha, symbolic=False):
     '''Recurrence coefficients for generalized Laguerre polynomials.
 
-        vals2 = vals1 * (t*a_k - b_k) - vals0 * c_k
+        vals_k = vals_{k-1} * (t*a_k - b_k) - vals{k-2} * c_k
     '''
-    gamma = (
-        sympy.gamma if symbolic else
-        lambda x: scipy.special.gamma(float(x))
-        )
+    S = sympy.S if symbolic else lambda x: x
     p0 = 1
-    a = n * [1]
-    b = [(2*k+1+alpha) for k in range(n)]
-    c = [k*(k+alpha) for k in range(n)]
-    c[0] = gamma(alpha+1)
+    a = [-S(1) / (k+1) for k in range(n)]
+    b = [-S(2*k+1+alpha) / (k+1) for k in range(n)]
+    c = [S(k+alpha) / (k+1) for k in range(n)]
+    c[0] = numpy.nan
     return p0, a, b, c
