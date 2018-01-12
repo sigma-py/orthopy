@@ -152,7 +152,7 @@ def laguerre_generalized(n, a, decimal_places):
 
 
 def hermite(n, decimal_places):
-    _, a, alpha, beta = \
+    _, _, alpha, beta = \
         e1r2.recurrence_coefficients(n, 'monic', symbolic=True)
 
     # For some reason, the parameters have to be adapted here.
