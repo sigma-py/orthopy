@@ -8,18 +8,15 @@ import sympy
 from ..tools import line_tree
 
 
-def tree(n, X, symbolic=False):
-    args = recurrence_coefficients(n, symbolic=symbolic)
+def tree(n, X, alpha=0, symbolic=False):
+    '''Recurrence coefficients for generalized Laguerre polynomials. Set
+    alpha=0 (default) to get classical Laguerre.
+    '''
+    args = recurrence_coefficients(n, alpha=alpha, symbolic=symbolic)
     return line_tree(X, *args)
 
 
-def recurrence_coefficients(n, symbolic=False):
-    '''Recurrence coefficients for Laguerre polynomials.
-    '''
-    return recurrence_coefficients_generalized(n, 0, symbolic=symbolic)
-
-
-def recurrence_coefficients_generalized(n, alpha, symbolic=False):
+def recurrence_coefficients(n, alpha, symbolic=False):
     '''Recurrence coefficients for generalized Laguerre polynomials.
 
         vals_k = vals_{k-1} * (t*a_k - b_k) - vals{k-2} * c_k
