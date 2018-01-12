@@ -20,16 +20,16 @@ import orthopy
 def test_legendre_monic(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.legendre(
+    out = orthopy.line_segment.recurrence_coefficients.legendre(
             n, 'monic', symbolic=True
             )
 
     # Test evaluation of one value
-    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -46,14 +46,14 @@ def test_legendre_monic(n, y):
 def test_legendre_p11(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.legendre(
+    out = orthopy.line_segment.recurrence_coefficients.legendre(
             n, standardization='p(1)=1'
             )
 
-    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
@@ -70,21 +70,21 @@ def test_legendre_p11(n, y):
 def test_legendre_normal(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.legendre(
+    out = orthopy.line_segment.recurrence_coefficients.legendre(
             n, standardization='normal', symbolic=True
             )
 
-    y0 = orthopy.line.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
     assert all(val == y)
     return
 
 
 def test_integral0(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
 
     assert sympy.integrate(vals[0], (x, -1, +1)) == sqrt(2)
     for val in vals[1:]:
@@ -94,7 +94,7 @@ def test_integral0(n=4):
 
 def test_normality(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
 
     for val in vals:
         assert sympy.integrate(val**2, (x, -1, +1)) == 1
@@ -103,7 +103,7 @@ def test_normality(n=4):
 
 def test_orthogonality(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:

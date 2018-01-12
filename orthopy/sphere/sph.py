@@ -3,7 +3,7 @@
 import numpy
 import sympy
 
-from .. import line
+from ..line_segment import alp_tree
 
 
 def sph_tree(
@@ -25,7 +25,7 @@ def sph_tree(
 
     norm, cs_phase = config[normalization]
 
-    return line.alp_tree(
+    return alp_tree(
         n, cos(polar), azimuthal,
         normalization=norm,
         with_condon_shortley_phase=cs_phase,

@@ -21,7 +21,7 @@ def test_jacobi(dtype):
         a = sympy.S(1)/1
         b = sympy.S(1)/1
         _, _, alpha, beta = \
-            orthopy.line.recurrence_coefficients.jacobi(
+            orthopy.line_segment.recurrence_coefficients.jacobi(
                 n, a, b, 'monic'
                 )
         assert all([a == 0 for a in alpha])
@@ -37,7 +37,7 @@ def test_jacobi(dtype):
         b = 1.0
         tol = 1.0e-14
         _, _, alpha, beta = \
-            orthopy.line.recurrence_coefficients.jacobi(
+            orthopy.line_segment.recurrence_coefficients.jacobi(
                 n, a, b, 'monic'
                 )
         assert numpy.all(abs(alpha) < tol)
@@ -56,10 +56,10 @@ def test_jacobi(dtype):
     )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.line.recurrence_coefficients.legendre(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
             n, 'monic', symbolic=True
             )
-    value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+    value = orthopy.line_segment.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert value == ref
 
@@ -84,10 +84,10 @@ def test_eval(t, ref, tol=1.0e-14):
     )
 def test_eval_vec(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.line.recurrence_coefficients.legendre(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
             n, 'monic', symbolic=True
             )
-    value = orthopy.line.evaluate_orthogonal_polynomial(t, p0, a, b, c)
+    value = orthopy.line_segment.evaluate_orthogonal_polynomial(t, p0, a, b, c)
 
     assert (value == ref).all()
 
@@ -101,11 +101,11 @@ def test_eval_vec(t, ref, tol=1.0e-14):
 def test_clenshaw(tol=1.0e-14):
     n = 5
     _, _, alpha, beta = \
-        orthopy.line.recurrence_coefficients.legendre(n, 'monic')
+        orthopy.line_segment.recurrence_coefficients.legendre(n, 'monic')
     t = 1.0
 
     a = numpy.ones(n+1)
-    value = orthopy.line.clenshaw(a, alpha, beta, t)
+    value = orthopy.line_segment.clenshaw(a, alpha, beta, t)
 
     ref = math.fsum([
             numpy.polyval(legendre(i, monic=True), t)
@@ -115,50 +115,7 @@ def test_clenshaw(tol=1.0e-14):
     return
 
 
-def test_logo():
-    import matplotlib.pyplot as plt
-
-    max_n = 6
-    moments = numpy.zeros(2*max_n)
-    moments[0] = 2.0 / 3.0
-    moments[2] = 8.0 / 45.0
-    for n in range(max_n):
-        _, _, b, c = orthopy.line.recurrence_coefficients.legendre(
-            2*n, standardization='p(1)=1'
-            )
-        alpha, beta = \
-            orthopy.line.chebyshev_modified(moments[:2*n], b, c)
-        orthopy.line.plot(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
-
-    plt.xlim(-1, +1)
-    plt.ylim(-2, +2)
-    plt.grid()
-    plt.tick_params(
-            axis='both',
-            which='both',
-            left='off',
-            labelleft='off',
-            bottom='off',
-            labelbottom='off',
-            )
-    plt.gca().set_aspect(0.25)
-    plt.show()
-    # plt.savefig('logo.png', transparent=True)
-    return
-
-
-def test_show():
-    n = 6
-    moments = numpy.zeros(2*n)
-    moments[0] = 2.0 / 3.0
-    moments[2] = 8.0 / 45.0
-    _, _, b, c = \
-        orthopy.line.recurrence_coefficients.legendre(2*n, 'monic')
-    alpha, beta = orthopy.line.chebyshev_modified(moments[:2*n], b, c)
-    orthopy.line.show(1, len(alpha)*[1], alpha, beta, -1.0, +1.0)
-    return
-
-
 if __name__ == '__main__':
     # test_gauss('mpmath')
-    test_logo()
+    # test_logo()
+    pass

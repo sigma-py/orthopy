@@ -19,7 +19,7 @@ from . import e1r2
 from . import e2r2
 from . import enr2
 from . import hexahedron
-from . import line
+from . import line_segment
 from . import ncube
 from . import quadrilateral
 from . import sphere
