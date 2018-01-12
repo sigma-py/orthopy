@@ -65,5 +65,5 @@ def test_plot():
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     test_plot()
-    plt.show()
-    # plt.savefig('e1r.png', transparent=True)
+    # plt.show()
+    plt.savefig('e1r.png', transparent=True)

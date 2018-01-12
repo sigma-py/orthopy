@@ -13,12 +13,14 @@ def show(*args, **kwargs):
 
 
 def plot(L):
-    xlim = [0.0, +4.0]
+    xlim = [0.0, +5.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
     vals = tree(L, x)
 
     for val in vals:
         plt.plot(x, val)
+
+    # plt.axes().set_aspect('equal')
 
     plt.xlim(*xlim)
     # plt.ylim(-2, +2)

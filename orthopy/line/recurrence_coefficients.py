@@ -83,7 +83,7 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
         #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
         # ```
-        # Note also that we have the treat the case N==1 separately to
+        # Note also that we have the treat the case N==1 separately to avoid
         # division by 0 for alpha=beta=-1/2.
         c = [
             int_1 if N == 0 else
