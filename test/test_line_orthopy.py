@@ -45,7 +45,7 @@ def test_golub_welsch(tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    'dtype', [numpy.float, sympy.Rational]
+    'dtype', [numpy.float, sympy.S]
     )
 def test_chebyshev(dtype):
     alpha = 2
@@ -59,9 +59,9 @@ def test_chebyshev(dtype):
     #
     n = 5
 
-    if dtype == sympy.Rational:
+    if dtype == sympy.S:
         moments = [
-            sympy.Rational(1.0 + (-1.0)**kk, kk + alpha + 1)
+            sympy.S(1 + (-1)**kk) / (kk + alpha + 1)
             for kk in range(2*n)
             ]
 
@@ -69,11 +69,11 @@ def test_chebyshev(dtype):
 
         assert all([a == 0 for a in alpha])
         assert (beta == [
-            sympy.Rational(2, 3),
-            sympy.Rational(3, 5),
-            sympy.Rational(4, 35),
-            sympy.Rational(25, 63),
-            sympy.Rational(16, 99),
+            sympy.S(2)/3,
+            sympy.S(3)/5,
+            sympy.S(4)/35,
+            sympy.S(25)/63,
+            sympy.S(16)/99,
             ]).all()
     else:
         assert dtype == numpy.float
@@ -119,24 +119,24 @@ def test_chebyshev_modified(tol=1.0e-14):
 
 
 @pytest.mark.parametrize(
-    'dtype', [numpy.float, sympy.Rational]
+    'dtype', [numpy.float, sympy.S]
     )
 def test_jacobi(dtype):
     n = 5
-    if dtype == sympy.Rational:
-        a = sympy.Rational(1, 1)
-        b = sympy.Rational(1, 1)
+    if dtype == sympy.S:
+        a = sympy.S(1)/1
+        b = sympy.S(1)/1
         _, _, alpha, beta = \
             orthopy.line.recurrence_coefficients.jacobi(
                 n, a, b, 'monic'
                 )
         assert all([a == 0 for a in alpha])
         assert (beta == [
-            sympy.Rational(4, 3),
-            sympy.Rational(1, 5),
-            sympy.Rational(8, 35),
-            sympy.Rational(5, 21),
-            sympy.Rational(8, 33),
+            sympy.S(4)/3,
+            sympy.S(1)/5,
+            sympy.S(8)/35,
+            sympy.S(5)/21,
+            sympy.S(8)/33,
             ]).all()
     else:
         a = 1.0
@@ -160,8 +160,8 @@ def test_jacobi(dtype):
 def test_gauss(mode):
     if mode == 'sympy':
         n = 3
-        a = sympy.Rational(0, 1)
-        b = sympy.Rational(0, 1)
+        a = sympy.S(0)/1
+        b = sympy.S(0)/1
         _, _, alpha, beta = \
             orthopy.line.recurrence_coefficients.jacobi(
                 n, a, b, 'monic', symbolic=True
@@ -170,21 +170,21 @@ def test_gauss(mode):
             orthopy.line.schemes.custom(alpha, beta, mode=mode)
 
         assert points == [
-            -sympy.sqrt(sympy.Rational(3, 5)),
+            -sympy.sqrt(sympy.S(3)/5),
             0,
-            +sympy.sqrt(sympy.Rational(3, 5)),
+            +sympy.sqrt(sympy.S(3)/5),
             ]
 
         assert weights == [
-            sympy.Rational(5, 9),
-            sympy.Rational(8, 9),
-            sympy.Rational(5, 9),
+            sympy.S(5)/9,
+            sympy.S(8)/9,
+            sympy.S(5)/9,
             ]
 
     elif mode == 'mpmath':
         n = 5
-        a = sympy.Rational(0, 1)
-        b = sympy.Rational(0, 1)
+        a = sympy.S(0)/1
+        b = sympy.S(0)/1
         _, _, alpha, beta = \
             orthopy.line.recurrence_coefficients.jacobi(
                 n, a, b, 'monic'
@@ -249,8 +249,8 @@ def test_jacobi_reconstruction(tol=1.0e-14):
 
 @pytest.mark.parametrize(
     't, ref', [
-        (sympy.Rational(1, 2), sympy.Rational(23, 2016)),
-        (1, sympy.Rational(8, 63)),
+        (sympy.S(1)/2, sympy.S(23)/2016),
+        (1, sympy.S(8)/63),
         ]
     )
 def test_eval(t, ref, tol=1.0e-14):
@@ -273,11 +273,11 @@ def test_eval(t, ref, tol=1.0e-14):
     't, ref', [
         (
             numpy.array([1]),
-            numpy.array([sympy.Rational(8, 63)])
+            numpy.array([sympy.S(8)/63])
         ),
         (
             numpy.array([1, 2]),
-            numpy.array([sympy.Rational(8, 63), sympy.Rational(1486, 63)])
+            numpy.array([sympy.S(8)/63, sympy.S(1486)/63])
         ),
         ],
     )
@@ -427,7 +427,7 @@ def test_show():
 def test_compute_moments():
     moments = orthopy.line.compute_moments(lambda x: 1, -1, +1, 5)
     assert (
-        moments == [2, 0, sympy.Rational(2, 3), 0, sympy.Rational(2, 5)]
+        moments == [2, 0, sympy.S(2)/3, 0, sympy.S(2)/5]
         ).all()
 
     moments = orthopy.line.compute_moments(
@@ -443,10 +443,10 @@ def test_compute_moments():
             5
             )
 
-    reference = [
-        3**sympy.Rational(n-2, 3) * sympy.gamma(sympy.Rational(n+1, 3))
-        for n in range(5)
-        ]
+    S = numpy.vectorize(sympy.S)
+    gamma = numpy.vectorize(sympy.gamma)
+    n = numpy.arange(5)
+    reference = 3**(S(n-2) / 3) * gamma(S(n+1) / 3)
 
     assert numpy.all([
         sympy.simplify(m - r) == 0
@@ -496,8 +496,8 @@ def test_xk(k):
 
     assert (alpha == 0).all()
     assert beta[0] == moments[0]
-    assert beta[1] == sympy.Rational(k+1, k+3)
-    assert beta[2] == sympy.Rational(4, (k+5) * (k+3))
+    assert beta[1] == sympy.S(k+1) / (k+3)
+    assert beta[2] == sympy.S(4) / ((k+5) * (k+3))
     orthopy.line.schemes.custom(
         numpy.array([sympy.N(a) for a in alpha], dtype=float),
         numpy.array([sympy.N(b) for b in beta], dtype=float),

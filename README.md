@@ -191,6 +191,14 @@ Some explanations:
    ```
    The implementation is numerically stable.
 
+### 1D half-space with weight function x<sup>α</sup> exp(-r)
+<img src="https://nschloe.github.io/orthopy/e1r.png" width="25%">
+
+(Generalized) Laguerre polynomials.
+```python
+vals = orthopy.e1r.tree(4, x, alpha=0, standardization='normal', symbolic=False)
+```
+
 
 ### 1D space with weight function exp(-r<sup>2</sup>)
 <img src="https://nschloe.github.io/orthopy/e1r2.png" width="25%">

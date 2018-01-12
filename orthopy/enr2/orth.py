@@ -5,12 +5,12 @@ from __future__ import division, print_function
 import numpy
 import scipy.special
 
-from ..line.recurrence_coefficients import hermite
+from ..e1r2 import recurrence_coefficients
 
 
 # pylint: disable=too-many-locals
 def tree(n, X, symbolic=False):
-    p0, a, b, c = hermite(n+1, 'normal', symbolic=symbolic)
+    p0, a, b, c = recurrence_coefficients(n+1, 'normal', symbolic=symbolic)
 
     dim = X.shape[0]
 

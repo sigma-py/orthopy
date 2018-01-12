@@ -2,22 +2,22 @@
 #
 import numpy
 import pytest
-from sympy import Rational, sqrt
+from sympy import S, sqrt
 
 import orthopy
 
 
 @pytest.mark.parametrize('n, y', [
     (0, [1, 1, 1]),
-    (1, [Rational(1, 7), Rational(9, 14), Rational(8, 7)]),
-    (2, [-Rational(1, 9), Rational(1, 4), Rational(10, 9)]),
-    (3, [-Rational(1, 33), Rational(7, 264), Rational(32, 33)]),
-    (4, [Rational(3, 143), -Rational(81, 2288), Rational(112, 143)]),
-    (5, [Rational(1, 143), -Rational(111, 4576), Rational(256, 429)]),
+    (1, [S(1)/7, S(9)/14, S(8)/7]),
+    (2, [-S(1)/9, S(1)/4, S(10)/9]),
+    (3, [-S(1)/33, S(7)/264, S(32)/33]),
+    (4, [S(3)/143, -S(81)/2288, S(112)/143]),
+    (5, [S(1)/143, -S(111)/4576, S(256)/429]),
     ]
     )
 def test_jacobi_monic(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='monic', symbolic=True
@@ -33,15 +33,15 @@ def test_jacobi_monic(n, y):
 
 @pytest.mark.parametrize('n, y', [
     (0, [1, 1, 1]),
-    (1, [Rational(1, 2), Rational(9, 4), 4]),
-    (2, [-1, Rational(9, 4), 10]),
-    (3, [-Rational(5, 8), Rational(35, 64), 20]),
-    (4, [Rational(15, 16), -Rational(405, 256), 35]),
-    (5, [Rational(21, 32), -Rational(2331, 1024), 56]),
+    (1, [S(1)/2, S(9)/4, 4]),
+    (2, [-1, S(9)/4, 10]),
+    (3, [-S(5)/8, S(35)/64, 20]),
+    (4, [S(15)/16, -S(405)/256, 35]),
+    (5, [S(21)/32, -S(2331)/1024, 56]),
     ]
     )
 def test_jacobi_p11(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)',
@@ -66,7 +66,7 @@ def test_jacobi_p11(n, y):
     ]
     )
 def test_jacobi_normal(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='normal', symbolic=True

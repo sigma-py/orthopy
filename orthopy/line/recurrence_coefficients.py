@@ -8,67 +8,19 @@ import sympy
 
 
 def chebyshev1(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    one_half = sympy.S(1)/2 if symbolic else 0.5
     return jacobi(
-        n, -frac(1, 2), -frac(1, 2), standardization,
+        n, -one_half, -one_half, standardization,
         symbolic=symbolic
         )
 
 
 def chebyshev2(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    one_half = sympy.S(1)/2 if symbolic else 0.5
     return jacobi(
-        n, +frac(1, 2), +frac(1, 2), standardization,
+        n, +one_half, +one_half, standardization,
         symbolic=symbolic
         )
-
-
-def laguerre(n, symbolic=False):
-    return laguerre_generalized(n, 0, symbolic=symbolic)
-
-
-def laguerre_generalized(n, alpha, symbolic=False):
-    gamma = (
-        sympy.gamma if symbolic else
-        lambda x: scipy.special.gamma(float(x))
-        )
-    p0 = 1
-    a = n * [1]
-    b = [(2*k+1+alpha) for k in range(n)]
-    c = [k*(k+alpha) for k in range(n)]
-    c[0] = gamma(alpha+1)
-    return p0, a, b, c
-
-
-def hermite(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
-    pi = sympy.pi if symbolic else numpy.pi
-
-    # Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the
-    # different standardizations.
-    if standardization in ['probabilist', 'monic']:
-        p0 = 1
-        a = numpy.ones(n, dtype=int)
-        b = numpy.zeros(n, dtype=int)
-        c = [k for k in range(n)]
-        c[0] = numpy.nan
-    elif standardization == 'physicist':
-        p0 = 1
-        a = numpy.full(n, 2, dtype=int)
-        b = numpy.zeros(n, dtype=int)
-        c = [2*k for k in range(n)]
-        c[0] = sqrt(pi)  # only used for custom scheme
-    else:
-        assert standardization == 'normal', \
-            'Unknown standardization \'{}\'.'.format(standardization)
-        p0 = 1 / sqrt(sqrt(pi))
-        a = [sqrt(frac(2, k+1)) for k in range(n)]
-        b = numpy.zeros(n, dtype=int)
-        c = [sqrt(frac(k, k+1)) for k in range(n)]
-        c[0] = numpy.nan
-
-    return p0, a, b, c
 
 
 def legendre(n, standardization, symbolic=False):
@@ -88,7 +40,16 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         sympy.gamma if symbolic else
         lambda x: scipy.special.gamma(float(x))
         )
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
+
+    def rational(x, y):
+        # <https://github.com/sympy/sympy/pull/13670>
+        return (
+            sympy.Rational(x, y)
+            if all([isinstance(val, int) for val in [x, y]])
+            else x/y
+            )
+
+    frac = rational if symbolic else lambda x, y: x/y
     sqrt = sympy.sqrt if symbolic else numpy.sqrt
 
     int_1 = (
@@ -122,7 +83,7 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
         #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
         # ```
-        # Note also that we have the treat the case N==1 separately to
+        # Note also that we have the treat the case N==1 separately to avoid
         # division by 0 for alpha=beta=-1/2.
         c = [
             int_1 if N == 0 else

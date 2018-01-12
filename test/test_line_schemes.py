@@ -85,10 +85,17 @@ def test_hermite():
 
     x1 = mp.sqrt((3 - mp.sqrt(6)) / 2)
     x2 = mp.sqrt((3 + mp.sqrt(6)) / 2)
+    print(x1)
+    print(x2)
+    print(points)
     assert (abs(points - [-x2, -x1, +x1, +x2]) < tol).all()
 
     w1 = mp.sqrt(mp.pi) / 4 / (3 - mp.sqrt(6))
     w2 = mp.sqrt(mp.pi) / 4 / (3 + mp.sqrt(6))
+
+    print(w1)
+    print(w2)
+    print(weights)
     assert (abs(weights - [w2, w1, w1, w2]) < tol).all()
     return
 

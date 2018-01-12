@@ -8,6 +8,8 @@ from scipy.linalg import eig_banded
 import sympy
 
 from . import recurrence_coefficients
+from .. import e1r
+from .. import e1r2
 
 
 def custom(alpha, beta, mode='mpmath', decimal_places=32):
@@ -72,7 +74,11 @@ def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
     n = len(alpha)
     b = mp.zeros(n, 1)
     for i in range(n-1):
-        b[i] = mp.sqrt(beta[i+1])
+        # work around <https://github.com/fredrik-johansson/mpmath/issues/382>
+        x = beta[i+1]
+        if isinstance(x, numpy.int64):
+            x = int(x)
+        b[i] = mp.sqrt(x)
 
     z = mp.zeros(1, n)
     z[0, 0] = 1
@@ -134,22 +140,22 @@ def chebyshev2(n, decimal_places):
 
 
 def laguerre(n, decimal_places):
-    _, _, alpha, beta = recurrence_coefficients.laguerre(n, symbolic=True)
+    _, _, alpha, beta = \
+        e1r.recurrence_coefficients(n, 0, 'monic', symbolic=True)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def laguerre_generalized(n, a, decimal_places):
     _, _, alpha, beta = \
-        recurrence_coefficients.laguerre_generalized(n, a, symbolic=True)
+        e1r.recurrence_coefficients(n, a, 'monic', symbolic=True)
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)
 
 
 def hermite(n, decimal_places):
-    _, _, alpha, beta = recurrence_coefficients.hermite(
-            n, standardization='physicist', symbolic=True
-            )
-    b0 = sympy.N(beta[0], decimal_places)
+    _, _, alpha, beta = \
+        e1r2.recurrence_coefficients(n, 'monic', symbolic=True)
 
-    beta = [b/4 for b in beta]
-    beta[0] = b0
+    # For some reason, the parameters have to be adapted here.
+    beta[1:] /= 2
+
     return custom(alpha, beta, mode='mpmath', decimal_places=decimal_places)

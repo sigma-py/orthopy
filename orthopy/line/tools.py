@@ -3,6 +3,10 @@
 import numpy
 from scipy.linalg.lapack import get_lapack_funcs
 
+from . import recurrence_coefficients
+
+from ..tools import line_tree
+
 
 def coefficients_from_gauss(points, weights):
     '''Given the points and weights of a Gaussian quadrature rule, this method
@@ -76,6 +80,21 @@ def clenshaw(a, alpha, beta, t):
     return phi0 * a[0] + phi1 * b[1] - beta[1] * phi0 * b[2]
 
 
+def tree_legendre(n, standardization, X, symbolic=False):
+    args = recurrence_coefficients.legendre(
+            n, standardization, symbolic=symbolic
+            )
+    return line_tree(X, *args)
+
+
+# pylint: disable=too-many-arguments
+def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
+    args = recurrence_coefficients.jacobi(
+            n, alpha, beta, standardization, symbolic=symbolic
+            )
+    return line_tree(X, *args)
+
+
 def evaluate_orthogonal_polynomial(t, p0, a, b, c):
     '''Evaluate the orthogonal polynomial defined by its recurrence coefficients
     a, b, and c at the point(s) t.
@@ -89,21 +108,6 @@ def evaluate_orthogonal_polynomial(t, p0, a, b, c):
         vals0, vals1 = vals1, vals2
         vals2 = vals1 * (t*a_k - b_k) - vals0 * c_k
     return vals2
-
-
-def tree(t, p0, a, b, c):
-    n = len(a)
-    assert len(b) == n
-    assert len(c) == n
-
-    out = [numpy.ones_like(t) * p0]
-
-    for L in range(n):
-        out.append(out[L] * (t*a[L] - b[L]))
-        if L > 0:
-            out[L+1] -= out[L-1] * c[L]
-
-    return out
 
 
 def check_coefficients(moments, alpha, beta):
