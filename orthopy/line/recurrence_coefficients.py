@@ -8,17 +8,17 @@ import sympy
 
 
 def chebyshev1(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    one_half = sympy.S(1)/2 if symbolic else 0.5
     return jacobi(
-        n, -frac(1, 2), -frac(1, 2), standardization,
+        n, -one_half, -one_half, standardization,
         symbolic=symbolic
         )
 
 
 def chebyshev2(n, standardization, symbolic=False):
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
+    one_half = sympy.S(1)/2 if symbolic else 0.5
     return jacobi(
-        n, +frac(1, 2), +frac(1, 2), standardization,
+        n, +one_half, +one_half, standardization,
         symbolic=symbolic
         )
 
