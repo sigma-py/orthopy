@@ -28,7 +28,13 @@ def recurrence_coefficients(
     sqrt = sympy.sqrt if symbolic else numpy.sqrt
     gamma = sympy.gamma if symbolic else scipy.special.gamma
 
-    if standardization == 'classical':
+    if standardization == 'monic':
+        p0 = 1
+        a = n * [1]
+        b = [(2*k+1+alpha) for k in range(n)]
+        c = [k*(k+alpha) for k in range(n)]
+        c[0] = gamma(alpha+1)
+    elif standardization == 'classical':
         p0 = 1
         a = [-S(1) / (k+1) for k in range(n)]
         b = [-S(2*k+1+alpha) / (k+1) for k in range(n)]

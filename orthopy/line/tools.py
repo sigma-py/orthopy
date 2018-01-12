@@ -87,6 +87,7 @@ def tree_legendre(n, standardization, X, symbolic=False):
     return line_tree(X, *args)
 
 
+# pylint: disable=too-many-arguments
 def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
     args = recurrence_coefficients.jacobi(
             n, alpha, beta, standardization, symbolic=symbolic
