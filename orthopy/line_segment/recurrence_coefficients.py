@@ -27,6 +27,10 @@ def legendre(n, standardization, symbolic=False):
     return jacobi(n, 0, 0, standardization, symbolic=symbolic)
 
 
+def gegenbauer(n, lmbda, standardization, symbolic=False):
+    return jacobi(n, lmbda, lmbda, standardization, symbolic=symbolic)
+
+
 def jacobi(n, alpha, beta, standardization, symbolic=False):
     '''Generate the recurrence coefficients a_k, b_k, c_k in
 

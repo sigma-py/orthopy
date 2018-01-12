@@ -1,7 +1,6 @@
 # orthopy
 
-Python tools for orthogonal polynomials and Gaussian quadrature for
-[lines](#line-segment), [triangles](#triangle), and [spheres](#sphere).
+Your one-stop shop for orthogonal polynomials in Python.
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://codecov.io/gh/nschloe/orthopy/branch/master/graph/badge.svg)](https://codecov.io/gh/nschloe/orthopy)
@@ -9,19 +8,28 @@ Python tools for orthogonal polynomials and Gaussian quadrature for
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars)](https://github.com/nschloe/orthopy)
 
-_All functions in this module are fully vectorized and, where possible and
-practical, return results in exact arithmetic._
+Various orthogonal polynomial classes for [lines](#line-segment),
+[triangles](#triangle), [disks](#disk), and [spheres](#sphere). All
+computations are done using recurrence schemes and are numerically stable.
+Furthermore, all functions are fully vectorized and, where possible and
+practical, can return results in _exact_ arithmetic.
 
-### Line segment [-1, +1]
+### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
-![](https://nschloe.github.io/orthopy/line-segment.png)
+<img src="https://nschloe.github.io/orthopy/line-segment.png" width="25%">
 
-Gaussian quadrature schemes and orthogonal polynomials of the form
+Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2),
+Legendre (α=β=0) polynomials.
+
+```python
+vals = orthopy.line_segment.tree(4, x, alpha=0, standardization='normal', symbolic=False)
 ```
-pi_{k+1}(x) = (a[k] x - b[k]) * pi_k(x) - c[k] * pi_{k-1}(x)
+
+#### Associated Legendre polynomials
+
+```python
+vals = orthopy.line_segment.alp_tree(4, x, phi=None, standardization=None, with_condon_shortley_phase=True, symbolic=False)
 ```
-(defined by their _recurrence coefficients_ `a`, `b`, `c`) are closely
-related. orthopy provides tools for working with them.
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
 <img src="https://nschloe.github.io/orthopy/e1r.png" width="25%">
