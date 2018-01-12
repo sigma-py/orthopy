@@ -74,7 +74,11 @@ def _gauss_from_coefficients_mpmath(alpha, beta, decimal_places):
     n = len(alpha)
     b = mp.zeros(n, 1)
     for i in range(n-1):
-        b[i] = mp.sqrt(beta[i+1])
+        # work around <https://github.com/fredrik-johansson/mpmath/issues/382>
+        x = beta[i+1]
+        if isinstance(x, numpy.int64):
+            x = int(x)
+        b[i] = mp.sqrt(x)
 
     z = mp.zeros(1, n)
     z[0, 0] = 1
@@ -148,9 +152,9 @@ def laguerre_generalized(n, a, decimal_places):
 
 
 def hermite(n, decimal_places):
-    _, _, alpha, beta = e1r2.recurrence_coefficients(
-            n, standardization='physicist', symbolic=True
-            )
+    _, _, alpha, beta = \
+        e1r2.recurrence_coefficients(n, 'physicist', symbolic=True)
+    # print(alpha, beta)
     b0 = sympy.N(beta[0], decimal_places)
 
     beta = [b/4 for b in beta]
