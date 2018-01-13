@@ -75,7 +75,12 @@ All polynomials are normalized over the measure.
 
 ### Triangle
 
-<img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/triangle-1-0.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/triangle-2-1.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/triangle-3-1.png" width="70%">
+:-------------------:|:-------------------:|:----------:|
+n=1, k=0             |  n= 2, k=1          |  n=3, k=1  |
+
 
 ```python
 vals = orthopy.triangle.tree(x, 4, 'normal', symbolic=False)
