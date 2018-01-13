@@ -48,7 +48,7 @@ vals = orthopy.line_segment.tree(4, x, alpha=0, standardization='normal', symbol
 #### Associated Legendre polynomials
 
 ```python
-vals = orthopy.line_segment.alp_tree(4, x, phi=None, standardization=None, with_condon_shortley_phase=True, symbolic=False)
+vals = orthopy.line_segment.tree_alp(4, x, phi=None, standardization=None, with_condon_shortley_phase=True, symbolic=False)
 ```
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)

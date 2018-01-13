@@ -3,5 +3,5 @@
 # pylint: disable=wildcard-import
 from . import recurrence_coefficients
 
-from .alp import *
+from .orth import *
 from .tools import *
