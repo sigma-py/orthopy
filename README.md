@@ -173,16 +173,6 @@ determined by `X.shape[0]`.
    vals = orthopy.line.evaluate_orthogonal_polynomial(alpha, beta, t)
    ```
 
- * Evaluate the entire _associated Legendre_ tree up to a given level at once:
-   ```python
-   vals = orthopy.line.alp_tree(
-       n, x,
-       normalization='full',
-       with_condon_shortley_phase=True
-       )
-   ```
-   The implementation is numerically stable.
-
 
 ### Installation
 
