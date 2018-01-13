@@ -36,7 +36,7 @@ print(sympy.expand(tree[3][1]))
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
-<img src="https://nschloe.github.io/orthopy/line-segment.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/line-segment-legendre.png" width="25%">
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2),
 Legendre (α=β=0) polynomials.
@@ -46,6 +46,8 @@ vals = orthopy.line_segment.tree(4, x, alpha=0, standardization='normal', symbol
 ```
 
 #### Associated Legendre polynomials
+
+<img src="https://nschloe.github.io/orthopy/line-segment-alp.png" width="25%">
 
 ```python
 vals = orthopy.line_segment.tree_alp(4, x, phi=None, standardization=None, with_condon_shortley_phase=True, symbolic=False)

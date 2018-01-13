@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 #
+import matplotlib.pyplot as plt
 import numpy
 
-from . import recurrence_coefficients
-
-from ..tools import line_tree, line_evaluate
+from .orth import tree_jacobi
 
 
 def clenshaw(a, alpha, beta, t):
@@ -42,17 +41,32 @@ def clenshaw(a, alpha, beta, t):
 
 
 def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
 
 
-# pylint: disable=too-many-arguments
-def plot(p0, a, b, c, t0, t1):
-    import matplotlib.pyplot as plt
-    n = 1000
-    t = numpy.linspace(t0, t1, n)
-    vals = line_evaluate(t, p0, a, b, c)
-    plt.plot(t, vals)
+def plot(L, alpha, beta):
+    xlim = [-1.0, +1.0]
+    x = numpy.linspace(xlim[0], xlim[1], 500)
+    vals = tree_jacobi(L, alpha, beta, 'normal', x)
+
+    for val in vals:
+        plt.plot(x, val)
+
+    # plt.axes().set_aspect('equal')
+
+    plt.xlim(*xlim)
+    # plt.ylim(-2, +2)
+    plt.tick_params(
+        axis='both',
+        which='both',
+        bottom='off',
+        top='off',
+        left='off',
+        right='off',
+        labelbottom='off',
+        labelleft='off'
+        )
+    plt.grid()
     return
