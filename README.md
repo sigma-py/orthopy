@@ -8,36 +8,21 @@ Your one-stop shop for orthogonal polynomials in Python.
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars)](https://github.com/nschloe/orthopy)
 
-Various orthogonal polynomial classes for [lines](#line-segment),
-[triangles](#triangle), [disks](#disk), and [spheres](#sphere). All
-computations are done using recurrence schemes and are numerically stable.
-Furthermore, all functions are fully vectorized and, where possible and
-practical, can return results in _exact_ arithmetic.
+Various orthogonal polynomial classes for
+[lines](#line-segment--1-1-with-weight-function-1-x%CE%B1-1-x%CE%B2),
+[triangles](#triangle),
+[quadrilaterals](#quadrilateral),
+[disks](#disk),
+[spheres](#sphere),
+[hexahedra](#hexahedron), and
+[n-cubes](#n-cube).
+All computations are done using numerically stable recurrence schemes.
+Furthermore, all functions are fully vectorized and can return results in
+[_exact arithmetic_](#symbolic-and-numerical-computation).
 
 _Note:_ In previous versions, orthopy contained tools for working with Gauss
 quadrature rules as well. Those have moved over to
 [quadpy](https://github.com/nschloe/quadpy).
-
-#### Symbolic and numerical computation
-
-By default, all operations are performed numerically. However, if
-`symbolic=True` is specified, all computations are performed symbolically. This
-can be used, for example, to get explicit representations of the polynomials:
-```python
-import numpy
-import orthopy
-import sympy
-
-b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
-
-tree = orthopy.triangle.tree(numpy.array([b0, b1, b2]), 3, 'normal', symbolic=True)
-
-print(sympy.expand(tree[3][1]))
-```
-```
-42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2
-+ 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
-```
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
@@ -49,6 +34,14 @@ Legendre (α=β=0) polynomials.
 ```python
 vals = orthopy.line_segment.tree_jacobi(x, 4, alpha, beta, 'normal', symbolic=False)
 ```
+
+Recurrence coefficients can be explicitly retrieved by
+```python
+p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(n, a, b, 'monic')
+```
+Possible choices for the standardization are `'monic'`, `'p(1)=(n+alpha over
+n)'`, and `'normal`.
+
 
 #### Associated Legendre polynomials
 
@@ -125,7 +118,7 @@ All polynomials are normalized over the measure.
 
 <img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
 
-_Sperical harmonics._
+_Spherical harmonics._
 
 ```python
 vals = orthopy.sphere.tree_sph(x, n, symbolic=False)
@@ -163,25 +156,33 @@ determined by `X.shape[0]`.
 
 ### Other tools
 
- * Recurrence coefficients of Jacobi polynomials
-   `w(x) = (1-x)^alpha * (1+x)^beta` with any `alpha` or `beta` are explicitly
-   given:
-   ```python
-   p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(n, a, b, 'monic')
-   ```
-   Possible choices for the standardization are `'monic'`,
-   `'p(1)=(n+alpha over n)'`, and `'normal`.
-
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
    ```python
-   vals = orthopy.line.clenshaw(a, alpha, beta, t)
+   vals = orthopy.line_segment.clenshaw(a, alpha, beta, t)
    ```
 
- * Evaluate orthogonal polynomials (at many points at once):
-   ```python
-   vals = orthopy.line.evaluate_orthogonal_polynomial(alpha, beta, t)
-   ```
+
+#### Symbolic and numerical computation
+
+By default, all operations are performed numerically. However, if
+`symbolic=True` is specified, all computations are performed symbolically. This
+can be used, for example, to get explicit representations of the polynomials:
+```python
+import numpy
+import orthopy
+import sympy
+
+b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
+
+tree = orthopy.triangle.tree(numpy.array([b0, b1, b2]), 3, 'normal', symbolic=True)
+
+print(sympy.expand(tree[3][1]))
+```
+```
+42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2
++ 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
+```
 
 
 ### Installation

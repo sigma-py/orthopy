@@ -5,9 +5,7 @@ from __future__ import division, print_function
 import math
 
 import numpy
-import pytest
 from scipy.special import legendre
-import sympy
 
 import orthopy
 
@@ -23,13 +21,12 @@ def test_clenshaw(tol=1.0e-14):
 
     ref = math.fsum([
             numpy.polyval(legendre(i, monic=True), t)
-            for i in range(n+1)])
+            for i in range(n+1)
+            ])
 
     assert abs(value - ref) < tol
     return
 
 
 if __name__ == '__main__':
-    # test_gauss('mpmath')
-    # test_logo()
-    pass
+    test_clenshaw()
