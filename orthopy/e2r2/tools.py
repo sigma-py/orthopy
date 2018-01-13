@@ -11,9 +11,11 @@ def show(*args, **kwargs):
     return
 
 
-def plot(f, n=100):
-    x0, x1 = -2, +2
-    y0, y1 = -2, +2
+def plot(f, n=100, d=1.0):
+    x0 = -d
+    x1 = +d
+    y0 = -d
+    y1 = +d
     x = numpy.linspace(x0, x1, n)
     y = numpy.linspace(y0, y1, n)
     X, Y = numpy.meshgrid(x, y)

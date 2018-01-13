@@ -57,11 +57,11 @@ def test_normality(n=4):
     return
 
 
-def test_show(n=2, r=1):
+def test_show(n=6, r=3, d=1.5):
     def f(X):
         return orthopy.e2r2.tree(X, n)[n][r]
 
-    orthopy.e2r2.show(f)
+    orthopy.e2r2.show(f, d=d)
     # orthopy.e2r2.plot(f)
     # import matplotlib.pyplot as plt
     # plt.savefig('e2r2.png', transparent=True)
@@ -69,4 +69,4 @@ def test_show(n=2, r=1):
 
 
 if __name__ == '__main__':
-    test_show(n=4, r=2)
+    test_show(n=6, r=3)
