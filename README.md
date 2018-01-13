@@ -14,6 +14,10 @@ computations are done using recurrence schemes and are numerically stable.
 Furthermore, all functions are fully vectorized and, where possible and
 practical, can return results in _exact_ arithmetic.
 
+_Note:_ In previous versions, orthopy contained tools for working with Gauss
+quadrature rules as well. Those have moved over to
+[quadpy](https://github.com/nschloe/quadpy).
+
 #### Symbolic and numerical computation
 
 By default, all operations are performed numerically. However, if
@@ -31,7 +35,8 @@ tree = orthopy.triangle.tree(3, numpy.array([b0, b1, b2]), 'normal', symbolic=Tr
 print(sympy.expand(tree[3][1]))
 ```
 ```
-42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2 + 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
+42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2
++ 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
 ```
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
@@ -42,7 +47,7 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2),
 Legendre (α=β=0) polynomials.
 
 ```python
-vals = orthopy.line_segment.tree(4, x, alpha=0, standardization='normal', symbolic=False)
+vals = orthopy.line_segment.tree_jacobi(4, alpha, beta, 'normal', x, symbolic=False)
 ```
 
 #### Associated Legendre polynomials
@@ -50,7 +55,10 @@ vals = orthopy.line_segment.tree(4, x, alpha=0, standardization='normal', symbol
 <img src="https://nschloe.github.io/orthopy/line-segment-alp.png" width="25%">
 
 ```python
-vals = orthopy.line_segment.tree_alp(4, x, phi=None, standardization=None, with_condon_shortley_phase=True, symbolic=False)
+vals = orthopy.line_segment.tree_alp(
+    4, x, phi=None, standardization=None, with_condon_shortley_phase=True,
+    symbolic=False
+    )
 ```
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
