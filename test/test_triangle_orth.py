@@ -204,4 +204,3 @@ if __name__ == '__main__':
     # # x_ = numpy.random.rand(3, 2)
     # test_triangle_orth(x=x_)
     test_show()
-    # test_orthonormal()
