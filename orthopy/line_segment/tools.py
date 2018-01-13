@@ -49,7 +49,7 @@ def show(*args, **kwargs):
 def plot(L, alpha, beta):
     xlim = [-1.0, +1.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
-    vals = tree_jacobi(L, alpha, beta, 'normal', x)
+    vals = tree_jacobi(x, L, alpha, beta, 'normal')
 
     for val in vals:
         plt.plot(x, val)

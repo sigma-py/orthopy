@@ -9,7 +9,7 @@ from ..e1r2 import recurrence_coefficients
 
 
 # pylint: disable=too-many-locals
-def tree(n, X, symbolic=False):
+def tree(X, n, symbolic=False):
     p0, a, b, c = recurrence_coefficients(n+1, 'normal', symbolic=symbolic)
 
     dim = X.shape[0]

@@ -10,30 +10,30 @@ from . import recurrence_coefficients
 from ..tools import line_tree
 
 
-def tree_chebyshev1(n, standardization, X, symbolic=False):
+def tree_chebyshev1(X, n, standardization, symbolic=False):
     one_half = sympy.S(1)/2 if symbolic else 0.5
     return tree_jacobi(
-        n, -one_half, -one_half, standardization, X, symbolic=symbolic
+        X, n, -one_half, -one_half, standardization, symbolic=symbolic
         )
 
 
-def tree_chebyshev2(n, standardization, X, symbolic=False):
+def tree_chebyshev2(X, n, standardization, symbolic=False):
     one_half = sympy.S(1)/2 if symbolic else 0.5
     return tree_jacobi(
-        n, +one_half, +one_half, standardization, X, symbolic=symbolic
+        X, n, +one_half, +one_half, standardization, symbolic=symbolic
         )
 
 
-def tree_gegenbauer(n, lmbda, standardization, X, symbolic=False):
-    return tree_jacobi(n, lmbda, lmbda, standardization, X, symbolic=symbolic)
+def tree_gegenbauer(X, n, lmbda, standardization, symbolic=False):
+    return tree_jacobi(X, n, lmbda, lmbda, standardization, symbolic=symbolic)
 
 
-def tree_legendre(n, standardization, X, symbolic=False):
-    return tree_jacobi(n, 0, 0, standardization, X, symbolic=symbolic)
+def tree_legendre(X, n, standardization, symbolic=False):
+    return tree_jacobi(X, n, 0, 0, standardization, symbolic=symbolic)
 
 
 # pylint: disable=too-many-arguments
-def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
+def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     args = recurrence_coefficients.jacobi(
             n, alpha, beta, standardization, symbolic=symbolic
             )
@@ -41,7 +41,7 @@ def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
 
 
 def tree_alp(
-        n, x, phi=None, normalization=None,
+        x, n, phi=None, normalization=None,
         with_condon_shortley_phase=True,
         symbolic=False
         ):

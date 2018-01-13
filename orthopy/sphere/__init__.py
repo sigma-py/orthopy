@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 #
 # pylint: disable=wildcard-import
-from .sph import *
+from .orth import *
 from .tools import *

@@ -12,14 +12,12 @@ import orthopy
 
 
 def op(i, j, x, y):
-    p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
             i, 0, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val1 = orthopy.line.tools.evaluate_orthogonal_polynomial(
-            (x-y)/(x+y), p0, a, b, c
-            )
+    val1 = orthopy.tools.line_evaluate((x-y)/(x+y), p0, a, b, c)
 
     val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x-y)/(x+y))
 
@@ -31,14 +29,12 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    p0, a, b, c = orthopy.line.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
             j, 2*i+1, 0,
             # standardization='monic'
             standardization='p(1)=(n+alpha over n)'
             )
-    val2 = orthopy.line.tools.evaluate_orthogonal_polynomial(
-            1-2*(x+y), p0, a, b, c
-            )
+    val2 = orthopy.tools.line_evaluate(1-2*(x+y), p0, a, b, c)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 
     flt = numpy.vectorize(float)
@@ -84,7 +80,7 @@ def test_triangle_orth(x, tol=1.0e-12):
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.tree(L, bary, 'normal')
+    vals = orthopy.triangle.tree(bary, L, 'normal')
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -107,7 +103,7 @@ def test_triangle_orth_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.tree(L, bary, 'normal', symbolic=True)
+    vals = orthopy.triangle.tree(bary, L, 'normal', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -133,7 +129,7 @@ def test_triangle_orth_1_exact():
     bary = numpy.array([
         x[0], x[1], 1-x[0]-x[1]
         ])
-    vals = orthopy.triangle.tree(L, bary, '1', symbolic=True)
+    vals = orthopy.triangle.tree(bary, L, '1', symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -146,7 +142,7 @@ def test_integral0(n=4):
     b1 = sympy.Symbol('b1')
     b = numpy.array([b0, b1, 1-b0-b1])
     tree = numpy.concatenate(
-        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        orthopy.triangle.tree(b, n, 'normal', symbolic=True)
         )
 
     assert \
@@ -163,7 +159,7 @@ def test_normality(n=4):
     b1 = sympy.Symbol('b1')
     b = numpy.array([b0, b1, 1-b0-b1])
     tree = numpy.concatenate(
-        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        orthopy.triangle.tree(b, n, 'normal', symbolic=True)
         )
 
     for val in tree:
@@ -176,7 +172,7 @@ def test_orthogonality(n=4):
     b1 = sympy.Symbol('b1')
     b = numpy.array([b0, b1, 1-b0-b1])
     tree = numpy.concatenate(
-        orthopy.triangle.tree(n, b, 'normal', symbolic=True)
+        orthopy.triangle.tree(b, n, 'normal', symbolic=True)
         )
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
@@ -194,7 +190,7 @@ def test_show(n=2, r=1):
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.triangle.tree(n, bary, 'normal')[n][r]
+        return orthopy.triangle.tree(bary, n, 'normal')[n][r]
 
     orthopy.triangle.show(corners, f)
     # orthopy.triangle.plot(corners, f)

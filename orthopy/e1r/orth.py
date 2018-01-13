@@ -9,7 +9,7 @@ import sympy
 from ..tools import line_tree
 
 
-def tree(n, X, alpha=0, symbolic=False):
+def tree(X, n, alpha=0, symbolic=False):
     '''Recurrence coefficients for generalized Laguerre polynomials. Set
     alpha=0 (default) to get classical Laguerre.
     '''

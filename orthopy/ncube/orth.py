@@ -9,7 +9,7 @@ from ..line_segment.recurrence_coefficients import legendre
 
 
 # pylint: disable=too-many-locals
-def tree(n, X, symbolic=False):
+def tree(X, n, symbolic=False):
     '''Evaluates the entire tree of orthogonal polynomials for the n-cube
 
     The computation is organized such that tree returns a list of arrays, L={0,

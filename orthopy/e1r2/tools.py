@@ -15,7 +15,7 @@ def show(*args, **kwargs):
 def plot(L):
     xlim = [-2.0, +2.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
-    vals = tree(L, x)
+    vals = tree(x, L, 'normal')
 
     for val in vals:
         plt.plot(x, val)

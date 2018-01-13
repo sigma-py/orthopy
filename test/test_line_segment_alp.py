@@ -67,7 +67,7 @@ numpy.random.seed(10)
     )
 def test_unnormalized(x):
     L = 4
-    vals = orthopy.line_segment.tree_alp(L, x, symbolic=True)
+    vals = orthopy.line_segment.tree_alp(x, L, symbolic=True)
     exacts = P4_exact(x)
 
     for val, ex in zip(vals, exacts):
@@ -97,7 +97,7 @@ def test_spherical(x):
     '''
     L = 4
     vals = orthopy.line_segment.tree_alp(
-            L, x, normalization='spherical', symbolic=True
+            x, L, normalization='spherical', symbolic=True
             )
     exacts = P4_exact(x)
 
@@ -125,7 +125,7 @@ def test_spherical(x):
 def test_full(x):
     L = 4
     vals = orthopy.line_segment.tree_alp(
-        L, x, normalization='full', symbolic=True
+        x, L, normalization='full', symbolic=True
         )
     exacts = P4_exact(x)
 
@@ -152,7 +152,7 @@ def test_full(x):
 def test_schmidt(x):
     L = 4
     vals = orthopy.line_segment.tree_alp(
-        L, x, normalization='schmidt', symbolic=True
+        x, L, normalization='schmidt', symbolic=True
         )
     exacts = P4_exact(x)
 
@@ -171,7 +171,7 @@ def test_plot():
     L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
     vals = orthopy.line_segment.tree_alp(
-            L, x, normalization='full',
+            x, L, normalization='full',
             with_condon_shortley_phase=True,
             symbolic=False
             )

@@ -5,6 +5,6 @@ from __future__ import division
 from ..ncube import tree as ncube_tree
 
 
-def tree(n, X, symbolic=False):
+def tree(X, n, symbolic=False):
     assert X.shape[0] == 3, 'X has incorrect shape (X.shape[0] != 3).'
-    return ncube_tree(n, X, symbolic=symbolic)
+    return ncube_tree(X, n, symbolic=symbolic)

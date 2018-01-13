@@ -14,8 +14,8 @@ def test_integral0(n=4):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
-            orthopy.sphere.sph_tree(
-                n, polar, azimuthal, normalization='quantum mechanic',
+            orthopy.sphere.tree_sph(
+                polar, azimuthal, n, normalization='quantum mechanic',
                 symbolic=True
                 ))
 
@@ -35,8 +35,8 @@ def test_normality(n=3):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
-            orthopy.sphere.sph_tree(
-                n, polar, azimuthal, normalization='quantum mechanic',
+            orthopy.sphere.tree_sph(
+                polar, azimuthal, n, normalization='quantum mechanic',
                 symbolic=True
                 ))
 
@@ -58,8 +58,8 @@ def test_orthogonality(normalization, n=4):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
-            orthopy.sphere.sph_tree(
-                n, polar, azimuthal, normalization=normalization,
+            orthopy.sphere.tree_sph(
+                polar, azimuthal, n, normalization=normalization,
                 symbolic=True
                 ))
     vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
@@ -79,8 +79,8 @@ def test_schmidt_seminormality(n=3):
     polar = sympy.Symbol('theta', real=True)
     azimuthal = sympy.Symbol('phi', real=True)
     tree = numpy.concatenate(
-            orthopy.sphere.sph_tree(
-                n, polar, azimuthal, normalization='schmidt',
+            orthopy.sphere.tree_sph(
+                polar, azimuthal, n, normalization='schmidt',
                 symbolic=True
                 ))
     # split into levels
@@ -149,8 +149,8 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.sph_tree(
-            L, theta, phi, normalization='quantum mechanic', symbolic=True
+    vals = orthopy.sphere.tree_sph(
+            theta, phi, L, normalization='quantum mechanic', symbolic=True
             )
 
     for val, ex in zip(vals, exacts):
@@ -168,8 +168,8 @@ def test_spherical_harmonics(theta, phi):
 def test_spherical_harmonics_numpy(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.sph_tree(
-            L, theta, phi, normalization='quantum mechanic'
+    vals = orthopy.sphere.tree_sph(
+            theta, phi, L, normalization='quantum mechanic'
             )
 
     cmplx = numpy.vectorize(complex)
@@ -180,8 +180,8 @@ def test_spherical_harmonics_numpy(theta, phi):
 
 def test_write():
     def sph22(polar, azimuthal):
-        out = orthopy.sphere.sph_tree(
-            5, polar, azimuthal, normalization='quantum mechanic'
+        out = orthopy.sphere.tree_sph(
+            polar, azimuthal, 5, normalization='quantum mechanic'
             )[5][3]
         # out = numpy.arctan2(numpy.imag(out), numpy.real(out))
         out = abs(out)

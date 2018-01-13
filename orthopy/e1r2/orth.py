@@ -44,8 +44,8 @@ def recurrence_coefficients(n, standardization, symbolic=False):
     return p0, a, b, c
 
 
-def tree(n, X, symbolic=False):
+def tree(X, n, standardization, symbolic=False):
     args = recurrence_coefficients(
-            n, standardization='normal', symbolic=symbolic
+            n, standardization=standardization, symbolic=symbolic
             )
     return line_tree(X, *args)

@@ -30,7 +30,7 @@ import sympy
 
 b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
 
-tree = orthopy.triangle.tree(3, numpy.array([b0, b1, b2]), 'normal', symbolic=True)
+tree = orthopy.triangle.tree(numpy.array([b0, b1, b2]), 3, 'normal', symbolic=True)
 
 print(sympy.expand(tree[3][1]))
 ```
@@ -47,7 +47,7 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2),
 Legendre (α=β=0) polynomials.
 
 ```python
-vals = orthopy.line_segment.tree_jacobi(4, alpha, beta, 'normal', x, symbolic=False)
+vals = orthopy.line_segment.tree_jacobi(x, 4, alpha, beta, 'normal', symbolic=False)
 ```
 
 #### Associated Legendre polynomials
@@ -56,7 +56,7 @@ vals = orthopy.line_segment.tree_jacobi(4, alpha, beta, 'normal', x, symbolic=Fa
 
 ```python
 vals = orthopy.line_segment.tree_alp(
-    4, x, phi=None, standardization=None, with_condon_shortley_phase=True,
+    x, 4, phi=None, standardization=None, with_condon_shortley_phase=True,
     symbolic=False
     )
 ```
@@ -66,7 +66,7 @@ vals = orthopy.line_segment.tree_alp(
 
 (Generalized) Laguerre polynomials.
 ```python
-vals = orthopy.e1r.tree(4, x, alpha=0, standardization='normal', symbolic=False)
+vals = orthopy.e1r.tree(x, 4, alpha=0, standardization='normal', symbolic=False)
 ```
 
 
@@ -75,7 +75,7 @@ vals = orthopy.e1r.tree(4, x, alpha=0, standardization='normal', symbolic=False)
 
 Hermite polynomials.
 ```python
-vals = orthopy.e1r2.tree(4, x, symbolic=False)
+vals = orthopy.e1r2.tree(x, 4, 'normal', symbolic=False)
 ```
 All polynomials are normalized over the measure.
 
@@ -85,7 +85,7 @@ All polynomials are normalized over the measure.
 <img src="https://nschloe.github.io/orthopy/triangle.png" width="25%">
 
 ```python
-vals = orthopy.triangle.tree(4, x, 'normal', symbolic=False)
+vals = orthopy.triangle.tree(x, 4, 'normal', symbolic=False)
 ```
 Available standardizations are
   * `'normal'` (normalized polynomials, i.e., the integral of the squared function equals 1) and
@@ -97,7 +97,7 @@ Available standardizations are
 <img src="https://nschloe.github.io/orthopy/quad.png" width="25%">
 
 ```python
-vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
+vals = orthopy.quadrilateral.tree(x, 4, symbolic=False)
 ```
 All polynomials are normalized on the quadrilateral.
 
@@ -107,7 +107,7 @@ All polynomials are normalized on the quadrilateral.
 <img src="https://nschloe.github.io/orthopy/disk.png" width="25%">
 
 ```python
-vals = orthopy.disk.tree(4, x, symbolic=False)
+vals = orthopy.disk.tree(x, 4, symbolic=False)
 ```
 All polynomials are normalized on the unit disk.
 
@@ -116,7 +116,7 @@ All polynomials are normalized on the unit disk.
 <img src="https://nschloe.github.io/orthopy/e2r2.png" width="25%">
 
 ```python
-vals = orthopy.e2r2.tree(4, x, symbolic=False)
+vals = orthopy.e2r2.tree(x, 4, symbolic=False)
 ```
 All polynomials are normalized over the measure.
 
@@ -125,10 +125,10 @@ All polynomials are normalized over the measure.
 
 <img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
 
-Evaluate the entire _spherical harmonics_ tree up to a given level at once.
-Again, the implementation is numerically stable.
+_Sperical harmonics._
+
 ```python
-vals = orthopy.sphere.sph_tree(n, x, symbolic=False)
+vals = orthopy.sphere.tree_sph(x, n, symbolic=False)
 ```
 Note that spherical harmonics are complex-valued in general. The above plot
 only shows the absolute value of SPH(5, 3).
@@ -139,7 +139,7 @@ only shows the absolute value of SPH(5, 3).
 <img src="https://nschloe.github.io/orthopy/hexa.png" width="25%">
 
 ```python
-vals = orthopy.hexahedron.tree(3, x, symbolic=False)
+vals = orthopy.hexahedron.tree(x, 3, symbolic=False)
 ```
 All polynomials are normalized on the hexahedron.
 
@@ -147,7 +147,7 @@ All polynomials are normalized on the hexahedron.
 ### n-Cube
 
 ```python
-vals = orthopy.ncube.tree(6, x, symbolic=False)
+vals = orthopy.ncube.tree(x, 6, symbolic=False)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
@@ -155,7 +155,7 @@ determined by `X.shape[0]`.
 ### nD space with weight function exp(-r<sup>2</sup>)
 
 ```python
-vals = orthopy.enr2.tree(4, x, symbolic=False)
+vals = orthopy.enr2.tree(x, 4, symbolic=False)
 ```
 All polynomials are normalized over the measure. The dimensionality is
 determined by `X.shape[0]`.

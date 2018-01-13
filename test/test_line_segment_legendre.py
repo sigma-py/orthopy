@@ -85,7 +85,7 @@ def test_legendre_normal(n, y):
 
 def test_integral0(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(x, n, 'normal', symbolic=True)
 
     assert sympy.integrate(vals[0], (x, -1, +1)) == sqrt(2)
     for val in vals[1:]:
@@ -95,7 +95,7 @@ def test_integral0(n=4):
 
 def test_normality(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(x, n, 'normal', symbolic=True)
 
     for val in vals:
         assert sympy.integrate(val**2, (x, -1, +1)) == 1
@@ -104,7 +104,7 @@ def test_normality(n=4):
 
 def test_orthogonality(n=4):
     x = sympy.Symbol('x')
-    vals = orthopy.line_segment.tree_legendre(n, 'normal', x, symbolic=True)
+    vals = orthopy.line_segment.tree_legendre(x, n, 'normal', symbolic=True)
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
