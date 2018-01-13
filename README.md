@@ -78,8 +78,8 @@ All polynomials are normalized over the measure.
 <img src="https://nschloe.github.io/orthopy/triangle-1-0.png" width="70%"> |
 <img src="https://nschloe.github.io/orthopy/triangle-2-1.png" width="70%"> |
 <img src="https://nschloe.github.io/orthopy/triangle-3-1.png" width="70%">
-:-------------------:|:-------------------:|:----------:|
-n=1, k=0             |  n= 2, k=1          |  n=3, k=1  |
+:-------------------:|:------------------:|:----------:|
+n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 
 ```python
