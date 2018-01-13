@@ -81,7 +81,6 @@ All polynomials are normalized over the measure.
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
-
 ```python
 vals = orthopy.triangle.tree(x, 4, 'normal', symbolic=False)
 ```
@@ -92,7 +91,11 @@ Available standardizations are
 
 ### Quadrilateral
 
-<img src="https://nschloe.github.io/orthopy/quad.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/quad-1-0.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/quad-2-1.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/quad-3-1.png" width="70%">
+:-------------------:|:------------------:|:----------:|
+n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
 vals = orthopy.quadrilateral.tree(x, 4, symbolic=False)
