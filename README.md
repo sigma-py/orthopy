@@ -121,7 +121,9 @@ All polynomials are normalized over the measure.
 _Spherical harmonics._
 
 ```python
-vals = orthopy.sphere.tree_sph(x, n, symbolic=False)
+vals = orthopy.sphere.tree_sph(
+    polar, azimuthal, n, standardization='quantum mechanic', symbolic=False
+    )
 ```
 Note that spherical harmonics are complex-valued in general. The above plot
 only shows the absolute value of SPH(5, 3).

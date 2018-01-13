@@ -7,7 +7,7 @@ from ..line_segment import tree_alp
 
 
 def tree_sph(
-        polar, azimuthal, n, normalization, symbolic=False
+        polar, azimuthal, n, standardization, symbolic=False
         ):
     '''Evaluate all spherical harmonics of degree at most `n` at angles `polar`,
     `azimuthal`.
@@ -23,11 +23,11 @@ def tree_sph(
         'schmidt': ('schmidt', False),
         }
 
-    norm, cs_phase = config[normalization]
+    standard, cs_phase = config[standardization]
 
     return tree_alp(
         cos(polar), n, phi=azimuthal,
-        normalization=norm,
+        standardization=standard,
         with_condon_shortley_phase=cs_phase,
         symbolic=symbolic
         )
