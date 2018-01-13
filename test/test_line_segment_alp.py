@@ -124,7 +124,9 @@ def test_spherical(x):
     )
 def test_full(x):
     L = 4
-    vals = orthopy.line_segment.tree_alp(L, x, normalization='full', symbolic=True)
+    vals = orthopy.line_segment.tree_alp(
+        L, x, normalization='full', symbolic=True
+        )
     exacts = P4_exact(x)
 
     # pylint: disable=consider-using-enumerate
@@ -149,7 +151,9 @@ def test_full(x):
     )
 def test_schmidt(x):
     L = 4
-    vals = orthopy.line_segment.tree_alp(L, x, normalization='schmidt', symbolic=True)
+    vals = orthopy.line_segment.tree_alp(
+        L, x, normalization='schmidt', symbolic=True
+        )
     exacts = P4_exact(x)
 
     # pylint: disable=consider-using-enumerate
@@ -163,12 +167,12 @@ def test_schmidt(x):
     return
 
 
-def test_show():
-    L = 4
+def test_plot():
+    L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
     vals = orthopy.line_segment.tree_alp(
             L, x, normalization='full',
-            with_condon_shortley_phase=False,
+            with_condon_shortley_phase=True,
             symbolic=False
             )
 
@@ -196,5 +200,6 @@ if __name__ == '__main__':
     # x_ = numpy.random.rand(3, 2)
     # test_unnormalized(x=x_)
     # test_full(x=x_)
-    test_show()
-    plt.show()
+    test_plot()
+    # plt.show()
+    plt.savefig('alp.png', transparent=True)
