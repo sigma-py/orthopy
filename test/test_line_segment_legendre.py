@@ -2,6 +2,7 @@
 #
 import numpy
 import pytest
+import scipy.special
 import sympy
 from sympy import S, sqrt
 
@@ -25,11 +26,11 @@ def test_legendre_monic(n, y):
             )
 
     # Test evaluation of one value
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
     return
 
@@ -50,10 +51,10 @@ def test_legendre_p11(n, y):
             n, standardization='p(1)=1'
             )
 
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
     return
 
@@ -74,10 +75,10 @@ def test_legendre_normal(n, y):
             n, standardization='normal', symbolic=True
             )
 
-    y0 = orthopy.line_segment.evaluate_orthogonal_polynomial(x[0], *out)
+    y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
 
-    val = orthopy.line_segment.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
     return
 
@@ -108,6 +109,56 @@ def test_orthogonality(n=4):
 
     for val in out:
         assert sympy.integrate(val, (x, -1, +1)) == 0
+    return
+
+
+@pytest.mark.parametrize(
+    't, ref', [
+        (sympy.S(1)/2, sympy.S(23)/2016),
+        (1, sympy.S(8)/63),
+        ]
+    )
+def test_eval(t, ref, tol=1.0e-14):
+    n = 5
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
+            n, 'monic', symbolic=True
+            )
+    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
+
+    assert value == ref
+
+    # Evaluating the Legendre polynomial in this way is rather unstable, so
+    # don't go too far with n.
+    approx_ref = numpy.polyval(scipy.special.legendre(n, monic=True), t)
+    assert abs(value - approx_ref) < tol
+    return
+
+
+@pytest.mark.parametrize(
+    't, ref', [
+        (
+            numpy.array([1]),
+            numpy.array([sympy.S(8)/63])
+        ),
+        (
+            numpy.array([1, 2]),
+            numpy.array([sympy.S(8)/63, sympy.S(1486)/63])
+        ),
+        ],
+    )
+def test_eval_vec(t, ref, tol=1.0e-14):
+    n = 5
+    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
+            n, 'monic', symbolic=True
+            )
+    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
+
+    assert (value == ref).all()
+
+    # Evaluating the Legendre polynomial in this way is rather unstable, so
+    # don't go too far with n.
+    approx_ref = numpy.polyval(scipy.special.legendre(n, monic=True), t)
+    assert (abs(value - approx_ref) < tol).all()
     return
 
 

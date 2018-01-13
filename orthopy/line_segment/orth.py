@@ -10,6 +10,24 @@ from . import recurrence_coefficients
 from ..tools import line_tree
 
 
+def tree_chebyshev1(n, standardization, X, symbolic=False):
+    one_half = sympy.S(1)/2 if symbolic else 0.5
+    return tree_jacobi(
+        n, -one_half, -one_half, standardization, X, symbolic=symbolic
+        )
+
+
+def tree_chebyshev2(n, standardization, X, symbolic=False):
+    one_half = sympy.S(1)/2 if symbolic else 0.5
+    return tree_jacobi(
+        n, +one_half, +one_half, standardization, X, symbolic=symbolic
+        )
+
+
+def tree_gegenbauer(n, lmbda, standardization, X, symbolic=False):
+    return tree_jacobi(n, lmbda, lmbda, standardization, X, symbolic=symbolic)
+
+
 def tree_legendre(n, standardization, X, symbolic=False):
     return tree_jacobi(n, 0, 0, standardization, X, symbolic=symbolic)
 
@@ -22,7 +40,6 @@ def tree_jacobi(n, alpha, beta, standardization, X, symbolic=False):
     return line_tree(X, *args)
 
 
-# pylint: disable=too-many-arguments
 def tree_alp(
         n, x, phi=None, normalization=None,
         with_condon_shortley_phase=True,

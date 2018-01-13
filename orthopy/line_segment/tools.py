@@ -52,7 +52,7 @@ def show(*args, **kwargs):
 def plot(p0, a, b, c, t0, t1):
     import matplotlib.pyplot as plt
     n = 1000
-    t = numpy.linspace(-1.0, +1.0, n)
+    t = numpy.linspace(t0, t1, n)
     vals = line_evaluate(t, p0, a, b, c)
     plt.plot(t, vals)
     return
