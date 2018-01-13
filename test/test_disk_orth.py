@@ -74,7 +74,7 @@ def test_normality(n=4):
     return
 
 
-def test_show(n=4, r=3):
+def test_show(n=2, r=1):
     def f(X):
         return orthopy.disk.tree(X, n)[n][r]
 
