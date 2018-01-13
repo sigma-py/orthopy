@@ -105,7 +105,11 @@ All polynomials are normalized on the quadrilateral.
 
 ### Disk
 
-<img src="https://nschloe.github.io/orthopy/disk.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/disk-1-0.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/disk-2-1.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/disk-4-3.png" width="70%">
+:-------------------:|:------------------:|:----------:|
+n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
 
 ```python
 vals = orthopy.disk.tree(x, 4, symbolic=False)
