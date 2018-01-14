@@ -86,7 +86,7 @@ def ff(l, m):
         ]
     )
 def test_exact(x, standardization, factor):
-    '''Test spherical harmonic standardization.
+    '''Test for the exact values.
     '''
     L = 4
     vals = orthopy.line_segment.tree_alp(x, L, standardization, symbolic=True)
