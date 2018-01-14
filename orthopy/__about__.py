@@ -7,6 +7,6 @@ __copyright__ = \
     u'Copyright (c) 2017-2018 {} <{}>'.format(__author__, __email__)
 __credits__ = []
 __license__ = 'License :: OSI Approved :: MIT License'
-__version__ = '0.4.1'
+__version__ = '0.5.0'
 __maintainer__ = 'Nico Schlömer'
 __status__ = 'Development Status :: 4 - Beta'
