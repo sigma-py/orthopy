@@ -41,7 +41,7 @@ def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
 
 
 def tree_alp(
-        x, n, phi=None, normalization=None,
+        x, n, standardization, phi=None,
         with_condon_shortley_phase=True,
         symbolic=False
         ):
@@ -91,7 +91,7 @@ def tree_alp(
 
     e = numpy.ones_like(x, dtype=int)
 
-    if normalization is None:
+    if standardization == 'natural':
         alpha = 1
 
         def z0_factor(L):
@@ -106,7 +106,7 @@ def tree_alp(
         def C1(L):
             return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
 
-    elif normalization == 'spherical':
+    elif standardization == 'spherical':
         alpha = 1 / sqrt(4*pi)
 
         def z0_factor(L):
@@ -125,11 +125,11 @@ def tree_alp(
             d = (L+m) * (L-m)
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
-    elif normalization in ['complex spherical', 'complex spherical 1']:
+    elif standardization in ['complex spherical', 'complex spherical 1']:
         # The starting value 1 has the effect of multiplying the entire tree by
         # sqrt(4*pi). This convention is used in geodesy and and spectral
         # analysis.
-        alpha = 1 / sqrt(4*pi) if normalization == 'complex spherical' else 1
+        alpha = 1 / sqrt(4*pi) if standardization == 'complex spherical' else 1
 
         exp_iphi = exp(imag_unit * phi)
 
@@ -149,7 +149,7 @@ def tree_alp(
             d = (L+m) * (L-m)
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
-    elif normalization == 'full':
+    elif standardization == 'normal':
         alpha = 1 / sqrt(2)
 
         def z0_factor(L):
@@ -169,8 +169,8 @@ def tree_alp(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     else:
-        assert normalization == 'schmidt', \
-            'Unknown normalization \'{}\'.'.format(normalization)
+        assert standardization == 'schmidt', \
+            'Unknown standardization \'{}\'.'.format(standardization)
 
         if phi is None:
             alpha = 2

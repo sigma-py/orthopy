@@ -49,7 +49,7 @@ n)'`, and `'normal`.
 
 ```python
 vals = orthopy.line_segment.tree_alp(
-    x, 4, phi=None, standardization=None, with_condon_shortley_phase=True,
+    x, 4, phi=None, standardization='natural', with_condon_shortley_phase=True,
     symbolic=False
     )
 ```

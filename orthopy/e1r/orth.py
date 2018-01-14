@@ -31,7 +31,7 @@ def recurrence_coefficients(
     if standardization == 'monic':
         p0 = 1
         a = n * [1]
-        b = [(2*k+1+alpha) for k in range(n)]
+        b = [2*k+1+alpha for k in range(n)]
         c = [k*(k+alpha) for k in range(n)]
         c[0] = gamma(alpha+1)
     elif standardization == 'classical':
@@ -49,4 +49,4 @@ def recurrence_coefficients(
         c = [sqrt(k*S(k+alpha) / ((k+1) * (k+1+alpha))) for k in range(n)]
         c[0] = numpy.nan
 
-    return p0, a, b, c
+    return p0, numpy.array(a), numpy.array(b), numpy.array(c)
