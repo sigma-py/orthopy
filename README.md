@@ -133,17 +133,22 @@ All polynomials are normalized over the measure.
 
 ### Sphere
 
-<img src="https://nschloe.github.io/orthopy/sphere.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/sphere-1-0.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/sphere-2-1.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/sphere-5-3.png" width="70%">
+:-------------------:|:------------------:|:----------:|
+n=1, k=0             |  n=2, k=1          |  n=5, k=3  |
 
 _Spherical harmonics._
+
+(Note that spherical harmonics are complex-valued in general; the above plots
+only show the absolute values.)
 
 ```python
 vals = orthopy.sphere.tree_sph(
     polar, azimuthal, n, standardization='quantum mechanic', symbolic=False
     )
 ```
-Note that spherical harmonics are complex-valued in general. The above plot
-only shows the absolute value of SPH(5, 3).
 
 
 ### Hexahedron
