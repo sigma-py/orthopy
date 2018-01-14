@@ -23,6 +23,10 @@ def chebyshev2(n, standardization, symbolic=False):
         )
 
 
+def gegenbauer(n, lmbda, standardization, symbolic=False):
+    return jacobi(n, lmbda, lmbda, standardization, symbolic=symbolic)
+
+
 def legendre(n, standardization, symbolic=False):
     return jacobi(n, 0, 0, standardization, symbolic=symbolic)
 

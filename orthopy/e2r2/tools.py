@@ -11,11 +11,9 @@ def show(*args, **kwargs):
     return
 
 
-def plot(f, n=100):
-    x0, x1 = -2, +2
-    y0, y1 = -2, +2
-    x = numpy.linspace(x0, x1, n)
-    y = numpy.linspace(y0, y1, n)
+def plot(f, n=100, d=1.0):
+    x = numpy.linspace(-d, +d, n)
+    y = numpy.linspace(-d, +d, n)
     X, Y = numpy.meshgrid(x, y)
     XY = numpy.stack([X, Y])
 
@@ -24,6 +22,14 @@ def plot(f, n=100):
     triang = matplotlib.tri.Triangulation(X.flatten(), Y.flatten())
     plt.tripcolor(triang, z.flatten(), shading='flat')
     plt.colorbar()
+
+    # Choose a diverging colormap such that the zeros are clearly
+    # distinguishable.
+    plt.set_cmap('coolwarm')
+    # Make sure the color map limits are symmetric around 0.
+    clim = plt.gci().get_clim()
+    mx = max(abs(clim[0]), abs(clim[1]))
+    plt.clim(-mx, mx)
 
     plt.gca().set_aspect('equal')
     plt.axis('off')

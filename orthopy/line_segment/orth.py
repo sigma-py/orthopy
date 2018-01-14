@@ -5,10 +5,43 @@ from __future__ import division
 import numpy
 import sympy
 
+from . import recurrence_coefficients
+
+from ..tools import line_tree
+
+
+def tree_chebyshev1(X, n, standardization, symbolic=False):
+    one_half = sympy.S(1)/2 if symbolic else 0.5
+    return tree_jacobi(
+        X, n, -one_half, -one_half, standardization, symbolic=symbolic
+        )
+
+
+def tree_chebyshev2(X, n, standardization, symbolic=False):
+    one_half = sympy.S(1)/2 if symbolic else 0.5
+    return tree_jacobi(
+        X, n, +one_half, +one_half, standardization, symbolic=symbolic
+        )
+
+
+def tree_gegenbauer(X, n, lmbda, standardization, symbolic=False):
+    return tree_jacobi(X, n, lmbda, lmbda, standardization, symbolic=symbolic)
+
+
+def tree_legendre(X, n, standardization, symbolic=False):
+    return tree_jacobi(X, n, 0, 0, standardization, symbolic=symbolic)
+
 
 # pylint: disable=too-many-arguments
-def alp_tree(
-        n, x, phi=None, normalization=None,
+def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
+    args = recurrence_coefficients.jacobi(
+            n, alpha, beta, standardization, symbolic=symbolic
+            )
+    return line_tree(X, *args)
+
+
+def tree_alp(
+        x, n, standardization, phi=None,
         with_condon_shortley_phase=True,
         symbolic=False
         ):
@@ -58,8 +91,8 @@ def alp_tree(
 
     e = numpy.ones_like(x, dtype=int)
 
-    if normalization is None:
-        alpha = 1
+    if standardization == 'natural':
+        p0 = 1
 
         def z0_factor(L):
             return sqrt1mx2 / (2*L)
@@ -73,8 +106,8 @@ def alp_tree(
         def C1(L):
             return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
 
-    elif normalization == 'spherical':
-        alpha = 1 / sqrt(4*pi)
+    elif standardization == 'spherical':
+        p0 = 1 / sqrt(4*pi)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
@@ -92,11 +125,11 @@ def alp_tree(
             d = (L+m) * (L-m)
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
-    elif normalization in ['complex spherical', 'complex spherical 1']:
+    elif standardization in ['complex spherical', 'complex spherical 1']:
         # The starting value 1 has the effect of multiplying the entire tree by
         # sqrt(4*pi). This convention is used in geodesy and and spectral
         # analysis.
-        alpha = 1 / sqrt(4*pi) if normalization == 'complex spherical' else 1
+        p0 = 1 / sqrt(4*pi) if standardization == 'complex spherical' else 1
 
         exp_iphi = exp(imag_unit * phi)
 
@@ -116,8 +149,8 @@ def alp_tree(
             d = (L+m) * (L-m)
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
-    elif normalization == 'full':
-        alpha = 1 / sqrt(2)
+    elif standardization == 'normal':
+        p0 = 1 / sqrt(2)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
@@ -136,14 +169,14 @@ def alp_tree(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     else:
-        assert normalization == 'schmidt', \
-            'Unknown normalization \'{}\'.'.format(normalization)
+        assert standardization == 'schmidt', \
+            'Unknown standardization \'{}\'.'.format(standardization)
 
         if phi is None:
-            alpha = 2
+            p0 = 2
             exp_iphi = 1
         else:
-            alpha = 1
+            p0 = 1
             exp_iphi = exp(imag_unit * phi)
 
         def z0_factor(L):
@@ -169,7 +202,7 @@ def alp_tree(
         z1_factor_CSP = z1_factor
 
     # Here comes the actual loop.
-    out = [[e * alpha]]
+    out = [[e * p0]]
     for L in range(1, n+1):
         out.append(
             numpy.concatenate([

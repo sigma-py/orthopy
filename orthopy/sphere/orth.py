@@ -3,11 +3,11 @@
 import numpy
 import sympy
 
-from .. import line
+from ..line_segment import tree_alp
 
 
-def sph_tree(
-        n, polar, azimuthal, normalization, symbolic=False
+def tree_sph(
+        polar, azimuthal, n, standardization, symbolic=False
         ):
     '''Evaluate all spherical harmonics of degree at most `n` at angles `polar`,
     `azimuthal`.
@@ -23,11 +23,11 @@ def sph_tree(
         'schmidt': ('schmidt', False),
         }
 
-    norm, cs_phase = config[normalization]
+    standard, cs_phase = config[standardization]
 
-    return line.alp_tree(
-        n, cos(polar), azimuthal,
-        normalization=norm,
+    return tree_alp(
+        cos(polar), n, phi=azimuthal,
+        standardization=standard,
         with_condon_shortley_phase=cs_phase,
         symbolic=symbolic
         )

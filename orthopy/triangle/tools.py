@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 #
+from __future__ import division
+
 import matplotlib.tri
 import matplotlib.pyplot as plt
 import numpy
@@ -42,6 +44,14 @@ def plot(corners, f, n=100):
     triang = matplotlib.tri.Triangulation(x, y)
     plt.tripcolor(triang, z, shading='flat')
     plt.colorbar()
+
+    # Choose a diverging colormap such that the zeros are clearly
+    # distinguishable.
+    plt.set_cmap('coolwarm')
+    # Make sure the color map limits are symmetric around 0.
+    clim = plt.gci().get_clim()
+    mx = max(abs(clim[0]), abs(clim[1]))
+    plt.clim(-mx, mx)
 
     # triangle outlines
     X = numpy.column_stack([corners, corners[:, 0]])

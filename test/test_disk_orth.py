@@ -14,7 +14,7 @@ def test_integral0(n=4):
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     vals = numpy.concatenate(
-        orthopy.disk.tree(n, numpy.array([x, y]), symbolic=True)
+        orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True)
         )
 
     # Cartesian integration in sympy is bugged, cf.
@@ -40,7 +40,7 @@ def test_orthogonality(n=3):
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     tree = numpy.concatenate(
-        orthopy.disk.tree(n, numpy.array([x, y]), symbolic=True)
+        orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True)
         )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
@@ -58,7 +58,7 @@ def test_normality(n=4):
     x = sympy.Symbol('x')
     y = sympy.Symbol('y')
     tree = numpy.concatenate(
-        orthopy.disk.tree(n, numpy.array([x, y]), symbolic=True)
+        orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True)
         )
 
     # Cartesian integration in sympy is bugged, cf.
@@ -74,9 +74,9 @@ def test_normality(n=4):
     return
 
 
-def test_show(n=4, r=3):
+def test_show(n=2, r=1):
     def f(X):
-        return orthopy.disk.tree(n, X)[n][r]
+        return orthopy.disk.tree(X, n)[n][r]
 
     orthopy.disk.show(f)
     # orthopy.disk.plot(f, lcar=2.0e-2)

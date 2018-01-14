@@ -19,14 +19,14 @@ import orthopy
 def test_jacobi_monic(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.jacobi(
+    out = orthopy.line_segment.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='monic', symbolic=True
             )
 
-    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.tools.line_evaluate(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
     return
 
@@ -43,15 +43,15 @@ def test_jacobi_monic(n, y):
 def test_jacobi_p11(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.jacobi(
+    out = orthopy.line_segment.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='p(1)=(n+alpha over n)',
             symbolic=True
             )
 
-    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.tools.line_evaluate(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
     return
 
@@ -68,15 +68,51 @@ def test_jacobi_p11(n, y):
 def test_jacobi_normal(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
-    out = orthopy.line.recurrence_coefficients.jacobi(
+    out = orthopy.line_segment.recurrence_coefficients.jacobi(
             n, alpha=3, beta=2, standardization='normal', symbolic=True
             )
 
-    y2 = orthopy.line.evaluate_orthogonal_polynomial(x[2], *out)
+    y2 = orthopy.tools.line_evaluate(x[2], *out)
     assert y2 == y[2]
 
-    val = orthopy.line.evaluate_orthogonal_polynomial(x, *out)
+    val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
+    return
+
+
+@pytest.mark.parametrize(
+    'dtype', [numpy.float, S]
+    )
+def test_jacobi(dtype):
+    n = 5
+    if dtype == S:
+        a = S(1)
+        b = S(1)
+        _, _, alpha, beta = \
+            orthopy.line_segment.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
+        assert all([a == 0 for a in alpha])
+        assert (beta == [
+            S(4)/3,
+            S(1)/5,
+            S(8)/35,
+            S(5)/21,
+            S(8)/33,
+            ]).all()
+    else:
+        a = 1.0
+        b = 1.0
+        tol = 1.0e-14
+        _, _, alpha, beta = \
+            orthopy.line_segment.recurrence_coefficients.jacobi(
+                n, a, b, 'monic'
+                )
+        assert numpy.all(abs(alpha) < tol)
+        assert numpy.all(
+            abs(beta - [4.0/3.0, 1.0/5.0, 8.0/35.0, 5.0/21.0, 8.0/33.0])
+            < tol
+            )
     return
 
 

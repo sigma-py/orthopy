@@ -12,7 +12,7 @@ def test_integral0(n=4):
     '''
     x = sympy.Symbol('x')
     vals = numpy.concatenate(
-        orthopy.e1r2.tree(n, numpy.array([x]), symbolic=True)
+        orthopy.e1r2.tree(numpy.array([x]), n, 'normal', symbolic=True)
         )
 
     assert sympy.integrate(
@@ -29,7 +29,7 @@ def test_integral0(n=4):
 def test_orthogonality(n=4):
     x = sympy.Symbol('x')
     tree = numpy.concatenate(
-        orthopy.e1r2.tree(n, numpy.array([x]), symbolic=True)
+        orthopy.e1r2.tree(numpy.array([x]), n, 'normal', symbolic=True)
         )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
@@ -41,7 +41,7 @@ def test_orthogonality(n=4):
 def test_normality(n=4):
     x = sympy.Symbol('x')
     tree = numpy.concatenate(
-        orthopy.e1r2.tree(n, numpy.array([x]), symbolic=True)
+        orthopy.e1r2.tree(numpy.array([x]), n, 'normal', symbolic=True)
         )
 
     for val in tree:
