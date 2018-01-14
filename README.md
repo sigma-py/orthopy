@@ -148,7 +148,11 @@ only shows the absolute value of SPH(5, 3).
 
 ### Hexahedron
 
-<img src="https://nschloe.github.io/orthopy/hexa.png" width="25%">
+<img src="https://nschloe.github.io/orthopy/hexa-1-0.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/hexa-2-1.png" width="70%"> |
+<img src="https://nschloe.github.io/orthopy/hexa-5-5.png" width="70%">
+:-------------------:|:------------------:|:----------:|
+n=1, k=0             |  n=2, k=1          |  n=5, k=5  |
 
 ```python
 vals = orthopy.hexahedron.tree(x, 3, symbolic=False)
