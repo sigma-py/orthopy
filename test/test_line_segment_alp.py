@@ -10,7 +10,7 @@ import sympy
 import orthopy
 
 
-def P4_exact(x):
+def exact_natural(x):
     # pylint: disable=too-many-locals
     sqrt = numpy.vectorize(sympy.sqrt)
     sqrt1mx2 = sqrt(1 - x**2)
@@ -58,30 +58,11 @@ def P4_exact(x):
 numpy.random.seed(10)
 
 
-@pytest.mark.parametrize(
-    'x', [
-        sympy.S(1) / 10,
-        sympy.S(1) / 1000,
-        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
-        ]
-    )
-def test_unnormalized(x):
-    L = 4
-    vals = orthopy.line_segment.tree_alp(x, L, 'natural', symbolic=True)
-    exacts = P4_exact(x)
-
-    for val, ex in zip(vals, exacts):
-        for v, e in zip(val, ex):
-            assert numpy.all(v == e)
-    return
-
-
 def ff(l, m):
     '''factorial(l-m) / factorial(l+m)
     '''
     if m > 0:
         return sympy.S(1) / sympy.prod([l-m+1+i for i in range(2*m)])
-
     return sympy.prod([l-abs(m)+1+i for i in range(2*abs(m))])
 
 
@@ -92,74 +73,29 @@ def ff(l, m):
         numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
         ]
     )
-def test_spherical(x):
+@pytest.mark.parametrize(
+    'standardization,factor', [
+        ('natural', lambda L, m: 1),
+        (
+            'spherical',
+            # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
+            lambda L, m: sympy.sqrt(sympy.S(2*L+1) / (4 * sympy.pi) * ff(L, m))
+        ),
+        ('normal', lambda L, m: sympy.sqrt(sympy.S(2*L+1) / 2 * ff(L, m))),
+        ('schmidt', lambda L, m: 2 * sympy.sqrt(ff(L, m))),
+        ]
+    )
+def test_exact(x, standardization, factor):
     '''Test spherical harmonic standardization.
     '''
     L = 4
-    vals = orthopy.line_segment.tree_alp(
-            x, L, standardization='spherical', symbolic=True
-            )
-    exacts = P4_exact(x)
+    vals = orthopy.line_segment.tree_alp(x, L, standardization, symbolic=True)
 
-    # pylint: disable=consider-using-enumerate
-    for L in range(len(exacts)):
-        for k, m in enumerate(range(-L, L+1)):
-            # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
-            exacts[L][k] *= sympy.sqrt(
-                    sympy.S(2*L+1) / (4 * sympy.pi) * ff(L, m)
-                    )
-
-    for val, ex in zip(vals, exacts):
-        for v, e in zip(val, ex):
-            assert numpy.all(v == e)
-    return
-
-
-@pytest.mark.parametrize(
-    'x', [
-        sympy.S(1) / 10,
-        sympy.S(1) / 1000,
-        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
+    exacts = exact_natural(x)
+    exacts = [
+        [val * factor(L, m-L) for m, val in enumerate(ex)]
+        for L, ex in enumerate(exacts)
         ]
-    )
-def test_normal(x):
-    L = 4
-    vals = orthopy.line_segment.tree_alp(
-        x, L, standardization='normal', symbolic=True
-        )
-    exacts = P4_exact(x)
-
-    # pylint: disable=consider-using-enumerate
-    for L in range(len(exacts)):
-        for k, m in enumerate(range(-L, L+1)):
-            exacts[L][k] *= sympy.sqrt(
-                    sympy.S(2*L+1) / 2 * ff(L, m)
-                    )
-
-    for val, ex in zip(vals, exacts):
-        for v, e in zip(val, ex):
-            assert numpy.all(v == e)
-    return
-
-
-@pytest.mark.parametrize(
-    'x', [
-        sympy.S(1) / 10,
-        sympy.S(1) / 1000,
-        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13])
-        ]
-    )
-def test_schmidt(x):
-    L = 4
-    vals = orthopy.line_segment.tree_alp(
-        x, L, standardization='schmidt', symbolic=True
-        )
-    exacts = P4_exact(x)
-
-    # pylint: disable=consider-using-enumerate
-    for L in range(len(exacts)):
-        for k, m in enumerate(range(-L, L+1)):
-            exacts[L][k] *= 2 * sympy.sqrt(ff(L, m))
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):

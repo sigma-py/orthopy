@@ -92,7 +92,7 @@ def tree_alp(
     e = numpy.ones_like(x, dtype=int)
 
     if standardization == 'natural':
-        alpha = 1
+        p0 = 1
 
         def z0_factor(L):
             return sqrt1mx2 / (2*L)
@@ -107,7 +107,7 @@ def tree_alp(
             return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
 
     elif standardization == 'spherical':
-        alpha = 1 / sqrt(4*pi)
+        p0 = 1 / sqrt(4*pi)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
@@ -129,7 +129,7 @@ def tree_alp(
         # The starting value 1 has the effect of multiplying the entire tree by
         # sqrt(4*pi). This convention is used in geodesy and and spectral
         # analysis.
-        alpha = 1 / sqrt(4*pi) if standardization == 'complex spherical' else 1
+        p0 = 1 / sqrt(4*pi) if standardization == 'complex spherical' else 1
 
         exp_iphi = exp(imag_unit * phi)
 
@@ -150,7 +150,7 @@ def tree_alp(
             return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
 
     elif standardization == 'normal':
-        alpha = 1 / sqrt(2)
+        p0 = 1 / sqrt(2)
 
         def z0_factor(L):
             return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
@@ -173,10 +173,10 @@ def tree_alp(
             'Unknown standardization \'{}\'.'.format(standardization)
 
         if phi is None:
-            alpha = 2
+            p0 = 2
             exp_iphi = 1
         else:
-            alpha = 1
+            p0 = 1
             exp_iphi = exp(imag_unit * phi)
 
         def z0_factor(L):
@@ -202,7 +202,7 @@ def tree_alp(
         z1_factor_CSP = z1_factor
 
     # Here comes the actual loop.
-    out = [[e * alpha]]
+    out = [[e * p0]]
     for L in range(1, n+1):
         out.append(
             numpy.concatenate([
