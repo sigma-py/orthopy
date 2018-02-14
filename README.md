@@ -7,6 +7,7 @@ Your one-stop shop for orthogonal polynomials in Python.
 [![Codacy grade](https://img.shields.io/codacy/grade/895c05bd82364370841cea4ab2121c99.svg)](https://app.codacy.com/app/nschloe/orthopy/dashboard)
 [![awesome](https://img.shields.io/badge/awesome-yes-brightgreen.svg)](https://img.shields.io/badge/awesome-yes-brightgreen.svg)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg)](https://doi.org/10.5281/zenodo.1173151)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=social&label=Stars)](https://github.com/nschloe/orthopy)
 
 Various orthogonal polynomial classes for
