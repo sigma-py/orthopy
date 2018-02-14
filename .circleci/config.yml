@@ -15,6 +15,9 @@ jobs:
       - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint orthopy/ test/*.py
+      # make sure that rst converts correctly
+      - run: pip3 install docutils pygments
+      - run: make README.rst
       # The tests
       - run: cd test/ && MPLBACKEND=Agg pytest --cov orthopy
       # submit to codecov
