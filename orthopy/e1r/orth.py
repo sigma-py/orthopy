@@ -17,9 +17,7 @@ def tree(X, n, alpha=0, symbolic=False):
     return line_tree(X, *args)
 
 
-def recurrence_coefficients(
-        n, alpha, standardization='normal', symbolic=False
-        ):
+def recurrence_coefficients(n, alpha, standardization='normal', symbolic=False):
     '''Recurrence coefficients for generalized Laguerre polynomials.
 
         vals_k = vals_{k-1} * (t*a_k - b_k) - vals{k-2} * c_k

@@ -5,13 +5,13 @@ jobs:
   build:
     working_directory: ~/orthopy
     docker:
-      - image: ubuntu:17.10
+      - image: ubuntu:18.04
     steps:
       - run: apt-get update
       - run: apt-get install -y git python3-pip gmsh pandoc
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
-      - run: pip3 install .[sphere-plot,disk-plot]
+      - run: pip3 install .[all]
       - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint setup.py orthopy/ test/*.py
@@ -23,12 +23,3 @@ jobs:
       # submit to codecov
       - run: apt-get install -y curl
       - run: bash <(curl -s https://codecov.io/bash)
-
-# workflow builds don't support forked PRs yet, cf.
-# <https://circleci.com/docs/2.0/faq/#can-i-build-fork-prs-using-workflows>.
-# workflows:
-#   version: 2
-#   build-and-test:
-#     jobs:
-#       - python2
-#       - python3

@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib.tri
-import matplotlib.pyplot as plt
 import numpy
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
 
 
 def plot(f, n=100, d=1.0):
+    import matplotlib.tri
+    import matplotlib.pyplot as plt
+
     x = numpy.linspace(-d, +d, n)
     y = numpy.linspace(-d, +d, n)
     X, Y = numpy.meshgrid(x, y)

@@ -2,12 +2,11 @@
 #
 from __future__ import division
 
-import matplotlib.tri
-import matplotlib.pyplot as plt
 import numpy
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
@@ -16,6 +15,9 @@ def show(*args, **kwargs):
 def plot(corners, f, n=100):
     '''Plot function over a triangle.
     '''
+    import matplotlib.tri
+    import matplotlib.pyplot as plt
+
     # discretization points
     def partition(boxes, balls):
         # <https://stackoverflow.com/a/36748940/353337>

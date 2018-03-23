@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib.pyplot as plt
 import numpy
 
 from .orth import tree_jacobi
@@ -41,12 +40,14 @@ def clenshaw(a, alpha, beta, t):
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
 
 
 def plot(L, alpha, beta):
+    import matplotlib.pyplot as plt
     xlim = [-1.0, +1.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
     vals = tree_jacobi(x, L, alpha, beta, 'normal')
