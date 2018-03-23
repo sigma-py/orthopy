@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib
-import matplotlib.pyplot as plt
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
@@ -13,6 +12,8 @@ def show(*args, **kwargs):
 def plot(f, lcar=1.0e-1):
     '''Plot function over a disk.
     '''
+    import matplotlib
+    import matplotlib.pyplot as plt
     import pygmsh
 
     geom = pygmsh.built_in.Geometry()

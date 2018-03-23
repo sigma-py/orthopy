@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib.pyplot as plt
 import numpy
 
 from .orth import tree
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
     return
 
 
 def plot(L):
+    import matplotlib.pyplot as plt
     xlim = [0.0, +5.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
     vals = tree(x, L)

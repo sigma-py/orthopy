@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-import matplotlib.tri
-import matplotlib.pyplot as plt
 import numpy
 
 
@@ -14,6 +12,9 @@ def show(*args, **kwargs):
 def plot(f, n=100):
     '''Plot function over the standard quadrilateral.
     '''
+    import matplotlib.tri
+    import matplotlib.pyplot as plt
+
     x = numpy.linspace(-1, +1, n)
     y = numpy.linspace(-1, +1, n)
     X, Y = numpy.meshgrid(x, y)

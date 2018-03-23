@@ -19,7 +19,7 @@ def read(fname):
             os.path.join(os.path.dirname(__file__), fname),
             encoding='utf-8'
             ).read()
-    except FileNotFoundError:
+    except IOError:
         content = ''
     return content
 
@@ -33,15 +33,16 @@ setup(
     author=about['__author__'],
     author_email=about['__email__'],
     install_requires=[
-        'matplotlib',
         'numpy',
         'pipdate',
         'scipy',
         'sympy',
         ],
     extras_require={
-        'sphere-plot': ['meshzoo', 'meshio'],
+        'all': ['matplotlib', 'meshio', 'meshzoo', 'pygmsh'],
         'disk-plot': ['pygmsh'],
+        'plot': ['matplotlib'],
+        'sphere-plot': ['meshzoo', 'meshio'],
         },
     description='tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.rst'),
