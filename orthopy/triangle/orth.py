@@ -107,8 +107,7 @@ def tree(bary, n, standardization, symbolic=False):
         out.append(numpy.concatenate([
             out[L-1] * (numpy.multiply.outer(alpha(L), 1-2*w).T - beta(L)).T,
             [delta(L) * out[L-1][L-1] * (u-v)],
-            ])
-            )
+            ]))
 
         if L > 1:
             out[-1][:L-1] -= (out[L-2].T * gamma(L)).T

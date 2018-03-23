@@ -6,9 +6,7 @@ import sympy
 from ..line_segment import tree_alp
 
 
-def tree_sph(
-        polar, azimuthal, n, standardization, symbolic=False
-        ):
+def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
     '''Evaluate all spherical harmonics of degree at most `n` at angles `polar`,
     `azimuthal`.
     '''

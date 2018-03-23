@@ -13,10 +13,10 @@ import orthopy
 
 def op(i, j, x, y):
     p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
-            i, 0, 0,
-            # standardization='monic'
-            standardization='p(1)=(n+alpha over n)'
-            )
+        i, 0, 0,
+        # standardization='monic'
+        standardization='p(1)=(n+alpha over n)'
+        )
     val1 = orthopy.tools.line_evaluate((x-y)/(x+y), p0, a, b, c)
 
     val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x-y)/(x+y))
@@ -30,10 +30,10 @@ def op(i, j, x, y):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
     p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
-            j, 2*i+1, 0,
-            # standardization='monic'
-            standardization='p(1)=(n+alpha over n)'
-            )
+        j, 2*i+1, 0,
+        # standardization='monic'
+        standardization='p(1)=(n+alpha over n)'
+        )
     val2 = orthopy.tools.line_evaluate(1-2*(x+y), p0, a, b, c)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 

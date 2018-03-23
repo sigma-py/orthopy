@@ -20,9 +20,9 @@ def test_clenshaw(tol=1.0e-14):
     value = orthopy.line_segment.clenshaw(a, alpha, beta, t)
 
     ref = math.fsum([
-            numpy.polyval(legendre(i, monic=True), t)
-            for i in range(n+1)
-            ])
+        numpy.polyval(legendre(i, monic=True), t)
+        for i in range(n+1)
+        ])
 
     assert abs(value - ref) < tol
     return

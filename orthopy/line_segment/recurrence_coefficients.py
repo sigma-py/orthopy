@@ -149,25 +149,25 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
         a = [
             frac(alpha+beta+2, 2) * sqrt(frac(
-                    alpha+beta+3,
-                    (alpha+1) * (beta+1)
-                    )) if N == 0 else
+                alpha+beta+3,
+                (alpha+1) * (beta+1)
+                )) if N == 0 else
             frac(2*N+alpha+beta+2, 2) * sqrt(frac(
-                    (2*N+alpha+beta+1) * (2*N+alpha+beta+3),
-                    (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
-                    ))
+                (2*N+alpha+beta+1) * (2*N+alpha+beta+3),
+                (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
+                ))
             for N in range(n)
             ]
 
         b = [(
-                frac(beta-alpha, 2) if N == 0 else
-                frac(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
-             ) * sqrt(frac(
-                    (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
-                    (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
-                    ))
+            frac(beta-alpha, 2) if N == 0 else
+            frac(beta**2 - alpha**2, 2 * (2*N+alpha+beta))
+            ) * sqrt(frac(
+                (2*N+alpha+beta+3) * (2*N+alpha+beta+1),
+                (N+1) * (N+alpha+1) * (N+beta+1) * (N+alpha+beta+1)
+                ))
              for N in range(n)
-             ]
+            ]
 
         c = [
             int_1 if N == 0 else

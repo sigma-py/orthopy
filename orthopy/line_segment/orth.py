@@ -35,16 +35,14 @@ def tree_legendre(X, n, standardization, symbolic=False):
 # pylint: disable=too-many-arguments
 def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     args = recurrence_coefficients.jacobi(
-            n, alpha, beta, standardization, symbolic=symbolic
-            )
+        n, alpha, beta, standardization, symbolic=symbolic
+        )
     return line_tree(X, *args)
 
 
-def tree_alp(
-        x, n, standardization, phi=None,
-        with_condon_shortley_phase=True,
-        symbolic=False
-        ):
+def tree_alp(x, n, standardization, phi=None,
+             with_condon_shortley_phase=True,
+             symbolic=False):
     '''Evaluates the entire tree of associated Legendre polynomials up to depth
     n.
     There are many recurrence relations that can be used to construct the

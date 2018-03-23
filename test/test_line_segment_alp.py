@@ -107,10 +107,10 @@ def test_plot():
     L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
     vals = orthopy.line_segment.tree_alp(
-            x, L, standardization='normal',
-            with_condon_shortley_phase=True,
-            symbolic=False
-            )
+        x, L, standardization='normal',
+        with_condon_shortley_phase=True,
+        symbolic=False
+        )
 
     for val in vals[L]:
         plt.plot(x, val)

@@ -16,14 +16,13 @@ import orthopy
     (3, [0, -S(7)/40, S(2)/5]),
     (4, [S(3)/35, -S(37)/560, S(8)/35]),
     (5, [0, S(23)/2016, S(8)/63]),
-    ]
-    )
+    ])
 def test_legendre_monic(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line_segment.recurrence_coefficients.legendre(
-            n, 'monic', symbolic=True
-            )
+        n, 'monic', symbolic=True
+        )
 
     # Test evaluation of one value
     y0 = orthopy.tools.line_evaluate(x[0], *out)
@@ -42,14 +41,13 @@ def test_legendre_monic(n, y):
     (3, [0, -S(7)/16, 1]),
     (4, [S(3)/8, -S(37)/128, 1]),
     (5, [0, S(23)/256, 1]),
-    ]
-    )
+    ])
 def test_legendre_p11(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line_segment.recurrence_coefficients.legendre(
-            n, standardization='p(1)=1'
-            )
+        n, standardization='p(1)=1'
+        )
 
     y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
@@ -66,14 +64,13 @@ def test_legendre_p11(n, y):
     (3, [0, -sqrt(S(343)/512), sqrt(S(7)/2)]),
     (4, [9 / sqrt(2) / 8, -111 / sqrt(2) / 128, 3/sqrt(2)]),
     (5, [0, sqrt(S(5819)/131072), sqrt(S(11)/2)]),
-    ]
-    )
+    ])
 def test_legendre_normal(n, y):
     x = numpy.array([0, S(1)/2, 1])
 
     out = orthopy.line_segment.recurrence_coefficients.legendre(
-            n, standardization='normal', symbolic=True
-            )
+        n, standardization='normal', symbolic=True
+        )
 
     y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
@@ -121,8 +118,8 @@ def test_orthogonality(n=4):
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
     p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
-            n, 'monic', symbolic=True
-            )
+        n, 'monic', symbolic=True
+        )
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
 
     assert value == ref
@@ -149,8 +146,8 @@ def test_eval(t, ref, tol=1.0e-14):
 def test_eval_vec(t, ref, tol=1.0e-14):
     n = 5
     p0, a, b, c = orthopy.line_segment.recurrence_coefficients.legendre(
-            n, 'monic', symbolic=True
-            )
+        n, 'monic', symbolic=True
+        )
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
 
     assert (value == ref).all()

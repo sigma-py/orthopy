@@ -27,10 +27,11 @@ def tree(X, n, symbolic=False):
     p0 = 1 / sqrt(pi)
 
     def alpha(n):
-        return numpy.array([2 * sqrt(frac(
-            (n+mu+frac(1, 2)) * (n+mu-frac(1, 2)),
-            (n-k) * (n+k+2*mu)
-            ))
+        return numpy.array([
+            2 * sqrt(frac(
+                (n+mu+frac(1, 2)) * (n+mu-frac(1, 2)),
+                (n-k) * (n+k+2*mu)
+                ))
             for k in range(n)
             ])
 
@@ -41,10 +42,11 @@ def tree(X, n, symbolic=False):
             ))
 
     def gamma(n):
-        return numpy.array([sqrt(frac(
-            (n-1-k) * (n+mu+frac(1, 2)) * (n+k+2*mu-1),
-            (n-k) * (n+mu-frac(3, 2)) * (n+k+2*mu)
-            ))
+        return numpy.array([
+            sqrt(frac(
+                (n-1-k) * (n+mu+frac(1, 2)) * (n+k+2*mu-1),
+                (n-k) * (n+mu-frac(3, 2)) * (n+k+2*mu)
+                ))
             for k in range(n-1)
             ])
 
@@ -62,8 +64,7 @@ def tree(X, n, symbolic=False):
         out.append(numpy.concatenate([
             out[L-1] * numpy.multiply.outer(alpha(L), X[0]),
             [out[L-1][L-1] * beta(L) * X[1]],
-            ])
-            )
+            ]))
 
         if L > 1:
             out[-1][:L-1] -= (out[L-2].T * gamma(L)).T

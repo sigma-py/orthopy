@@ -18,12 +18,12 @@ def plot(f, lcar=1.0e-1):
 
     geom = pygmsh.built_in.Geometry()
     geom.add_circle(
-            [0.0, 0.0, 0.0],
-            1.0,
-            lcar,
-            num_sections=4,
-            compound=True,
-            )
+        [0.0, 0.0, 0.0],
+        1.0,
+        lcar,
+        num_sections=4,
+        compound=True,
+        )
     points, cells, _, _, _ = pygmsh.generate_mesh(geom, verbose=True)
 
     x = points[:, 0]
