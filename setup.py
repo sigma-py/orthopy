@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 import os
+import codecs
 
 from setuptools import setup, find_packages
 
@@ -13,9 +14,7 @@ with open(os.path.join(base_dir, 'orthopy', '__about__.py'), 'rb') as f:
 
 
 def read(fname):
-    with open(os.path.join(base_dir, fname), 'r') as f:
-        text = f.read()
-    return text
+    return codecs.open(os.path.join(base_dir, fname), encoding='utf-8').read()
 
 
 setup(
