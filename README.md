@@ -6,7 +6,7 @@ Everything about orthogonal polynomials.
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/orthopy.svg)](https://codecov.io/gh/nschloe/orthopy)
 [![Codacy grade](https://img.shields.io/codacy/grade/895c05bd82364370841cea4ab2121c99.svg)](https://app.codacy.com/app/nschloe/orthopy/dashboard)
 [![orthogonal](https://img.shields.io/badge/orthogonal-definitely-ff69b4.svg)](https://github.com/nschloe/orthopy)
-[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.python.org/pypi/orthopy)
+[![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.org/project/orthopy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg)](https://doi.org/10.5281/zenodo.1173151)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?logo=github&style=social&label=Stars)](https://github.com/nschloe/orthopy)
 

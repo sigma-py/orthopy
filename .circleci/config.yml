@@ -1,25 +1,21 @@
 version: 2
 
 jobs:
-
   build:
     working_directory: ~/orthopy
     docker:
       - image: ubuntu:18.04
     steps:
-      - run: apt-get update
-      - run: apt-get install -y git python3-pip gmsh pandoc
+      - run: apt update
+      - run: apt install -y git python3-pip gmsh
       - run: pip3 install -U pytest pytest-cov pylint
       - checkout
       - run: pip3 install .[all]
       - run: pip3 install -r test_requirements.txt
       # lint
       - run: pylint setup.py orthopy/ test/*.py
-      # make sure that rst converts correctly
-      - run: pip3 install docutils pygments
-      - run: make README.rst
       # The tests
       - run: cd test/ && MPLBACKEND=Agg pytest --cov orthopy
       # submit to codecov
-      - run: apt-get install -y curl
+      - run: apt install -y curl
       - run: bash <(curl -s https://codecov.io/bash)

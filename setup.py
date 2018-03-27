@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 #
 import os
-import codecs
 
 from setuptools import setup, find_packages
 
@@ -14,14 +13,9 @@ with open(os.path.join(base_dir, 'orthopy', '__about__.py'), 'rb') as f:
 
 
 def read(fname):
-    try:
-        content = codecs.open(
-            os.path.join(os.path.dirname(__file__), fname),
-            encoding='utf-8'
-            ).read()
-    except IOError:
-        content = ''
-    return content
+    with open(os.path.join(base_dir, fname), 'r') as f:
+        text = f.read()
+    return text
 
 
 setup(
@@ -29,7 +23,6 @@ setup(
     version=about['__version__'],
     packages=find_packages(),
     url='https://github.com/nschloe/orthopy',
-    download_url='https://pypi.python.org/pypi/orthopy',
     author=about['__author__'],
     author_email=about['__email__'],
     install_requires=[
@@ -45,7 +38,8 @@ setup(
         'sphere-plot': ['meshzoo', 'meshio'],
         },
     description='tools for orthogonal polynomials, Gaussian quadrature',
-    long_description=read('README.rst'),
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     license=about['__license__'],
     classifiers=[
         about['__license__'],
