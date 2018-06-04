@@ -9,13 +9,13 @@ import orthopy
 
 
 def test_integral0(n=4):
-    '''Make sure that the polynomials are orthonormal
-    '''
-    x = sympy.Symbol('x')
-    y = sympy.Symbol('y')
+    """Make sure that the polynomials are orthonormal
+    """
+    x = sympy.Symbol("x")
+    y = sympy.Symbol("y")
     vals = numpy.concatenate(
         orthopy.quadrilateral.tree(numpy.array([x, y]), n, symbolic=True)
-        )
+    )
 
     assert sympy.integrate(vals[0], (x, -1, +1), (y, -1, +1)) == 2
     for val in vals[1:]:
@@ -24,11 +24,11 @@ def test_integral0(n=4):
 
 
 def test_orthogonality(n=4):
-    x = sympy.Symbol('x')
-    y = sympy.Symbol('y')
+    x = sympy.Symbol("x")
+    y = sympy.Symbol("y")
     tree = numpy.concatenate(
         orthopy.quadrilateral.tree(numpy.array([x, y]), n, symbolic=True)
-        )
+    )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
@@ -37,14 +37,14 @@ def test_orthogonality(n=4):
 
 
 def test_normality(n=4):
-    x = sympy.Symbol('x')
-    y = sympy.Symbol('y')
+    x = sympy.Symbol("x")
+    y = sympy.Symbol("y")
     tree = numpy.concatenate(
         orthopy.quadrilateral.tree(numpy.array([x, y]), n, symbolic=True)
-        )
+    )
 
     for val in tree:
-        assert sympy.integrate(val**2, (x, -1, +1), (y, -1, +1)) == 1
+        assert sympy.integrate(val ** 2, (x, -1, +1), (y, -1, +1)) == 1
     return
 
 
@@ -59,5 +59,5 @@ def test_show(n=2, r=1):
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_show()

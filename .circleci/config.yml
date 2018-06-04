@@ -2,18 +2,19 @@ version: 2
 
 jobs:
   build:
-    working_directory: ~/orthopy
+    working_directory: ~/work
     docker:
       - image: ubuntu:18.04
     steps:
       - run: apt update
       - run: apt install -y git python3-pip gmsh
-      - run: pip3 install -U pytest pytest-cov pylint
+      - run: pip3 install -U pytest pytest-cov black flake8
       - checkout
       - run: pip3 install .[all]
       - run: pip3 install -r test_requirements.txt
-      # lint
-      - run: pylint setup.py orthopy/ test/*.py
+      # format and lint
+      - run: LC_ALL=C.UTF-8 black --check setup.py orthopy/ test/*.py
+      - run: flake8 setup.py orthopy/ test/*.py
       # The tests
       - run: cd test/ && MPLBACKEND=Agg pytest --cov orthopy
       # submit to codecov

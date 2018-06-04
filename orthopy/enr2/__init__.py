@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-# pylint: disable=wildcard-import
-from .orth import *
+from .orth import tree
+
+__all__ = ["tree"]

@@ -11,17 +11,13 @@ from ..tools import line_tree
 
 
 def tree_chebyshev1(X, n, standardization, symbolic=False):
-    one_half = sympy.S(1)/2 if symbolic else 0.5
-    return tree_jacobi(
-        X, n, -one_half, -one_half, standardization, symbolic=symbolic
-        )
+    one_half = sympy.S(1) / 2 if symbolic else 0.5
+    return tree_jacobi(X, n, -one_half, -one_half, standardization, symbolic=symbolic)
 
 
 def tree_chebyshev2(X, n, standardization, symbolic=False):
-    one_half = sympy.S(1)/2 if symbolic else 0.5
-    return tree_jacobi(
-        X, n, +one_half, +one_half, standardization, symbolic=symbolic
-        )
+    one_half = sympy.S(1) / 2 if symbolic else 0.5
+    return tree_jacobi(X, n, +one_half, +one_half, standardization, symbolic=symbolic)
 
 
 def tree_gegenbauer(X, n, lmbda, standardization, symbolic=False):
@@ -32,18 +28,165 @@ def tree_legendre(X, n, standardization, symbolic=False):
     return tree_jacobi(X, n, 0, 0, standardization, symbolic=symbolic)
 
 
-# pylint: disable=too-many-arguments
 def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     args = recurrence_coefficients.jacobi(
         n, alpha, beta, standardization, symbolic=symbolic
-        )
+    )
     return line_tree(X, *args)
 
 
-def tree_alp(x, n, standardization, phi=None,
-             with_condon_shortley_phase=True,
-             symbolic=False):
-    '''Evaluates the entire tree of associated Legendre polynomials up to depth
+class _Natural(object):
+    def __init__(self, x, symbolic):
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+
+        self.p0 = 1
+        self.sqrt1mx2 = sqrt(1 - x ** 2)
+        return
+
+    def z0_factor(self, L):
+        return self.sqrt1mx2 / (2 * L)
+
+    def z1_factor(self, L):
+        return self.sqrt1mx2 * (2 * L - 1)
+
+    def C0(self, L):
+        return [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
+
+    def C1(self, L):
+        return [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
+
+
+class _Spherical(object):
+    def __init__(self, x, symbolic):
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        pi = sympy.pi if symbolic else numpy.pi
+
+        self.p0 = 1 / self.sqrt(4 * pi)
+        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
+        return
+
+    def z0_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
+
+    def z1_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
+
+    def C0(self, L):
+        m = numpy.arange(-L + 1, L)
+        d = (L + m) * (L - m)
+        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+
+    def C1(self, L):
+        m = numpy.arange(-L + 2, L - 1)
+        d = (L + m) * (L - m)
+        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+            (2 * L - 3) * d
+        )
+
+
+class _ComplexSpherical(object):
+    def __init__(self, x, phi, symbolic, geodesic):
+        pi = sympy.pi if symbolic else numpy.pi
+        imag_unit = sympy.I if symbolic else 1j
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        exp = sympy.exp if symbolic else numpy.exp
+
+        # The starting value 1 has the effect of multiplying the entire tree by
+        # sqrt(4*pi). This convention is used in geodesy and and spectral
+        # analysis.
+        self.p0 = 1 if geodesic else 1 / self.sqrt(4 * pi)
+        self.exp_iphi = exp(imag_unit * phi)
+        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
+        return
+
+    def z0_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
+
+    def z1_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
+
+    def C0(self, L):
+        m = numpy.arange(-L + 1, L)
+        d = (L + m) * (L - m)
+        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+
+    def C1(self, L):
+        m = numpy.arange(-L + 2, L - 1)
+        d = (L + m) * (L - m)
+        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+            (2 * L - 3) * d
+        )
+
+
+class _Normal(object):
+    def __init__(self, x, symbolic):
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+
+        self.p0 = 1 / self.sqrt(2)
+        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
+        return
+
+    def z0_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
+
+    def z1_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
+
+    def C0(self, L):
+        m = numpy.arange(-L + 1, L)
+        d = (L + m) * (L - m)
+        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+
+    def C1(self, L):
+        m = numpy.arange(-L + 2, L - 1)
+        d = (L + m) * (L - m)
+        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+            (2 * L - 3) * d
+        )
+
+
+class _Schmidt(object):
+    def __init__(self, x, phi, symbolic):
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+
+        if phi is None:
+            self.p0 = 2
+            self.exp_iphi = 1
+        else:
+            self.p0 = 1
+            imag_unit = sympy.I if symbolic else 1j
+            exp = sympy.exp if symbolic else numpy.exp
+            self.exp_iphi = exp(imag_unit * phi)
+
+        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
+        return
+
+    def z0_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi
+
+    def z1_factor(self, L):
+        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
+
+    def C0(self, L):
+        m = numpy.arange(-L + 1, L)
+        d = self.sqrt((L + m) * (L - m))
+        return (2 * L - 1) / d
+
+    def C1(self, L):
+        m = numpy.arange(-L + 2, L - 1)
+        d = self.sqrt((L + m) * (L - m))
+        return self.sqrt((L + m - 1) * (L - m - 1)) / d
+
+
+def tree_alp(
+    x, n, standardization, phi=None, with_condon_shortley_phase=True, symbolic=False
+):
+    """Evaluates the entire tree of associated Legendre polynomials up to depth
     n.
     There are many recurrence relations that can be used to construct the
     associated Legendre polynomials. However, only few are numerically stable.
@@ -75,142 +218,43 @@ def tree_alp(x, n, standardization, phi=None,
                     (-1, 1)   (0, 1)   (1, 1)
           (-2, 2)   (-1, 2)   (0, 2)   (1, 2)   (2, 2)
             ...       ...       ...     ...       ...
-    '''
-    # pylint: disable=too-many-statements,too-many-locals
+    """
     # assert numpy.all(numpy.abs(x) <= 1.0)
 
-    exp = sympy.exp if symbolic else numpy.exp
-    pi = sympy.pi if symbolic else numpy.pi
-    sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-    frac = sympy.Rational if symbolic else lambda x, y: x/y
-    imag_unit = sympy.I if symbolic else 1j
-
-    sqrt1mx2 = sqrt(1 - x**2)
-
-    e = numpy.ones_like(x, dtype=int)
-
-    if standardization == 'natural':
-        p0 = 1
-
-        def z0_factor(L):
-            return sqrt1mx2 / (2*L)
-
-        def z1_factor(L):
-            return sqrt1mx2 * (2*L-1)
-
-        def C0(L):
-            return [frac(2*L-1, L-m) for m in range(-L+1, L)]
-
-        def C1(L):
-            return [frac(L-1+m, L-m) for m in range(-L+2, L-1)]
-
-    elif standardization == 'spherical':
-        p0 = 1 / sqrt(4*pi)
-
-        def z0_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
-
-        def z1_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
-
-        def C0(L):
-            m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m)
-            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
-
-        def C1(L):
-            m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m)
-            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
-
-    elif standardization in ['complex spherical', 'complex spherical 1']:
-        # The starting value 1 has the effect of multiplying the entire tree by
-        # sqrt(4*pi). This convention is used in geodesy and and spectral
-        # analysis.
-        p0 = 1 / sqrt(4*pi) if standardization == 'complex spherical' else 1
-
-        exp_iphi = exp(imag_unit * phi)
-
-        def z0_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) / exp_iphi
-
-        def z1_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L)) * exp_iphi
-
-        def C0(L):
-            m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m)
-            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
-
-        def C1(L):
-            m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m)
-            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
-
-    elif standardization == 'normal':
-        p0 = 1 / sqrt(2)
-
-        def z0_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
-
-        def z1_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L+1, 2*L))
-
-        def C0(L):
-            m = numpy.arange(-L+1, L)
-            d = (L+m) * (L-m)
-            return sqrt((2*L-1) * (2*L+1)) / sqrt(d)
-
-        def C1(L):
-            m = numpy.arange(-L+2, L-1)
-            d = (L+m) * (L-m)
-            return sqrt((L+m-1) * (L-m-1) * (2*L+1)) / sqrt((2*L-3) * d)
-
-    else:
-        assert standardization == 'schmidt', \
-            'Unknown standardization \'{}\'.'.format(standardization)
-
-        if phi is None:
-            p0 = 2
-            exp_iphi = 1
-        else:
-            p0 = 1
-            exp_iphi = exp(imag_unit * phi)
-
-        def z0_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L)) / exp_iphi
-
-        def z1_factor(L):
-            return sqrt1mx2 * sqrt(frac(2*L-1, 2*L)) * exp_iphi
-
-        def C0(L):
-            m = numpy.arange(-L+1, L)
-            d = sqrt((L+m) * (L-m))
-            return (2*L-1) / d
-
-        def C1(L):
-            m = numpy.arange(-L+2, L-1)
-            d = sqrt((L+m) * (L-m))
-            return sqrt((L+m-1) * (L-m-1)) / d
+    d = {
+        "natural": (_Natural, [x, symbolic]),
+        "spherical": (_Spherical, [x, symbolic]),
+        "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
+        "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
+        "normal": (_Normal, [x, symbolic]),
+        "schmidt": (_Schmidt, [x, phi, symbolic]),
+    }
+    fun, args = d[standardization]
+    c = fun(*args)
 
     if with_condon_shortley_phase:
+
         def z1_factor_CSP(L):
-            return -1 * z1_factor(L)
+            return -1 * c.z1_factor(L)
+
     else:
-        z1_factor_CSP = z1_factor
+        z1_factor_CSP = c.z1_factor
 
     # Here comes the actual loop.
-    out = [[e * p0]]
-    for L in range(1, n+1):
+    e = numpy.ones_like(x, dtype=int)
+    out = [[e * c.p0]]
+    for L in range(1, n + 1):
         out.append(
-            numpy.concatenate([
-                [out[L-1][0] * z0_factor(L)],
-                out[L-1] * numpy.multiply.outer(C0(L), x),
-                [out[L-1][-1] * z1_factor_CSP(L)],
-                ])
+            numpy.concatenate(
+                [
+                    [out[L - 1][0] * c.z0_factor(L)],
+                    out[L - 1] * numpy.multiply.outer(c.C0(L), x),
+                    [out[L - 1][-1] * z1_factor_CSP(L)],
+                ]
             )
+        )
 
         if L > 1:
-            out[-1][2:-2] -= numpy.multiply.outer(C1(L), e) * out[L-2]
+            out[-1][2:-2] -= numpy.multiply.outer(c.C1(L), e) * out[L - 2]
 
     return out
