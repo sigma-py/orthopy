@@ -87,7 +87,7 @@ class _Spherical(object):
 
 
 class _ComplexSpherical(object):
-    def __init__(self, x, phi, symbolic, geodesic=True):
+    def __init__(self, x, phi, symbolic, geodesic):
         pi = sympy.pi if symbolic else numpy.pi
         imag_unit = sympy.I if symbolic else 1j
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -222,15 +222,15 @@ def tree_alp(
     # assert numpy.all(numpy.abs(x) <= 1.0)
 
     d = {
-        "natural": _Natural(x, symbolic),
-        "spherical": _Spherical(x, symbolic),
-        "complex spherical": _ComplexSpherical(x, phi, symbolic),
-        "complex spherical 1": _ComplexSpherical(x, phi, symbolic, geodesic=True),
-        "normal": _Normal(x, symbolic),
-        "schmidt": _Schmidt(x, phi, symbolic),
+        "natural": (_Natural, [x, symbolic]),
+        "spherical": (_Spherical, [x, symbolic]),
+        "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
+        "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
+        "normal": (_Normal, [x, symbolic]),
+        "schmidt": (_Schmidt, [x, phi, symbolic]),
     }
-
-    c = d[standardization]
+    fun, args = d[standardization]
+    c = fun(*args)
 
     if with_condon_shortley_phase:
 
