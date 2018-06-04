@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-from .orth import *
-from .tools import *
+from .orth import tree
+from .tools import show, plot
+
+__all__ = ["tree", "show", "plot"]
