@@ -36,7 +36,7 @@ setup(
         'plot': ['matplotlib'],
         'sphere-plot': ['meshzoo', 'meshio'],
         },
-    description='tools for orthogonal polynomials, Gaussian quadrature',
+    description='Tools for orthogonal polynomials, Gaussian quadrature',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     license=about['__license__'],

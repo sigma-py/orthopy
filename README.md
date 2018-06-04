@@ -8,7 +8,7 @@ Everything about orthogonal polynomials.
 [![orthogonal](https://img.shields.io/badge/orthogonal-definitely-ff69b4.svg)](https://github.com/nschloe/orthopy)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg)](https://pypi.org/project/orthopy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg)](https://doi.org/10.5281/zenodo.1173151)
-[![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?logo=github&style=social&label=Stars)](https://github.com/nschloe/orthopy)
+[![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?logo=github&label=Stars)](https://github.com/nschloe/orthopy)
 
 Various orthogonal polynomial classes for
 [lines](#line-segment--1-1-with-weight-function-1-x%CE%B1-1-x%CE%B2),
@@ -42,7 +42,7 @@ Recurrence coefficients can be explicitly retrieved by
 p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(n, a, b, 'monic')
 ```
 Possible choices for the standardization are `'monic'`, `'p(1)=(n+alpha over
-n)'`, and `'normal`.
+n)'`, and `'normal'`.
 
 
 #### Associated Legendre polynomials
