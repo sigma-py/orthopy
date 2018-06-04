@@ -10,7 +10,7 @@ from ..line_segment.recurrence_coefficients import legendre
 
 # pylint: disable=too-many-locals
 def tree(X, n, symbolic=False):
-    '''Evaluates the entire tree of orthogonal polynomials for the n-cube
+    """Evaluates the entire tree of orthogonal polynomials for the n-cube
 
     The computation is organized such that tree returns a list of arrays, L={0,
     ..., dim}, where each level corresponds to the polynomial degree L.
@@ -39,8 +39,8 @@ def tree(X, n, symbolic=False):
          the third entry.
 
     In the same manner this can be repeated for `dim` dimensions.
-    '''
-    p0, a, b, c = legendre(n+1, 'normal', symbolic=symbolic)
+    """
+    p0, a, b, c = legendre(n + 1, "normal", symbolic=symbolic)
 
     dim = X.shape[0]
 
@@ -53,23 +53,23 @@ def tree(X, n, symbolic=False):
     # TODO use a simpler binom implementation
     for L in range(n):
         level = []
-        for i in range(dim-1):
-            m1 = int(scipy.special.binom(L+dim-i-1, dim-i-1))
+        for i in range(dim - 1):
+            m1 = int(scipy.special.binom(L + dim - i - 1, dim - i - 1))
             if L > 0:
-                m2 = int(scipy.special.binom(L+dim-i-2, dim-i-1))
+                m2 = int(scipy.special.binom(L + dim - i - 2, dim - i - 1))
             r = 0
-            for k in range(L+1):
-                m = int(scipy.special.binom(k+dim-i-2, dim-i-2))
-                val = out[L][-m1:][r:r+m] * (a[L-k] * X[i] - b[L-k])
-                if L-k > 0:
-                    val -= out[L-1][-m2:][r:r+m] * c[L-k]
+            for k in range(L + 1):
+                m = int(scipy.special.binom(k + dim - i - 2, dim - i - 2))
+                val = out[L][-m1:][r : r + m] * (a[L - k] * X[i] - b[L - k])
+                if L - k > 0:
+                    val -= out[L - 1][-m2:][r : r + m] * c[L - k]
                 r += m
                 level.append(val)
 
         # treat the last one separately
         val = out[L][-1] * (a[L] * X[-1] - b[L])
         if L > 0:
-            val -= out[L-1][-1] * c[L]
+            val -= out[L - 1][-1] * c[L]
         level.append([val])
 
         out.append(numpy.concatenate(level))

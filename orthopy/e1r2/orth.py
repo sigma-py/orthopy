@@ -20,25 +20,26 @@ def recurrence_coefficients(n, standardization, symbolic=False):
     # Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the
     # different standardizations.
     N = numpy.array([sS(k) for k in range(n)])
-    if standardization in ['probabilist', 'monic']:
+    if standardization in ["probabilist", "monic"]:
         p0 = 1
         a = numpy.ones(n, dtype=int)
         b = numpy.zeros(n, dtype=int)
         c = N
         c[0] = ssqrt(pi)  # only used for custom scheme
-    elif standardization == 'physicist':
+    elif standardization == "physicist":
         p0 = 1
         a = numpy.full(n, 2, dtype=int)
         b = numpy.zeros(n, dtype=int)
-        c = 2*N
+        c = 2 * N
         c[0] = ssqrt(pi)  # only used for custom scheme
     else:
-        assert standardization == 'normal', \
-            'Unknown standardization \'{}\'.'.format(standardization)
+        assert standardization == "normal", "Unknown standardization '{}'.".format(
+            standardization
+        )
         p0 = 1 / sqrt(sqrt(pi))
-        a = sqrt(S(2) / (N+1))
+        a = sqrt(S(2) / (N + 1))
         b = numpy.zeros(n, dtype=int)
-        c = sqrt(S(N) / (N+1))
+        c = sqrt(S(N) / (N + 1))
         c[0] = numpy.nan
 
     return p0, a, b, c
@@ -47,5 +48,5 @@ def recurrence_coefficients(n, standardization, symbolic=False):
 def tree(X, n, standardization, symbolic=False):
     args = recurrence_coefficients(
         n, standardization=standardization, symbolic=symbolic
-        )
+    )
     return line_tree(X, *args)

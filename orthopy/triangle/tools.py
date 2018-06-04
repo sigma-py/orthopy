@@ -7,14 +7,15 @@ import numpy
 
 def show(*args, **kwargs):
     import matplotlib.pyplot as plt
+
     plot(*args, **kwargs)
     plt.show()
     return
 
 
 def plot(corners, f, n=100):
-    '''Plot function over a triangle.
-    '''
+    """Plot function over a triangle.
+    """
     import matplotlib.tri
     import matplotlib.pyplot as plt
 
@@ -32,9 +33,7 @@ def plot(corners, f, n=100):
         return list(rec(boxes, balls))
 
     bary = numpy.array(partition(3, n)).T / n
-    X = numpy.sum([
-        numpy.outer(bary[k], corners[:, k]) for k in range(3)
-        ], axis=0).T
+    X = numpy.sum([numpy.outer(bary[k], corners[:, k]) for k in range(3)], axis=0).T
 
     # plot the points
     # plt.plot(X[0], X[1], 'xk')
@@ -44,12 +43,12 @@ def plot(corners, f, n=100):
     z = numpy.array(f(bary), dtype=float)
 
     triang = matplotlib.tri.Triangulation(x, y)
-    plt.tripcolor(triang, z, shading='flat')
+    plt.tripcolor(triang, z, shading="flat")
     plt.colorbar()
 
     # Choose a diverging colormap such that the zeros are clearly
     # distinguishable.
-    plt.set_cmap('coolwarm')
+    plt.set_cmap("coolwarm")
     # Make sure the color map limits are symmetric around 0.
     clim = plt.gci().get_clim()
     mx = max(abs(clim[0]), abs(clim[1]))
@@ -57,8 +56,8 @@ def plot(corners, f, n=100):
 
     # triangle outlines
     X = numpy.column_stack([corners, corners[:, 0]])
-    plt.plot(X[0], X[1], '-k')
+    plt.plot(X[0], X[1], "-k")
 
-    plt.gca().set_aspect('equal')
-    plt.axis('off')
+    plt.gca().set_aspect("equal")
+    plt.axis("off")
     return
