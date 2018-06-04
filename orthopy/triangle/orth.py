@@ -6,7 +6,6 @@ import numpy
 import sympy
 
 
-# pylint: disable=too-many-locals
 def tree(bary, n, standardization, symbolic=False):
     """Evaluates the entire tree of orthogonal triangle polynomials.
 

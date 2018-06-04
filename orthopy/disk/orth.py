@@ -6,7 +6,6 @@ import numpy
 import sympy
 
 
-# pylint: disable=too-many-locals
 def tree(X, n, symbolic=False):
     """Evaluates the entire tree of orthogonal polynomials on the unit disk.
 

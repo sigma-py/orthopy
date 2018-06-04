@@ -11,13 +11,11 @@ import orthopy
 
 
 def exact_natural(x):
-    # pylint: disable=too-many-locals
     sqrt = numpy.vectorize(sympy.sqrt)
     sqrt1mx2 = sqrt(1 - x ** 2)
 
     p0_0 = 1
     #
-    # pylint: disable=invalid-unary-operand-type
     p1p1 = -sqrt1mx2
     p1_0 = x
     p1m1 = -p1p1 / 2

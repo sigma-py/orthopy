@@ -88,7 +88,6 @@ def test_schmidt_seminormality(n=3):
     return
 
 
-# pylint: disable=too-many-locals
 def sph_exact2(theta, phi):
     # Exact values from
     # <https://en.wikipedia.org/wiki/Table_of_spherical_harmonics>.
@@ -107,7 +106,6 @@ def sph_exact2(theta, phi):
 
     i = sympy.I
 
-    # pylint: disable=invalid-unary-operand-type
     y1m1 = +sin_theta * exp(-i * phi) * sqrt(3 / pi / 2) / 2
     y1_0 = +cos_theta * sqrt(3 / pi) / 2
     y1p1 = -sin_theta * exp(+i * phi) * sqrt(3 / pi / 2) / 2

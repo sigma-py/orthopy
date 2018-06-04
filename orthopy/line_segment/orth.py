@@ -28,7 +28,6 @@ def tree_legendre(X, n, standardization, symbolic=False):
     return tree_jacobi(X, n, 0, 0, standardization, symbolic=symbolic)
 
 
-# pylint: disable=too-many-arguments
 def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     args = recurrence_coefficients.jacobi(
         n, alpha, beta, standardization, symbolic=symbolic
@@ -72,7 +71,6 @@ def tree_alp(
           (-2, 2)   (-1, 2)   (0, 2)   (1, 2)   (2, 2)
             ...       ...       ...     ...       ...
     """
-    # pylint: disable=too-many-statements,too-many-locals
     # assert numpy.all(numpy.abs(x) <= 1.0)
 
     exp = sympy.exp if symbolic else numpy.exp

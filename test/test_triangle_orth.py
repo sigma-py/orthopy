@@ -65,7 +65,6 @@ def eval_orthpolys4(bary):
     def f(i, j):
         return op(i, j, x, y)
 
-    # pylint: disable=invalid-unary-operand-type
     return [
         [+f(0, 0)],
         [-f(0, 1), +f(1, 0)],
