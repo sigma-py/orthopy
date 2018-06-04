@@ -163,7 +163,7 @@ def test_write():
         out = abs(out)
         return out
 
-    orthopy.sphere.write("sph.vtu", sph22)
+    orthopy.sphere.write("sph.vtk", sph22)
     return
 
 

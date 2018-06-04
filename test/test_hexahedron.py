@@ -56,7 +56,7 @@ def test_normality(n=4):
 
 def test_write():
     orthopy.hexahedron.write(
-        "hexa.vtu", lambda X: orthopy.hexahedron.tree(X.T, 5)[5][5]
+        "hexa.vtk", lambda X: orthopy.hexahedron.tree(X.T, 5)[5][5]
     )
     return
 
