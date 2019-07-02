@@ -51,16 +51,14 @@ def test_chebyshev1_p11(n, y):
     out = orthopy.line_segment.recurrence_coefficients.chebyshev1(
         n, standardization="p(1)=(n+alpha over n)", symbolic=True
     )
-    # alpha = -Rational(1, 2)
-    # print(sympy.gamma(n+alpha+1) / sympy.gamma(n+1) / sympy.gamma(alpha+1))
-    # if n == 4:
-    #     exit(1)
 
     y0 = orthopy.tools.line_evaluate(x[0], *out)
     assert y0 == y[0]
 
+    alpha = -Rational(1, 2)
+    assert sympy.binomial(n + alpha, n) == y[2]
+
     val = orthopy.tools.line_evaluate(x, *out)
-    print(val)
     assert all(val == y)
     return
 
@@ -95,9 +93,9 @@ def test_integral0(n=4):
     x = sympy.Symbol("x")
     vals = orthopy.line_segment.tree_chebyshev1(x, n, "normal", symbolic=True)
 
-    assert sympy.integrate(vals[0] / sqrt(1 - x**2), (x, -1, +1)) == sqrt(pi)
+    assert sympy.integrate(vals[0] / sqrt(1 - x ** 2), (x, -1, +1)) == sqrt(pi)
     for val in vals[1:]:
-        assert sympy.integrate(val / sqrt(1 - x**2), (x, -1, +1)) == 0
+        assert sympy.integrate(val / sqrt(1 - x ** 2), (x, -1, +1)) == 0
     return
 
 
@@ -106,7 +104,7 @@ def test_normality(n=4):
     vals = orthopy.line_segment.tree_chebyshev1(x, n, "normal", symbolic=True)
 
     for val in vals:
-        assert sympy.integrate(val ** 2 / sqrt(1 - x**2), (x, -1, +1)) == 1
+        assert sympy.integrate(val ** 2 / sqrt(1 - x ** 2), (x, -1, +1)) == 1
     return
 
 
@@ -116,7 +114,7 @@ def test_orthogonality(n=4):
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
-        assert sympy.integrate(val / sqrt(1 - x**2), (x, -1, +1)) == 0
+        assert sympy.integrate(val / sqrt(1 - x ** 2), (x, -1, +1)) == 0
     return
 
 
@@ -148,7 +146,6 @@ def test_eval_vec(t, ref, tol=1.0e-14):
     )
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
 
-    print(value)
     assert (value == ref).all()
     return
 
