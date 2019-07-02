@@ -32,7 +32,7 @@ def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     return line_tree(X, *args)
 
 
-class _Natural(object):
+class _Natural:
     def __init__(self, x, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -54,7 +54,7 @@ class _Natural(object):
         return [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
 
 
-class _Spherical(object):
+class _Spherical:
     def __init__(self, x, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -83,7 +83,7 @@ class _Spherical(object):
         )
 
 
-class _ComplexSpherical(object):
+class _ComplexSpherical:
     def __init__(self, x, phi, symbolic, geodesic):
         pi = sympy.pi if symbolic else numpy.pi
         imag_unit = sympy.I if symbolic else 1j
@@ -118,7 +118,7 @@ class _ComplexSpherical(object):
         )
 
 
-class _Normal(object):
+class _Normal:
     def __init__(self, x, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
@@ -146,7 +146,7 @@ class _Normal(object):
         )
 
 
-class _Schmidt(object):
+class _Schmidt:
     def __init__(self, x, phi, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
