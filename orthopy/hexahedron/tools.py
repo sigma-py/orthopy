@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 def write(filename, f):
     import meshio
     import meshzoo

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-
-
 def show(*args, **kwargs):
     import matplotlib.pyplot as plt
 
