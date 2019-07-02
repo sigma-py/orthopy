@@ -5,9 +5,8 @@ from __future__ import division
 import numpy
 import sympy
 
-from . import recurrence_coefficients
-
 from ..tools import line_tree
+from . import recurrence_coefficients
 
 
 def tree_chebyshev1(X, n, standardization, symbolic=False):
