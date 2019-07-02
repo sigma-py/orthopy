@@ -12,5 +12,7 @@ def write(filename, f):
     polar = numpy.arccos(points[:, 2])
     azimuthal = numpy.arctan2(points[:, 1], points[:, 0])
     vals = f(polar, azimuthal)
-    meshio.write(filename, points, {"triangle": cells}, point_data={"f": vals})
+    meshio.write_points_cells(
+        filename, points, {"triangle": cells}, point_data={"f": vals}
+    )
     return
