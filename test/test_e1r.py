@@ -61,14 +61,13 @@ def test_normality(alpha, n=4):
     return
 
 
-def test_plot():
-    orthopy.e1r.plot(L=4)
+def test_show():
+    orthopy.e1r.show(L=4)
     return
 
 
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-
-    test_plot()
+    test_show()
+    # import matplotlib.pyplot as plt
     # plt.show()
-    plt.savefig("e1r.png", transparent=True)
+    # plt.savefig("e1r.png", transparent=True)
