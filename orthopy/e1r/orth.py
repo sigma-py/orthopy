@@ -10,8 +10,8 @@ from ..tools import line_tree
 
 
 def tree(X, n, alpha=0, symbolic=False):
-    """Recurrence coefficients for generalized Laguerre polynomials. Set
-    alpha=0 (default) to get classical Laguerre.
+    """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
+    (default) to get classical Laguerre.
     """
     args = recurrence_coefficients(n, alpha=alpha, symbolic=symbolic)
     return line_tree(X, *args)
@@ -41,9 +41,7 @@ def recurrence_coefficients(n, alpha, standardization="normal", symbolic=False):
     else:
         assert (
             standardization == "normal"
-        ), "Unknown Laguerre standardization '{}'.".format(
-            standardization
-        )
+        ), "Unknown Laguerre standardization '{}'.".format(standardization)
         p0 = 1 / sqrt(gamma(alpha + 1))
         a = [-1 / sqrt((k + 1) * (k + 1 + alpha)) for k in range(n)]
         b = [-(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha)) for k in range(n)]

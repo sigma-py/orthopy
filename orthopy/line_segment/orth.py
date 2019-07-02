@@ -188,16 +188,16 @@ def tree_alp(
 ):
     """Evaluates the entire tree of associated Legendre polynomials up to depth
     n.
-    There are many recurrence relations that can be used to construct the
-    associated Legendre polynomials. However, only few are numerically stable.
-    Many implementations (including this one) use the classical Legendre
-    recurrence relation with increasing L.
+    There are many recurrence relations that can be used to construct the associated
+    Legendre polynomials. However, only few are numerically stable.  Many
+    implementations (including this one) use the classical Legendre recurrence relation
+    with increasing L.
 
     Useful references are
 
     Taweetham Limpanuparb, Josh Milthorpe,
-    Associated Legendre Polynomials and Spherical Harmonics Computation for
-    Chemistry Applications,
+    Associated Legendre Polynomials and Spherical Harmonics Computation for Chemistry
+    Applications,
     Proceedings of The 40th Congress on Science and Technology of Thailand;
     2014 Dec 2-4, Khon Kaen, Thailand. P. 233-241.
     <https://arxiv.org/abs/1410.1748>
@@ -205,14 +205,14 @@ def tree_alp(
     and
 
     Schneider et al.,
-    A new Fortran 90 program to compute regular and irregular associated
-    Legendre functions,
+    A new Fortran 90 program to compute regular and irregular associated Legendre
+    functions,
     Computer Physics Communications,
     Volume 181, Issue 12, December 2010, Pages 2091-2097,
     <https://doi.org/10.1016/j.cpc.2010.08.038>.
 
-    The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
-    values of the `k`th level of the tree
+    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
+    `k`th level of the tree
 
                               (0, 0)
                     (-1, 1)   (0, 1)   (1, 1)
