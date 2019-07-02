@@ -139,13 +139,16 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         ]
 
     else:
-        assert standardization == "normal", "Unknown standardization '{}'.".format(
-            standardization
+        assert (
+            standardization == "normal"
+        ), "Unknown standardization '{}'. (valid: {})".format(
+            standardization, ", ".join(["monic", "p(1)=(n+alpha over n)", "normal"])
         )
 
         p0 = sqrt(1 / int_1)
 
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
+        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2 (Chebyshev
+        # 1).
         a = [
             frac(alpha + beta + 2, 2)
             * sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
@@ -160,12 +163,13 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
             for N in range(n)
         ]
 
+        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2 (Chebyshev
+        # 1).
         b = [
-            (
-                frac(beta - alpha, 2)
-                if N == 0
-                else frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta))
-            )
+            frac(beta - alpha, 2)
+            * sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
+            if N == 0
+            else frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta))
             * sqrt(
                 frac(
                     (2 * N + alpha + beta + 3) * (2 * N + alpha + beta + 1),

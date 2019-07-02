@@ -15,12 +15,12 @@ def tree_chebyshev2(X, n, standardization, symbolic=False):
     return tree_jacobi(X, n, +one_half, +one_half, standardization, symbolic=symbolic)
 
 
-def tree_gegenbauer(X, n, lmbda, standardization, symbolic=False):
-    return tree_jacobi(X, n, lmbda, lmbda, standardization, symbolic=symbolic)
-
-
 def tree_legendre(X, n, standardization, symbolic=False):
     return tree_jacobi(X, n, 0, 0, standardization, symbolic=symbolic)
+
+
+def tree_gegenbauer(X, n, lmbda, standardization, symbolic=False):
+    return tree_jacobi(X, n, lmbda, lmbda, standardization, symbolic=symbolic)
 
 
 def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
