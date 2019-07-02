@@ -6,7 +6,7 @@ def show(*args, **kwargs):
     return
 
 
-def plot(f, lcar=1.0e-1):
+def plot(f, lcar=5.0e-2):
     """Plot function over a disk.
     """
     import matplotlib
@@ -14,11 +14,11 @@ def plot(f, lcar=1.0e-1):
     import dmsh
 
     geo = dmsh.Circle([0.0, 0.0], 1.0)
-    points, cells = dmsh.generate(geo, 0.1)
+    points, cells = dmsh.generate(geo, lcar)
 
     x = points[:, 0]
     y = points[:, 1]
-    triang = matplotlib.tri.Triangulation(x, y, cells["triangle"])
+    triang = matplotlib.tri.Triangulation(x, y, cells)
 
     plt.tripcolor(triang, f(points.T), shading="flat")
     plt.colorbar()
