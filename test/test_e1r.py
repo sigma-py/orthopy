@@ -8,8 +8,6 @@ import orthopy
 
 @pytest.mark.parametrize("alpha", [0, 1])
 def test_integral0(alpha, n=4):
-    """Make sure that the polynomials are orthonormal
-    """
     x = sympy.Symbol("x")
     vals = numpy.concatenate(
         orthopy.e1r.tree(numpy.array([x]), n, alpha=alpha, symbolic=True)
@@ -22,11 +20,27 @@ def test_integral0(alpha, n=4):
     return
 
 
-@pytest.mark.parametrize("alpha", [0, 1])
-def test_orthogonality(alpha, n=4):
+@pytest.mark.parametrize(
+    "alpha,standardization",
+    [
+        (0, "monic"),
+        (0, "classical"),
+        (0, "normal"),
+        (1, "monic"),
+        (1, "classical"),
+        (1, "normal"),
+    ],
+)
+def test_orthogonality(alpha, standardization, n=4):
     x = sympy.Symbol("x")
     tree = numpy.concatenate(
-        orthopy.e1r.tree(numpy.array([x]), n, alpha=alpha, symbolic=True)
+        orthopy.e1r.tree(
+            numpy.array([x]),
+            n,
+            alpha=alpha,
+            standardization=standardization,
+            symbolic=True,
+        )
     )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
@@ -47,14 +61,13 @@ def test_normality(alpha, n=4):
     return
 
 
-def test_plot():
-    orthopy.e1r.plot(L=4)
+def test_show():
+    orthopy.e1r.show(L=4)
     return
 
 
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-
-    test_plot()
+    test_show()
+    # import matplotlib.pyplot as plt
     # plt.show()
-    plt.savefig("e1r.png", transparent=True)
+    # plt.savefig("e1r.png", transparent=True)
