@@ -1,5 +1,3 @@
-from __future__ import division
-
 import numpy
 import scipy.special
 import sympy

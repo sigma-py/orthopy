@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from . import (
     disk,
     e1r,

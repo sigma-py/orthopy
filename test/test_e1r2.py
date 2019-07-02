@@ -1,4 +1,5 @@
 import numpy
+import pytest
 import sympy
 from sympy import oo
 
@@ -22,10 +23,18 @@ def test_integral0(n=4):
     return
 
 
-def test_orthogonality(n=4):
+@pytest.mark.parametrize(
+    "standardization",
+    [
+        # "monic",
+        "physicist",
+        "normal",
+    ],
+)
+def test_orthogonality(standardization, n=4):
     x = sympy.Symbol("x")
     tree = numpy.concatenate(
-        orthopy.e1r2.tree(numpy.array([x]), n, "normal", symbolic=True)
+        orthopy.e1r2.tree(numpy.array([x]), n, standardization, symbolic=True)
     )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
