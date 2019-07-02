@@ -11,11 +11,10 @@ def plot(f, lcar=1.0e-1):
     """
     import matplotlib
     import matplotlib.pyplot as plt
-    import pygmsh
+    import dmsh
 
-    geom = pygmsh.built_in.Geometry()
-    geom.add_circle([0.0, 0.0, 0.0], 1.0, lcar, num_sections=4, compound=True)
-    points, cells, _, _, _ = pygmsh.generate_mesh(geom, verbose=True)
+    geo = dmsh.Circle([0.0, 0.0], 1.0)
+    points, cells = dmsh.generate(geo, 0.1)
 
     x = points[:, 0]
     y = points[:, 1]

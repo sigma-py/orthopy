@@ -23,8 +23,8 @@ setup(
     author_email=about["__email__"],
     install_requires=["numpy", "pipdate", "scipy", "sympy"],
     extras_require={
-        "all": ["matplotlib", "meshio", "meshzoo", "pygmsh"],
-        "disk-plot": ["pygmsh"],
+        "all": ["matplotlib", "meshio", "meshzoo", "dmsh"],
+        "disk-plot": ["dmsh"],
         "plot": ["matplotlib"],
         "sphere-plot": ["meshzoo", "meshio"],
     },
