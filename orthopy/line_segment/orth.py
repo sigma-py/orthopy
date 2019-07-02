@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-#
 from __future__ import division
 
 import numpy
 import sympy
 
-from . import recurrence_coefficients
-
 from ..tools import line_tree
+from . import recurrence_coefficients
 
 
 def tree_chebyshev1(X, n, standardization, symbolic=False):
@@ -35,7 +32,7 @@ def tree_jacobi(X, n, alpha, beta, standardization, symbolic=False):
     return line_tree(X, *args)
 
 
-class _Natural(object):
+class _Natural:
     def __init__(self, x, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -57,7 +54,7 @@ class _Natural(object):
         return [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
 
 
-class _Spherical(object):
+class _Spherical:
     def __init__(self, x, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -86,7 +83,7 @@ class _Spherical(object):
         )
 
 
-class _ComplexSpherical(object):
+class _ComplexSpherical:
     def __init__(self, x, phi, symbolic, geodesic):
         pi = sympy.pi if symbolic else numpy.pi
         imag_unit = sympy.I if symbolic else 1j
@@ -121,7 +118,7 @@ class _ComplexSpherical(object):
         )
 
 
-class _Normal(object):
+class _Normal:
     def __init__(self, x, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
@@ -149,7 +146,7 @@ class _Normal(object):
         )
 
 
-class _Schmidt(object):
+class _Schmidt:
     def __init__(self, x, phi, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
@@ -188,16 +185,16 @@ def tree_alp(
 ):
     """Evaluates the entire tree of associated Legendre polynomials up to depth
     n.
-    There are many recurrence relations that can be used to construct the
-    associated Legendre polynomials. However, only few are numerically stable.
-    Many implementations (including this one) use the classical Legendre
-    recurrence relation with increasing L.
+    There are many recurrence relations that can be used to construct the associated
+    Legendre polynomials. However, only few are numerically stable.  Many
+    implementations (including this one) use the classical Legendre recurrence relation
+    with increasing L.
 
     Useful references are
 
     Taweetham Limpanuparb, Josh Milthorpe,
-    Associated Legendre Polynomials and Spherical Harmonics Computation for
-    Chemistry Applications,
+    Associated Legendre Polynomials and Spherical Harmonics Computation for Chemistry
+    Applications,
     Proceedings of The 40th Congress on Science and Technology of Thailand;
     2014 Dec 2-4, Khon Kaen, Thailand. P. 233-241.
     <https://arxiv.org/abs/1410.1748>
@@ -205,14 +202,14 @@ def tree_alp(
     and
 
     Schneider et al.,
-    A new Fortran 90 program to compute regular and irregular associated
-    Legendre functions,
+    A new Fortran 90 program to compute regular and irregular associated Legendre
+    functions,
     Computer Physics Communications,
     Volume 181, Issue 12, December 2010, Pages 2091-2097,
     <https://doi.org/10.1016/j.cpc.2010.08.038>.
 
-    The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
-    values of the `k`th level of the tree
+    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
+    `k`th level of the tree
 
                               (0, 0)
                     (-1, 1)   (0, 1)   (1, 1)

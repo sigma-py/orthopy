@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-#
-import os
 import codecs
+import os
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 # https://packaging.python.org/single_source_version/
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -25,8 +23,8 @@ setup(
     author_email=about["__email__"],
     install_requires=["numpy", "pipdate", "scipy", "sympy"],
     extras_require={
-        "all": ["matplotlib", "meshio", "meshzoo", "pygmsh"],
-        "disk-plot": ["pygmsh"],
+        "all": ["matplotlib", "meshio", "meshzoo", "dmsh"],
+        "disk-plot": ["dmsh"],
         "plot": ["matplotlib"],
         "sphere-plot": ["meshzoo", "meshio"],
     },
@@ -39,7 +37,6 @@ setup(
         about["__status__"],
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Mathematics",

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-from .orth import tree, recurrence_coefficients
-from .tools import show, plot
+from .orth import recurrence_coefficients, tree
+from .tools import plot, show
 
 __all__ = ["tree", "recurrence_coefficients", "show", "plot"]

@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-#
 from __future__ import division
 
 import numpy
 import pytest
 import sympy
-from sympy import sqrt, pi
+from sympy import pi, sqrt
 
 import orthopy
 
