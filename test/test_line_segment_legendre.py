@@ -158,14 +158,11 @@ def test_eval_vec(t, ref, tol=1.0e-14):
     return
 
 
-def test_plot(n=4):
-    orthopy.line_segment.plot(n, 0, 0)
+def test_show(n=4):
+    orthopy.line_segment.show(n, 0, 0)
     return
 
 
 if __name__ == "__main__":
-    test_plot()
-    import matplotlib.pyplot as plt
-
-    # plt.show()
-    plt.savefig("line-segment-legendre.png", transparent=True)
+    test_show()
+    # plt.savefig("line-segment-legendre.png", transparent=True)
