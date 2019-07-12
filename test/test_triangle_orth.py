@@ -174,7 +174,7 @@ def test_show(n=2, r=1):
     def f(bary):
         return orthopy.triangle.tree(bary, n, "normal")[n][r]
 
-    cmap = mpl.colors.ListedColormap(['white', 'black'])
+    cmap = mpl.colors.ListedColormap(["white", "black"])
     orthopy.triangle.show(corners, f, n=1000, colorbar=False, colormap=cmap)
 
     # orthopy.triangle.plot(corners, f)
