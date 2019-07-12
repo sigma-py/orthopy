@@ -152,16 +152,14 @@ def test_spherical_harmonics_numpy(theta, phi):
 
 def test_write():
     def sph22(polar, azimuthal):
-        out = orthopy.sphere.tree_sph(
+        return orthopy.sphere.tree_sph(
             polar, azimuthal, 5, standardization="quantum mechanic"
-        )[5][3]
-        # out = numpy.arctan2(numpy.imag(out), numpy.real(out))
-        out = abs(out)
-        return out
+        )[5][4]
 
     orthopy.sphere.write("sph.vtk", sph22)
     return
 
 
 if __name__ == "__main__":
-    test_schmidt_seminormality()
+    # test_schmidt_seminormality()
+    test_write()
