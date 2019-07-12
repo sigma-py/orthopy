@@ -141,10 +141,8 @@ All polynomials are normalized over the measure.
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=5, k=3  |
 
-_Spherical harmonics._
-
-(Note that spherical harmonics are complex-valued in general; the above plots
-only show the absolute values.)
+Complex-valued _spherical harmonics,_ plotted with
+[cplot](https://github.com/nschloe/cplot/) coloring.
 
 ```python
 vals = orthopy.sphere.tree_sph(
