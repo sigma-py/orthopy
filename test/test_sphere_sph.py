@@ -154,7 +154,7 @@ def test_write():
     def sph22(polar, azimuthal):
         return orthopy.sphere.tree_sph(
             polar, azimuthal, 5, standardization="quantum mechanic"
-        )[5][4]
+        )[5][3]
 
     orthopy.sphere.write("sph.vtk", sph22)
     return

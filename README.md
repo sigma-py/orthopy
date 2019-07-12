@@ -11,7 +11,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173151)
 [![GitHub stars](https://img.shields.io/github/stars/nschloe/orthopy.svg?style=flat-square&logo=github&label=Stars&logoColor=white)](https://github.com/nschloe/orthopy)
 
-Various orthogonal polynomial classes for
+orthopy provides various orthogonal polynomial classes for
 [lines](#line-segment--1-1-with-weight-function-1-x%CE%B1-1-x%CE%B2),
 [triangles](#triangle),
 [quadrilaterals](#quadrilateral),
@@ -20,19 +20,18 @@ Various orthogonal polynomial classes for
 [hexahedra](#hexahedron), and
 [n-cubes](#n-cube).
 All computations are done using numerically stable recurrence schemes.
-Furthermore, all functions are fully vectorized and can return results in
-[_exact arithmetic_](#symbolic-and-numerical-computation).
+Furthermore, all functions are fully vectorized and can return results in [_exact
+arithmetic_](#symbolic-and-numerical-computation).
 
-_Note:_ In previous versions, orthopy contained tools for working with Gauss
-quadrature rules as well. Those have moved over to
-[quadpy](https://github.com/nschloe/quadpy).
+_Note:_ In previous versions, orthopy contained tools for working with Gauss quadrature
+rules as well. Those have moved over to [quadpy](https://github.com/nschloe/quadpy).
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
 <img src="https://nschloe.github.io/orthopy/line-segment-legendre.png" width="25%">
 
-Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2),
-Legendre (α=β=0) polynomials.
+Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
+(α=β=0) polynomials.
 
 ```python
 vals = orthopy.line_segment.tree_jacobi(x, 4, alpha, beta, 'normal', symbolic=False)
