@@ -1,13 +1,12 @@
 import numpy
 
-import cplot
-
 
 def write(filename, f):
     """Write a function `f` defined in terms of spherical coordinates to a file.
     """
     import meshio
     import meshzoo
+    import cplot
 
     points, cells = meshzoo.iso_sphere(5)
     # get spherical coordinates from points
