@@ -1,6 +1,7 @@
-# orthopy
-
-Everything about orthogonal polynomials.
+<p align="center">
+  <a href="https://github.com/nschloe/orthopy"><img alt="orthopy" src="https://nschloe.github.io/orthopy/orthopy-logo.png" width="30%"></a>
+  <p align="center">All about orthogonal polynomials.</p>
+</p>
 
 [![CircleCI](https://img.shields.io/circleci/project/github/nschloe/orthopy/master.svg?style=flat-square)](https://circleci.com/gh/nschloe/orthopy/tree/master)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/orthopy.svg?style=flat-square)](https://codecov.io/gh/nschloe/orthopy)
