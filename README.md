@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/nschloe/orthopy"><img alt="orthopy" src="https://nschloe.github.io/orthopy/orthopy-logo.png" width="30%"></a>
+  <a href="https://github.com/nschloe/orthopy"><img alt="orthopy" src="https://nschloe.github.io/orthopy/orthopy-logo-with-text.png" width="30%"></a>
   <p align="center">All about orthogonal polynomials.</p>
 </p>
 
