@@ -23,10 +23,10 @@ setup(
     author_email=about["__email__"],
     install_requires=["numpy", "scipy", "sympy"],
     extras_require={
-        "all": ["matplotlib", "meshio", "meshzoo", "dmsh"],
+        "all": ["matplotlib", "meshio", "meshzoo", "dmsh", "cplot"],
         "disk-plot": ["dmsh"],
         "plot": ["matplotlib"],
-        "sphere-plot": ["meshzoo", "meshio"],
+        "sphere-plot": ["meshzoo", "meshio", "cplot"],
     },
     description="Tools for orthogonal polynomials, Gaussian quadrature",
     long_description=read("README.md"),

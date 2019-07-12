@@ -56,8 +56,8 @@ def tree(bary, n, standardization, symbolic=False):
         # page 219 (and the reference to Gould, 1972) in
         #
         #  Farouki, Goodman, Sauer,
-        #  Construction of orthogonal bases for polynomials in Bernstein form
-        #  on triangular and simplex domains,
+        #  Construction of orthogonal bases for polynomials in Bernstein form on
+        #  triangular and simplex domains,
         #  Computer Aided Geometric Design 20 (2003) 209–230.
         #
         # The Legendre integral is 1/(2*r+1), and one gets

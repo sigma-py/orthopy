@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import numpy
 import pytest
 import scipy.special
@@ -52,8 +53,8 @@ def eval_orthpolys4(bary):
     See, e.g.,
 
     S.-A. Papanicolopulos,
-    New fully symmetric and rotationally symmetric cubature rules on the
-    triangle using minimal orthonormal bases,
+    New fully symmetric and rotationally symmetric cubature rules on the triangle using
+    minimal orthonormal bases,
     <https://arxiv.org/pdf/1411.5631.pdf>.
     """
     x, y = bary[0], bary[1]
@@ -165,7 +166,7 @@ def test_orthogonality(n=4):
 
 def test_show(n=2, r=1):
     # plot the triangle
-    alpha = numpy.pi * numpy.array([3.0 / 6.0, 7.0 / 6.0, 11.0 / 6.0])
+    alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
     corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
 
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
@@ -173,7 +174,9 @@ def test_show(n=2, r=1):
     def f(bary):
         return orthopy.triangle.tree(bary, n, "normal")[n][r]
 
-    orthopy.triangle.show(corners, f)
+    cmap = mpl.colors.ListedColormap(["white", "black"])
+    orthopy.triangle.show(corners, f, n=1000, colorbar=False, colormap=cmap)
+
     # orthopy.triangle.plot(corners, f)
     # import matplotlib.pyplot as plt
     # plt.savefig('triangle.png', transparent=True)
@@ -184,4 +187,4 @@ if __name__ == "__main__":
     # x_ = numpy.array([0.24, 0.65])
     # # x_ = numpy.random.rand(3, 2)
     # test_triangle_orth(x=x_)
-    test_show()
+    test_show(n=3, r=1)

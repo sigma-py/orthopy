@@ -1,7 +1,7 @@
 import numpy
 import pytest
 import sympy
-from sympy import S, sqrt, Rational, pi
+from sympy import Rational, S, pi, sqrt
 
 import orthopy
 

@@ -55,12 +55,6 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
 
         a = numpy.ones(n, dtype=int)
 
-        # work around bug <https://github.com/sympy/sympy/issues/13618>
-        if isinstance(alpha, numpy.int64):
-            alpha = int(alpha)
-        if isinstance(beta, numpy.int64):
-            beta = int(beta)
-
         b = [
             frac(beta - alpha, alpha + beta + 2)
             if N == 0
@@ -100,12 +94,6 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
         alpha == 0 and standardization == "p(1)=1"
     ):
         p0 = 1
-
-        # work around bug <https://github.com/sympy/sympy/issues/13618>
-        if isinstance(alpha, numpy.int64):
-            alpha = int(alpha)
-        if isinstance(beta, numpy.int64):
-            beta = int(beta)
 
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
         a = [
