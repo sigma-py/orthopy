@@ -30,7 +30,7 @@ def recurrence_coefficients(n, standardization, symbolic=False):
     else:
         assert (
             standardization == "normal"
-        ), f"Unknown standardization '{standardization}'."
+        ), "Unknown standardization '{}'.".format(standardization)
         p0 = 1 / sqrt(sqrt(pi))
         a = sqrt(S(2) / (N + 1))
         b = numpy.zeros(n, dtype=int)
