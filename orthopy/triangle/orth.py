@@ -19,6 +19,9 @@ def tree(bary, n, standardization, symbolic=False):
     Recurrence Relations for Orthogonal Polynomials on Triangular Domains,
     Mathematics 2016, 4(2), 25,
     <https://doi.org/10.3390/math4020025>.
+
+    (The formulation there is more complicated than necessary, however, and doesn't
+    include the normalization.)
     """
     S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
     sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
@@ -52,13 +55,14 @@ def tree(bary, n, standardization, symbolic=False):
         #   int_T P_{n, r}^2 =
         #       int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}(w)^2 (1-w)^(r+s+1) dw.
         #
-        # For reference, see
-        # page 219 (and the reference to Gould, 1972) in
+        # For reference, see page 219 in
         #
         #  Farouki, Goodman, Sauer,
         #  Construction of orthogonal bases for polynomials in Bernstein form on
         #  triangular and simplex domains,
-        #  Computer Aided Geometric Design 20 (2003) 209–230.
+        #  Computer Aided Geometric Design 20 (2003) 209–230,
+        #
+        # and the reference to Gould, 1972, there.
         #
         # The Legendre integral is 1/(2*r+1), and one gets
         #
