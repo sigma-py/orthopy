@@ -12,6 +12,16 @@ def tree(X, n, symbolic=False):
         (0, 1)   (1, 1)
         (0, 2)   (1, 2)   (2, 2)
           ...      ...      ...
+
+    See
+
+    Yuan Xu
+    Orthogonal polynomials of several variables,
+    Jan. 2017,
+    <https://arxiv.org/abs/1701.02709>
+
+    equation (3.4) for a formulation in terms of Gegenbauer polynomials C. The
+    recurrence relation can be worked out from there.
     """
     frac = sympy.Rational if symbolic else lambda x, y: x / y
     sqrt = sympy.sqrt if symbolic else numpy.sqrt
