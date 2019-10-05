@@ -194,9 +194,9 @@ determined by `X.shape[0]`.
 
 #### Symbolic and numerical computation
 
-By default, all operations are performed numerically. However, if
-`symbolic=True` is specified, all computations are performed symbolically. This
-can be used, for example, to get explicit representations of the polynomials:
+By default, all operations are performed numerically. However, if `symbolic=True` is
+specified, all computations are performed symbolically. This can be used, for example,
+to get explicit representations of the polynomials:
 ```python
 import numpy
 import orthopy
@@ -228,6 +228,12 @@ To run the tests, simply check out this repository and run
 ```
 pytest
 ```
+
+### Relevant publications
+
+* [Robert C. Kirby, Singularity-free evaluation of collapsed-coordinate orthogonal polynomials, ACM Transactions on Mathematical Software (TOMS), Volume 37, Issue 1, January 2010](https://doi.org/10.1145/1644001.1644006)
+* [Abedallah Rababah, Recurrence Relations for Orthogonal Polynomials on Triangular Domains, MDPI Mathematics 2016, 4(2)](https://doi.org/10.3390/math4020025)
+* [Yuan Xu, Orthogonal polynomials of several variables, archiv.org, January 2017](https://arxiv.org/abs/1701.02709)
 
 ### License
 orthopy is published under the [MIT license](https://en.wikipedia.org/wiki/MIT_License).
