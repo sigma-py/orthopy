@@ -79,17 +79,17 @@ def tree(X, n, symbolic=False):
     one_min_x2 = 1 - X[0] ** 2
 
     for L in range(1, n + 1):
-        out.append(
-            numpy.concatenate(
-                [
-                    out[L - 1] * numpy.multiply.outer(alpha(L), X[0]),
-                    [out[L - 1][L - 1] * beta(L) * X[1]],
-                ]
-            )
+        nxt = numpy.concatenate(
+            [
+                out[-1] * numpy.multiply.outer(alpha(L), X[0]),
+                [out[-1][L - 1] * beta(L) * X[1]],
+            ]
         )
 
         if L > 1:
-            out[-1][: L - 1] -= (out[L - 2].T * gamma(L)).T
-            out[-1][-1] -= out[L - 2][L - 2] * delta(L) * one_min_x2
+            nxt[: L - 1] -= (out[-2].T * gamma(L)).T
+            nxt[-1] -= out[-2][-1] * delta(L) * one_min_x2
+
+        out.append(nxt)
 
     return out

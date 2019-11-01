@@ -9,6 +9,10 @@ def test_integral0(n=4):
     """
     x = sympy.Symbol("x")
     y = sympy.Symbol("y")
+    # for level in orthopy.disk.Orth(numpy.array([x, y]), symbolic=True):
+    #     print(level)
+    #     exit(1)
+
     vals = numpy.concatenate(orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True))
 
     # Cartesian integration in sympy is bugged, cf.
@@ -32,8 +36,6 @@ def test_integral0(n=4):
             == 0
         )
 
-    return
-
 
 def test_orthogonality(n=3):
     x = sympy.Symbol("x")
@@ -52,7 +54,6 @@ def test_orthogonality(n=3):
             )
             == 0
         )
-    return
 
 
 def test_normality(n=4):
@@ -74,7 +75,6 @@ def test_normality(n=4):
             )
             == 1
         )
-    return
 
 
 def test_show(n=2, r=1):
@@ -85,7 +85,6 @@ def test_show(n=2, r=1):
     # orthopy.disk.plot(f, lcar=2.0e-2)
     # import matplotlib.pyplot as plt
     # plt.savefig('disk.png', transparent=True)
-    return
 
 
 if __name__ == "__main__":
