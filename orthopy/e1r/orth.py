@@ -1,5 +1,6 @@
+import math
+
 import numpy
-import scipy.special
 import sympy
 
 from ..tools import line_tree
@@ -22,7 +23,7 @@ def recurrence_coefficients(n, alpha, standardization="normal", symbolic=False):
     """
     S = sympy.S if symbolic else lambda x: x
     sqrt = sympy.sqrt if symbolic else numpy.sqrt
-    gamma = sympy.gamma if symbolic else scipy.special.gamma
+    gamma = sympy.gamma if symbolic else math.gamma
 
     if standardization == "monic":
         p0 = 1

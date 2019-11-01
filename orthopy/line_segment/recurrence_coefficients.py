@@ -1,6 +1,7 @@
 import itertools
+import math
+
 import numpy
-import scipy.special
 import sympy
 
 
@@ -59,9 +60,7 @@ class Monic:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
-        self.gamma = (
-            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
-        )
+        self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
 
@@ -124,9 +123,7 @@ class P1:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
-        self.gamma = (
-            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
-        )
+        self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
 
@@ -183,9 +180,7 @@ class Normal:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
-        self.gamma = (
-            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
-        )
+        self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
