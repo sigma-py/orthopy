@@ -16,7 +16,7 @@ setup(
     url="https://github.com/nschloe/orthopy",
     author=about["__author__"],
     author_email=about["__email__"],
-    install_requires=["numpy", "scipy", "sympy"],
+    install_requires=["numpy", "sympy"],
     extras_require={
         "all": ["matplotlib", "meshio", "meshzoo", "dmsh", "cplot"],
         "disk-plot": ["dmsh"],
