@@ -7,10 +7,10 @@ from ..line_segment.recurrence_coefficients import legendre
 def tree(X, n, symbolic=False):
     """Evaluates the entire tree of orthogonal polynomials for the n-cube
 
-    The computation is organized such that tree returns a list of arrays, L={0,
-    ..., dim}, where each level corresponds to the polynomial degree L.
-    Further, each level is organized like a discrete (dim-1)-dimensional
-    simplex. Let's demonstrate this for 3D:
+    The computation is organized such that tree returns a list of arrays, L={0, ...,
+    dim}, where each level corresponds to the polynomial degree L.  Further, each level
+    is organized like a discrete (dim-1)-dimensional simplex. Let's demonstrate this for
+    3D:
 
     L = 1:
          (0, 0, 0)
@@ -24,14 +24,13 @@ def tree(X, n, symbolic=False):
          (1, 1, 0) (1, 0, 1)
          (0, 2, 0) (0, 1, 1) (0, 0, 2)
 
-    The main insight here that makes computation for n dimensions easy is that
-    the next level is composed by:
+    The main insight here that makes computation for n dimensions easy is that the next
+    level is composed by:
 
        * Taking the whole previous level and adding +1 to the first entry.
-       * Taking the last row of the previous level and adding +1 to the second
-         entry.
-       * Taking the last entry of the last row of the previous and adding +1 to
-         the third entry.
+       * Taking the last row of the previous level and adding +1 to the second entry.
+       * Taking the last entry of the last row of the previous and adding +1 to the
+         third entry.
 
     In the same manner this can be repeated for `dim` dimensions.
     """
@@ -46,6 +45,7 @@ def tree(X, n, symbolic=False):
     out.append(level)
 
     # TODO use a simpler binom implementation
+    # In Python 3.8 one has math.comb; no need for int() there either
     for L in range(n):
         level = []
         for i in range(dim - 1):
@@ -55,16 +55,16 @@ def tree(X, n, symbolic=False):
             r = 0
             for k in range(L + 1):
                 m = int(scipy.special.binom(k + dim - i - 2, dim - i - 2))
-                val = out[L][-m1:][r : r + m] * (a[L - k] * X[i] - b[L - k])
+                val = out[-1][-m1:][r : r + m] * (a[L - k] * X[i] - b[L - k])
                 if L - k > 0:
-                    val -= out[L - 1][-m2:][r : r + m] * c[L - k]
+                    val -= out[-2][-m2:][r : r + m] * c[L - k]
                 r += m
                 level.append(val)
 
         # treat the last one separately
-        val = out[L][-1] * (a[L] * X[-1] - b[L])
+        val = out[-1][-1] * (a[L] * X[-1] - b[L])
         if L > 0:
-            val -= out[L - 1][-1] * c[L]
+            val -= out[-2][-1] * c[L]
         level.append([val])
 
         out.append(numpy.concatenate(level))
