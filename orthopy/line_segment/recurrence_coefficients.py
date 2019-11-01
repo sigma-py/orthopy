@@ -32,28 +32,49 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
     weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
-    if standardization == "monic":
-        iterator = Monic(alpha, beta, symbolic)
-        p0 = iterator.p0
-    elif standardization == "p(1)=(n+alpha over n)" or (
-        alpha == 0 and standardization == "p(1)=1"
-    ):
-        iterator = P1(alpha, beta, symbolic)
-        p0 = iterator.p0
-    else:
-        assert (
-            standardization == "normal"
-        ), "Unknown standardization '{}'. (valid: {})".format(
-            standardization, ", ".join(["monic", "p(1)=(n+alpha over n)", "normal"])
-        )
-        iterator = Normal(alpha, beta, symbolic)
-        p0 = iterator.p0
-
+    iterator = Jacobi(alpha, beta, standardization, symbolic)
+    p0 = iterator.p0
     lst = list(itertools.islice(iterator, n))
     a = numpy.array([item[0] for item in lst])
     b = numpy.array([item[1] for item in lst])
     c = numpy.array([item[2] for item in lst])
     return p0, a, b, c
+
+
+class Jacobi:
+    def __init__(self, alpha, beta, standardization, symbolic):
+        if standardization == "monic":
+            self.iterator = Monic(alpha, beta, symbolic)
+        elif standardization == "p(1)=(n+alpha over n)" or (
+            alpha == 0 and standardization == "p(1)=1"
+        ):
+            self.iterator = P1(alpha, beta, symbolic)
+        else:
+            assert (
+                standardization == "normal"
+            ), "Unknown standardization '{}'. (valid: {})".format(
+                standardization, ", ".join(["monic", "p(1)=(n+alpha over n)", "normal"])
+            )
+            self.iterator = Normal(alpha, beta, symbolic)
+
+        self.p0 = self.iterator.p0
+        return
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.iterator.__next__()
+
+
+class Legendre(Jacobi):
+    def __init__(self, standardization, symbolic=False):
+        super().__init__(0, 0, standardization, symbolic)
+
+
+class Gegenbauer(Jacobi):
+    def __init__(self, lmbda, standardization, symbolic=False):
+        super().__init__(lmbda, lmbda, standardization, symbolic)
 
 
 class Monic:

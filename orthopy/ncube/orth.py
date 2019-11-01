@@ -1,6 +1,6 @@
 import numpy
 
-from ..line_segment.recurrence_coefficients import legendre
+from ..line_segment.recurrence_coefficients import Legendre
 from ..tools import math_comb
 
 
@@ -34,7 +34,9 @@ def tree(X, n, symbolic=False):
 
     In the same manner this can be repeated for `dim` dimensions.
     """
-    p0, a, b, c = legendre(n + 1, "normal", symbolic=symbolic)
+    # p0, a, b, c = legendre(n + 1, "normal", symbolic=symbolic)
+    legendre_iterator = Legendre("normal", symbolic=symbolic)
+    p0 = legendre_iterator.p0
 
     dim = X.shape[0]
 
@@ -44,7 +46,16 @@ def tree(X, n, symbolic=False):
     level = numpy.array([numpy.ones(X.shape[1:], dtype=int) * p0n])
     out.append(level)
 
+    a = []
+    b = []
+    c = []
+
     for L in range(n):
+        aa, bb, cc = next(legendre_iterator)
+        a.append(aa)
+        b.append(bb)
+        c.append(cc)
+
         level = []
         for i in range(dim - 1):
             m1 = math_comb(L + dim - i - 1, dim - i - 1)
