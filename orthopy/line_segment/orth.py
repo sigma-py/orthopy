@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import sympy
 
@@ -181,8 +183,8 @@ class _Schmidt:
 def tree_alp(
     x, n, standardization, phi=None, with_condon_shortley_phase=True, symbolic=False
 ):
-    """Evaluates the entire tree of associated Legendre polynomials up to depth
-    n.
+    """Evaluates the entire tree of associated Legendre polynomials up to depth n.
+
     There are many recurrence relations that can be used to construct the associated
     Legendre polynomials. However, only few are numerically stable.  Many
     implementations (including this one) use the classical Legendre recurrence relation
@@ -214,42 +216,72 @@ def tree_alp(
           (-2, 2)   (-1, 2)   (0, 2)   (1, 2)   (2, 2)
             ...       ...       ...     ...       ...
     """
-    # assert numpy.all(numpy.abs(x) <= 1.0)
+    return list(
+        itertools.islice(
+            OrthAlp(x, standardization, phi, with_condon_shortley_phase, symbolic),
+            n + 1,
+        )
+    )
 
-    d = {
-        "natural": (_Natural, [x, symbolic]),
-        "spherical": (_Spherical, [x, symbolic]),
-        "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
-        "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
-        "normal": (_Normal, [x, symbolic]),
-        "schmidt": (_Schmidt, [x, phi, symbolic]),
-    }
-    fun, args = d[standardization]
-    c = fun(*args)
 
-    if with_condon_shortley_phase:
+class OrthAlp:
+    def __init__(
+        self,
+        x,
+        standardization,
+        phi=None,
+        with_condon_shortley_phase=True,
+        symbolic=False,
+    ):
+        # assert numpy.all(numpy.abs(x) <= 1.0)
+        d = {
+            "natural": (_Natural, [x, symbolic]),
+            "spherical": (_Spherical, [x, symbolic]),
+            "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
+            "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
+            "normal": (_Normal, [x, symbolic]),
+            "schmidt": (_Schmidt, [x, phi, symbolic]),
+        }
+        fun, args = d[standardization]
+        self.c = fun(*args)
 
-        def z1_factor_CSP(L):
-            return -1 * c.z1_factor(L)
+        if with_condon_shortley_phase:
 
-    else:
-        z1_factor_CSP = c.z1_factor
+            def z1_factor_CSP(L):
+                return -1 * self.c.z1_factor(L)
 
-    # Here comes the actual loop.
-    e = numpy.ones_like(x, dtype=int)
-    out = [[e * c.p0]]
-    for L in range(1, n + 1):
-        out.append(
-            numpy.concatenate(
+        else:
+            z1_factor_CSP = self.c.z1_factor
+
+        self.z1_factor_CSP = z1_factor_CSP
+
+        self.k = 0
+        self.x = x
+        self.last = [None, None]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+
+        # Here comes the actual loop.
+        e = numpy.ones_like(self.x, dtype=int)
+        if self.k == 0:
+            out = numpy.array([e * self.c.p0])
+        else:
+            [self.last[0][0] * self.c.z0_factor(self.k)]
+            out = numpy.concatenate(
                 [
-                    [out[L - 1][0] * c.z0_factor(L)],
-                    out[L - 1] * numpy.multiply.outer(c.C0(L), x),
-                    [out[L - 1][-1] * z1_factor_CSP(L)],
+                    [self.last[0][0] * self.c.z0_factor(self.k)],
+                    self.last[0] * numpy.multiply.outer(self.c.C0(self.k), self.x),
+                    [self.last[0][-1] * self.z1_factor_CSP(self.k)],
                 ]
             )
-        )
 
-        if L > 1:
-            out[-1][2:-2] -= numpy.multiply.outer(c.C1(L), e) * out[L - 2]
+            if self.k > 1:
+                out[2:-2] -= numpy.multiply.outer(self.c.C1(self.k), e) * self.last[1]
 
-    return out
+        self.last[1] = self.last[0]
+        self.last[0] = out
+        self.k += 1
+        return out

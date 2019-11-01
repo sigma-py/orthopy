@@ -12,12 +12,12 @@ def test_integral0(n=4):
         orthopy.e1r2.tree(numpy.array([x]), n, "normal", symbolic=True)
     )
 
-    assert sympy.integrate(vals[0] * sympy.exp(-x ** 2), (x, -oo, +oo)) == sympy.sqrt(
+    assert sympy.integrate(vals[0] * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == sympy.sqrt(
         sympy.sqrt(sympy.pi)
     )
 
     for val in vals[1:]:
-        assert sympy.integrate(val * sympy.exp(-x ** 2), (x, -oo, +oo)) == 0
+        assert sympy.integrate(val * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == 0
     return
 
 
@@ -28,9 +28,9 @@ def test_orthogonality(standardization, n=4):
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     if standardization == "monic":
-        weight_function = sympy.exp(-x ** 2 / 2)
+        weight_function = sympy.exp(-(x ** 2) / 2)
     else:
-        weight_function = sympy.exp(-x ** 2)
+        weight_function = sympy.exp(-(x ** 2))
 
     for val in vals:
         assert sympy.integrate(val * weight_function, (x, -oo, +oo)) == 0
@@ -44,7 +44,7 @@ def test_normality(n=4):
     )
 
     for val in tree:
-        assert sympy.integrate(val ** 2 * sympy.exp(-x ** 2), (x, -oo, +oo)) == 1
+        assert sympy.integrate(val ** 2 * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == 1
     return
 
 

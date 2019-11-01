@@ -13,12 +13,12 @@ def test_integral0(n=4):
     vals = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
 
     assert sympy.integrate(
-        vals[0] * sympy.exp(-x ** 2 - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
+        vals[0] * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
     ) == sympy.sqrt(sympy.pi)
     for val in vals[1:]:
         assert (
             sympy.integrate(
-                val * sympy.exp(-x ** 2 - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
+                val * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
             )
             == 0
         )
@@ -34,7 +34,7 @@ def test_orthogonality(n=4):
     for val in vals:
         assert (
             sympy.integrate(
-                val * sympy.exp(-x ** 2 - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
+                val * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
             )
             == 0
         )
@@ -49,7 +49,7 @@ def test_normality(n=4):
     for val in tree:
         assert (
             sympy.integrate(
-                val ** 2 * sympy.exp(-x ** 2 - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
+                val ** 2 * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
             )
             == 1
         )

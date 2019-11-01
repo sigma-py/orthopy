@@ -17,7 +17,7 @@ def test_integral0(n=4):
 
     assert (
         sympy.integrate(
-            vals[0] * sympy.exp(-x ** 2 - y ** 2 - z ** 2),
+            vals[0] * sympy.exp(-(x ** 2) - y ** 2 - z ** 2),
             (x, -oo, +oo),
             (y, -oo, +oo),
             (z, -oo, +oo),
@@ -27,7 +27,7 @@ def test_integral0(n=4):
     for val in vals[1:]:
         assert (
             sympy.integrate(
-                val * sympy.exp(-x ** 2 - y ** 2 - z ** 2),
+                val * sympy.exp(-(x ** 2) - y ** 2 - z ** 2),
                 (x, -oo, +oo),
                 (y, -oo, +oo),
                 (z, -oo, +oo),
@@ -49,7 +49,7 @@ def test_orthogonality(n=4):
     for val in vals:
         assert (
             sympy.integrate(
-                val * sympy.exp(-x ** 2 - y ** 2 - z ** 2),
+                val * sympy.exp(-(x ** 2) - y ** 2 - z ** 2),
                 (x, -oo, +oo),
                 (y, -oo, +oo),
                 (z, -oo, +oo),
@@ -70,7 +70,7 @@ def test_normality(n=4):
     for val in tree:
         assert (
             sympy.integrate(
-                val ** 2 * sympy.exp(-x ** 2 - y ** 2 - z ** 2),
+                val ** 2 * sympy.exp(-(x ** 2) - y ** 2 - z ** 2),
                 (x, -oo, +oo),
                 (y, -oo, +oo),
                 (z, -oo, +oo),

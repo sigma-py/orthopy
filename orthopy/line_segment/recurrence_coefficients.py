@@ -26,8 +26,8 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
 
-    for the Jacobi polynomials which are orthogonal on [-1, 1]
-    with respect to the weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
+    for the Jacobi polynomials which are orthogonal on [-1, 1] with respect to the
+    weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
     gamma = sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
