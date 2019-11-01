@@ -10,7 +10,7 @@ def math_comb(n, k):
     out = 1
     for i in range(k):
         out *= n - i
-        out /= i + 1
+        out //= i + 1
 
     return out
 

@@ -15,8 +15,6 @@ def tree(X, n, symbolic=False):
     level = numpy.array([numpy.ones(X.shape[1:], dtype=int) * p0n])
     out.append(level)
 
-    # TODO use a simpler binom implementation
-    # In Python 3.8 one has math.comb; no need for int() there either
     for L in range(n):
         level = []
         for i in range(dim - 1):
