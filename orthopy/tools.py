@@ -9,9 +9,10 @@ def line_tree(t, p0, a, b, c):
     out = [numpy.ones_like(t) * p0]
 
     for L in range(n):
-        out.append(out[L] * (t * a[L] - b[L]))
+        nxt = out[-1] * (t * a[L] - b[L])
         if L > 0:
-            out[L + 1] -= out[L - 1] * c[L]
+            nxt -= out[-2] * c[L]
+        out.append(nxt)
 
     return out
 

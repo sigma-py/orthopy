@@ -1,3 +1,4 @@
+import itertools
 import numpy
 import scipy.special
 import sympy
@@ -30,156 +31,225 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
     weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
-    gamma = sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
-
-    def rational(x, y):
-        # <https://github.com/sympy/sympy/pull/13670>
-        return (
-            sympy.Rational(x, y)
-            if all([isinstance(val, int) for val in [x, y]])
-            else x / y
-        )
-
-    frac = rational if symbolic else lambda x, y: x / y
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
-
-    int_1 = (
-        2 ** (alpha + beta + 1)
-        * gamma(alpha + 1)
-        * gamma(beta + 1)
-        / gamma(alpha + beta + 2)
-    )
-
     if standardization == "monic":
-        p0 = 1
-
-        a = numpy.ones(n, dtype=int)
-
-        b = [
-            frac(beta - alpha, alpha + beta + 2)
-            if N == 0
-            else frac(
-                beta ** 2 - alpha ** 2,
-                (2 * N + alpha + beta) * (2 * N + alpha + beta + 2),
-            )
-            for N in range(n)
-        ]
-
-        # c[0] is not used in the actual recurrence, but is often defined
-        # as the integral of the weight function of the domain, i.e.,
-        # ```
-        # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
-        #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
-        # ```
-        # Note also that we have the treat the case N==1 separately to avoid
-        # division by 0 for alpha=beta=-1/2.
-        c = [
-            int_1
-            if N == 0
-            else frac(
-                4 * (1 + alpha) * (1 + beta),
-                (2 + alpha + beta) ** 2 * (3 + alpha + beta),
-            )
-            if N == 1
-            else frac(
-                4 * (N + alpha) * (N + beta) * N * (N + alpha + beta),
-                (2 * N + alpha + beta) ** 2
-                * (2 * N + alpha + beta + 1)
-                * (2 * N + alpha + beta - 1),
-            )
-            for N in range(n)
-        ]
-
+        iterator = Monic(alpha, beta, symbolic)
+        p0 = iterator.p0
     elif standardization == "p(1)=(n+alpha over n)" or (
         alpha == 0 and standardization == "p(1)=1"
     ):
-        p0 = 1
-
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2.
-        a = [
-            frac(alpha + beta + 2, 2)
-            if N == 0
-            else frac(
-                (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 2),
-                2 * (N + 1) * (N + alpha + beta + 1),
-            )
-            for N in range(n)
-        ]
-
-        b = [
-            frac(beta - alpha, 2)
-            if N == 0
-            else frac(
-                (beta ** 2 - alpha ** 2) * (2 * N + alpha + beta + 1),
-                2 * (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
-            )
-            for N in range(n)
-        ]
-
-        c = [
-            int_1
-            if N == 0
-            else frac(
-                (N + alpha) * (N + beta) * (2 * N + alpha + beta + 2),
-                (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
-            )
-            for N in range(n)
-        ]
-
+        iterator = P1(alpha, beta, symbolic)
+        p0 = iterator.p0
     else:
         assert (
             standardization == "normal"
         ), "Unknown standardization '{}'. (valid: {})".format(
             standardization, ", ".join(["monic", "p(1)=(n+alpha over n)", "normal"])
         )
+        iterator = Normal(alpha, beta, symbolic)
+        p0 = iterator.p0
 
-        p0 = sqrt(1 / int_1)
+    lst = list(itertools.islice(iterator, n))
+    a = numpy.array([item[0] for item in lst])
+    b = numpy.array([item[1] for item in lst])
+    c = numpy.array([item[2] for item in lst])
+    return p0, a, b, c
 
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2 (Chebyshev
-        # 1).
-        a = [
-            frac(alpha + beta + 2, 2)
-            * sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
-            if N == 0
-            else frac(2 * N + alpha + beta + 2, 2)
-            * sqrt(
+
+class Monic:
+    def __init__(self, alpha, beta, symbolic):
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = (
+            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
+        )
+
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+
+        self.p0 = 1
+        self.int_1 = (
+            2 ** (alpha + beta + 1)
+            * self.gamma(alpha + 1)
+            * self.gamma(beta + 1)
+            / self.gamma(alpha + beta + 2)
+        )
+        self.n = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        frac = self.frac
+        alpha = self.alpha
+        beta = self.beta
+
+        N = self.n
+
+        a = 1
+
+        if N == 0:
+            b = frac(beta - alpha, alpha + beta + 2)
+        else:
+            b = frac(
+                beta ** 2 - alpha ** 2,
+                (2 * N + alpha + beta) * (2 * N + alpha + beta + 2),
+            )
+
+        # c[0] is not used in the actual recurrence, but is often defined as the
+        # integral of the weight function of the domain, i.e.,
+        # ```
+        # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
+        #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
+        # ```
+        # Note also that we have the treat the case N==1 separately to avoid division by
+        # 0 for alpha=beta=-1/2.
+        if N == 0:
+            c = self.int_1
+        elif N == 1:
+            c = frac(
+                4 * (1 + alpha) * (1 + beta),
+                (2 + alpha + beta) ** 2 * (3 + alpha + beta),
+            )
+        else:
+            c = frac(
+                4 * (N + alpha) * (N + beta) * N * (N + alpha + beta),
+                (2 * N + alpha + beta) ** 2
+                * (2 * N + alpha + beta + 1)
+                * (2 * N + alpha + beta - 1),
+            )
+        self.n += 1
+        return a, b, c
+
+
+class P1:
+    def __init__(self, alpha, beta, symbolic):
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = (
+            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
+        )
+
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+
+        self.p0 = 1
+        self.int_1 = (
+            2 ** (alpha + beta + 1)
+            * self.gamma(alpha + 1)
+            * self.gamma(beta + 1)
+            / self.gamma(alpha + beta + 2)
+        )
+
+        self.n = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        frac = self.frac
+        alpha = self.alpha
+        beta = self.beta
+
+        N = self.n
+
+        # Treat N = 0 separately to avoid division by 0 for alpha = beta = -1/2.
+        if N == 0:
+            a = frac(alpha + beta + 2, 2)
+        else:
+            a = frac(
+                (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 2),
+                2 * (N + 1) * (N + alpha + beta + 1),
+            )
+
+        if N == 0:
+            b = frac(beta - alpha, 2)
+        else:
+            b = frac(
+                (beta ** 2 - alpha ** 2) * (2 * N + alpha + beta + 1),
+                2 * (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
+            )
+
+        if N == 0:
+            c = self.int_1
+        else:
+            c = frac(
+                (N + alpha) * (N + beta) * (2 * N + alpha + beta + 2),
+                (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
+            )
+
+        self.n += 1
+        return a, b, c
+
+
+class Normal:
+    def __init__(self, alpha, beta, symbolic):
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = (
+            sympy.gamma if symbolic else lambda x: scipy.special.gamma(float(x))
+        )
+
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.int_1 = (
+            2 ** (alpha + beta + 1)
+            * self.gamma(alpha + 1)
+            * self.gamma(beta + 1)
+            / self.gamma(alpha + beta + 2)
+        )
+        self.p0 = self.sqrt(1 / self.int_1)
+
+        self.n = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        frac = self.frac
+        alpha = self.alpha
+        beta = self.beta
+        sqrt = self.sqrt
+
+        N = self.n
+        int_1 = self.int_1
+
+        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2
+        # (Chebyshev 1).
+        if N == 0:
+            a = frac(alpha + beta + 2, 2) * sqrt(
+                frac(alpha + beta + 3, (alpha + 1) * (beta + 1))
+            )
+        else:
+            a = frac(2 * N + alpha + beta + 2, 2) * sqrt(
                 frac(
                     (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 3),
                     (N + 1) * (N + alpha + 1) * (N + beta + 1) * (N + alpha + beta + 1),
                 )
             )
-            for N in range(n)
-        ]
 
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2 (Chebyshev
-        # 1).
-        b = [
-            frac(beta - alpha, 2)
-            * sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
-            if N == 0
-            else frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta))
-            * sqrt(
+        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2
+        # (Chebyshev 1).
+        if N == 0:
+            b = frac(beta - alpha, 2) * sqrt(
+                frac(alpha + beta + 3, (alpha + 1) * (beta + 1))
+            )
+        else:
+            b = frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta)) * sqrt(
                 frac(
                     (2 * N + alpha + beta + 3) * (2 * N + alpha + beta + 1),
                     (N + 1) * (N + alpha + 1) * (N + beta + 1) * (N + alpha + beta + 1),
                 )
             )
-            for N in range(n)
-        ]
 
-        c = [
-            int_1
-            if N == 0
-            else frac(4 + alpha + beta, 2 + alpha + beta)
-            * sqrt(
+        if N == 0:
+            c = int_1
+        elif N == 1:
+            c = frac(4 + alpha + beta, 2 + alpha + beta) * sqrt(
                 frac(
                     (1 + alpha) * (1 + beta) * (5 + alpha + beta),
                     2 * (2 + alpha) * (2 + beta) * (2 + alpha + beta),
                 )
             )
-            if N == 1
-            else frac(2 * N + alpha + beta + 2, 2 * N + alpha + beta)
-            * sqrt(
+        else:
+            c = frac(2 * N + alpha + beta + 2, 2 * N + alpha + beta) * sqrt(
                 frac(
                     N
                     * (N + alpha)
@@ -193,7 +263,6 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
                     * (2 * N + alpha + beta - 1),
                 )
             )
-            for N in range(n)
-        ]
 
-    return p0, numpy.array(a), numpy.array(b), numpy.array(c)
+        self.n += 1
+        return a, b, c

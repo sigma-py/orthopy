@@ -16,6 +16,7 @@ def tree(X, n, symbolic=False):
     out.append(level)
 
     # TODO use a simpler binom implementation
+    # In Python 3.8 one has math.comb; no need for int() there either
     for L in range(n):
         level = []
         for i in range(dim - 1):
