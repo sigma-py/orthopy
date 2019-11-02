@@ -28,9 +28,9 @@ def recurrence_coefficients(n, standardization, symbolic=False):
         c = 2 * N
         c[0] = ssqrt(pi)  # only used for custom scheme
     else:
-        assert (
-            standardization == "normal"
-        ), f"Unknown standardization '{standardization}'."
+        assert standardization == "normal", "Unknown standardization '{}'.".format(
+            standardization
+        )
         p0 = 1 / sqrt(sqrt(pi))
         a = sqrt(S(2) / (N + 1))
         b = numpy.zeros(n, dtype=int)
