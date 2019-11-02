@@ -1,6 +1,20 @@
 import numpy
 
 
+def math_comb(n, k):
+    # TODO replace by math.comb as soon as we require Python 3.8,
+    # <https://docs.python.org/3/library/math.html#math.comb>
+    if k > n - k:
+        k = n - k
+
+    out = 1
+    for i in range(k):
+        out *= n - i
+        out //= i + 1
+
+    return out
+
+
 def line_tree(t, p0, a, b, c):
     n = len(a)
     assert len(b) == n
@@ -9,9 +23,10 @@ def line_tree(t, p0, a, b, c):
     out = [numpy.ones_like(t) * p0]
 
     for L in range(n):
-        out.append(out[L] * (t * a[L] - b[L]))
+        nxt = out[-1] * (t * a[L] - b[L])
         if L > 0:
-            out[L + 1] -= out[L - 1] * c[L]
+            nxt -= out[-2] * c[L]
+        out.append(nxt)
 
     return out
 

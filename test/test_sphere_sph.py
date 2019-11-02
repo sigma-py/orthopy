@@ -106,11 +106,11 @@ def sph_exact2(theta, phi):
     y1_0 = +cos_theta * sqrt(3 / pi) / 2
     y1p1 = -sin_theta * exp(+i * phi) * sqrt(3 / pi / 2) / 2
     #
-    y2m2 = +sin_theta ** 2 * exp(-i * 2 * phi) * sqrt(15 / pi / 2) / 4
+    y2m2 = +(sin_theta ** 2) * exp(-i * 2 * phi) * sqrt(15 / pi / 2) / 4
     y2m1 = +(sin_theta * cos_theta * exp(-i * phi)) * (sqrt(15 / pi / 2) / 2)
     y2_0 = +(3 * cos_theta ** 2 - 1) * sqrt(5 / pi) / 4
     y2p1 = -(sin_theta * cos_theta * exp(+i * phi)) * (sqrt(15 / pi / 2) / 2)
-    y2p2 = +sin_theta ** 2 * exp(+i * 2 * phi) * sqrt(15 / pi / 2) / 4
+    y2p2 = +(sin_theta ** 2) * exp(+i * 2 * phi) * sqrt(15 / pi / 2) / 4
     return [[y0_0], [y1m1, y1_0, y1p1], [y2m2, y2m1, y2_0, y2p1, y2p2]]
 
 

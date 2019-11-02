@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import sympy
 
@@ -23,73 +25,94 @@ def tree(X, n, symbolic=False):
     equation (3.4) for a formulation in terms of Gegenbauer polynomials C. The
     recurrence relation can be worked out from there.
     """
-    frac = sympy.Rational if symbolic else lambda x, y: x / y
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
-    pi = sympy.pi if symbolic else numpy.pi
+    return list(itertools.islice(Iterator(X, symbolic), n + 1))
 
-    mu = frac(1, 2)
 
-    p0 = 1 / sqrt(pi)
+class Iterator:
+    def __init__(self, X, symbolic=False):
+        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.pi = sympy.pi if symbolic else numpy.pi
 
-    def alpha(n):
+        self.mu = self.frac(1, 2)
+
+        self.p0 = 1 / self.sqrt(self.pi)
+        self.X = X
+        self.L = 0
+        self.last = [None, None]
+
+    def alpha(self, n):
         return numpy.array(
             [
                 2
-                * sqrt(
-                    frac(
-                        (n + mu + frac(1, 2)) * (n + mu - frac(1, 2)),
-                        (n - k) * (n + k + 2 * mu),
+                * self.sqrt(
+                    self.frac(
+                        (n + self.mu + self.frac(1, 2))
+                        * (n + self.mu - self.frac(1, 2)),
+                        (n - k) * (n + k + 2 * self.mu),
                     )
                 )
                 for k in range(n)
             ]
         )
 
-    def beta(n):
-        return 2 * sqrt(
-            frac((n + mu - 1) * (n + mu + frac(1, 2)), (n + 2 * mu - 1) * n)
+    def beta(self, n):
+        return 2 * self.sqrt(
+            self.frac(
+                (n + self.mu - 1) * (n + self.mu + self.frac(1, 2)),
+                (n + 2 * self.mu - 1) * n,
+            )
         )
 
-    def gamma(n):
+    def gamma(self, n):
         return numpy.array(
             [
-                sqrt(
-                    frac(
-                        (n - 1 - k) * (n + mu + frac(1, 2)) * (n + k + 2 * mu - 1),
-                        (n - k) * (n + mu - frac(3, 2)) * (n + k + 2 * mu),
+                self.sqrt(
+                    self.frac(
+                        (n - 1 - k)
+                        * (n + self.mu + self.frac(1, 2))
+                        * (n + k + 2 * self.mu - 1),
+                        (n - k)
+                        * (n + self.mu - self.frac(3, 2))
+                        * (n + k + 2 * self.mu),
                     )
                 )
                 for k in range(n - 1)
             ]
         )
 
-    def delta(n):
-        return sqrt(
-            frac(
+    def delta(self, n):
+        return self.sqrt(
+            self.frac(
                 (n - 1)
-                * (n + 2 * mu - 2)
-                * (n + mu - frac(1, 2))
-                * (n + mu + frac(1, 2)),
-                n * (n + 2 * mu - 1) * (n + mu - 1) * (n + mu - 2),
+                * (n + 2 * self.mu - 2)
+                * (n + self.mu - self.frac(1, 2))
+                * (n + self.mu + self.frac(1, 2)),
+                n * (n + 2 * self.mu - 1) * (n + self.mu - 1) * (n + self.mu - 2),
             )
         )
 
-    out = [numpy.array([0 * X[0] + p0])]
+    def __iter__(self):
+        return self
 
-    one_min_x2 = 1 - X[0] ** 2
+    def __next__(self):
+        one_min_x2 = 1 - self.X[0] ** 2
 
-    for L in range(1, n + 1):
-        out.append(
-            numpy.concatenate(
+        if self.L == 0:
+            out = numpy.array([0 * self.X[0] + self.p0])
+        else:
+            out = numpy.concatenate(
                 [
-                    out[L - 1] * numpy.multiply.outer(alpha(L), X[0]),
-                    [out[L - 1][L - 1] * beta(L) * X[1]],
+                    self.last[0] * numpy.multiply.outer(self.alpha(self.L), self.X[0]),
+                    [self.last[0][-1] * self.beta(self.L) * self.X[1]],
                 ]
             )
-        )
 
-        if L > 1:
-            out[-1][: L - 1] -= (out[L - 2].T * gamma(L)).T
-            out[-1][-1] -= out[L - 2][L - 2] * delta(L) * one_min_x2
+            if self.L > 1:
+                out[:-2] -= (self.last[1].T * self.gamma(self.L)).T
+                out[-1] -= self.last[1][-1] * self.delta(self.L) * one_min_x2
 
-    return out
+        self.last[1] = self.last[0]
+        self.last[0] = out
+        self.L += 1
+        return out

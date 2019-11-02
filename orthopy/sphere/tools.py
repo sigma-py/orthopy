@@ -8,7 +8,7 @@ def write(filename, f):
     import meshzoo
     import cplot
 
-    points, cells = meshzoo.iso_sphere(5)
+    points, cells = meshzoo.icosa_sphere(5)
     # get spherical coordinates from points
     polar = numpy.arccos(points[:, 2])
     azimuthal = numpy.arctan2(points[:, 1], points[:, 0])
