@@ -25,10 +25,10 @@ def tree(bary, n, standardization, symbolic=False):
     (The formulation there is more complicated than necessary, however, and doesn't
     include the normalization.)
     """
-    return list(itertools.islice(Orth(bary, standardization, symbolic), n + 1))
+    return list(itertools.islice(Iterator(bary, standardization, symbolic), n + 1))
 
 
-class Orth:
+class Iterator:
     def __init__(self, bary, standardization, symbolic=False):
         S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt

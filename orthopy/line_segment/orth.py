@@ -218,13 +218,13 @@ def tree_alp(
     """
     return list(
         itertools.islice(
-            OrthAlp(x, standardization, phi, with_condon_shortley_phase, symbolic),
+            IteratorAlp(x, standardization, phi, with_condon_shortley_phase, symbolic),
             n + 1,
         )
     )
 
 
-class OrthAlp:
+class IteratorAlp:
     def __init__(
         self,
         x,

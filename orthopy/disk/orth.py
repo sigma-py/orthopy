@@ -25,10 +25,10 @@ def tree(X, n, symbolic=False):
     equation (3.4) for a formulation in terms of Gegenbauer polynomials C. The
     recurrence relation can be worked out from there.
     """
-    return list(itertools.islice(Orth(X, symbolic), n + 1))
+    return list(itertools.islice(Iterator(X, symbolic), n + 1))
 
 
-class Orth:
+class Iterator:
     def __init__(self, X, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt

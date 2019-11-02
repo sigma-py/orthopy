@@ -35,15 +35,15 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 (α=β=0) polynomials.
 
 ```python
-vals = orthopy.line_segment.tree_jacobi(x, 4, alpha, beta, 'normal', symbolic=False)
+vals = orthopy.line_segment.tree_jacobi(x, 4, alpha, beta, "normal", symbolic=False)
 ```
 
 Recurrence coefficients can be explicitly retrieved by
 ```python
-p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(n, a, b, 'monic')
+p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(n, a, b, "monic")
 ```
-Possible choices for the standardization are `'monic'`, `'p(1)=(n+alpha over
-n)'`, and `'normal'`.
+Possible choices for the standardization are `"monic"`, `"p(1)=(n+alpha over
+n)"`, and `"normal"`.
 
 
 #### Associated Legendre polynomials
@@ -52,7 +52,7 @@ n)'`, and `'normal'`.
 
 ```python
 vals = orthopy.line_segment.tree_alp(
-    x, 4, phi=None, standardization='natural', with_condon_shortley_phase=True,
+    x, 4, phi=None, standardization="natural", with_condon_shortley_phase=True,
     symbolic=False
     )
 ```
@@ -62,7 +62,7 @@ vals = orthopy.line_segment.tree_alp(
 
 (Generalized) Laguerre polynomials.
 ```python
-vals = orthopy.e1r.tree(x, 4, alpha=0, standardization='normal', symbolic=False)
+vals = orthopy.e1r.tree(x, 4, alpha=0, standardization="normal", symbolic=False)
 ```
 
 
@@ -71,7 +71,7 @@ vals = orthopy.e1r.tree(x, 4, alpha=0, standardization='normal', symbolic=False)
 
 Hermite polynomials.
 ```python
-vals = orthopy.e1r2.tree(x, 4, 'normal', symbolic=False)
+vals = orthopy.e1r2.tree(x, 4, "normal", symbolic=False)
 ```
 All polynomials are normalized over the measure.
 
@@ -85,11 +85,17 @@ All polynomials are normalized over the measure.
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
-vals = orthopy.triangle.tree(x, 4, 'normal', symbolic=False)
+for level in orthopy.triangle.Iterator(x, "normal", symbolic=False):
+    # `level` contains all evalutations of the orthogonal polynomials with the next
+    # degree at the points x
+    pass
+
+# or for the entire tree up to degree 4
+vals = orthopy.triangle.tree(x, 4, "normal", symbolic=False)
 ```
 Available standardizations are
-  * `'normal'` (normalized polynomials, i.e., the integral of the squared function equals 1) and
-  * `'1'` where the polynomial is `1` in at least one corner of the triangle.
+  * `"normal"` (normalized polynomials, i.e., the integral of the squared function equals 1) and
+  * `"1"` where the polynomial is `1` in at least one corner of the triangle.
 
 
 ### Quadrilateral
@@ -115,6 +121,12 @@ All polynomials are normalized on the quadrilateral.
 n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
 
 ```python
+for level in orthopy.disk.Iterator(x, symbolic=False):
+    # `level` contains all evalutations of the orthogonal polynomials with the next
+    # degree at the points x
+    pass
+
+# or for the entire tree up to degree 4
 vals = orthopy.disk.tree(x, 4, symbolic=False)
 ```
 All polynomials are normalized on the unit disk.
@@ -146,8 +158,14 @@ Complex-valued _spherical harmonics,_ plotted with
 [cplot](https://github.com/nschloe/cplot/) coloring.
 
 ```python
+for level in orthopy.sphere.Iterator(polar, azimuthal, standardization="quantum mechanic", symbolic=False):
+    # `level` contains all evalutations of the spherical harmonics with the next
+    # degree at the points x
+    pass
+
+# or for the entire tree up to degree n
 vals = orthopy.sphere.tree_sph(
-    polar, azimuthal, n, standardization='quantum mechanic', symbolic=False
+    polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
     )
 ```
 
@@ -202,9 +220,9 @@ import numpy
 import orthopy
 import sympy
 
-b0, b1, b2 = sympy.Symbol('b0'), sympy.Symbol('b1'), sympy.Symbol('b2')
+b0, b1, b2 = sympy.Symbol("b0"), sympy.Symbol("b1"), sympy.Symbol("b2")
 
-tree = orthopy.triangle.tree(numpy.array([b0, b1, b2]), 3, 'normal', symbolic=True)
+tree = orthopy.triangle.tree(numpy.array([b0, b1, b2]), 3, "normal", symbolic=True)
 
 print(sympy.expand(tree[3][1]))
 ```

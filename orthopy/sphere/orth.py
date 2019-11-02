@@ -3,7 +3,7 @@ import itertools
 import numpy
 import sympy
 
-from ..line_segment import OrthAlp
+from ..line_segment import IteratorAlp
 
 
 def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
@@ -11,11 +11,11 @@ def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
     `azimuthal`.
     """
     return list(
-        itertools.islice(Orth(polar, azimuthal, standardization, symbolic), n + 1)
+        itertools.islice(Iterator(polar, azimuthal, standardization, symbolic), n + 1)
     )
 
 
-class Orth(OrthAlp):
+class Iterator(IteratorAlp):
     def __init__(self, polar, azimuthal, standardization, symbolic=False):
         cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
 

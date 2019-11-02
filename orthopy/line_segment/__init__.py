@@ -1,6 +1,6 @@
 from . import recurrence_coefficients
 from .orth import (
-    OrthAlp,
+    IteratorAlp,
     tree_alp,
     tree_chebyshev1,
     tree_chebyshev2,
@@ -18,7 +18,7 @@ __all__ = [
     "tree_legendre",
     "tree_jacobi",
     "tree_alp",
-    "OrthAlp",
+    "IteratorAlp",
     "clenshaw",
     "show",
     "plot",
