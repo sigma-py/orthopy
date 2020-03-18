@@ -90,7 +90,7 @@ def test_jacobi(dtype):
         a = S(1)
         b = S(1)
         _, _, alpha, beta = orthopy.line_segment.recurrence_coefficients.jacobi(
-            n, a, b, "monic"
+            n, a, b, "monic", symbolic=True
         )
         assert all([a == 0 for a in alpha])
         assert (beta == [S(4) / 3, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33]).all()
@@ -99,7 +99,7 @@ def test_jacobi(dtype):
         b = 1.0
         tol = 1.0e-14
         _, _, alpha, beta = orthopy.line_segment.recurrence_coefficients.jacobi(
-            n, a, b, "monic"
+            n, a, b, "monic", symbolic=False
         )
         assert numpy.all(abs(alpha) < tol)
         assert numpy.all(
