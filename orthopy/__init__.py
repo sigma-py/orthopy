@@ -11,22 +11,10 @@ from . import (
     sphere,
     triangle,
 )
-from .__about__ import (
-    __author__,
-    __copyright__,
-    __email__,
-    __license__,
-    __status__,
-    __version__,
-)
+from .__about__ import __version__
 
 __all__ = [
-    "__author__",
-    "__email__",
-    "__copyright__",
-    "__license__",
     "__version__",
-    "__status__",
     "disk",
     "e1r",
     "e1r2",
