@@ -230,9 +230,9 @@ class Normal:
         # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2
         # (Chebyshev 1).
         if N == 0:
-            a = frac(alpha + beta + 2, 2) * sqrt(
-                frac(alpha + beta + 3, (alpha + 1) * (beta + 1))
-            )
+            w = sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
+            a = frac(alpha + beta + 2, 2) * w
+            b = frac(beta - alpha, 2) * w
         else:
             a = frac(2 * N + alpha + beta + 2, 2) * sqrt(
                 frac(
@@ -240,14 +240,6 @@ class Normal:
                     (N + 1) * (N + alpha + 1) * (N + beta + 1) * (N + alpha + beta + 1),
                 )
             )
-
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2
-        # (Chebyshev 1).
-        if N == 0:
-            b = frac(beta - alpha, 2) * sqrt(
-                frac(alpha + beta + 3, (alpha + 1) * (beta + 1))
-            )
-        else:
             b = frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta)) * sqrt(
                 frac(
                     (2 * N + alpha + beta + 3) * (2 * N + alpha + beta + 1),
