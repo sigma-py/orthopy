@@ -6,7 +6,7 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - run: pip3 install -U black flake8 --user
+      - run: pip3 install black flake8
       - run: black --check .
       - run: flake8 .
   build:
@@ -14,10 +14,10 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
-      - run: pip3 install -U pytest pytest-cov --user
+      - run: pip3 install -U pytest pytest-cov
       - checkout
-      - run: pip3 install .[all] --user
-      - run: pip3 install -r test_requirements.txt --user
+      - run: pip3 install .[all]
+      - run: pip3 install -r test_requirements.txt
       # The tests
       - run:
           command: pytest --cov orthopy
