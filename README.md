@@ -78,11 +78,9 @@ All polynomials are normalized over the measure.
 
 ### Triangle
 
-<img src="https://nschloe.github.io/orthopy/triangle-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/triangle-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/triangle-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
+| <img src="https://nschloe.github.io/orthopy/triangle-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/triangle-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/triangle-3-1.png" width="70%"> |
+| :-------------------:|:------------------:|:----------:|
+| n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
 for level in orthopy.triangle.Iterator(x, "normal", symbolic=False):
@@ -100,11 +98,9 @@ Available standardizations are
 
 ### Quadrilateral
 
-<img src="https://nschloe.github.io/orthopy/quad-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/quad-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/quad-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
+| <img src="https://nschloe.github.io/orthopy/quad-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-3-1.png" width="70%"> |
+| :-------------------:|:------------------:|:----------:|
+| n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
 vals = orthopy.quadrilateral.tree(x, 4, symbolic=False)
@@ -114,9 +110,7 @@ All polynomials are normalized on the quadrilateral.
 
 ### Disk
 
-<img src="https://nschloe.github.io/orthopy/disk-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/disk-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/disk-4-3.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/disk-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-4-3.png" width="70%">
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
 
@@ -134,9 +128,7 @@ All polynomials are normalized on the unit disk.
 
 ### 2D space with weight function exp(-r<sup>2</sup>)
 
-<img src="https://nschloe.github.io/orthopy/e2r2-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/e2r2-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/e2r2-3-1.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/e2r2-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-3-1.png" width="70%">
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
@@ -148,9 +140,7 @@ All polynomials are normalized over the measure.
 
 ### Sphere
 
-<img src="https://nschloe.github.io/orthopy/sphere-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/sphere-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/sphere-5-3.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/sphere-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-5-3.png" width="70%">
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=5, k=3  |
 
@@ -172,9 +162,7 @@ vals = orthopy.sphere.tree_sph(
 
 ### Hexahedron
 
-<img src="https://nschloe.github.io/orthopy/hexa-1-0.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/hexa-2-1.png" width="70%"> |
-<img src="https://nschloe.github.io/orthopy/hexa-5-5.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/hexa-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-5-5.png" width="70%">
 :-------------------:|:------------------:|:----------:|
 n=1, k=0             |  n=2, k=1          |  n=5, k=5  |
 
