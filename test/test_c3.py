@@ -18,7 +18,6 @@ def test_integral0(n=4):
     )
     for val in vals[1:]:
         assert sympy.integrate(val, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 0
-    return
 
 
 def test_orthogonality(n=4):
@@ -30,7 +29,6 @@ def test_orthogonality(n=4):
 
     for val in vals:
         assert sympy.integrate(val, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 0
-    return
 
 
 def test_normality(n=4):
@@ -41,12 +39,10 @@ def test_normality(n=4):
 
     for val in tree:
         assert sympy.integrate(val ** 2, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 1
-    return
 
 
 def test_write():
     orthopy.c3.write("hexa.vtk", lambda X: orthopy.c3.tree(X.T, 5)[5][5])
-    return
 
 
 if __name__ == "__main__":
