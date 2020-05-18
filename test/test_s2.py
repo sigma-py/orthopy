@@ -9,11 +9,11 @@ def test_integral0(n=4):
     """
     x = sympy.Symbol("x")
     y = sympy.Symbol("y")
-    # for level in orthopy.disk.Orth(numpy.array([x, y]), symbolic=True):
+    # for level in orthopy.s2.Orth(numpy.array([x, y]), symbolic=True):
     #     print(level)
     #     exit(1)
 
-    vals = numpy.concatenate(orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True))
+    vals = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
 
     # Cartesian integration in sympy is bugged, cf.
     # <https://github.com/sympy/sympy/issues/13816>.
@@ -40,7 +40,7 @@ def test_integral0(n=4):
 def test_orthogonality(n=3):
     x = sympy.Symbol("x")
     y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     r = sympy.Symbol("r")
@@ -59,7 +59,7 @@ def test_orthogonality(n=3):
 def test_normality(n=4):
     x = sympy.Symbol("x")
     y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.disk.tree(numpy.array([x, y]), n, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
 
     # Cartesian integration in sympy is bugged, cf.
     # <https://github.com/sympy/sympy/issues/13816>.
@@ -79,12 +79,12 @@ def test_normality(n=4):
 
 def test_show(n=2, r=1):
     def f(X):
-        return orthopy.disk.tree(X, n)[n][r]
+        return orthopy.s2.tree(X, n)[n][r]
 
-    orthopy.disk.show(f)
-    # orthopy.disk.plot(f, lcar=2.0e-2)
+    orthopy.s2.show(f)
+    # orthopy.s2.plot(f, lcar=2.0e-2)
     # import matplotlib.pyplot as plt
-    # plt.savefig('disk.png', transparent=True)
+    # plt.savefig('s2.png', transparent=True)
 
 
 if __name__ == "__main__":

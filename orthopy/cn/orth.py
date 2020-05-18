@@ -1,6 +1,6 @@
 import numpy
 
-from ..line_segment.recurrence_coefficients import Legendre
+from ..c1.recurrence_coefficients import Legendre
 from ..tools import math_comb
 
 

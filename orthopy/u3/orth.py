@@ -3,7 +3,7 @@ import itertools
 import numpy
 import sympy
 
-from ..line_segment import IteratorAlp
+from ..c1 import IteratorAlp
 
 
 def tree_sph(polar, azimuthal, n, standardization, symbolic=False):

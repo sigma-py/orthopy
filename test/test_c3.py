@@ -11,7 +11,7 @@ def test_integral0(n=4):
     y = sympy.Symbol("y")
     z = sympy.Symbol("z")
     vals = numpy.concatenate(
-        orthopy.hexahedron.tree(numpy.array([x, y, z]), n, symbolic=True)
+        orthopy.c3.tree(numpy.array([x, y, z]), n, symbolic=True)
     )
 
     assert (
@@ -28,7 +28,7 @@ def test_orthogonality(n=4):
     y = sympy.Symbol("y")
     z = sympy.Symbol("z")
     tree = numpy.concatenate(
-        orthopy.hexahedron.tree(numpy.array([x, y, z]), n, symbolic=True)
+        orthopy.c3.tree(numpy.array([x, y, z]), n, symbolic=True)
     )
     vals = tree * numpy.roll(tree, 1, axis=0)
 
@@ -42,7 +42,7 @@ def test_normality(n=4):
     y = sympy.Symbol("y")
     z = sympy.Symbol("z")
     tree = numpy.concatenate(
-        orthopy.hexahedron.tree(numpy.array([x, y, z]), n, symbolic=True)
+        orthopy.c3.tree(numpy.array([x, y, z]), n, symbolic=True)
     )
 
     for val in tree:
@@ -51,8 +51,8 @@ def test_normality(n=4):
 
 
 def test_write():
-    orthopy.hexahedron.write(
-        "hexa.vtk", lambda X: orthopy.hexahedron.tree(X.T, 5)[5][5]
+    orthopy.c3.write(
+        "hexa.vtk", lambda X: orthopy.c3.tree(X.T, 5)[5][5]
     )
     return
 

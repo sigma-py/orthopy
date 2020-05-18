@@ -20,7 +20,7 @@ import orthopy
 def test_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.chebyshev1(
+    out = orthopy.c1.recurrence_coefficients.chebyshev1(
         n, "monic", symbolic=True
     )
 
@@ -48,7 +48,7 @@ def test_chebyshev1_monic(n, y):
 def test_chebyshev1_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.chebyshev1(
+    out = orthopy.c1.recurrence_coefficients.chebyshev1(
         n, standardization="p(1)=(n+alpha over n)", symbolic=True
     )
 
@@ -77,7 +77,7 @@ def test_chebyshev1_p11(n, y):
 def test_chebyshev1_normal(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.chebyshev1(
+    out = orthopy.c1.recurrence_coefficients.chebyshev1(
         n, standardization="normal", symbolic=True
     )
 
@@ -91,7 +91,7 @@ def test_chebyshev1_normal(n, y):
 
 def test_integral0(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.line_segment.tree_chebyshev1(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
 
     assert sympy.integrate(vals[0] / sqrt(1 - x ** 2), (x, -1, +1)) == sqrt(pi)
     for val in vals[1:]:
@@ -101,7 +101,7 @@ def test_integral0(n=4):
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.line_segment.tree_chebyshev1(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
 
     for val in vals:
         assert sympy.integrate(val ** 2 / sqrt(1 - x ** 2), (x, -1, +1)) == 1
@@ -110,7 +110,7 @@ def test_normality(n=4):
 
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.line_segment.tree_chebyshev1(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
@@ -123,7 +123,7 @@ def test_orthogonality(n=4):
 )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.chebyshev1(
+    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
         n, "monic", symbolic=True
     )
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
@@ -141,7 +141,7 @@ def test_eval(t, ref, tol=1.0e-14):
 )
 def test_eval_vec(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.chebyshev1(
+    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
         n, "monic", symbolic=True
     )
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
@@ -151,7 +151,7 @@ def test_eval_vec(t, ref, tol=1.0e-14):
 
 
 def test_plot(n=4):
-    orthopy.line_segment.plot(n, -0.5, -0.5)
+    orthopy.c1.plot(n, -0.5, -0.5)
     return
 
 

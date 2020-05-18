@@ -20,7 +20,7 @@ import orthopy
 def test_gegenbauer_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.gegenbauer(
+    out = orthopy.c1.recurrence_coefficients.gegenbauer(
         n, -Rational(1, 2), "monic", symbolic=True
     )
 

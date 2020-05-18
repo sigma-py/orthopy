@@ -19,7 +19,7 @@ import orthopy
 def test_jacobi_monic(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.c1.recurrence_coefficients.jacobi(
         n, alpha=3, beta=2, standardization="monic", symbolic=True
     )
 
@@ -45,7 +45,7 @@ def test_jacobi_monic(n, y):
 def test_jacobi_p11(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.c1.recurrence_coefficients.jacobi(
         n, alpha=3, beta=2, standardization="p(1)=(n+alpha over n)", symbolic=True
     )
 
@@ -71,7 +71,7 @@ def test_jacobi_p11(n, y):
 def test_jacobi_normal(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    out = orthopy.line_segment.recurrence_coefficients.jacobi(
+    out = orthopy.c1.recurrence_coefficients.jacobi(
         n, alpha=3, beta=2, standardization="normal", symbolic=True
     )
 
@@ -89,7 +89,7 @@ def test_jacobi(dtype):
     if dtype == S:
         a = S(1)
         b = S(1)
-        _, _, alpha, beta = orthopy.line_segment.recurrence_coefficients.jacobi(
+        _, _, alpha, beta = orthopy.c1.recurrence_coefficients.jacobi(
             n, a, b, "monic", symbolic=True
         )
         assert all([a == 0 for a in alpha])
@@ -98,7 +98,7 @@ def test_jacobi(dtype):
         a = 1.0
         b = 1.0
         tol = 1.0e-14
-        _, _, alpha, beta = orthopy.line_segment.recurrence_coefficients.jacobi(
+        _, _, alpha, beta = orthopy.c1.recurrence_coefficients.jacobi(
             n, a, b, "monic", symbolic=False
         )
         assert numpy.all(abs(alpha) < tol)

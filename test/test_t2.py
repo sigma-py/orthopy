@@ -9,7 +9,7 @@ import orthopy
 
 
 def op(i, j, x, y):
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.c1.recurrence_coefficients.jacobi(
         i,
         0,
         0,
@@ -28,7 +28,7 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    p0, a, b, c = orthopy.line_segment.recurrence_coefficients.jacobi(
+    p0, a, b, c = orthopy.c1.recurrence_coefficients.jacobi(
         j,
         2 * i + 1,
         0,
