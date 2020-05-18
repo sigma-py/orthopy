@@ -1,18 +1,20 @@
+import math
 import numpy
+import sys
 
 
 def math_comb(n, k):
-    # TODO replace by math.comb as soon as we require Python 3.8,
-    # <https://docs.python.org/3/library/math.html#math.comb>
-    if k > n - k:
-        k = n - k
+    if sys.version < "3.8":
+        if k > n - k:
+            k = n - k
 
-    out = 1
-    for i in range(k):
-        out *= n - i
-        out //= i + 1
+        out = 1
+        for i in range(k):
+            out *= n - i
+            out //= i + 1
+        return out
 
-    return out
+    return math.comb(n, k)
 
 
 def line_tree(t, p0, a, b, c):
