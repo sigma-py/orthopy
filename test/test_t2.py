@@ -72,20 +72,19 @@ def eval_orthpolys4(bary):
 
 
 @pytest.mark.parametrize("x", [numpy.array([0.24, 0.65]), numpy.random.rand(2, 5)])
-def test_triangle_orth(x, tol=1.0e-12):
+def test_t2_orth(x, tol=1.0e-12):
     L = 4
     exacts = eval_orthpolys4(x)
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.triangle.tree(bary, L, "normal")
+    vals = orthopy.t2.tree(bary, L, "normal")
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
-    return
 
 
-def test_triangle_orth_exact():
+def test_t2_orth_exact():
     x = numpy.array([S(1) / 3, S(1) / 7])
 
     L = 2
@@ -100,15 +99,14 @@ def test_triangle_orth_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.triangle.tree(bary, L, "normal", symbolic=True)
+    vals = orthopy.t2.tree(bary, L, "normal", symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert v == e
-    return
 
 
-def test_triangle_orth_1_exact():
+def test_t2_orth_1_exact():
     x = numpy.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
 
     L = 2
@@ -118,24 +116,22 @@ def test_triangle_orth_1_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.triangle.tree(bary, L, "1", symbolic=True)
+    vals = orthopy.t2.tree(bary, L, "1", symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
-    return
 
 
 def test_integral0(n=4):
     b0 = sympy.Symbol("b0")
     b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.triangle.tree(b, n, "normal", symbolic=True))
+    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
     assert sympy.integrate(tree[0], (b0, 0, 1 - b1), (b1, 0, 1)) == sympy.sqrt(2) / 2
     for val in tree[1:]:
         assert sympy.integrate(val, (b0, 0, 1 - b1), (b1, 0, 1)) == 0
-    return
 
 
 def test_normality(n=4):
@@ -144,47 +140,44 @@ def test_normality(n=4):
     b0 = sympy.Symbol("b0")
     b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.triangle.tree(b, n, "normal", symbolic=True))
+    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
     for val in tree:
         assert sympy.integrate(val ** 2, (b0, 0, 1 - b1), (b1, 0, 1)) == 1
-    return
 
 
 def test_orthogonality(n=4):
     b0 = sympy.Symbol("b0")
     b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.triangle.tree(b, n, "normal", symbolic=True))
+    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
 
     for val in shifts:
         assert sympy.integrate(val, (b0, 0, 1 - b1), (b1, 0, 1)) == 0
-    return
 
 
 def test_show(n=2, r=1):
-    # plot the triangle
+    # plot the t2
     alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
     corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
 
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.triangle.tree(bary, n, "normal")[n][r]
+        return orthopy.t2.tree(bary, n, "normal")[n][r]
 
     cmap = mpl.colors.ListedColormap(["white", "black"])
-    orthopy.triangle.show(corners, f, n=1000, colorbar=False, colormap=cmap)
+    orthopy.t2.show(corners, f, n=1000, colorbar=False, colormap=cmap)
 
-    # orthopy.triangle.plot(corners, f)
+    # orthopy.t2.plot(corners, f)
     # import matplotlib.pyplot as plt
-    # plt.savefig('triangle.png', transparent=True)
-    return
+    # plt.savefig('t2.png', transparent=True)
 
 
 if __name__ == "__main__":
     # x_ = numpy.array([0.24, 0.65])
     # # x_ = numpy.random.rand(3, 2)
-    # test_triangle_orth(x=x_)
+    # test_t2_orth(x=x_)
     test_show(n=3, r=1)

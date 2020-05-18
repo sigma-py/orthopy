@@ -10,7 +10,7 @@ def test_integral0(n=4):
     polar = sympy.Symbol("theta", real=True)
     azimuthal = sympy.Symbol("phi", real=True)
     tree = numpy.concatenate(
-        orthopy.sphere.tree_sph(
+        orthopy.u3.tree_sph(
             polar, azimuthal, n, standardization="quantum mechanic", symbolic=True
         )
     )
@@ -25,7 +25,6 @@ def test_integral0(n=4):
             )
             == 0
         )
-    return
 
 
 def test_normality(n=3):
@@ -34,7 +33,7 @@ def test_normality(n=3):
     polar = sympy.Symbol("theta", real=True)
     azimuthal = sympy.Symbol("phi", real=True)
     tree = numpy.concatenate(
-        orthopy.sphere.tree_sph(
+        orthopy.u3.tree_sph(
             polar, azimuthal, n, standardization="quantum mechanic", symbolic=True
         )
     )
@@ -42,7 +41,6 @@ def test_normality(n=3):
     for val in tree:
         integrand = sympy.simplify(val * sympy.conjugate(val) * sympy.sin(polar))
         assert sympy.integrate(integrand, (azimuthal, 0, 2 * pi), (polar, 0, pi)) == 1
-    return
 
 
 @pytest.mark.parametrize("standardization", ["quantum mechanic", "schmidt"])
@@ -50,7 +48,7 @@ def test_orthogonality(standardization, n=4):
     polar = sympy.Symbol("theta", real=True)
     azimuthal = sympy.Symbol("phi", real=True)
     tree = numpy.concatenate(
-        orthopy.sphere.tree_sph(
+        orthopy.u3.tree_sph(
             polar, azimuthal, n, standardization=standardization, symbolic=True
         )
     )
@@ -59,7 +57,6 @@ def test_orthogonality(standardization, n=4):
     for val in vals:
         integrand = sympy.simplify(val * sympy.sin(polar))
         assert sympy.integrate(integrand, (azimuthal, 0, 2 * pi), (polar, 0, pi)) == 0
-    return
 
 
 def test_schmidt_seminormality(n=3):
@@ -68,7 +65,7 @@ def test_schmidt_seminormality(n=3):
     polar = sympy.Symbol("theta", real=True)
     azimuthal = sympy.Symbol("phi", real=True)
     tree = numpy.concatenate(
-        orthopy.sphere.tree_sph(
+        orthopy.u3.tree_sph(
             polar, azimuthal, n, standardization="schmidt", symbolic=True
         )
     )
@@ -81,7 +78,6 @@ def test_schmidt_seminormality(n=3):
             assert sympy.integrate(
                 integrand, (azimuthal, 0, 2 * pi), (polar, 0, pi)
             ) == 4 * pi / (2 * k + 1)
-    return
 
 
 def sph_exact2(theta, phi):
@@ -128,36 +124,33 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.tree_sph(
+    vals = orthopy.u3.tree_sph(
         theta, phi, L, standardization="quantum mechanic", symbolic=True
     )
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(numpy.array(sympy.simplify(v - e)) == 0)
-    return
 
 
 @pytest.mark.parametrize("theta,phi", [(1.0e-1, 16.0 / 5.0), (1.0e-4, 7.0e-5)])
 def test_spherical_harmonics_numpy(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.sphere.tree_sph(theta, phi, L, standardization="quantum mechanic")
+    vals = orthopy.u3.tree_sph(theta, phi, L, standardization="quantum mechanic")
 
     cmplx = numpy.vectorize(complex)
     for val, ex in zip(vals, exacts):
         assert numpy.all(abs(val - cmplx(ex)) < 1.0e-12)
-    return
 
 
 def test_write():
     def sph22(polar, azimuthal):
-        return orthopy.sphere.tree_sph(
+        return orthopy.u3.tree_sph(
             polar, azimuthal, 5, standardization="quantum mechanic"
         )[5][3]
 
-    orthopy.sphere.write("sph.vtk", sph22)
-    return
+    orthopy.u3.write("sph.vtk", sph22)
 
 
 if __name__ == "__main__":
