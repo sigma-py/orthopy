@@ -32,13 +32,9 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install -y gnuplot
-    - name: Install package
+    - name: Test with tox
       run: |
-        pip install -r test_requirements.txt
-        pip install .[all]
-    - name: Test with pytest
-      run: |
-        pip install pytest pytest-cov
-        pytest --cov orthopy
+        pip install tox
+        tox
     # - name: Submit to codecov
     #   run: bash <(curl -s https://codecov.io/bash) -R ~/work

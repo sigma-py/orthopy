@@ -6,7 +6,6 @@ def show(*args, **kwargs):
 
     plot(*args, **kwargs)
     plt.show()
-    return
 
 
 def plot(corners, f, n=100, colorbar=True, colormap="coolwarm"):
@@ -58,4 +57,3 @@ def plot(corners, f, n=100, colorbar=True, colormap="coolwarm"):
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
-    return
