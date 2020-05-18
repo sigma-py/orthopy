@@ -20,9 +20,7 @@ import orthopy
 def test_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, "monic", symbolic=True
-    )
+    out = orthopy.c1.recurrence_coefficients.chebyshev1(n, "monic", symbolic=True)
 
     # Test evaluation of one value
     y0 = orthopy.tools.line_evaluate(x[0], *out)

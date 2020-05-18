@@ -8,9 +8,7 @@ import orthopy
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    _, _, alpha, beta = orthopy.c1.recurrence_coefficients.legendre(
-        n, "monic"
-    )
+    _, _, alpha, beta = orthopy.c1.recurrence_coefficients.legendre(n, "monic")
     t = 1.0
 
     a = numpy.ones(n + 1)
