@@ -40,6 +40,7 @@ class Iterator:
 
     In the same manner this can be repeated for `dim` dimensions.
     """
+
     def __init__(self, X, n, symbolic=False):
         self.legendre_iterator = Legendre("normal", symbolic=symbolic)
         self.p0 = self.legendre_iterator.p0
@@ -78,7 +79,9 @@ class Iterator:
                 r = 0
                 for k in range(L):
                     m = math_comb(k + dim - i - 2, dim - i - 2)
-                    val = self.last[0][-m1:][r : r + m] * (a[L - k - 1] * X[i] - b[L - k - 1])
+                    val = self.last[0][-m1:][r : r + m] * (
+                        a[L - k - 1] * X[i] - b[L - k - 1]
+                    )
                     if L - k > 1:
                         val -= self.last[1][-m2:][r : r + m] * c[L - k - 1]
                     r += m

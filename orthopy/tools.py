@@ -1,6 +1,7 @@
 import math
-import numpy
 import sys
+
+import numpy
 
 
 def math_comb(n, k):
