@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 
 from ..c1.recurrence_coefficients import Legendre
@@ -5,6 +7,10 @@ from ..tools import math_comb
 
 
 def tree(X, n, symbolic=False):
+    return list(itertools.islice(Iterator(X, n, symbolic), n + 1))
+
+
+class Iterator:
     """Evaluates the entire tree of orthogonal polynomials for the n-cube
 
     The computation is organized such that tree returns a list of arrays, L={0, ...,
@@ -34,48 +40,59 @@ def tree(X, n, symbolic=False):
 
     In the same manner this can be repeated for `dim` dimensions.
     """
-    # p0, a, b, c = legendre(n + 1, "normal", symbolic=symbolic)
-    legendre_iterator = Legendre("normal", symbolic=symbolic)
-    p0 = legendre_iterator.p0
+    def __init__(self, X, n, symbolic=False):
+        self.legendre_iterator = Legendre("normal", symbolic=symbolic)
+        self.p0 = self.legendre_iterator.p0
+        self.dim = X.shape[0]
+        self.p0n = self.p0 ** self.dim
+        self.last = [None, None]
+        self.k = 0
+        self.X = X
+        self.a = []
+        self.b = []
+        self.c = []
 
-    dim = X.shape[0]
+    def __iter__(self):
+        return self
 
-    p0n = p0 ** dim
-    out = []
-
-    level = numpy.array([numpy.ones(X.shape[1:], dtype=int) * p0n])
-    out.append(level)
-
-    a = []
-    b = []
-    c = []
-
-    for L in range(n):
-        aa, bb, cc = next(legendre_iterator)
+    def __next__(self):
+        aa, bb, cc = next(self.legendre_iterator)
+        dim = self.dim
+        L = self.k
+        X = self.X
+        a = self.a
+        b = self.b
+        c = self.c
         a.append(aa)
         b.append(bb)
         c.append(cc)
 
-        level = []
-        for i in range(dim - 1):
-            m1 = math_comb(L + dim - i - 1, dim - i - 1)
-            if L > 0:
-                m2 = math_comb(L + dim - i - 2, dim - i - 1)
-            r = 0
-            for k in range(L + 1):
-                m = math_comb(k + dim - i - 2, dim - i - 2)
-                val = out[-1][-m1:][r : r + m] * (a[L - k] * X[i] - b[L - k])
-                if L - k > 0:
-                    val -= out[-2][-m2:][r : r + m] * c[L - k]
-                r += m
-                level.append(val)
+        if L == 0:
+            out = numpy.full([1] + list(X.shape[1:]), self.p0n)
+        else:
+            level = []
+            for i in range(dim - 1):
+                m1 = math_comb(L + dim - i - 2, dim - i - 1)
+                if L > 1:
+                    m2 = math_comb(L + dim - i - 3, dim - i - 1)
+                r = 0
+                for k in range(L):
+                    m = math_comb(k + dim - i - 2, dim - i - 2)
+                    val = self.last[0][-m1:][r : r + m] * (a[L - k - 1] * X[i] - b[L - k - 1])
+                    if L - k > 1:
+                        val -= self.last[1][-m2:][r : r + m] * c[L - k - 1]
+                    r += m
+                    level.append(val)
 
-        # treat the last one separately
-        val = out[-1][-1] * (a[L] * X[-1] - b[L])
-        if L > 0:
-            val -= out[-2][-1] * c[L]
-        level.append([val])
+            # treat the last one separately
+            val = self.last[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
+            if L > 1:
+                val -= self.last[1][-1] * c[L - 1]
+            level.append([val])
 
-        out.append(numpy.concatenate(level))
+            out = numpy.concatenate(level)
 
-    return out
+        self.last[1] = self.last[0]
+        self.last[0] = out
+        self.k += 1
+        return out
