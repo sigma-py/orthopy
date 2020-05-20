@@ -44,10 +44,11 @@ class Iterator1D:
 
 
 class ProductIterator:
-    """Evaluates the entire tree of orthogonal polynomials for the n-cube
+    """Evaluates the entire tree of orthogonal polynomials for an n-dimensional product
+    domain.
 
     The computation is organized such that tree returns a list of arrays, L={0, ...,
-    dim}, where each level corresponds to the polynomial degree L.  Further, each level
+    dim}, where each level corresponds to the polynomial degree L. Further, each level
     is organized like a discrete (dim-1)-dimensional simplex. Let's demonstrate this for
     3D:
 
