@@ -4,7 +4,6 @@ import sympy
 from sympy import Rational, S, pi, sqrt
 
 import orthopy
-
 from helpers import get_nth
 
 
