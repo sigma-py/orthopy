@@ -12,8 +12,8 @@ def tree(X, n, **kwargs):
 
 
 class Iterator(Iterator1D):
-    """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
-    (default) to get classical Laguerre.
+    """Generalized Laguerre polynomials. Set alpha=0 (default) to get classical
+    Laguerre.
 
     The first few are (for alpha=0):
 
