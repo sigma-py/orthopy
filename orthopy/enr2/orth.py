@@ -1,7 +1,7 @@
 import itertools
 
 from ..e1r2 import IteratorRC
-from ..helpers import ProductIterator
+from ..tools import ProductIterator
 
 
 def tree(X, n, symbolic=False):
