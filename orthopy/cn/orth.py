@@ -10,5 +10,5 @@ def tree(n, *args, **kwargs):
 
 class Iterator(ProductIterator):
     def __init__(self, X, symbolic=False):
-        iterator = legendre.IteratorRC("normal", symbolic)
+        iterator = legendre.IteratorRCNormal(symbolic)
         super().__init__(iterator, X, symbolic)
