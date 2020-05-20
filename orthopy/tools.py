@@ -44,12 +44,14 @@ class Iterator1D:
 
 
 class ProductIterator:
-    def __init__(self, p0, a, b, c, X, symbolic):
-        self.a = a
-        self.b = b
-        self.c = c
+    def __init__(self, rc_iterator, X, symbolic):
+        self.rc_iterator = rc_iterator
+
+        self.a = []
+        self.b = []
+        self.c = []
         dim = X.shape[0]
-        self.p0n = p0 ** dim
+        self.p0n = rc_iterator.p0 ** dim
         self.k = 0
         self.X = X
         self.last = [None, None]
@@ -58,12 +60,17 @@ class ProductIterator:
         return self
 
     def __next__(self):
-        X = self.X
-        L = self.k
-        dim = X.shape[0]
+        aa, bb, cc = next(self.rc_iterator)
         a = self.a
         b = self.b
         c = self.c
+        a.append(aa)
+        b.append(bb)
+        c.append(cc)
+
+        X = self.X
+        L = self.k
+        dim = X.shape[0]
 
         if L == 0:
             out = numpy.full([1] + list(X.shape[1:]), self.p0n)
