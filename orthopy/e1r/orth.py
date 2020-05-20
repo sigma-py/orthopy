@@ -19,6 +19,11 @@ class Iterator(Iterator1D):
 class IteratorRC:
     """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
     (default) to get classical Laguerre.
+
+    The first few are (for alpha=0):
+
+    standardization == "monic":
+
     """
 
     def __init__(self, alpha=0, standardization="normal", symbolic=False):

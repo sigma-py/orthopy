@@ -1,6 +1,6 @@
 import numpy
 
-from .orth import Jacobi
+from . import jacobi
 
 
 def clenshaw(a, alpha, beta, t):
@@ -50,7 +50,7 @@ def plot(L, alpha, beta):
     xlim = [-1.0, +1.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
 
-    for k, val in enumerate(Jacobi(x, alpha, beta, "normal")):
+    for k, val in enumerate(jacobi.Iterator(x, alpha, beta, "normal")):
         if k > L:
             break
         plt.plot(x, val)

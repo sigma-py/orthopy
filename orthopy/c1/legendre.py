@@ -39,6 +39,7 @@ class Iterator(Iterator1D):
         105*sqrt(2)*x**4/16 - 45*sqrt(2)*x**2/8 + 9*sqrt(2)/16
         63*sqrt(22)*x**5/16 - 35*sqrt(22)*x**3/8 + 15*sqrt(22)*x/16
     """
+
     def __init__(self, X, *args, **kwargs):
         super().__init__(X, IteratorRC(*args, **kwargs))
 

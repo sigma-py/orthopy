@@ -41,6 +41,7 @@ class Iterator(Iterator1D):
         8*sqrt(2)*x**4/sqrt(pi) - 8*sqrt(2)*x**2/sqrt(pi) + sqrt(2)/sqrt(pi)
         16*sqrt(2)*x**5/sqrt(pi) - 20*sqrt(2)*x**3/sqrt(pi) + 5*sqrt(2)*x/sqrt(pi)
     """
+
     def __init__(self, X, *args, **kwargs):
         super().__init__(X, IteratorRC(*args, **kwargs))
 
