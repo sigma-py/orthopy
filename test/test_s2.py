@@ -4,77 +4,44 @@ import sympy
 import orthopy
 
 
-def test_integral0(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    # for level in orthopy.s2.Orth(numpy.array([x, y]), symbolic=True):
-    #     print(level)
-    #     exit(1)
-
-    vals = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
-
+def _integrate(f, x, y):
     # Cartesian integration in sympy is bugged, cf.
     # <https://github.com/sympy/sympy/issues/13816>.
     # Simply transform to polar coordinates for now.
     r = sympy.Symbol("r")
     phi = sympy.Symbol("phi")
-    assert sympy.integrate(
-        r * vals[0].subs([(x, r * sympy.cos(phi)), (y, r * sympy.sin(phi))]),
+    return sympy.integrate(
+        r * f.subs([(x, r * sympy.cos(phi)), (y, r * sympy.sin(phi))]),
         (r, 0, 1),
         (phi, 0, 2 * sympy.pi),
-    ) == sympy.sqrt(sympy.pi)
+    )
 
+
+def test_integral0(n=4):
+    xy = sympy.symbols("x, y")
+    vals = numpy.concatenate(orthopy.s2.tree(xy, n, symbolic=True))
+
+    assert _integrate(vals[0], *xy) == sympy.sqrt(sympy.pi)
     for val in vals[1:]:
-        assert (
-            sympy.integrate(
-                r * val.subs([(x, r * sympy.cos(phi)), (y, r * sympy.sin(phi))]),
-                (r, 0, 1),
-                (phi, 0, 2 * sympy.pi),
-            )
-            == 0
-        )
+        assert _integrate(val, *xy) == 0
 
 
 def test_orthogonality(n=3):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
+    xy = sympy.symbols("x, y")
+    tree = numpy.concatenate(orthopy.s2.tree(xy, n, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
-    r = sympy.Symbol("r")
-    phi = sympy.Symbol("phi")
     for val in vals:
-        assert (
-            sympy.integrate(
-                r * val.subs([(x, r * sympy.cos(phi)), (y, r * sympy.sin(phi))]),
-                (r, 0, 1),
-                (phi, 0, 2 * sympy.pi),
-            )
-            == 0
-        )
+        assert _integrate(val, *xy) == 0
 
 
 def test_normality(n=4):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.s2.tree(numpy.array([x, y]), n, symbolic=True))
-
-    # Cartesian integration in sympy is bugged, cf.
-    # <https://github.com/sympy/sympy/issues/13816>.
-    # Simply transform to polar coordinates for now.
-    r = sympy.Symbol("r")
-    phi = sympy.Symbol("phi")
-    for val in tree:
-        assert (
-            sympy.integrate(
-                r * val.subs([(x, r * sympy.cos(phi)), (y, r * sympy.sin(phi))]) ** 2,
-                (r, 0, 1),
-                (phi, 0, 2 * sympy.pi),
-            )
-            == 1
-        )
+    xy = sympy.symbols("x, y")
+    for k, level in enumerate(orthopy.s2.Iterator(xy, symbolic=True)):
+        for val in level:
+            assert _integrate(val ** 2, *xy) == 1
+        if k == n:
+            break
 
 
 def test_show(n=2, r=1):
