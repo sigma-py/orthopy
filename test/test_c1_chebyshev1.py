@@ -44,7 +44,7 @@ def test_chebyshev1_monic(n, y):
 def test_chebyshev1_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    standardization = "p(1)=(n+alpha over n)"
+    standardization = "classical"
 
     y0 = get_nth(
         orthopy.c1.chebyshev1.Iterator(x[0], standardization, symbolic=True), n

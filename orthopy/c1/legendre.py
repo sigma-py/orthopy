@@ -19,7 +19,7 @@ class Iterator(Iterator1D):
         x**4 - 6*x**2/7 + 3/35
         x**5 - 10*x**3/9 + 5*x/21
 
-    standardization == "p(1)=(n+alpha over n)":
+    standardization == "classical":
         1
         x
         3*x**2/2 - 1/2

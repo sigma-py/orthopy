@@ -10,8 +10,8 @@ from helpers import get_nth
 
 
 def op(i, j, x, y):
-    # standardization='monic'
-    standardization = "p(1)=(n+alpha over n)"
+    # standardization = "monic"
+    standardization = "classical"
     val1 = get_nth(
         orthopy.c1.jacobi.Iterator((x - y) / (x + y), 0, 0, standardization), i
     )

@@ -43,8 +43,10 @@ Recurrence coefficients can be explicitly retrieved by
 ```python
 p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
 ```
-Possible choices for the standardization are `"monic"`, `"p(1)=(n+alpha over n)"`, and
-`"normal"`.
+Possible choices for the standardization are
+  * `"monic"` (leading coefficient 1),
+  * `"classical"`, (_p(1) = (n+alpha over n)_), and
+  * `"normal"` (integral over the domain is 1).
 
 
 #### Associated Legendre polynomials
