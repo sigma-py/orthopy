@@ -12,12 +12,9 @@ def _integrate(f, x):
 
 def test_integral0(n=4):
     x = sympy.Symbol("x")
-    vals = numpy.concatenate(
-        orthopy.e1r2.tree(n, numpy.array([x]), "normal", symbolic=True)
-    )
+    vals = orthopy.e1r2.tree(n, x, "normal", symbolic=True)
 
     assert _integrate(vals[0], x) == sympy.sqrt(sympy.sqrt(sympy.pi))
-
     for val in vals[1:]:
         assert _integrate(val, x) == 0
 
@@ -25,7 +22,7 @@ def test_integral0(n=4):
 @pytest.mark.parametrize("standardization", ["monic", "physicist", "normal"])
 def test_orthogonality(standardization, n=4):
     x = sympy.Symbol("x")
-    tree = orthopy.e1r2.tree(n, numpy.array(x), standardization, symbolic=True)
+    tree = orthopy.e1r2.tree(n, x, standardization, symbolic=True)
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     if standardization == "monic":
@@ -39,10 +36,7 @@ def test_orthogonality(standardization, n=4):
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    tree = numpy.concatenate(
-        orthopy.e1r2.tree(n, numpy.array([x]), "normal", symbolic=True)
-    )
-
+    tree = orthopy.e1r2.tree(n, x, "normal", symbolic=True)
     for val in tree:
         assert _integrate(val ** 2, x) == 1
 
