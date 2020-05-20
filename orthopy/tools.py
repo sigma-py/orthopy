@@ -43,19 +43,6 @@ class Iterator1D:
         return out
 
 
-def line_tree2(t, iterator, n):
-    out = [numpy.ones_like(t) * iterator.p0]
-
-    for L in range(n):
-        a, b, c = next(iterator)
-        nxt = out[-1] * (t * a - b)
-        if L > 0:
-            nxt -= out[-2] * c
-        out.append(nxt)
-
-    return out
-
-
 def line_tree(t, p0, a, b, c):
     n = len(a)
     assert len(b) == n
@@ -77,8 +64,7 @@ def line_evaluate(t, p0, a, b, c):
     a, b, and c at the point(s) t.
     """
     vals1 = numpy.zeros_like(t, dtype=int)
-    # The order is important here; see
-    # <https://github.com/sympy/sympy/issues/13637>.
+    # The order is important here; see <https://github.com/sympy/sympy/issues/13637>.
     vals2 = numpy.ones_like(t) * p0
 
     for a_k, b_k, c_k in zip(a, b, c):
