@@ -96,7 +96,6 @@ def test_exact(x, standardization, factor):
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
-    return
 
 
 def test_plot():
@@ -122,7 +121,6 @@ def test_plot():
         labelleft="off",
     )
     plt.grid()
-    return
 
 
 if __name__ == "__main__":

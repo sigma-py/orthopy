@@ -1,7 +1,6 @@
 from . import recurrence_coefficients
+from ._alp import IteratorAlp, tree_alp
 from .orth import (
-    IteratorAlp,
-    tree_alp,
     tree_chebyshev1,
     tree_chebyshev2,
     tree_gegenbauer,
