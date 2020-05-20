@@ -30,7 +30,7 @@ class Iterator1D:
 
     def __next__(self):
         if self.k == 0:
-            out = numpy.full(self.x.shape, self.iterator_abc.p0)
+            out = numpy.full_like(self.x, self.iterator_abc.p0)
         else:
             a, b, c = next(self.iterator_abc)
             out = self.last[0] * (self.x * a - b)
@@ -135,22 +135,6 @@ class ProductIterator:
         self.last[0] = out
         self.k += 1
         return out
-
-
-def line_tree(t, p0, a, b, c):
-    n = len(a)
-    assert len(b) == n
-    assert len(c) == n
-
-    out = [numpy.ones_like(t) * p0]
-
-    for L in range(n):
-        nxt = out[-1] * (t * a[L] - b[L])
-        if L > 0:
-            nxt -= out[-2] * c[L]
-        out.append(nxt)
-
-    return out
 
 
 def line_evaluate(t, p0, a, b, c):

@@ -23,8 +23,8 @@ def gegenbauer(n, lmbda, standardization, symbolic=False):
     return jacobi(n, lmbda, lmbda, standardization, symbolic=symbolic)
 
 
-def jacobi(n, alpha, beta, standardization, symbolic=False):
-    iterator = Jacobi(alpha, beta, standardization, symbolic)
+def jacobi(n, *args, **kwargs):
+    iterator = Jacobi(*args, **kwargs)
     p0 = iterator.p0
     lst = list(itertools.islice(iterator, n))
     a = numpy.array([item[0] for item in lst])
@@ -43,7 +43,7 @@ class Jacobi:
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
 
-    def __init__(self, alpha, beta, standardization, symbolic):
+    def __init__(self, alpha, beta, standardization, symbolic=False):
         if standardization == "monic":
             self.iterator = Monic(alpha, beta, symbolic)
         elif standardization == "p(1)=(n+alpha over n)" or (
