@@ -1,5 +1,3 @@
-import itertools
-
 import numpy
 import pytest
 import sympy
@@ -7,9 +5,7 @@ from sympy import Rational, S, pi, sqrt
 
 import orthopy
 
-
-def get_nth(iterator, n):
-    return next(itertools.islice(iterator, n, None))
+from helpers import get_nth
 
 
 @pytest.mark.parametrize(
