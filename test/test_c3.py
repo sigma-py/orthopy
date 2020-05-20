@@ -4,6 +4,10 @@ import sympy
 import orthopy
 
 
+def _integrate(f, x, y, z):
+    return sympy.integrate(f, (x, -1, +1), (y, -1, +1), (z, -1, +1))
+
+
 def test_integral0(n=4):
     """Make sure that the polynomials are orthonormal
     """
@@ -12,12 +16,9 @@ def test_integral0(n=4):
     z = sympy.Symbol("z")
     vals = numpy.concatenate(orthopy.c3.tree(numpy.array([x, y, z]), n, symbolic=True))
 
-    assert (
-        sympy.integrate(vals[0], (x, -1, +1), (y, -1, +1), (z, -1, +1))
-        == sympy.sqrt(2) ** 3
-    )
+    assert _integrate(vals[0], x, y, z) == sympy.sqrt(2) ** 3
     for val in vals[1:]:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 0
+        assert _integrate(val, x, y, z) == 0
 
 
 def test_orthogonality(n=4):
@@ -28,7 +29,7 @@ def test_orthogonality(n=4):
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 0
+        assert _integrate(val, x, y, z) == 0
 
 
 def test_normality(n=4):
@@ -38,7 +39,7 @@ def test_normality(n=4):
     tree = numpy.concatenate(orthopy.c3.tree(numpy.array([x, y, z]), n, symbolic=True))
 
     for val in tree:
-        assert sympy.integrate(val ** 2, (x, -1, +1), (y, -1, +1), (z, -1, +1)) == 1
+        assert _integrate(val ** 2, x, y, z) == 1
 
 
 def test_write():

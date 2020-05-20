@@ -5,6 +5,12 @@ from sympy import oo
 import orthopy
 
 
+def _integrate(f, x, y):
+    return sympy.integrate(
+        f * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
+    )
+
+
 def test_integral0(n=4):
     """Make sure that the polynomials are orthonormal
     """
@@ -12,17 +18,9 @@ def test_integral0(n=4):
     y = sympy.Symbol("y")
     vals = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
 
-    assert sympy.integrate(
-        vals[0] * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
-    ) == sympy.sqrt(sympy.pi)
+    assert _integrate(vals[0], x, y) == sympy.sqrt(sympy.pi)
     for val in vals[1:]:
-        assert (
-            sympy.integrate(
-                val * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
-            )
-            == 0
-        )
-    return
+        assert _integrate(val, x, y) == 0
 
 
 def test_orthogonality(n=4):
@@ -32,13 +30,7 @@ def test_orthogonality(n=4):
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert (
-            sympy.integrate(
-                val * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
-            )
-            == 0
-        )
-    return
+        assert _integrate(val, x, y) == 0
 
 
 def test_normality(n=4):
@@ -47,13 +39,7 @@ def test_normality(n=4):
     tree = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
 
     for val in tree:
-        assert (
-            sympy.integrate(
-                val ** 2 * sympy.exp(-(x ** 2) - y ** 2), (x, -oo, +oo), (y, -oo, +oo)
-            )
-            == 1
-        )
-    return
+        assert _integrate(val ** 2, x, y) == 1
 
 
 def test_show(n=2, r=1, d=1.5):
@@ -64,7 +50,6 @@ def test_show(n=2, r=1, d=1.5):
     # orthopy.e2r2.plot(f, d=d)
     # import matplotlib.pyplot as plt
     # plt.savefig('e2r2.png', transparent=True)
-    return
 
 
 if __name__ == "__main__":

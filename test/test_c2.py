@@ -4,6 +4,10 @@ import sympy
 import orthopy
 
 
+def _integrate(f, x, y):
+    return sympy.integrate(f, (x, -1, +1), (y, -1, +1))
+
+
 def test_integral0(n=4):
     """Make sure that the polynomials are orthonormal
     """
@@ -11,10 +15,9 @@ def test_integral0(n=4):
     y = sympy.Symbol("y")
     vals = numpy.concatenate(orthopy.c2.tree(numpy.array([x, y]), n, symbolic=True))
 
-    assert sympy.integrate(vals[0], (x, -1, +1), (y, -1, +1)) == 2
+    assert _integrate(vals[0], x, y) == 2
     for val in vals[1:]:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
-    return
+        assert _integrate(val, x, y) == 0
 
 
 def test_orthogonality(n=4):
@@ -24,8 +27,7 @@ def test_orthogonality(n=4):
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
-    return
+        assert _integrate(val, x, y) == 0
 
 
 def test_normality(n=4):
@@ -34,8 +36,7 @@ def test_normality(n=4):
     tree = numpy.concatenate(orthopy.c2.tree(numpy.array([x, y]), n, symbolic=True))
 
     for val in tree:
-        assert sympy.integrate(val ** 2, (x, -1, +1), (y, -1, +1)) == 1
-    return
+        assert _integrate(val ** 2, x, y) == 1
 
 
 def test_show(n=2, r=1):
@@ -46,7 +47,6 @@ def test_show(n=2, r=1):
     # orthopy.c2.plot(f)
     # import matplotlib.pyplot as plt
     # plt.savefig('quad.png', transparent=True)
-    return
 
 
 if __name__ == "__main__":
