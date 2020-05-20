@@ -36,15 +36,15 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 (α=β=0) polynomials.
 
 ```python
-vals = orthopy.c1.tree_jacobi(4, x, alpha, beta, "normal", symbolic=False)
+vals = orthopy.c1.jacobi.tree(4, x, alpha, beta, "normal", symbolic=False)
 ```
 
 Recurrence coefficients can be explicitly retrieved by
 ```python
-p0, a, b, c = orthopy.c1.recurrence_coefficients.jacobi(n, a, b, "monic")
+p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
 ```
-Possible choices for the standardization are `"monic"`, `"p(1)=(n+alpha over
-n)"`, and `"normal"`.
+Possible choices for the standardization are `"monic"`, `"p(1)=(n+alpha over n)"`, and
+`"normal"`.
 
 
 #### Associated Legendre polynomials
@@ -52,7 +52,7 @@ n)"`, and `"normal"`.
 <img src="https://nschloe.github.io/orthopy/line-segment-alp.png" width="25%">
 
 ```python
-vals = orthopy.c1.tree_alp(
+vals = orthopy.c1.associated_legendre.tree(
     x, 4, phi=None, standardization="natural", with_condon_shortley_phase=True,
     symbolic=False
     )
@@ -104,7 +104,7 @@ Available standardizations are
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
-vals = orthopy.quadrilateral.tree(x, 4, symbolic=False)
+vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized on the quadrilateral.
 
@@ -122,7 +122,7 @@ for level in orthopy.s2.Iterator(x, symbolic=False):
     pass
 
 # or for the entire tree up to degree 4
-vals = orthopy.s2.tree(x, 4, symbolic=False)
+vals = orthopy.s2.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized on the unit disk.
 
@@ -134,7 +134,7 @@ All polynomials are normalized on the unit disk.
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
-vals = orthopy.e2r2.tree(x, 4, symbolic=False)
+vals = orthopy.e2r2.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized over the measure.
 
@@ -168,7 +168,7 @@ vals = orthopy.u3.tree_sph(
 n=1, k=0             |  n=2, k=1          |  n=5, k=5  |
 
 ```python
-vals = orthopy.c3.tree(x, 3, symbolic=False)
+vals = orthopy.c3.tree(3, x, symbolic=False)
 ```
 All polynomials are normalized on the hexahedron.
 
@@ -176,7 +176,7 @@ All polynomials are normalized on the hexahedron.
 ### n-Cube (_C<sub>n</sub>_)
 
 ```python
-vals = orthopy.cn.tree(x, 6, symbolic=False)
+vals = orthopy.cn.tree(6, x, symbolic=False)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
@@ -184,7 +184,7 @@ determined by `X.shape[0]`.
 ### nD space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
 
 ```python
-vals = orthopy.enr2.tree(x, 4, symbolic=False)
+vals = orthopy.enr2.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized over the measure. The dimensionality is
 determined by `X.shape[0]`.
@@ -223,11 +223,12 @@ print(sympy.expand(tree[3][1]))
 
 ### Installation
 
-orthopy is [available from the Python Package Index](https://pypi.python.org/pypi/orthopy/), so with
+orthopy is [available from the Python Package
+Index](https://pypi.python.org/pypi/orthopy/), so use
 ```
-pip install -U orthopy
+pip install orthopy
 ```
-you can install/upgrade.
+to install.
 
 ### Testing
 

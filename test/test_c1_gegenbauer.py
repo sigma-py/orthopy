@@ -3,6 +3,7 @@ import pytest
 from sympy import Rational
 
 import orthopy
+from helpers import get_nth
 
 
 # simple smoke test for gegenbauer
@@ -19,16 +20,12 @@ import orthopy
 )
 def test_gegenbauer_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
-
-    out = orthopy.c1.recurrence_coefficients.gegenbauer(
-        n, -Rational(1, 2), "monic", symbolic=True
-    )
+    lmbda = -Rational(1, 2)
 
     # Test evaluation of one value
-    y0 = orthopy.tools.line_evaluate(x[0], *out)
+    y0 = get_nth(orthopy.c1.gegenbauer.Iterator(x[0], lmbda, "monic", symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.tools.line_evaluate(x, *out)
+    val = get_nth(orthopy.c1.gegenbauer.Iterator(x, lmbda, "monic", symbolic=True), n)
     assert all(val == y)
-    return

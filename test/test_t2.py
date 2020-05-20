@@ -6,17 +6,15 @@ import sympy
 from sympy import S
 
 import orthopy
+from helpers import get_nth
 
 
 def op(i, j, x, y):
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.jacobi(
-        i,
-        0,
-        0,
-        # standardization='monic'
-        standardization="p(1)=(n+alpha over n)",
+    # standardization='monic'
+    standardization = "p(1)=(n+alpha over n)"
+    val1 = get_nth(
+        orthopy.c1.jacobi.Iterator((x - y) / (x + y), 0, 0, standardization), i
     )
-    val1 = orthopy.tools.line_evaluate((x - y) / (x + y), p0, a, b, c)
 
     val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
 
@@ -28,14 +26,9 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.jacobi(
-        j,
-        2 * i + 1,
-        0,
-        # standardization='monic'
-        standardization="p(1)=(n+alpha over n)",
+    val2 = get_nth(
+        orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), 2 * i + 1, 0, standardization), j
     )
-    val2 = orthopy.tools.line_evaluate(1 - 2 * (x + y), p0, a, b, c)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 
     flt = numpy.vectorize(float)
