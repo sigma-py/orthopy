@@ -3,7 +3,7 @@ import numpy
 from .tools import math_comb
 
 
-class NDIterator:
+class ProductIterator:
     def __init__(self, p0, a, b, c, X, symbolic):
         self.a = a
         self.b = b

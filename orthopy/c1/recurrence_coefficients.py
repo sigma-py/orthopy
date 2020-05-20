@@ -58,7 +58,6 @@ class Jacobi:
             self.iterator = Normal(alpha, beta, symbolic)
 
         self.p0 = self.iterator.p0
-        return
 
     def __iter__(self):
         return self

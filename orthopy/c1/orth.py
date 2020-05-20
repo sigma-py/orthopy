@@ -39,7 +39,6 @@ class _Natural:
 
         self.p0 = 1
         self.sqrt1mx2 = sqrt(1 - x ** 2)
-        return
 
     def z0_factor(self, L):
         return self.sqrt1mx2 / (2 * L)
@@ -62,7 +61,6 @@ class _Spherical:
 
         self.p0 = 1 / self.sqrt(4 * pi)
         self.sqrt1mx2 = self.sqrt(1 - x ** 2)
-        return
 
     def z0_factor(self, L):
         return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
@@ -97,7 +95,6 @@ class _ComplexSpherical:
         self.p0 = 1 if geodesic else 1 / self.sqrt(4 * pi)
         self.exp_iphi = exp(imag_unit * phi)
         self.sqrt1mx2 = self.sqrt(1 - x ** 2)
-        return
 
     def z0_factor(self, L):
         return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
@@ -125,7 +122,6 @@ class _Normal:
 
         self.p0 = 1 / self.sqrt(2)
         self.sqrt1mx2 = self.sqrt(1 - x ** 2)
-        return
 
     def z0_factor(self, L):
         return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
