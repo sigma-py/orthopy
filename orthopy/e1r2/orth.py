@@ -42,15 +42,16 @@ class Iterator(Iterator1D):
         sqrt(6)*x**4/(3*pi**(1/4)) - sqrt(6)*x**2/pi**(1/4) + sqrt(6)/(4*pi**(1/4))
         2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
     """
+
     def __init__(self, X, standardization, *args, **kwargs):
         if standardization in ["probabilist", "monic"]:
             iterator = IteratorRCMonic(*args, **kwargs)
         elif standardization == "physicist":
             iterator = IteratorRCPhysicist(*args, **kwargs)
         else:
-            assert standardization == "normal", (
-                f"Unknown standardization '{standardization}'."
-            )
+            assert (
+                standardization == "normal"
+            ), f"Unknown standardization '{standardization}'."
             iterator = IteratorRCNormal(*args, **kwargs)
 
         super().__init__(X, iterator)

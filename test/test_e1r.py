@@ -14,7 +14,9 @@ def _integrate(f, alpha, x):
 def test_integral0(alpha, n=4):
     x = sympy.Symbol("x")
     vals = numpy.concatenate(
-        orthopy.e1r.tree(numpy.array([x]), n, alpha=alpha, symbolic=True)
+        orthopy.e1r.tree(
+            n, numpy.array([x]), alpha=alpha, standardization="normal", symbolic=True
+        )
     )
 
     assert _integrate(vals[0], alpha, x) == 1
@@ -29,8 +31,8 @@ def test_orthogonality(alpha, standardization, n=4):
     x = sympy.Symbol("x")
     tree = numpy.concatenate(
         orthopy.e1r.tree(
-            numpy.array([x]),
             n,
+            numpy.array([x]),
             alpha=alpha,
             standardization=standardization,
             symbolic=True,
@@ -46,7 +48,7 @@ def test_orthogonality(alpha, standardization, n=4):
 def test_normality(alpha, n=4):
     x = sympy.Symbol("x")
     tree = numpy.concatenate(
-        orthopy.e1r.tree(numpy.array([x]), n, alpha=alpha, symbolic=True)
+        orthopy.e1r.tree(n, numpy.array([x]), "normal", alpha=alpha, symbolic=True)
     )
 
     for val in tree:
