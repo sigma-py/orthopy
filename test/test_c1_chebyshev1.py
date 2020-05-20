@@ -119,32 +119,18 @@ def test_orthogonality(n=4):
 
 
 @pytest.mark.parametrize(
-    "t, ref", [(Rational(1, 2), Rational(1, 32)), (1, Rational(1, 16))]
-)
-def test_eval(t, ref, tol=1.0e-14):
-    n = 5
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, "monic", symbolic=True
-    )
-    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
-    assert value == ref
-
-
-@pytest.mark.parametrize(
     "t, ref",
     [
+        (Rational(1, 2), Rational(1, 32)),
+        (1, Rational(1, 16)),
         (numpy.array([1]), numpy.array([Rational(1, 16)])),
         (numpy.array([1, 2]), numpy.array([Rational(1, 16), Rational(181, 8)])),
     ],
 )
-def test_eval_vec(t, ref, tol=1.0e-14):
+def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, "monic", symbolic=True
-    )
-    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
-
-    assert (value == ref).all()
+    value = get_nth(orthopy.c1.chebyshev1.Iterator(t, "monic", symbolic=True), n)
+    assert numpy.all(value == ref)
 
 
 def test_plot(n=4):
