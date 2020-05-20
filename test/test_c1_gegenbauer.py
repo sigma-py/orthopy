@@ -23,9 +23,9 @@ def test_gegenbauer_chebyshev1_monic(n, y):
     lmbda = -Rational(1, 2)
 
     # Test evaluation of one value
-    y0 = get_nth(orthopy.c1.gegenbauer.Iterator(x[0], lmbda, "monic", symbolic=True), n)
+    y0 = get_nth(orthopy.c1.gegenbauer.Iterator(x[0], "monic", lmbda, symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = get_nth(orthopy.c1.gegenbauer.Iterator(x, lmbda, "monic", symbolic=True), n)
+    val = get_nth(orthopy.c1.gegenbauer.Iterator(x, "monic", lmbda, symbolic=True), n)
     assert all(val == y)
