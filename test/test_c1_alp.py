@@ -85,7 +85,7 @@ def test_exact(x, standardization, factor):
     """Test for the exact values.
     """
     L = 4
-    vals = orthopy.c1.tree_alp(x, L, standardization, symbolic=True)
+    vals = orthopy.c1.associated_legendre.tree(L, x, standardization, symbolic=True)
 
     exacts = exact_natural(x)
     exacts = [
@@ -101,8 +101,8 @@ def test_exact(x, standardization, factor):
 def test_plot():
     L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
-    vals = orthopy.c1.tree_alp(
-        x, L, standardization="normal", with_condon_shortley_phase=True, symbolic=False
+    vals = orthopy.c1.associated_legendre.tree(
+        L, x, standardization="normal", with_condon_shortley_phase=True, symbolic=False
     )
 
     for val in vals[L]:

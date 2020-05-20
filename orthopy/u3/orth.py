@@ -3,7 +3,7 @@ import itertools
 import numpy
 import sympy
 
-from ..c1 import IteratorAlp
+from ..c1 import associated_legendre
 
 
 def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
@@ -15,7 +15,7 @@ def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
     )
 
 
-class Iterator(IteratorAlp):
+class Iterator(associated_legendre.Iterator):
     def __init__(self, polar, azimuthal, standardization, symbolic=False):
         cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
 
