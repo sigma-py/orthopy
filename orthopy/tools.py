@@ -18,6 +18,13 @@ def math_comb(n, k):
     return math.comb(n, k)
 
 
+def _full_like(x, val):
+    if isinstance(x, numpy.ndarray):
+        return numpy.full_like(x, val)
+    # assume x is just a float or int
+    return val
+
+
 class Iterator1D:
     def __init__(self, x, iterator_abc):
         self.iterator_abc = iterator_abc
@@ -30,7 +37,7 @@ class Iterator1D:
 
     def __next__(self):
         if self.k == 0:
-            out = numpy.full_like(self.x, self.iterator_abc.p0)
+            out = _full_like(self.x, self.iterator_abc.p0)
         else:
             a, b, c = next(self.iterator_abc)
             out = self.last[0] * (self.x * a - b)
