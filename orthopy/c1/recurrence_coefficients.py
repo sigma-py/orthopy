@@ -5,33 +5,25 @@ import numpy
 import sympy
 
 
+def legendre(n, standardization, symbolic=False):
+    return gegenbauer(n, 0, standardization, symbolic=symbolic)
+
+
 def chebyshev1(n, standardization, symbolic=False):
     one_half = sympy.S(1) / 2 if symbolic else 0.5
-    return jacobi(n, -one_half, -one_half, standardization, symbolic=symbolic)
+    return gegenbauer(n, -one_half, standardization, symbolic=symbolic)
 
 
 def chebyshev2(n, standardization, symbolic=False):
     one_half = sympy.S(1) / 2 if symbolic else 0.5
-    return jacobi(n, +one_half, +one_half, standardization, symbolic=symbolic)
+    return gegenbauer(n, +one_half, standardization, symbolic=symbolic)
 
 
 def gegenbauer(n, lmbda, standardization, symbolic=False):
     return jacobi(n, lmbda, lmbda, standardization, symbolic=symbolic)
 
 
-def legendre(n, standardization, symbolic=False):
-    return jacobi(n, 0, 0, standardization, symbolic=symbolic)
-
-
 def jacobi(n, alpha, beta, standardization, symbolic=False):
-    """Generate the recurrence coefficients a_k, b_k, c_k in
-
-    P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
-
-    for the Jacobi polynomials which are orthogonal on [-1, 1] with respect to the
-    weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
-    <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
-    """
     iterator = Jacobi(alpha, beta, standardization, symbolic)
     p0 = iterator.p0
     lst = list(itertools.islice(iterator, n))
@@ -42,6 +34,15 @@ def jacobi(n, alpha, beta, standardization, symbolic=False):
 
 
 class Jacobi:
+    """Generate the recurrence coefficients a_k, b_k, c_k in
+
+    P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
+
+    for the Jacobi polynomials which are orthogonal on [-1, 1] with respect to the
+    weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
+    <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
+    """
+
     def __init__(self, alpha, beta, standardization, symbolic):
         if standardization == "monic":
             self.iterator = Monic(alpha, beta, symbolic)
@@ -66,14 +67,26 @@ class Jacobi:
         return self.iterator.__next__()
 
 
-class Legendre(Jacobi):
-    def __init__(self, standardization, symbolic=False):
-        super().__init__(0, 0, standardization, symbolic)
-
-
 class Gegenbauer(Jacobi):
     def __init__(self, lmbda, standardization, symbolic=False):
         super().__init__(lmbda, lmbda, standardization, symbolic)
+
+
+class Legendre(Gegenbauer):
+    def __init__(self, standardization, symbolic=False):
+        super().__init__(0, standardization, symbolic)
+
+
+class Chebyshev1(Gegenbauer):
+    def __init__(self, standardization, symbolic=False):
+        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        super().__init__(-one_half, standardization, symbolic)
+
+
+class Chebyshev2(Gegenbauer):
+    def __init__(self, standardization, symbolic=False):
+        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        super().__init__(+one_half, standardization, symbolic)
 
 
 class Monic:
