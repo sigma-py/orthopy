@@ -11,16 +11,24 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-def recurrence_coefficients(n, *args, **kwargs):
-    return list(itertools.islice(IteratorRC(*args, **kwargs), n + 1))
-
-
 class Iterator(Iterator1D):
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, IteratorRC(*args, **kwargs))
+    def __init__(self, X, standardization, *args, **kwargs):
+        if standardization == "monic":
+            iterator = IteratorRCMonic(*args, **kwargs)
+        elif standardization == "classical":
+            # p(1) = (n+alpha over n)   (=1 if alpha=0)
+            iterator = IteratorRCClassical(*args, **kwargs)
+        else:
+            valid = ", ".join(["monic", "classical", "normal"])
+            assert (
+                standardization == "normal"
+            ), f"Unknown standardization '{standardization}'. (valid: {valid})"
+            iterator = IteratorRCNormal(*args, **kwargs)
+
+        super().__init__(X, iterator)
 
 
-class IteratorRC:
+class IteratorRCMonic:
     """Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
@@ -30,31 +38,6 @@ class IteratorRC:
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
 
-    def __init__(self, alpha, beta, standardization, symbolic=False):
-        if standardization == "monic":
-            self.iterator = Monic(alpha, beta, symbolic)
-        elif standardization == "p(1)=(n+alpha over n)" or (
-            alpha == 0 and standardization == "p(1)=1"
-        ):
-            self.iterator = P1(alpha, beta, symbolic)
-        else:
-            assert (
-                standardization == "normal"
-            ), "Unknown standardization '{}'. (valid: {})".format(
-                standardization, ", ".join(["monic", "p(1)=(n+alpha over n)", "normal"])
-            )
-            self.iterator = Normal(alpha, beta, symbolic)
-
-        self.p0 = self.iterator.p0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.iterator.__next__()
-
-
-class Monic:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
@@ -117,7 +100,7 @@ class Monic:
         return a, b, c
 
 
-class P1:
+class IteratorRCClassical:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
@@ -174,7 +157,7 @@ class P1:
         return a, b, c
 
 
-class Normal:
+class IteratorRCNormal:
     def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta

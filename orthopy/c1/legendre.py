@@ -8,10 +8,6 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-def recurrence_coefficients(n, *args, **kwargs):
-    return list(itertools.islice(IteratorRC(*args, **kwargs), n + 1))
-
-
 class Iterator(Iterator1D):
     """Legendre. The first few are:
 
@@ -40,10 +36,32 @@ class Iterator(Iterator1D):
         63*sqrt(22)*x**5/16 - 35*sqrt(22)*x**3/8 + 15*sqrt(22)*x/16
     """
 
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, IteratorRC(*args, **kwargs))
+    def __init__(self, X, standardization, *args, **kwargs):
+        if standardization == "monic":
+            iterator = IteratorRCMonic(*args, **kwargs)
+        elif standardization == "classical":
+            # p(1) = (n+alpha over n)   (=1 if alpha=0)
+            iterator = IteratorRCClassical(*args, **kwargs)
+        else:
+            valid = ", ".join(["monic", "classical", "normal"])
+            assert (
+                standardization == "normal"
+            ), f"Unknown standardization '{standardization}'. (valid: {valid})"
+            iterator = IteratorRCNormal(*args, **kwargs)
+
+        super().__init__(X, iterator)
 
 
-class IteratorRC(gegenbauer.IteratorRC):
-    def __init__(self, *args, **kwargs):
-        super().__init__(0, *args, **kwargs)
+class IteratorRCMonic(gegenbauer.IteratorRCMonic):
+    def __init__(self, symbolic=False):
+        super().__init__(0, symbolic)
+
+
+class IteratorRCClassical(gegenbauer.IteratorRCClassical):
+    def __init__(self, symbolic=False):
+        super().__init__(0, symbolic)
+
+
+class IteratorRCNormal(gegenbauer.IteratorRCNormal):
+    def __init__(self, symbolic=False):
+        super().__init__(0, symbolic)

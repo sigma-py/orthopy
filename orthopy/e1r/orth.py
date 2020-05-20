@@ -33,7 +33,7 @@ class Iterator(Iterator1D):
         x**4/24 - 2*x**3/3 + 3*x**2 - 4*x + 1
         -x**5/120 + 5*x**4/24 - 5*x**3/3 + 5*x**2 - 5*x + 1
 
-    The classical and normal standarizations differe for alpha != 0.
+    The classical and normal standarizations differ for alpha != 0.
     """
 
     def __init__(self, X, standardization, *args, **kwargs):

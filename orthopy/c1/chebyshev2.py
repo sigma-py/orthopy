@@ -10,10 +10,6 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-def recurrence_coefficients(n, *args, **kwargs):
-    return list(itertools.islice(IteratorRC(*args, **kwargs), n + 1))
-
-
 class Iterator(Iterator1D):
     """Chebyshev polynomials of the second kind. The first few are:
 
@@ -42,11 +38,35 @@ class Iterator(Iterator1D):
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, IteratorRC(*args, **kwargs))
+    def __init__(self, X, standardization, *args, **kwargs):
+        if standardization == "monic":
+            iterator = IteratorRCMonic(*args, **kwargs)
+        elif standardization == "classical":
+            # p(1) = (n+alpha over n)   (=1 if alpha=0)
+            iterator = IteratorRCClassical(*args, **kwargs)
+        else:
+            valid = ", ".join(["monic", "classical", "normal"])
+            assert (
+                standardization == "normal"
+            ), f"Unknown standardization '{standardization}'. (valid: {valid})"
+            iterator = IteratorRCNormal(*args, **kwargs)
+
+        super().__init__(X, iterator)
 
 
-class IteratorRC(gegenbauer.IteratorRC):
-    def __init__(self, standardization, symbolic=False):
+class IteratorRCMonic(gegenbauer.IteratorRCMonic):
+    def __init__(self, symbolic=False):
         one_half = sympy.S(1) / 2 if symbolic else 0.5
-        super().__init__(+one_half, standardization, symbolic)
+        super().__init__(+one_half, symbolic)
+
+
+class IteratorRCClassical(gegenbauer.IteratorRCClassical):
+    def __init__(self, symbolic=False):
+        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        super().__init__(+one_half, symbolic)
+
+
+class IteratorRCNormal(gegenbauer.IteratorRCNormal):
+    def __init__(self, symbolic=False):
+        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        super().__init__(+one_half, symbolic)
