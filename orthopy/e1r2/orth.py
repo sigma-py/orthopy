@@ -6,12 +6,15 @@ import sympy
 from ..tools import Iterator1D
 
 
-def tree(X, n, *args, **kwargs):
-    return list(itertools.islice(Iterator(X, *args, **kwargs), n + 1))
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
 class Iterator(Iterator1D):
     """Recurrence coefficients for Hermite polynomials.
+
+    Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the different
+    standardizations.
 
     The first few are:
 
@@ -39,65 +42,74 @@ class Iterator(Iterator1D):
         sqrt(6)*x**4/(3*pi**(1/4)) - sqrt(6)*x**2/pi**(1/4) + sqrt(6)/(4*pi**(1/4))
         2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
     """
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, IteratorRC(*args, **kwargs))
-
-
-class IteratorRC:
-    def __init__(self, standardization, symbolic=False):
-        self.standardization = standardization
-        self.symbolic = symbolic
-        self.k = 0
-
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        self.pi = sympy.pi if symbolic else numpy.pi
-        self.frac = sympy.Rational if self.symbolic else lambda a, b: a / b
-
+    def __init__(self, X, standardization, *args, **kwargs):
         if standardization in ["probabilist", "monic"]:
-            self.p0 = 1
+            iterator = IteratorRCMonic(*args, **kwargs)
         elif standardization == "physicist":
-            self.p0 = 1
+            iterator = IteratorRCPhysicist(*args, **kwargs)
         else:
-            assert standardization == "normal", "Unknown standardization '{}'.".format(
-                standardization
+            assert standardization == "normal", (
+                f"Unknown standardization '{standardization}'."
             )
-            self.p0 = 1 / self.sqrt(self.sqrt(self.pi))
+            iterator = IteratorRCNormal(*args, **kwargs)
+
+        super().__init__(X, iterator)
+
+
+class IteratorRCMonic:
+    def __init__(self, symbolic=False):
+        self.k = 0
+        self.p0 = 1
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        frac = self.frac
-        pi = self.pi
-        sqrt = self.sqrt
+        a = 1
+        b = 0
+        # Note: The first c is never actually used.
+        c = self.k
 
-        # Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the different
-        # standardizations.
-        if self.standardization in ["probabilist", "monic"]:
-            a = 1
-            b = 0
-            if self.k == 0:
-                # TODO remove
-                c = sqrt(pi)  # only used for custom scheme
-            else:
-                c = self.k
-        elif self.standardization == "physicist":
-            a = 2
-            b = 0
-            if self.k == 0:
-                # TODO remove
-                c = sqrt(pi)  # only used for custom scheme
-            else:
-                c = 2 * self.k
-        else:
-            assert self.standardization == "normal"
-            a = sqrt(frac(2, self.k + 1))
-            b = 0
-            if self.k == 0:
-                # TODO remove
-                c = numpy.nan
-            else:
-                c = sqrt(frac(self.k, self.k + 1))
+        self.k += 1
+        return a, b, c
+
+
+class IteratorRCPhysicist:
+    def __init__(self, symbolic=False):
+        self.k = 0
+        self.p0 = 1
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        a = 2
+        b = 0
+        # Note: The first c is never actually used.
+        c = 2 * self.k
+
+        self.k += 1
+        return a, b, c
+
+
+class IteratorRCNormal:
+    def __init__(self, symbolic=False):
+        self.k = 0
+
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.frac = sympy.Rational if symbolic else lambda a, b: a / b
+        pi = sympy.pi if symbolic else numpy.pi
+
+        self.p0 = 1 / self.sqrt(self.sqrt(pi))
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        a = self.sqrt(self.frac(2, self.k + 1))
+        b = 0
+        # Note: The first c is never actually used.
+        c = self.sqrt(self.frac(self.k, self.k + 1))
 
         self.k += 1
         return a, b, c
