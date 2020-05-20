@@ -11,6 +11,34 @@ def tree(X, n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
+    """Recurrence coefficients for Hermite polynomials.
+
+    The first few are:
+
+    standardization in ["probabilist", "monic"]:
+        1
+        x
+        x**2 - 1
+        x**3 - 3*x
+        x**4 - 6*x**2 + 3
+        x**5 - 10*x**3 + 15*x
+
+    standardization == "physicist":
+        1
+        2*x
+        4*x**2 - 2
+        8*x**3 - 12*x
+        16*x**4 - 48*x**2 + 12
+        32*x**5 - 160*x**3 + 120*x
+
+    standardization == "normal":
+        pi**(-1/4)
+        sqrt(2)*x/pi**(1/4)
+        sqrt(2)*x**2/pi**(1/4) - sqrt(2)/(2*pi**(1/4))
+        2*sqrt(3)*x**3/(3*pi**(1/4)) - sqrt(3)*x/pi**(1/4)
+        sqrt(6)*x**4/(3*pi**(1/4)) - sqrt(6)*x**2/pi**(1/4) + sqrt(6)/(4*pi**(1/4))
+        2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
+    """
     def __init__(self, X, *args, **kwargs):
         super().__init__(X, IteratorRC(*args, **kwargs))
 
