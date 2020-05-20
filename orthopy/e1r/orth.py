@@ -11,15 +11,9 @@ def tree(X, n, **kwargs):
     return list(itertools.islice(Iterator(X, **kwargs), n + 1))
 
 
-class Iterator:
+class Iterator(Iterator1D):
     def __init__(self, X, **kwargs):
-        self.iterator1d = Iterator1D(X, IteratorRC(**kwargs))
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return next(self.iterator1d)
+        super().__init__(X, IteratorRC(**kwargs))
 
 
 class IteratorRC:
