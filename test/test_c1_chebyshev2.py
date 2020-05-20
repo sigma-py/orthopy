@@ -29,7 +29,6 @@ def test_chebyshev2_monic(n, y):
     # Test evaluation of multiple values
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -58,7 +57,6 @@ def test_chebyshev2_p11(n, y):
 
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -84,7 +82,6 @@ def test_chebyshev2_normal(n, y):
 
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 # sympy is too weak for the following tests
@@ -95,7 +92,6 @@ def test_chebyshev2_normal(n, y):
 #     assert sympy.integrate(vals[0] * sqrt(1 - x ** 2), (x, -1, +1)) == sqrt(pi)/sqrt(2)
 #     for val in vals[1:]:
 #         assert sympy.integrate(val * sqrt(1 - x ** 2), (x, -1, +1)) == 0
-#     return
 #
 #
 # def test_normality(n=4):
@@ -104,7 +100,6 @@ def test_chebyshev2_normal(n, y):
 #
 #     for val in vals:
 #         assert sympy.integrate(val ** 2 * sqrt(1 - x ** 2), (x, -1, +1)) == 1
-#     return
 #
 #
 # def test_orthogonality(n=4):
@@ -114,7 +109,6 @@ def test_chebyshev2_normal(n, y):
 #
 #     for val in out:
 #         assert sympy.simplify(sympy.integrate(val * sqrt(1 - x ** 2), (x, -1, +1))) == 0
-#     return
 
 
 @pytest.mark.parametrize("t, ref", [(Rational(1, 2), 0), (1, Rational(3, 16))])
@@ -126,7 +120,6 @@ def test_eval(t, ref, tol=1.0e-14):
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
 
     assert value == ref
-    return
 
 
 @pytest.mark.parametrize(
@@ -144,12 +137,10 @@ def test_eval_vec(t, ref, tol=1.0e-14):
     value = orthopy.tools.line_evaluate(t, p0, a, b, c)
 
     assert (value == ref).all()
-    return
 
 
 def test_plot(n=4):
     orthopy.c1.plot(n, +0.5, +0.5)
-    return
 
 
 if __name__ == "__main__":
