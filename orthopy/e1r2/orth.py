@@ -6,9 +6,19 @@ import sympy
 from ..tools import Iterator1D
 
 
-def tree(X, n, standardization, symbolic=False):
-    iterator_abc = IteratorRC(standardization, symbolic)
-    return list(itertools.islice(Iterator1D(X, iterator_abc), n + 1))
+def tree(X, n, *args, **kwargs):
+    return list(itertools.islice(Iterator(X, *args, **kwargs), n + 1))
+
+
+class Iterator:
+    def __init__(self, X, *args, **kwargs):
+        self.iterator1d = Iterator1D(X, IteratorRC(*args, **kwargs))
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self.iterator1d)
 
 
 class IteratorRC:

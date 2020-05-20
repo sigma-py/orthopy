@@ -7,16 +7,27 @@ import sympy
 from ..tools import Iterator1D
 
 
-def tree(X, n, alpha=0, standardization="normal", symbolic=False):
-    """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
-    (default) to get classical Laguerre.
-    """
-    iterator_abc = IteratorRC(alpha=alpha, standardization=standardization, symbolic=symbolic)
-    return list(itertools.islice(Iterator1D(X, iterator_abc), n + 1))
+def tree(X, n, **kwargs):
+    return list(itertools.islice(Iterator(X, **kwargs), n + 1))
+
+
+class Iterator:
+    def __init__(self, X, **kwargs):
+        self.iterator1d = Iterator1D(X, IteratorRC(**kwargs))
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self.iterator1d)
 
 
 class IteratorRC:
-    def __init__(self, alpha, standardization="normal", symbolic=False):
+    """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
+    (default) to get classical Laguerre.
+    """
+
+    def __init__(self, alpha=0, standardization="normal", symbolic=False):
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
         self.gamma = sympy.gamma if symbolic else math.gamma
         self.S = sympy.S if symbolic else lambda a: a
