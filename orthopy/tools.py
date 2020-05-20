@@ -88,6 +88,7 @@ class ProductIterator:
         self.a = []
         self.b = []
         self.c = []
+        X = numpy.asarray(X)
         dim = X.shape[0]
         self.p0n = rc_iterator.p0 ** dim
         self.k = 0

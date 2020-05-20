@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import pytest
 from sympy import S, sqrt
@@ -16,12 +18,12 @@ from helpers import get_nth
         ("monic", 4, [S(3) / 143, -S(81) / 2288, S(112) / 143]),
         ("monic", 5, [S(1) / 143, -S(111) / 4576, S(256) / 429]),
         #
-        ("p(1)=(n+alpha over n)", 0, [1, 1, 1]),
-        ("p(1)=(n+alpha over n)", 1, [S(1) / 2, S(9) / 4, 4]),
-        ("p(1)=(n+alpha over n)", 2, [-1, S(9) / 4, 10]),
-        ("p(1)=(n+alpha over n)", 3, [-S(5) / 8, S(35) / 64, 20]),
-        ("p(1)=(n+alpha over n)", 4, [S(15) / 16, -S(405) / 256, 35]),
-        ("p(1)=(n+alpha over n)", 5, [S(21) / 32, -S(2331) / 1024, 56]),
+        ("classical", 0, [1, 1, 1]),
+        ("classical", 1, [S(1) / 2, S(9) / 4, 4]),
+        ("classical", 2, [-1, S(9) / 4, 10]),
+        ("classical", 3, [-S(5) / 8, S(35) / 64, 20]),
+        ("classical", 4, [S(15) / 16, -S(405) / 256, 35]),
+        ("classical", 5, [S(21) / 32, -S(2331) / 1024, 56]),
         #
         ("normal", 0, [sqrt(15) / 4, sqrt(15) / 4, sqrt(15) / 4]),
         ("normal", 1, [sqrt(10) / 8, 9 * sqrt(10) / 16, sqrt(10)]),
@@ -39,38 +41,32 @@ def test_jacobi_monic(standardization, n, y):
     symbolic = True
 
     y2 = get_nth(
-        orthopy.c1.jacobi.Iterator(x[2], alpha, beta, standardization, symbolic), n
+        orthopy.c1.jacobi.Iterator(x[2], standardization, alpha, beta, symbolic), n
     )
     assert y2 == y[2]
 
     val = get_nth(
-        orthopy.c1.jacobi.Iterator(x, alpha, beta, standardization, symbolic), n
+        orthopy.c1.jacobi.Iterator(x, standardization, alpha, beta, symbolic), n
     )
     assert all(val == y)
 
 
-@pytest.mark.parametrize("dtype", [numpy.float, S])
-def test_jacobi(dtype):
+@pytest.mark.parametrize("symbolic", [True, False])
+def test_jacobi(symbolic):
     n = 5
-    if dtype == S:
-        a = S(1)
-        b = S(1)
-        _, _, alpha, beta = orthopy.c1.recurrence_coefficients.jacobi(
-            n, a, b, "monic", symbolic=True
-        )
-        assert all([a == 0 for a in alpha])
-        assert (beta == [S(4) / 3, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33]).all()
+    iterator = orthopy.c1.jacobi.IteratorRCMonic(1, 1, symbolic)
+    alpha, beta, gamma = numpy.array(list(itertools.islice(iterator, n))).T
+
+    if symbolic:
+        assert numpy.all(alpha == 1)
+        assert numpy.all(beta == 0)
+        assert numpy.all(gamma == [S(4) / 3, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
     else:
-        a = 1.0
-        b = 1.0
         tol = 1.0e-14
-        _, _, alpha, beta = orthopy.c1.recurrence_coefficients.jacobi(
-            n, a, b, "monic", symbolic=False
-        )
-        assert numpy.all(abs(alpha) < tol)
-        assert numpy.all(
-            abs(beta - [4.0 / 3.0, 1.0 / 5.0, 8.0 / 35.0, 5.0 / 21.0, 8.0 / 33.0]) < tol
-        )
+        assert numpy.all(numpy.abs(alpha - 1) < tol)
+        assert numpy.all(numpy.abs(beta) < tol)
+        ref_gamma = [4 / 3, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
+        assert numpy.all(numpy.abs(gamma - ref_gamma) < tol)
 
 
 if __name__ == "__main__":

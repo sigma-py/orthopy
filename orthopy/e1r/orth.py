@@ -7,75 +7,114 @@ import sympy
 from ..tools import Iterator1D
 
 
-def tree(X, n, **kwargs):
-    return list(itertools.islice(Iterator(X, **kwargs), n + 1))
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, **kwargs):
-        super().__init__(X, IteratorRC(**kwargs))
+    """Generalized Laguerre polynomials. Set alpha=0 (default) to get classical
+    Laguerre.
 
+    The first few are (for alpha=0):
 
-class IteratorRC:
-    """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
-    (default) to get classical Laguerre.
+    standardization == "monic":
+        1
+        x - 1
+        x**2 - 4*x + 2
+        x**3 - 9*x**2 + 18*x - 6
+        x**4 - 16*x**3 + 72*x**2 - 96*x + 24
+        x**5 - 25*x**4 + 200*x**3 - 600*x**2 + 600*x - 120
+
+    standardization == "classical" or "normal"
+        1
+        1 - x
+        x**2/2 - 2*x + 1
+        -x**3/6 + 3*x**2/2 - 3*x + 1
+        x**4/24 - 2*x**3/3 + 3*x**2 - 4*x + 1
+        -x**5/120 + 5*x**4/24 - 5*x**3/3 + 5*x**2 - 5*x + 1
+
+    The classical and normal standarizations differ for alpha != 0.
     """
 
-    def __init__(self, alpha=0, standardization="normal", symbolic=False):
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        self.gamma = sympy.gamma if symbolic else math.gamma
-        self.S = sympy.S if symbolic else lambda a: a
-
-        self.alpha = alpha
-        self.standardization = standardization
-
+    def __init__(self, X, standardization, *args, **kwargs):
         if standardization == "monic":
-            self.p0 = 1
+            iterator = IteratorRCMonic(*args, **kwargs)
         elif standardization == "classical":
-            self.p0 = 1
+            iterator = IteratorRCClassical(*args, **kwargs)
         else:
             assert (
                 standardization == "normal"
             ), "Unknown Laguerre standardization '{}'.".format(standardization)
-            self.p0 = 1 / self.sqrt(self.gamma(alpha + 1))
+            iterator = IteratorRCNormal(*args, **kwargs)
 
+        super().__init__(X, iterator)
+
+
+class IteratorRCMonic:
+    def __init__(self, alpha=0, symbolic=False):
+        self.alpha = alpha
+        self.p0 = 1
         self.k = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        gamma = self.gamma
-        sqrt = self.sqrt
+        alpha = self.alpha
+        k = self.k
+
+        a = 1
+        b = 2 * k + 1 + alpha
+        c = k * (k + alpha)
+
+        self.k += 1
+        return a, b, c
+
+
+class IteratorRCClassical:
+    def __init__(self, alpha=0, symbolic=False):
+        self.S = sympy.S if symbolic else lambda a: a
+        self.alpha = alpha
+        self.p0 = 1
+        self.k = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         alpha = self.alpha
         S = self.S
         k = self.k
 
-        if self.standardization == "monic":
-            a = 1
-            b = 2 * k + 1 + alpha
-            # TODO remove specialization for k == 0
-            if self.k == 0:
-                c = gamma(alpha + 1)
-            else:
-                c = k * (k + alpha)
-        elif self.standardization == "classical":
-            a = -S(1) / (k + 1)
-            b = -S(2 * k + 1 + alpha) / (k + 1)
-            # TODO remove specialization for k == 0
-            if self.k == 0:
-                c = numpy.nan
-            else:
-                c = S(k + alpha) / (k + 1)
-        else:
-            assert self.standardization == "normal"
-            a = -1 / sqrt((k + 1) * (k + 1 + alpha))
-            b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
-            # TODO remove specialization for k == 0
-            if self.k == 0:
-                c = numpy.nan
-            else:
-                c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
+        a = -S(1) / (k + 1)
+        b = -S(2 * k + 1 + alpha) / (k + 1)
+        c = S(k + alpha) / (k + 1)
+
+        self.k += 1
+        return a, b, c
+
+
+class IteratorRCNormal:
+    def __init__(self, alpha=0, symbolic=False):
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        gamma = sympy.gamma if symbolic else math.gamma
+        self.S = sympy.S if symbolic else lambda a: a
+        self.alpha = alpha
+        self.p0 = 1 / self.sqrt(gamma(alpha + 1))
+        self.k = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        sqrt = self.sqrt
+        S = self.S
+        alpha = self.alpha
+        k = self.k
+
+        a = -1 / sqrt((k + 1) * (k + 1 + alpha))
+        b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
+        c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
 
         self.k += 1
         return a, b, c

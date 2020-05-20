@@ -10,13 +10,13 @@ from helpers import get_nth
 
 
 def op(i, j, x, y):
-    # standardization='monic'
-    standardization = "p(1)=(n+alpha over n)"
-    val1 = get_nth(
-        orthopy.c1.jacobi.Iterator((x - y) / (x + y), 0, 0, standardization), i
-    )
+    # stand = "monic"
+    stand = "classical"
 
-    val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
+    iterator = orthopy.c1.jacobi.Iterator((x - y) / (x + y), stand, 0, 0)
+    val1 = get_nth(iterator, i)
+
+    # val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
 
     # treat x==0, y==0 separately
     if isinstance(val1, numpy.ndarray):
@@ -26,9 +26,8 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    val2 = get_nth(
-        orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), 2 * i + 1, 0, standardization), j
-    )
+    iterator = orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), stand, 2 * i + 1, 0)
+    val2 = get_nth(iterator, j)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 
     flt = numpy.vectorize(float)

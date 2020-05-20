@@ -1,6 +1,6 @@
 import itertools
 
-from ..c1.recurrence_coefficients import Legendre
+from ..c1 import legendre
 from ..tools import ProductIterator
 
 
@@ -10,5 +10,5 @@ def tree(n, *args, **kwargs):
 
 class Iterator(ProductIterator):
     def __init__(self, X, symbolic=False):
-        iterator = Legendre("normal", symbolic)
+        iterator = legendre.IteratorRCNormal(symbolic)
         super().__init__(iterator, X, symbolic)

@@ -1,6 +1,8 @@
+import itertools
+
 import numpy
 
-from .orth import tree
+from .orth import Iterator
 
 
 def show(*args, **kwargs):
@@ -8,7 +10,6 @@ def show(*args, **kwargs):
 
     plot(*args, **kwargs)
     plt.show()
-    return
 
 
 def plot(L):
@@ -16,9 +17,8 @@ def plot(L):
 
     xlim = [-2.0, +2.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
-    vals = tree(x, L, "normal")
 
-    for val in vals:
+    for val in itertools.islice(Iterator(x, "normal"), L + 1):
         plt.plot(x, val)
 
     plt.xlim(*xlim)
@@ -34,4 +34,3 @@ def plot(L):
         labelleft="off",
     )
     plt.grid()
-    return
