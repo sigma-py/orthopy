@@ -39,19 +39,12 @@ class Iterator(Iterator1D):
     """
 
     def __init__(self, X, standardization, *args, **kwargs):
-        if standardization == "monic":
-            iterator = IteratorRCMonic(*args, **kwargs)
-        elif standardization == "classical":
-            # p(1) = (n+alpha over n)   (=1 if alpha=0)
-            iterator = IteratorRCClassical(*args, **kwargs)
-        else:
-            valid = ", ".join(["monic", "classical", "normal"])
-            assert (
-                standardization == "normal"
-            ), f"Unknown standardization '{standardization}'. (valid: {valid})"
-            iterator = IteratorRCNormal(*args, **kwargs)
-
-        super().__init__(X, iterator)
+        cls = {
+            "monic": IteratorRCMonic,
+            "classical": IteratorRCClassical,
+            "normal": IteratorRCNormal,
+        }[standardization]
+        super().__init__(X, cls(*args, **kwargs))
 
 
 class IteratorRCMonic(gegenbauer.IteratorRCMonic):
