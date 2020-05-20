@@ -44,6 +44,36 @@ class Iterator1D:
 
 
 class ProductIterator:
+    """Evaluates the entire tree of orthogonal polynomials for the n-cube
+
+    The computation is organized such that tree returns a list of arrays, L={0, ...,
+    dim}, where each level corresponds to the polynomial degree L.  Further, each level
+    is organized like a discrete (dim-1)-dimensional simplex. Let's demonstrate this for
+    3D:
+
+    L = 1:
+         (0, 0, 0)
+
+    L = 2:
+         (1, 0, 0)
+         (0, 1, 0) (0, 0, 1)
+
+    L = 3:
+         (2, 0, 0)
+         (1, 1, 0) (1, 0, 1)
+         (0, 2, 0) (0, 1, 1) (0, 0, 2)
+
+    The main insight here that makes computation for n dimensions easy is that the next
+    level is composed by:
+
+       * Taking the whole previous level and adding +1 to the first entry.
+       * Taking the last row of the previous level and adding +1 to the second entry.
+       * Taking the last entry of the last row of the previous and adding +1 to the
+         third entry.
+
+    In the same manner this can be repeated for `dim` dimensions.
+    """
+
     def __init__(self, rc_iterator, X, symbolic):
         self.rc_iterator = rc_iterator
 
@@ -60,13 +90,9 @@ class ProductIterator:
         return self
 
     def __next__(self):
-        aa, bb, cc = next(self.rc_iterator)
         a = self.a
         b = self.b
         c = self.c
-        a.append(aa)
-        b.append(bb)
-        c.append(cc)
 
         X = self.X
         L = self.k
@@ -75,6 +101,11 @@ class ProductIterator:
         if L == 0:
             out = numpy.full([1] + list(X.shape[1:]), self.p0n)
         else:
+            aa, bb, cc = next(self.rc_iterator)
+            a.append(aa)
+            b.append(bb)
+            c.append(cc)
+
             level = []
             for i in range(dim - 1):
                 m1 = math_comb(L + dim - i - 2, dim - i - 1)
