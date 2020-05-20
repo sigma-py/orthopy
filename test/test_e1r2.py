@@ -6,19 +6,20 @@ from sympy import oo
 import orthopy
 
 
+def _integrate(f, x):
+    return sympy.integrate(f * sympy.exp(-(x ** 2)), (x, -oo, +oo))
+
+
 def test_integral0(n=4):
     x = sympy.Symbol("x")
     vals = numpy.concatenate(
         orthopy.e1r2.tree(numpy.array([x]), n, "normal", symbolic=True)
     )
 
-    assert sympy.integrate(vals[0] * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == sympy.sqrt(
-        sympy.sqrt(sympy.pi)
-    )
+    assert _integrate(vals[0], x) == sympy.sqrt(sympy.sqrt(sympy.pi))
 
     for val in vals[1:]:
-        assert sympy.integrate(val * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == 0
-    return
+        assert _integrate(val, x) == 0
 
 
 @pytest.mark.parametrize("standardization", ["monic", "physicist", "normal"])
@@ -34,7 +35,6 @@ def test_orthogonality(standardization, n=4):
 
     for val in vals:
         assert sympy.integrate(val * weight_function, (x, -oo, +oo)) == 0
-    return
 
 
 def test_normality(n=4):
@@ -44,13 +44,11 @@ def test_normality(n=4):
     )
 
     for val in tree:
-        assert sympy.integrate(val ** 2 * sympy.exp(-(x ** 2)), (x, -oo, +oo)) == 1
-    return
+        assert _integrate(val ** 2, x) == 1
 
 
 def test_show():
     orthopy.e1r2.show(L=4)
-    return
 
 
 if __name__ == "__main__":

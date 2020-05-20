@@ -4,36 +4,23 @@ import math
 import numpy
 import sympy
 
-
-def legendre(n, standardization, symbolic=False):
-    return gegenbauer(n, 0, standardization, symbolic=symbolic)
+from ..tools import Iterator1D
 
 
-def chebyshev1(n, standardization, symbolic=False):
-    one_half = sympy.S(1) / 2 if symbolic else 0.5
-    return gegenbauer(n, -one_half, standardization, symbolic=symbolic)
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-def chebyshev2(n, standardization, symbolic=False):
-    one_half = sympy.S(1) / 2 if symbolic else 0.5
-    return gegenbauer(n, +one_half, standardization, symbolic=symbolic)
+def recurrence_coefficients(n, *args, **kwargs):
+    return list(itertools.islice(IteratorRC(*args, **kwargs), n + 1))
 
 
-def gegenbauer(n, lmbda, standardization, symbolic=False):
-    return jacobi(n, lmbda, lmbda, standardization, symbolic=symbolic)
+class Iterator(Iterator1D):
+    def __init__(self, X, *args, **kwargs):
+        super().__init__(X, IteratorRC(*args, **kwargs))
 
 
-def jacobi(n, *args, **kwargs):
-    iterator = Jacobi(*args, **kwargs)
-    p0 = iterator.p0
-    lst = list(itertools.islice(iterator, n))
-    a = numpy.array([item[0] for item in lst])
-    b = numpy.array([item[1] for item in lst])
-    c = numpy.array([item[2] for item in lst])
-    return p0, a, b, c
-
-
-class Jacobi:
+class IteratorRC:
     """Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
@@ -65,22 +52,6 @@ class Jacobi:
 
     def __next__(self):
         return self.iterator.__next__()
-
-
-class Gegenbauer(Jacobi):
-    def __init__(self, lmbda, standardization, symbolic=False):
-        super().__init__(lmbda, lmbda, standardization, symbolic)
-
-
-class Legendre(Gegenbauer):
-    def __init__(self, standardization, symbolic=False):
-        super().__init__(0, standardization, symbolic)
-
-
-class Chebyshev2(Gegenbauer):
-    def __init__(self, standardization, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
-        super().__init__(+one_half, standardization, symbolic)
 
 
 class Monic:

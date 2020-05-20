@@ -30,7 +30,6 @@ def test_legendre_monic(n, y):
     # Test evaluation of multiple values
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -54,7 +53,6 @@ def test_legendre_p11(n, y):
 
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -80,36 +78,32 @@ def test_legendre_normal(n, y):
 
     val = orthopy.tools.line_evaluate(x, *out)
     assert all(val == y)
-    return
 
 
 def test_integral0(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_legendre(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
 
     assert sympy.integrate(vals[0], (x, -1, +1)) == sqrt(2)
     for val in vals[1:]:
         assert sympy.integrate(val, (x, -1, +1)) == 0
-    return
 
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_legendre(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
 
     for val in vals:
         assert sympy.integrate(val ** 2, (x, -1, +1)) == 1
-    return
 
 
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_legendre(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
         assert sympy.integrate(val, (x, -1, +1)) == 0
-    return
 
 
 @pytest.mark.parametrize(
@@ -126,7 +120,6 @@ def test_eval(t, ref, tol=1.0e-14):
     # don't go too far with n.
     approx_ref = numpy.polyval(scipy.special.legendre(n, monic=True), t)
     assert abs(value - approx_ref) < tol
-    return
 
 
 @pytest.mark.parametrize(
@@ -147,12 +140,10 @@ def test_eval_vec(t, ref, tol=1.0e-14):
     # don't go too far with n.
     approx_ref = numpy.polyval(scipy.special.legendre(n, monic=True), t)
     assert (abs(value - approx_ref) < tol).all()
-    return
 
 
 def test_show(n=4):
     orthopy.c1.show(n, 0, 0)
-    return
 
 
 if __name__ == "__main__":

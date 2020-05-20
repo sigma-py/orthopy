@@ -1,9 +1,15 @@
+import itertools
+
 import numpy
 import pytest
 import sympy
 from sympy import Rational, S, pi, sqrt
 
 import orthopy
+
+
+def get_nth(iterator, n):
+    return next(itertools.islice(iterator, n, None))
 
 
 @pytest.mark.parametrize(
@@ -20,16 +26,13 @@ import orthopy
 def test_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.c1.recurrence_coefficients.chebyshev1(n, "monic", symbolic=True)
-
     # Test evaluation of one value
-    y0 = orthopy.tools.line_evaluate(x[0], *out)
+    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], "monic", symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = orthopy.tools.line_evaluate(x, *out)
+    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, "monic", symbolic=True), n)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -46,19 +49,18 @@ def test_chebyshev1_monic(n, y):
 def test_chebyshev1_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    out = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, standardization="p(1)=(n+alpha over n)", symbolic=True
-    )
+    standardization = "p(1)=(n+alpha over n)"
 
-    y0 = orthopy.tools.line_evaluate(x[0], *out)
+    y0 = get_nth(
+        orthopy.c1.chebyshev1.Iterator(x[0], standardization, symbolic=True), n
+    )
     assert y0 == y[0]
 
     alpha = -Rational(1, 2)
     assert sympy.binomial(n + alpha, n) == y[2]
 
-    val = orthopy.tools.line_evaluate(x, *out)
+    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, standardization, symbolic=True), n)
     assert all(val == y)
-    return
 
 
 @pytest.mark.parametrize(
@@ -75,82 +77,64 @@ def test_chebyshev1_p11(n, y):
 def test_chebyshev1_normal(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    out = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, standardization="normal", symbolic=True
-    )
+    standardization = "normal"
 
-    y0 = orthopy.tools.line_evaluate(x[0], *out)
+    y0 = get_nth(
+        orthopy.c1.chebyshev1.Iterator(x[0], standardization, symbolic=True), n
+    )
     assert y0 == y[0]
 
-    val = orthopy.tools.line_evaluate(x, *out)
+    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, standardization, symbolic=True), n)
     assert all(val == y)
-    return
+
+
+def _integrate(f, x):
+    return sympy.integrate(f / sqrt(1 - x ** 2), (x, -1, +1))
 
 
 def test_integral0(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.chebyshev1.tree(n, x, "normal", symbolic=True)
 
-    assert sympy.integrate(vals[0] / sqrt(1 - x ** 2), (x, -1, +1)) == sqrt(pi)
+    assert _integrate(vals[0], x) == sqrt(pi)
     for val in vals[1:]:
-        assert sympy.integrate(val / sqrt(1 - x ** 2), (x, -1, +1)) == 0
-    return
+        assert _integrate(val, x) == 0
 
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
-
-    for val in vals:
-        assert sympy.integrate(val ** 2 / sqrt(1 - x ** 2), (x, -1, +1)) == 1
-    return
+    for k, val in enumerate(orthopy.c1.chebyshev1.Iterator(x, "normal", symbolic=True)):
+        assert _integrate(val ** 2, x) == 1
+        if k == n:
+            break
 
 
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.tree_chebyshev1(x, n, "normal", symbolic=True)
+    vals = orthopy.c1.chebyshev1.tree(n, x, "normal", symbolic=True)
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
-        assert sympy.integrate(val / sqrt(1 - x ** 2), (x, -1, +1)) == 0
-    return
-
-
-@pytest.mark.parametrize(
-    "t, ref", [(Rational(1, 2), Rational(1, 32)), (1, Rational(1, 16))]
-)
-def test_eval(t, ref, tol=1.0e-14):
-    n = 5
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, "monic", symbolic=True
-    )
-    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
-
-    assert value == ref
-    return
+        assert _integrate(val, x) == 0
 
 
 @pytest.mark.parametrize(
     "t, ref",
     [
+        (Rational(1, 2), Rational(1, 32)),
+        (1, Rational(1, 16)),
         (numpy.array([1]), numpy.array([Rational(1, 16)])),
         (numpy.array([1, 2]), numpy.array([Rational(1, 16), Rational(181, 8)])),
     ],
 )
-def test_eval_vec(t, ref, tol=1.0e-14):
+def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    p0, a, b, c = orthopy.c1.recurrence_coefficients.chebyshev1(
-        n, "monic", symbolic=True
-    )
-    value = orthopy.tools.line_evaluate(t, p0, a, b, c)
-
-    assert (value == ref).all()
-    return
+    value = get_nth(orthopy.c1.chebyshev1.Iterator(t, "monic", symbolic=True), n)
+    assert numpy.all(value == ref)
 
 
 def test_plot(n=4):
     orthopy.c1.plot(n, -0.5, -0.5)
-    return
 
 
 if __name__ == "__main__":

@@ -1,50 +1,81 @@
+import itertools
 import math
 
 import numpy
 import sympy
 
-from ..tools import line_tree
+from ..tools import Iterator1D
 
 
-def tree(X, n, alpha=0, standardization="normal", symbolic=False):
+def tree(X, n, **kwargs):
+    return list(itertools.islice(Iterator(X, **kwargs), n + 1))
+
+
+class Iterator(Iterator1D):
+    def __init__(self, X, **kwargs):
+        super().__init__(X, IteratorRC(**kwargs))
+
+
+class IteratorRC:
     """Recurrence coefficients for generalized Laguerre polynomials. Set alpha=0
     (default) to get classical Laguerre.
     """
-    args = recurrence_coefficients(
-        n, alpha=alpha, standardization=standardization, symbolic=symbolic
-    )
-    return line_tree(X, *args)
 
+    def __init__(self, alpha=0, standardization="normal", symbolic=False):
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.gamma = sympy.gamma if symbolic else math.gamma
+        self.S = sympy.S if symbolic else lambda a: a
 
-def recurrence_coefficients(n, alpha, standardization="normal", symbolic=False):
-    """Recurrence coefficients for generalized Laguerre polynomials.
+        self.alpha = alpha
+        self.standardization = standardization
 
-        vals_k = vals_{k-1} * (t*a_k - b_k) - vals{k-2} * c_k
-    """
-    S = sympy.S if symbolic else lambda x: x
-    sqrt = sympy.sqrt if symbolic else numpy.sqrt
-    gamma = sympy.gamma if symbolic else math.gamma
+        if standardization == "monic":
+            self.p0 = 1
+        elif standardization == "classical":
+            self.p0 = 1
+        else:
+            assert (
+                standardization == "normal"
+            ), "Unknown Laguerre standardization '{}'.".format(standardization)
+            self.p0 = 1 / self.sqrt(self.gamma(alpha + 1))
 
-    if standardization == "monic":
-        p0 = 1
-        a = n * [1]
-        b = [2 * k + 1 + alpha for k in range(n)]
-        c = [k * (k + alpha) for k in range(n)]
-        c[0] = gamma(alpha + 1)
-    elif standardization == "classical":
-        p0 = 1
-        a = [-S(1) / (k + 1) for k in range(n)]
-        b = [-S(2 * k + 1 + alpha) / (k + 1) for k in range(n)]
-        c = [S(k + alpha) / (k + 1) for k in range(n)]
-        c[0] = numpy.nan
-    else:
-        assert (
-            standardization == "normal"
-        ), "Unknown Laguerre standardization '{}'.".format(standardization)
-        p0 = 1 / sqrt(gamma(alpha + 1))
-        a = [-1 / sqrt((k + 1) * (k + 1 + alpha)) for k in range(n)]
-        b = [-(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha)) for k in range(n)]
-        c = [sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha))) for k in range(n)]
-        c[0] = numpy.nan
+        self.k = 0
 
-    return p0, numpy.array(a), numpy.array(b), numpy.array(c)
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        gamma = self.gamma
+        sqrt = self.sqrt
+        alpha = self.alpha
+        S = self.S
+        k = self.k
+
+        if self.standardization == "monic":
+            a = 1
+            b = 2 * k + 1 + alpha
+            # TODO remove specialization for k == 0
+            if self.k == 0:
+                c = gamma(alpha + 1)
+            else:
+                c = k * (k + alpha)
+        elif self.standardization == "classical":
+            a = -S(1) / (k + 1)
+            b = -S(2 * k + 1 + alpha) / (k + 1)
+            # TODO remove specialization for k == 0
+            if self.k == 0:
+                c = numpy.nan
+            else:
+                c = S(k + alpha) / (k + 1)
+        else:
+            assert self.standardization == "normal"
+            a = -1 / sqrt((k + 1) * (k + 1 + alpha))
+            b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
+            # TODO remove specialization for k == 0
+            if self.k == 0:
+                c = numpy.nan
+            else:
+                c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
+
+        self.k += 1
+        return a, b, c

@@ -1,41 +1,14 @@
-import numpy
+import itertools
 
-from ..e1r2 import recurrence_coefficients
-from ..tools import math_comb
+from ..e1r2 import IteratorRC
+from ..tools import ProductIterator
 
 
 def tree(X, n, symbolic=False):
-    p0, a, b, c = recurrence_coefficients(n + 1, "normal", symbolic=symbolic)
+    return list(itertools.islice(Iterator(X, symbolic), n + 1))
 
-    dim = X.shape[0]
 
-    p0n = p0 ** dim
-    out = []
-
-    level = numpy.array([numpy.ones(X.shape[1:], dtype=int) * p0n])
-    out.append(level)
-
-    for L in range(n):
-        level = []
-        for i in range(dim - 1):
-            m1 = math_comb(L + dim - i - 1, dim - i - 1)
-            if L > 0:
-                m2 = math_comb(L + dim - i - 2, dim - i - 1)
-            r = 0
-            for k in range(L + 1):
-                m = math_comb(k + dim - i - 2, dim - i - 2)
-                val = out[L][-m1:][r : r + m] * (a[L - k] * X[i] - b[L - k])
-                if L - k > 0:
-                    val -= out[L - 1][-m2:][r : r + m] * c[L - k]
-                r += m
-                level.append(val)
-
-        # treat the last one separately
-        val = out[L][-1] * (a[L] * X[-1] - b[L])
-        if L > 0:
-            val -= out[L - 1][-1] * c[L]
-        level.append([val])
-
-        out.append(numpy.concatenate(level))
-
-    return out
+class Iterator(ProductIterator):
+    def __init__(self, X, symbolic=False):
+        iterator = IteratorRC("normal", symbolic)
+        super().__init__(iterator, X, symbolic)

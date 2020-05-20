@@ -1,6 +1,6 @@
 import numpy
 
-from .orth import tree_jacobi
+from .orth import Jacobi
 
 
 def clenshaw(a, alpha, beta, t):
@@ -42,7 +42,6 @@ def show(*args, **kwargs):
 
     plot(*args, **kwargs)
     plt.show()
-    return
 
 
 def plot(L, alpha, beta):
@@ -50,9 +49,10 @@ def plot(L, alpha, beta):
 
     xlim = [-1.0, +1.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
-    vals = tree_jacobi(x, L, alpha, beta, "normal")
 
-    for val in vals:
+    for k, val in enumerate(Jacobi(x, alpha, beta, "normal")):
+        if k > L:
+            break
         plt.plot(x, val)
 
     # plt.axes().set_aspect('equal')
@@ -70,4 +70,3 @@ def plot(L, alpha, beta):
         labelleft="off",
     )
     plt.grid()
-    return

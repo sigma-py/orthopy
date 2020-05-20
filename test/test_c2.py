@@ -4,49 +4,44 @@ import sympy
 import orthopy
 
 
-def test_integral0(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    vals = numpy.concatenate(orthopy.c2.tree(numpy.array([x, y]), n, symbolic=True))
+def _integrate(f, x, y):
+    return sympy.integrate(f, (x, -1, +1), (y, -1, +1))
 
-    assert sympy.integrate(vals[0], (x, -1, +1), (y, -1, +1)) == 2
+
+def test_integral0(n=4):
+    xy = sympy.symbols("x, y")
+    vals = numpy.concatenate(orthopy.c2.tree(n, xy, symbolic=True))
+
+    assert _integrate(vals[0], *xy) == 2
     for val in vals[1:]:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
-    return
+        assert _integrate(val, *xy) == 0
 
 
 def test_orthogonality(n=4):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.c2.tree(numpy.array([x, y]), n, symbolic=True))
+    xy = sympy.symbols("x, y")
+    tree = numpy.concatenate(orthopy.c2.tree(n, xy, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert sympy.integrate(val, (x, -1, +1), (y, -1, +1)) == 0
-    return
+        assert _integrate(val, *xy) == 0
 
 
 def test_normality(n=4):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.c2.tree(numpy.array([x, y]), n, symbolic=True))
+    xy = sympy.symbols("x, y")
+    tree = numpy.concatenate(orthopy.c2.tree(n, xy, symbolic=True))
 
     for val in tree:
-        assert sympy.integrate(val ** 2, (x, -1, +1), (y, -1, +1)) == 1
-    return
+        assert _integrate(val ** 2, *xy) == 1
 
 
 def test_show(n=2, r=1):
     def f(X):
-        return orthopy.c2.tree(X, n)[n][r]
+        return orthopy.c2.tree(n, X)[n][r]
 
     orthopy.c2.show(f)
     # orthopy.c2.plot(f)
     # import matplotlib.pyplot as plt
     # plt.savefig('quad.png', transparent=True)
-    return
 
 
 if __name__ == "__main__":

@@ -1,6 +1,16 @@
-from ..cn import tree as cn_tree
+import itertools
+
+import numpy
+
+from ..cn import Iterator as CNIterator
 
 
-def tree(X, n, symbolic=False):
-    assert X.shape[0] == 2, "X has incorrect shape (X.shape[0] != 2)."
-    return cn_tree(X, n, symbolic=symbolic)
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+
+
+class Iterator(CNIterator):
+    def __init__(self, X, symbolic=False):
+        X = numpy.asarray(X)
+        assert X.shape[0] == 2, "X has incorrect shape (X.shape[0] != 2)."
+        super().__init__(X, symbolic)

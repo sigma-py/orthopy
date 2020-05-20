@@ -36,7 +36,7 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 (α=β=0) polynomials.
 
 ```python
-vals = orthopy.c1.tree_jacobi(x, 4, alpha, beta, "normal", symbolic=False)
+vals = orthopy.c1.tree_jacobi(4, x, alpha, beta, "normal", symbolic=False)
 ```
 
 Recurrence coefficients can be explicitly retrieved by

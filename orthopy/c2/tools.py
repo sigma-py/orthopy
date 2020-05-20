@@ -6,7 +6,6 @@ def show(*args, **kwargs):
 
     plot(*args, **kwargs)
     plt.show()
-    return
 
 
 def plot(f, n=100):
@@ -40,4 +39,3 @@ def plot(f, n=100):
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
-    return
