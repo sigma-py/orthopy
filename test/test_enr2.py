@@ -7,7 +7,7 @@ import orthopy
 
 def _integrate3(f, x, y, z):
     return sympy.integrate(
-        f * sympy.exp(-(x ** 2) - y ** 2 - z ** 2),
+        f * sympy.exp(-(x ** 2 + y ** 2 + z ** 2)),
         (x, -oo, +oo),
         (y, -oo, +oo),
         (z, -oo, +oo),
@@ -15,16 +15,12 @@ def _integrate3(f, x, y, z):
 
 
 def test_integral0(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    x, y, z = sympy.symbols("x, y, z")
-    vals = numpy.concatenate(
-        orthopy.enr2.tree(numpy.array([x, y, z]), n, symbolic=True)
-    )
+    xyz = sympy.symbols("x, y, z")
+    vals = numpy.concatenate(orthopy.enr2.tree(xyz, n, symbolic=True))
 
-    assert _integrate3(vals[0], x, y, z) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** 3
+    assert _integrate3(vals[0], *xyz) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** 3
     for val in vals[1:]:
-        assert _integrate3(val, x, y, z) == 0
+        assert _integrate3(val, *xyz) == 0
 
 
 def test_orthogonality(n=4):
