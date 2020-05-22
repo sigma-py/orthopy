@@ -74,20 +74,21 @@ class Iterator:
         if self.k == 0:
             out = numpy.array([full_like(self.x, self.c.p0)])
         else:
+            z0, z1, c0, c1 = self.c.get_coefficients(self.k)
             # Make sure that self.sqrt1mx2 is listed first
             # https://github.com/sympy/sympy/issues/19399
-            a = self.sqrt1mx2 * self.c.z0_factor(self.k)
-            b = self.sqrt1mx2 * self.c.z1_factor(self.k) * self.phase
+            a = self.sqrt1mx2 * z0
+            b = self.sqrt1mx2 * z1 * self.phase
             out = numpy.concatenate(
                 [
                     [self.last[0][0] * a],
-                    self.last[0] * numpy.multiply.outer(self.c.C0(self.k), self.x),
+                    self.last[0] * numpy.multiply.outer(c0, self.x),
                     [self.last[0][-1] * b],
                 ]
             )
 
             if self.k > 1:
-                out[2:-2] -= (self.last[1].T * self.c.C1(self.k)).T
+                out[2:-2] -= (self.last[1].T * c1).T
 
         self.last[1] = self.last[0]
         self.last[0] = out
@@ -100,17 +101,15 @@ class _Natural:
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.p0 = 1
 
-    def z0_factor(self, L):
-        return self.frac(1, 2 * L)
-
-    def z1_factor(self, L):
-        return 2 * L - 1
-
-    def C0(self, L):
-        return [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
-
-    def C1(self, L):
-        return [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
+    def get_coefficients(self, L):
+        z0 = self.frac(1, 2 * L)
+        z1 = 2 * L - 1
+        c0 = [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
+        if L == 1:
+            c1 = None
+        else:
+            c1 = [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
+        return z0, z1, c0, c1
 
 
 class _Spherical:
@@ -121,23 +120,23 @@ class _Spherical:
 
         self.p0 = 1 / self.sqrt(4 * pi)
 
-    def z0_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def z1_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        #
         m = numpy.arange(-L + 1, L)
         d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            d = (L + m) * (L - m)
+            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+                (2 * L - 3) * d
+            )
+        return z0, z1, c0, c1
 
 
 class _ComplexSpherical:
@@ -154,23 +153,23 @@ class _ComplexSpherical:
         self.p0 = 1 if geodesic else 1 / self.sqrt(4 * pi)
         self.exp_iphi = exp(imag_unit * phi)
 
-    def z0_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
-
-    def z1_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
+        #
         m = numpy.arange(-L + 1, L)
         d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            d = (L + m) * (L - m)
+            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+                (2 * L - 3) * d
+            )
+        return z0, z1, c0, c1
 
 
 class _Normal:
@@ -180,23 +179,23 @@ class _Normal:
 
         self.p0 = 1 / self.sqrt(2)
 
-    def z0_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def z1_factor(self, L):
-        return self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        #
         m = numpy.arange(-L + 1, L)
         d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            d = (L + m) * (L - m)
+            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
+                (2 * L - 3) * d
+            )
+        return z0, z1, c0, c1
 
 
 class _Schmidt:
@@ -213,18 +212,18 @@ class _Schmidt:
             exp = sympy.exp if symbolic else numpy.exp
             self.exp_iphi = exp(imag_unit * phi)
 
-    def z0_factor(self, L):
-        return self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi
-
-    def z1_factor(self, L):
-        return self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi
+        z1 = self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
+        #
         m = numpy.arange(-L + 1, L)
         d = self.sqrt((L + m) * (L - m))
-        return (2 * L - 1) / d
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = self.sqrt((L + m) * (L - m))
-        return self.sqrt((L + m - 1) * (L - m - 1)) / d
+        c0 = (2 * L - 1) / d
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            d = self.sqrt((L + m) * (L - m))
+            c1 = self.sqrt((L + m - 1) * (L - m - 1)) / d
+        return z0, z1, c0, c1
