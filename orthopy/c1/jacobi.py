@@ -105,23 +105,17 @@ class RCClassical:
         # Treat N = 0 separately to avoid division by 0 for alpha = beta = -1/2.
         if N == 0:
             a = frac(alpha + beta + 2, 2)
+            b = frac(beta - alpha, 2)
+            c = self.int_1
         else:
             a = frac(
                 (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 2),
                 2 * (N + 1) * (N + alpha + beta + 1),
             )
-
-        if N == 0:
-            b = frac(beta - alpha, 2)
-        else:
             b = frac(
                 (beta ** 2 - alpha ** 2) * (2 * N + alpha + beta + 1),
                 2 * (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
             )
-
-        if N == 0:
-            c = self.int_1
-        else:
             c = frac(
                 (N + alpha) * (N + beta) * (2 * N + alpha + beta + 2),
                 (N + 1) * (N + alpha + beta + 1) * (2 * N + alpha + beta),
