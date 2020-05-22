@@ -31,9 +31,10 @@ class Iterator:
     """
 
     def __init__(self, X, symbolic=False):
-        self.rc = RC(symbolic)
+        self.rc = RCNormal(symbolic)
 
         self.X = X
+        self.one_min_x2 = 1 - self.X[0] ** 2
         self.L = 0
         self.last = [None, None]
 
@@ -41,8 +42,6 @@ class Iterator:
         return self
 
     def __next__(self):
-        one_min_x2 = 1 - self.X[0] ** 2
-
         if self.L == 0:
             out = numpy.array([0 * self.X[0] + self.rc.p0])
         else:
@@ -56,7 +55,7 @@ class Iterator:
 
             if self.L > 1:
                 out[:-2] -= (self.last[1].T * gamma).T
-                out[-1] -= self.last[1][-1] * delta * one_min_x2
+                out[-1] -= self.last[1][-1] * delta * self.one_min_x2
 
         self.last[1] = self.last[0]
         self.last[0] = out
@@ -64,7 +63,7 @@ class Iterator:
         return out
 
 
-class RC:
+class RCNormal:
     def __init__(self, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
