@@ -13,7 +13,7 @@ def tree(n, *args, **kwargs):
 class Iterator(Iterator1D):
     """Chebyshev polynomials of the second kind. The first few are:
 
-    standardization == "monic":
+    scaling == "monic":
         1
         x
         x**2 - 1/4
@@ -21,7 +21,7 @@ class Iterator(Iterator1D):
         x**4 - 3*x**2/4 + 1/16
         x**5 - x**3 + 3*x/16
 
-    standardization == "classical":
+    scaling == "classical":
         1
         3*x/2
         5*x**2/2 - 5/8
@@ -29,7 +29,7 @@ class Iterator(Iterator1D):
         63*x**4/8 - 189*x**2/32 + 63/128
         231*x**5/16 - 231*x**3/16 + 693*x/256
 
-    standardization == "normal":
+    scaling == "normal":
         sqrt(2)/sqrt(pi)
         2*sqrt(2)*x/sqrt(pi)
         4*sqrt(2)*x**2/sqrt(pi) - sqrt(2)/sqrt(pi)
@@ -38,28 +38,24 @@ class Iterator(Iterator1D):
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
-        cls = {
-            "monic": IteratorRCMonic,
-            "classical": IteratorRCClassical,
-            "normal": IteratorRCNormal,
-        }[standardization]
+    def __init__(self, X, scaling, *args, **kwargs):
+        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 
-class IteratorRCMonic(gegenbauer.IteratorRCMonic):
+class RCMonic(gegenbauer.RCMonic):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)
 
 
-class IteratorRCClassical(gegenbauer.IteratorRCClassical):
+class RCClassical(gegenbauer.RCClassical):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)
 
 
-class IteratorRCNormal(gegenbauer.IteratorRCNormal):
+class RCNormal(gegenbauer.RCNormal):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)

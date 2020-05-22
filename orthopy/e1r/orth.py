@@ -1,7 +1,6 @@
 import itertools
 import math
 
-import numpy
 import sympy
 
 from ..tools import Iterator1D
@@ -17,7 +16,7 @@ class Iterator(Iterator1D):
 
     The first few are (for alpha=0):
 
-    standardization == "monic":
+    scaling == "monic":
         1
         x - 1
         x**2 - 4*x + 2
@@ -25,7 +24,7 @@ class Iterator(Iterator1D):
         x**4 - 16*x**3 + 72*x**2 - 96*x + 24
         x**5 - 25*x**4 + 200*x**3 - 600*x**2 + 600*x - 120
 
-    standardization == "classical" or "normal"
+    scaling == "classical" or "normal"
         1
         1 - x
         x**2/2 - 2*x + 1
@@ -36,85 +35,57 @@ class Iterator(Iterator1D):
     The classical and normal standarizations differ for alpha != 0.
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
-        if standardization == "monic":
-            iterator = IteratorRCMonic(*args, **kwargs)
-        elif standardization == "classical":
-            iterator = IteratorRCClassical(*args, **kwargs)
-        else:
-            assert (
-                standardization == "normal"
-            ), "Unknown Laguerre standardization '{}'.".format(standardization)
-            iterator = IteratorRCNormal(*args, **kwargs)
-
-        super().__init__(X, iterator)
+    def __init__(self, X, scaling, *args, **kwargs):
+        rc = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
+        super().__init__(X, rc(*args, **kwargs))
 
 
-class IteratorRCMonic:
+class RCMonic:
     def __init__(self, alpha=0, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.p0 = 1
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        alpha = self.alpha
-        k = self.k
-
+    def __getitem__(self, k):
         a = 1
-        b = 2 * k + 1 + alpha
-        c = k * (k + alpha)
-
-        self.k += 1
+        b = 2 * k + 1 + self.alpha
+        c = k * (k + self.alpha) if k > 0 else self.nan
         return a, b, c
 
 
-class IteratorRCClassical:
+class RCClassical:
     def __init__(self, alpha=0, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
         self.p0 = 1
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         alpha = self.alpha
         S = self.S
-        k = self.k
 
         a = -S(1) / (k + 1)
         b = -S(2 * k + 1 + alpha) / (k + 1)
-        c = S(k + alpha) / (k + 1)
-
-        self.k += 1
+        c = S(k + alpha) / (k + 1) if k > 0 else self.nan
         return a, b, c
 
 
-class IteratorRCNormal:
+class RCNormal:
     def __init__(self, alpha=0, symbolic=False):
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        gamma = sympy.gamma if symbolic else math.gamma
+        self.nan = None if symbolic else math.nan
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
+
+        gamma = sympy.gamma if symbolic else math.gamma
         self.p0 = 1 / self.sqrt(gamma(alpha + 1))
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         sqrt = self.sqrt
         S = self.S
         alpha = self.alpha
-        k = self.k
 
         a = -1 / sqrt((k + 1) * (k + 1 + alpha))
         b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
-        c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
-
-        self.k += 1
+        c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha))) if k > 0 else self.nan
         return a, b, c

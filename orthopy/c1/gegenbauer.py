@@ -9,25 +9,21 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, standardization, *args, **kwargs):
-        cls = {
-            "monic": IteratorRCMonic,
-            "classical": IteratorRCClassical,
-            "normal": IteratorRCNormal,
-        }[standardization]
+    def __init__(self, X, scaling, *args, **kwargs):
+        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 
-class IteratorRCMonic(jacobi.IteratorRCMonic):
+class RCMonic(jacobi.RCMonic):
     def __init__(self, lmbda, symbolic=False):
         super().__init__(lmbda, lmbda, symbolic)
 
 
-class IteratorRCClassical(jacobi.IteratorRCClassical):
+class RCClassical(jacobi.RCClassical):
     def __init__(self, lmbda, symbolic=False):
         super().__init__(lmbda, lmbda, symbolic)
 
 
-class IteratorRCNormal(jacobi.IteratorRCNormal):
+class RCNormal(jacobi.RCNormal):
     def __init__(self, lmbda, symbolic=False):
         super().__init__(lmbda, lmbda, symbolic)

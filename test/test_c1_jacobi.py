@@ -1,4 +1,4 @@
-import itertools
+import math
 
 import numpy
 import pytest
@@ -9,7 +9,7 @@ from helpers import get_nth
 
 
 @pytest.mark.parametrize(
-    "standardization, n, y",
+    "scaling, n, y",
     [
         ("monic", 0, [1, 1, 1]),
         ("monic", 1, [S(1) / 7, S(9) / 14, S(8) / 7]),
@@ -33,40 +33,37 @@ from helpers import get_nth
         ("normal", 5, [3 * sqrt(105) / 64, -333 * sqrt(105) / 2048, 4 * sqrt(105)]),
     ],
 )
-def test_jacobi_monic(standardization, n, y):
+def test_jacobi_monic(scaling, n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
     alpha = 3
     beta = 2
     symbolic = True
 
-    y2 = get_nth(
-        orthopy.c1.jacobi.Iterator(x[2], standardization, alpha, beta, symbolic), n
-    )
+    y2 = get_nth(orthopy.c1.jacobi.Iterator(x[2], scaling, alpha, beta, symbolic), n)
     assert y2 == y[2]
 
-    val = get_nth(
-        orthopy.c1.jacobi.Iterator(x, standardization, alpha, beta, symbolic), n
-    )
+    val = get_nth(orthopy.c1.jacobi.Iterator(x, scaling, alpha, beta, symbolic), n)
     assert all(val == y)
 
 
 @pytest.mark.parametrize("symbolic", [True, False])
 def test_jacobi(symbolic):
     n = 5
-    iterator = orthopy.c1.jacobi.IteratorRCMonic(1, 1, symbolic)
-    alpha, beta, gamma = numpy.array(list(itertools.islice(iterator, n))).T
+    rc = orthopy.c1.jacobi.RCMonic(1, 1, symbolic)
+    alpha, beta, gamma = numpy.array([rc[k] for k in range(n)]).T
 
     if symbolic:
         assert numpy.all(alpha == 1)
         assert numpy.all(beta == 0)
-        assert numpy.all(gamma == [S(4) / 3, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
+        assert numpy.all(gamma == [None, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
     else:
         tol = 1.0e-14
         assert numpy.all(numpy.abs(alpha - 1) < tol)
         assert numpy.all(numpy.abs(beta) < tol)
-        ref_gamma = [4 / 3, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
-        assert numpy.all(numpy.abs(gamma - ref_gamma) < tol)
+        ref_gamma = [math.nan, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
+        assert math.isnan(gamma[0])
+        assert numpy.all(numpy.abs(gamma[1:] - ref_gamma[1:]) < tol)
 
 
 if __name__ == "__main__":

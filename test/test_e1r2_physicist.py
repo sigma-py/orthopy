@@ -19,13 +19,13 @@ def test_integral0(n=4):
         assert _integrate(val, x) == 0
 
 
-@pytest.mark.parametrize("standardization", ["monic", "physicist", "normal"])
-def test_orthogonality(standardization, n=4):
+@pytest.mark.parametrize("scaling", ["monic", "physicist", "normal"])
+def test_orthogonality(scaling, n=4):
     x = sympy.Symbol("x")
-    tree = orthopy.e1r2.tree(n, x, standardization, symbolic=True)
+    tree = orthopy.e1r2.tree(n, x, scaling, symbolic=True)
     vals = tree * numpy.roll(tree, 1, axis=0)
 
-    if standardization == "monic":
+    if scaling == "monic":
         weight_function = sympy.exp(-(x ** 2) / 2)
     else:
         weight_function = sympy.exp(-(x ** 2))

@@ -18,7 +18,7 @@ def math_comb(n, k):
     return math.comb(n, k)
 
 
-def _full_like(x, val):
+def full_like(x, val):
     if isinstance(x, numpy.ndarray):
         return numpy.full_like(x, val)
     # assume x is just a float or int
@@ -26,8 +26,8 @@ def _full_like(x, val):
 
 
 class Iterator1D:
-    def __init__(self, x, iterator_abc):
-        self.iterator_abc = iterator_abc
+    def __init__(self, x, rc):
+        self.rc = rc
         self.x = x
         self.k = 0
         self.last = [None, None]
@@ -37,9 +37,9 @@ class Iterator1D:
 
     def __next__(self):
         if self.k == 0:
-            out = _full_like(self.x, self.iterator_abc.p0)
+            out = full_like(self.x, self.rc.p0)
         else:
-            a, b, c = next(self.iterator_abc)
+            a, b, c = self.rc[self.k - 1]
             out = self.last[0] * (self.x * a - b)
             if self.k > 1:
                 out -= self.last[1] * c
@@ -82,15 +82,15 @@ class ProductIterator:
     In the same manner this can be repeated for `dim` dimensions.
     """
 
-    def __init__(self, rc_iterator, X, symbolic):
-        self.rc_iterator = rc_iterator
+    def __init__(self, rc, X, symbolic):
+        self.rc = rc
 
         self.a = []
         self.b = []
         self.c = []
         X = numpy.asarray(X)
         dim = X.shape[0]
-        self.p0n = rc_iterator.p0 ** dim
+        self.p0n = rc.p0 ** dim
         self.k = 0
         self.X = X
         self.last = [None, None]
@@ -110,7 +110,7 @@ class ProductIterator:
         if L == 0:
             out = numpy.full([1] + list(X.shape[1:]), self.p0n)
         else:
-            aa, bb, cc = next(self.rc_iterator)
+            aa, bb, cc = self.rc[L - 1]
             a.append(aa)
             b.append(bb)
             c.append(cc)

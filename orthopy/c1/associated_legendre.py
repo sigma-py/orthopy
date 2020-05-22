@@ -3,6 +3,8 @@ import itertools
 import numpy
 import sympy
 
+from ..tools import full_like
+
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
@@ -12,9 +14,9 @@ class Iterator:
     """Evaluates the entire tree of associated Legendre polynomials.
 
     There are many recurrence relations that can be used to construct the associated
-    Legendre polynomials. However, only few are numerically stable.  Many
-    implementations (including this one) use the classical Legendre recurrence relation
-    with increasing L.
+    Legendre polynomials. However, only few are numerically stable. Many implementations
+    (including this one) use the classical Legendre recurrence relation with increasing
+    L.
 
     Useful references are
 
@@ -44,59 +46,49 @@ class Iterator:
     """
 
     def __init__(
-        self,
-        x,
-        standardization,
-        phi=None,
-        with_condon_shortley_phase=True,
-        symbolic=False,
+        self, x, scaling, phi=None, with_condon_shortley_phase=True, symbolic=False,
     ):
+        sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         # assert numpy.all(numpy.abs(x) <= 1.0)
-        d = {
-            "natural": (_Natural, [x, symbolic]),
-            "spherical": (_Spherical, [x, symbolic]),
-            "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
-            "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
-            "normal": (_Normal, [x, symbolic]),
-            "schmidt": (_Schmidt, [x, phi, symbolic]),
-        }
-        fun, args = d[standardization]
+        fun, args = {
+            "natural": (_Natural, [symbolic]),
+            "spherical": (_Spherical, [symbolic]),
+            "complex spherical": (_ComplexSpherical, [phi, symbolic, False]),
+            "complex spherical 1": (_ComplexSpherical, [phi, symbolic, True]),
+            "normal": (_Normal, [symbolic]),
+            "schmidt": (_Schmidt, [phi, symbolic]),
+        }[scaling]
         self.c = fun(*args)
 
-        if with_condon_shortley_phase:
-
-            def z1_factor_CSP(L):
-                return -1 * self.c.z1_factor(L)
-
-        else:
-            z1_factor_CSP = self.c.z1_factor
-
-        self.z1_factor_CSP = z1_factor_CSP
+        self.phase = -1 if with_condon_shortley_phase else 1
 
         self.k = 0
         self.x = x
+        self.sqrt1mx2 = sqrt(1 - x ** 2)
         self.last = [None, None]
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        # Here comes the actual loop.
-        e = numpy.ones_like(self.x, dtype=int)
         if self.k == 0:
-            out = numpy.array([e * self.c.p0])
+            out = numpy.array([full_like(self.x, self.c.p0)])
         else:
-            [self.last[0][0] * self.c.z0_factor(self.k)]
+            z0, z1, c0, c1 = self.c.get_coefficients(self.k)
+            # Make sure that self.sqrt1mx2 is listed first
+            # https://github.com/sympy/sympy/issues/19399
+            a = self.sqrt1mx2 * z0
+            b = self.sqrt1mx2 * z1 * self.phase
             out = numpy.concatenate(
                 [
-                    [self.last[0][0] * self.c.z0_factor(self.k)],
-                    self.last[0] * numpy.multiply.outer(self.c.C0(self.k), self.x),
-                    [self.last[0][-1] * self.z1_factor_CSP(self.k)],
+                    [self.last[0][0] * a],
+                    self.last[0] * numpy.multiply.outer(c0, self.x),
+                    [self.last[0][-1] * b],
                 ]
             )
 
             if self.k > 1:
-                out[2:-2] -= numpy.multiply.outer(self.c.C1(self.k), e) * self.last[1]
+                out[2:-2] -= (self.last[1].T * c1).T
 
         self.last[1] = self.last[0]
         self.last[0] = out
@@ -105,60 +97,55 @@ class Iterator:
 
 
 class _Natural:
-    def __init__(self, x, symbolic):
+    def __init__(self, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
-        sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-
         self.p0 = 1
-        self.sqrt1mx2 = sqrt(1 - x ** 2)
 
-    def z0_factor(self, L):
-        return self.sqrt1mx2 / (2 * L)
-
-    def z1_factor(self, L):
-        return self.sqrt1mx2 * (2 * L - 1)
-
-    def C0(self, L):
-        return [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
-
-    def C1(self, L):
-        return [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
+    def get_coefficients(self, L):
+        z0 = self.frac(1, 2 * L)
+        z1 = 2 * L - 1
+        c0 = [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
+        if L == 1:
+            c1 = None
+        else:
+            c1 = [self.frac(L - 1 + m, L - m) for m in range(-L + 2, L - 1)]
+        return z0, z1, c0, c1
 
 
 class _Spherical:
-    def __init__(self, x, symbolic):
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+    def __init__(self, symbolic):
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         pi = sympy.pi if symbolic else numpy.pi
 
         self.p0 = 1 / self.sqrt(4 * pi)
-        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
 
-    def z0_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def z1_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
+            )
+        return z0, z1, c0, c1
 
 
 class _ComplexSpherical:
-    def __init__(self, x, phi, symbolic, geodesic):
+    def __init__(self, phi, symbolic, geodesic):
         pi = sympy.pi if symbolic else numpy.pi
         imag_unit = sympy.I if symbolic else 1j
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
         exp = sympy.exp if symbolic else numpy.exp
 
         # The starting value 1 has the effect of multiplying the entire tree by
@@ -166,58 +153,58 @@ class _ComplexSpherical:
         # analysis.
         self.p0 = 1 if geodesic else 1 / self.sqrt(4 * pi)
         self.exp_iphi = exp(imag_unit * phi)
-        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
 
-    def z0_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
-
-    def z1_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L)) / self.exp_iphi
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
+        #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
+            )
+        return z0, z1, c0, c1
 
 
 class _Normal:
-    def __init__(self, x, symbolic):
+    def __init__(self, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         self.p0 = 1 / self.sqrt(2)
-        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
 
-    def z0_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def z1_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L + 1, 2 * L))
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
+        #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        return self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = (L + m) * (L - m)
-        return self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-            (2 * L - 3) * d
-        )
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
+            )
+        return z0, z1, c0, c1
 
 
 class _Schmidt:
-    def __init__(self, x, phi, symbolic):
+    def __init__(self, phi, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         if phi is None:
             self.p0 = 2
@@ -228,21 +215,16 @@ class _Schmidt:
             exp = sympy.exp if symbolic else numpy.exp
             self.exp_iphi = exp(imag_unit * phi)
 
-        self.sqrt1mx2 = self.sqrt(1 - x ** 2)
-        return
-
-    def z0_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi
-
-    def z1_factor(self, L):
-        return self.sqrt1mx2 * self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
-
-    def C0(self, L):
+    def get_coefficients(self, L):
+        z0 = self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi
+        z1 = self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
+        #
         m = numpy.arange(-L + 1, L)
-        d = self.sqrt((L + m) * (L - m))
-        return (2 * L - 1) / d
-
-    def C1(self, L):
-        m = numpy.arange(-L + 2, L - 1)
-        d = self.sqrt((L + m) * (L - m))
-        return self.sqrt((L + m - 1) * (L - m - 1)) / d
+        c0 = (2 * L - 1) / self.sqrt((L + m) * (L - m))
+        #
+        if L == 1:
+            c1 = None
+        else:
+            m = numpy.arange(-L + 2, L - 1)
+            c1 = self.sqrt(self.frac((L + m - 1) * (L - m - 1), (L + m) * (L - m)))
+        return z0, z1, c0, c1

@@ -13,7 +13,7 @@ def _integrate(f, alpha, x):
 @pytest.mark.parametrize("alpha", [0, 1])
 def test_integral0(alpha, n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.e1r.tree(n, x, alpha=alpha, standardization="normal", symbolic=True)
+    vals = orthopy.e1r.tree(n, x, alpha=alpha, scaling="normal", symbolic=True)
 
     assert _integrate(vals[0], alpha, x) == 1
     for val in vals[1:]:
@@ -21,10 +21,10 @@ def test_integral0(alpha, n=4):
 
 
 @pytest.mark.parametrize("alpha", [0, 1])
-@pytest.mark.parametrize("standardization", ["monic", "classical", "normal"])
-def test_orthogonality(alpha, standardization, n=4):
+@pytest.mark.parametrize("scaling", ["monic", "classical", "normal"])
+def test_orthogonality(alpha, scaling, n=4):
     x = sympy.Symbol("x")
-    tree = orthopy.e1r.tree(n, x, standardization, alpha=alpha, symbolic=True)
+    tree = orthopy.e1r.tree(n, x, scaling, alpha=alpha, symbolic=True)
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:

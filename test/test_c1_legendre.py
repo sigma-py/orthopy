@@ -9,7 +9,7 @@ from helpers import get_nth
 
 
 @pytest.mark.parametrize(
-    "standardization, n, y",
+    "scaling, n, y",
     [
         ("monic", 0, [1, 1, 1]),
         ("monic", 1, [0, S(1) / 2, 1]),
@@ -33,15 +33,15 @@ from helpers import get_nth
         ("normal", 5, [0, sqrt(S(5819) / 131072), sqrt(S(11) / 2)]),
     ],
 )
-def test_legendre_monic(standardization, n, y):
+def test_legendre_monic(scaling, n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
     # Test evaluation of one value
-    y0 = get_nth(orthopy.c1.legendre.Iterator(x[0], standardization, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.legendre.Iterator(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = get_nth(orthopy.c1.legendre.Iterator(x, standardization, symbolic=True), n)
+    val = get_nth(orthopy.c1.legendre.Iterator(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
