@@ -1,6 +1,6 @@
 import itertools
 
-from ..e1r2.orth import RCNormal
+from ..e1r2.orth import RCPhysicistNormal
 from ..tools import ProductIterator
 
 
@@ -10,5 +10,5 @@ def tree(X, n, symbolic=False):
 
 class Iterator(ProductIterator):
     def __init__(self, X, symbolic=False):
-        rc = RCNormal(symbolic)
+        rc = RCPhysicistNormal(symbolic)
         super().__init__(rc, X, symbolic)

@@ -4,7 +4,7 @@ import sys
 import numpy
 
 
-def math_comb(n, k):
+def _math_comb(n, k):
     if sys.version < "3.8":
         if k > n - k:
             k = n - k
@@ -117,14 +117,14 @@ class ProductIterator:
 
             level = []
             for i in range(dim - 1):
-                m1 = math_comb(L + dim - i - 2, dim - i - 1)
+                m1 = _math_comb(L + dim - i - 2, dim - i - 1)
                 last0 = self.last[0][-m1:]
                 if L > 1:
-                    m2 = math_comb(L + dim - i - 3, dim - i - 1)
+                    m2 = _math_comb(L + dim - i - 3, dim - i - 1)
                     last1 = self.last[1][-m2:]
                 r = 0
                 for k in range(L):
-                    m = math_comb(k + dim - i - 2, dim - i - 2)
+                    m = _math_comb(k + dim - i - 2, dim - i - 2)
                     val = last0[r : r + m] * (a[L - k - 1] * X[i] - b[L - k - 1])
                     if L - k > 1:
                         val -= last1[r : r + m] * c[L - k - 1]

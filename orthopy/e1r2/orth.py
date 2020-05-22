@@ -14,7 +14,7 @@ class Iterator(Iterator1D):
     """Recurrence coefficients for Hermite polynomials.
 
     Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the different
-    scalings.
+    standardizations.
 
     The first few are:
 
@@ -43,17 +43,23 @@ class Iterator(Iterator1D):
         2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
     """
 
-    def __init__(self, X, scaling, *args, **kwargs):
+    def __init__(self, X, standardization, scaling, *args, **kwargs):
         rc = {
-            "probabilst": RCMonic,
-            "monic": RCMonic,
-            "physicist": RCPhysicist,
-            "normal": RCNormal,
-        }[scaling]
+            "probabilist": {
+                "monic": RCProbabilistMonic,
+                "classical": RCProbabilistMonic,
+                "normal": RCProbabilistMonic,
+            },
+            "physicist": {
+                "monic": RCPhysicistMonic,
+                "classical": RCPhysicistMonic,
+                "normal": RCPhysicistMonic,
+            },
+        }[standardization][scaling]
         super().__init__(X, rc(*args, **kwargs))
 
 
-class RCMonic:
+class RCProbabilistMonic:
     def __init__(self, symbolic=False):
         self.nan = None if symbolic else math.nan
         self.p0 = 1
@@ -65,7 +71,35 @@ class RCMonic:
         return a, b, c
 
 
-class RCPhysicist:
+class RCProbabilistNormal:
+    def __init__(self, symbolic=False):
+        self.frac = sympy.Rational if symbolic else lambda a, b: a / b
+        self.nan = None if symbolic else math.nan
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
+
+        pi = sympy.pi if symbolic else math.pi
+        self.p0 = 1 / self.sqrt(self.sqrt(pi))
+
+    def __getitem__(self, k):
+        a = self.sqrt(self.frac(2, k + 1))
+        b = 0
+        c = self.sqrt(self.frac(k, k + 1)) if k > 0 else self.nan
+        return a, b, c
+
+
+class RCPhysicistMonic:
+    def __init__(self, symbolic=False):
+        self.nan = None if symbolic else math.nan
+        self.p0 = 1
+
+    def __getitem__(self, k):
+        a = 1
+        b = 0
+        c = k if k > 0 else self.nan
+        return a, b, c
+
+
+class RCPhysicistClassical:
     def __init__(self, symbolic=False):
         self.nan = None if symbolic else math.nan
         self.p0 = 1
@@ -77,7 +111,7 @@ class RCPhysicist:
         return a, b, c
 
 
-class RCNormal:
+class RCPhysicistNormal:
     def __init__(self, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan

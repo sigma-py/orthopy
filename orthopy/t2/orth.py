@@ -51,7 +51,7 @@ class Iterator:
             out = numpy.concatenate(
                 [
                     self.last[0] * (numpy.multiply.outer(alpha, 1 - 2 * w).T - beta).T,
-                    [delta * self.last[0][self.k - 1] * (u - v)],
+                    [delta * self.last[0][-1] * (u - v)],
                 ]
             )
 
@@ -94,15 +94,15 @@ class RCNormal:
     """
     The coefficients here are based on the insight that
 
-      int_T P_{n, r}^2 =
-          int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}(w)^2 (1-w)^(r+s+1) dw.
+        int_T P_{n, r}^2 =
+            int_0^1 L_r^2(t) dt * int_0^1 q_{n,r}(w)^2 (1-w)^(r+s+1) dw.
 
     For reference, see page 219 in
 
-     Farouki, Goodman, Sauer,
-     Construction of orthogonal bases for polynomials in Bernstein form on
-     triangular and simplex domains,
-     Computer Aided Geometric Design 20 (2003) 209–230,
+        Farouki, Goodman, Sauer,
+        Construction of orthogonal bases for polynomials in Bernstein form on triangular
+        and simplex domains,
+        Computer Aided Geometric Design 20 (2003) 209–230,
 
     and the reference to Gould, 1972, there.
 
