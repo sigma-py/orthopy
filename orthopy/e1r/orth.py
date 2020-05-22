@@ -1,7 +1,6 @@
 import itertools
 import math
 
-import numpy
 import sympy
 
 from ..tools import Iterator1D
@@ -43,18 +42,20 @@ class Iterator(Iterator1D):
 
 class RCMonic:
     def __init__(self, alpha=0, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.p0 = 1
 
     def __getitem__(self, k):
         a = 1
         b = 2 * k + 1 + self.alpha
-        c = k * (k + self.alpha)
+        c = k * (k + self.alpha) if k > 0 else self.nan
         return a, b, c
 
 
 class RCClassical:
     def __init__(self, alpha=0, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
         self.p0 = 1
@@ -65,13 +66,14 @@ class RCClassical:
 
         a = -S(1) / (k + 1)
         b = -S(2 * k + 1 + alpha) / (k + 1)
-        c = S(k + alpha) / (k + 1)
+        c = S(k + alpha) / (k + 1) if k > 0 else self.nan
         return a, b, c
 
 
 class RCNormal:
     def __init__(self, alpha=0, symbolic=False):
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.nan = None if symbolic else math.nan
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
 
@@ -85,5 +87,5 @@ class RCNormal:
 
         a = -1 / sqrt((k + 1) * (k + 1 + alpha))
         b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
-        c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
+        c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha))) if k > 0 else self.nan
         return a, b, c

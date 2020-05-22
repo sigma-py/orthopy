@@ -55,39 +55,39 @@ class Iterator(Iterator1D):
 
 class RCMonic:
     def __init__(self, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.p0 = 1
 
     def __getitem__(self, k):
         a = 1
         b = 0
-        # Note: The first c is never actually used.
-        c = k
+        c = k if k > 0 else self.nan
         return a, b, c
 
 
 class RCPhysicist:
     def __init__(self, symbolic=False):
+        self.nan = None if symbolic else math.nan
         self.p0 = 1
 
     def __getitem__(self, k):
         a = 2
         b = 0
-        # Note: The first c is never actually used.
-        c = 2 * k
+        c = 2 * k if k > 0 else self.nan
         return a, b, c
 
 
 class RCNormal:
     def __init__(self, symbolic=False):
-        self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
-        pi = sympy.pi if symbolic else math.pi
+        self.nan = None if symbolic else math.nan
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
 
+        pi = sympy.pi if symbolic else math.pi
         self.p0 = 1 / self.sqrt(self.sqrt(pi))
 
     def __getitem__(self, k):
         a = self.sqrt(self.frac(2, k + 1))
         b = 0
-        # Note: The first c is never actually used.
-        c = self.sqrt(self.frac(k, k + 1))
+        c = self.sqrt(self.frac(k, k + 1)) if k > 0 else self.nan
         return a, b, c
