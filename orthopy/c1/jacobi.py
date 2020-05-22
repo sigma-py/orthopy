@@ -1,7 +1,6 @@
 import itertools
 import math
 
-import numpy
 import sympy
 
 from ..tools import Iterator1D
@@ -33,7 +32,7 @@ class RCMonic:
         self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
-        self.nan = None if symbolic else numpy.nan
+        self.nan = None if symbolic else math.nan
 
         self.p0 = 1
 
@@ -82,7 +81,7 @@ class RCMonic:
 class RCClassical:
     def __init__(self, alpha, beta, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
-        self.nan = None if symbolic else numpy.nan
+        self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.beta = beta
 
@@ -126,8 +125,8 @@ class RCClassical:
 class RCNormal:
     def __init__(self, alpha, beta, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        self.nan = None if symbolic else numpy.nan
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
+        self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.beta = beta
 

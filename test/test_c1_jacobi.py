@@ -1,3 +1,5 @@
+import math
+
 import numpy
 import pytest
 from sympy import S, sqrt
@@ -59,8 +61,8 @@ def test_jacobi(symbolic):
         tol = 1.0e-14
         assert numpy.all(numpy.abs(alpha - 1) < tol)
         assert numpy.all(numpy.abs(beta) < tol)
-        ref_gamma = [numpy.nan, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
-        assert numpy.isnan(gamma[0])
+        ref_gamma = [math.nan, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
+        assert math.isnan(gamma[0])
         assert numpy.all(numpy.abs(gamma[1:] - ref_gamma[1:]) < tol)
 
 

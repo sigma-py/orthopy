@@ -1,6 +1,6 @@
 import itertools
+import math
 
-import numpy
 import sympy
 
 from ..tools import Iterator1D
@@ -79,9 +79,9 @@ class RCPhysicist:
 
 class RCNormal:
     def __init__(self, symbolic=False):
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else math.pi
 
         self.p0 = 1 / self.sqrt(self.sqrt(pi))
 
