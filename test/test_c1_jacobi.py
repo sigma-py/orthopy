@@ -1,5 +1,3 @@
-import itertools
-
 import numpy
 import pytest
 from sympy import S, sqrt
@@ -50,8 +48,8 @@ def test_jacobi_monic(scaling, n, y):
 @pytest.mark.parametrize("symbolic", [True, False])
 def test_jacobi(symbolic):
     n = 5
-    iterator = orthopy.c1.jacobi.IteratorRCMonic(1, 1, symbolic)
-    alpha, beta, gamma = numpy.array(list(itertools.islice(iterator, n))).T
+    rc = orthopy.c1.jacobi.RCMonic(1, 1, symbolic)
+    alpha, beta, gamma = numpy.array([rc.get(k) for k in range(n)]).T
 
     if symbolic:
         assert numpy.all(alpha == 1)

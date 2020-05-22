@@ -39,27 +39,23 @@ class Iterator(Iterator1D):
     """
 
     def __init__(self, X, scaling, *args, **kwargs):
-        cls = {
-            "monic": IteratorRCMonic,
-            "classical": IteratorRCClassical,
-            "normal": IteratorRCNormal,
-        }[scaling]
+        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 
-class IteratorRCMonic(gegenbauer.IteratorRCMonic):
+class RCMonic(gegenbauer.RCMonic):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)
 
 
-class IteratorRCClassical(gegenbauer.IteratorRCClassical):
+class RCClassical(gegenbauer.RCClassical):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)
 
 
-class IteratorRCNormal(gegenbauer.IteratorRCNormal):
+class RCNormal(gegenbauer.RCNormal):
     def __init__(self, symbolic=False):
-        one_half = sympy.S(1) / 2 if symbolic else 0.5
+        one_half = sympy.Rational(1, 2) if symbolic else 0.5
         super().__init__(+one_half, symbolic)

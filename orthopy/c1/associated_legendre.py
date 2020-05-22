@@ -14,9 +14,9 @@ class Iterator:
     """Evaluates the entire tree of associated Legendre polynomials.
 
     There are many recurrence relations that can be used to construct the associated
-    Legendre polynomials. However, only few are numerically stable.  Many
-    implementations (including this one) use the classical Legendre recurrence relation
-    with increasing L.
+    Legendre polynomials. However, only few are numerically stable. Many implementations
+    (including this one) use the classical Legendre recurrence relation with increasing
+    L.
 
     Useful references are
 

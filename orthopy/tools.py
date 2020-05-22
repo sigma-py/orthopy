@@ -26,8 +26,8 @@ def full_like(x, val):
 
 
 class Iterator1D:
-    def __init__(self, x, iterator_abc):
-        self.iterator_abc = iterator_abc
+    def __init__(self, x, rc):
+        self.rc = rc
         self.x = x
         self.k = 0
         self.last = [None, None]
@@ -37,9 +37,9 @@ class Iterator1D:
 
     def __next__(self):
         if self.k == 0:
-            out = full_like(self.x, self.iterator_abc.p0)
+            out = full_like(self.x, self.rc.p0)
         else:
-            a, b, c = next(self.iterator_abc)
+            a, b, c = self.rc.get(self.k - 1)
             out = self.last[0] * (self.x * a - b)
             if self.k > 1:
                 out -= self.last[1] * c
