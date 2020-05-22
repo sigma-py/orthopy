@@ -1,6 +1,6 @@
 import itertools
 
-from ..c1 import legendre
+from ..c1 import jacobi
 from ..tools import ProductIterator
 
 
@@ -9,6 +9,6 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(ProductIterator):
-    def __init__(self, X, symbolic=False):
-        iterator = legendre.RCNormal(symbolic)
-        super().__init__(iterator, X, symbolic)
+    def __init__(self, X, alpha=0, beta=0, symbolic=False):
+        rc = jacobi.RCNormal(alpha, beta, symbolic)
+        super().__init__(rc, X, symbolic)

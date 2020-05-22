@@ -2,7 +2,6 @@ import itertools
 
 import sympy
 
-from ..tools import Iterator1D
 from . import gegenbauer
 
 
@@ -10,7 +9,7 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-class Iterator(Iterator1D):
+class Iterator(gegenbauer.Iterator):
     """Chebyshev polynomials of the second kind. The first few are:
 
     scaling == "monic":
@@ -38,24 +37,6 @@ class Iterator(Iterator1D):
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, scaling, *args, **kwargs):
-        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, cls(*args, **kwargs))
-
-
-class RCMonic(gegenbauer.RCMonic):
-    def __init__(self, symbolic=False):
-        one_half = sympy.Rational(1, 2) if symbolic else 0.5
-        super().__init__(+one_half, symbolic)
-
-
-class RCClassical(gegenbauer.RCClassical):
-    def __init__(self, symbolic=False):
-        one_half = sympy.Rational(1, 2) if symbolic else 0.5
-        super().__init__(+one_half, symbolic)
-
-
-class RCNormal(gegenbauer.RCNormal):
-    def __init__(self, symbolic=False):
-        one_half = sympy.Rational(1, 2) if symbolic else 0.5
-        super().__init__(+one_half, symbolic)
+    def __init__(self, X, scaling, symbolic=False):
+        lmbda = sympy.S(1) / 2 if symbolic else 0.5
+        super().__init__(X, scaling, lmbda, symbolic)

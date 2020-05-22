@@ -26,7 +26,7 @@ class Iterator(Iterator1D):
 
     scaling == "classical" or "normal"
         1
-        1 - x
+        -x + 1
         x**2/2 - 2*x + 1
         -x**3/6 + 3*x**2/2 - 3*x + 1
         x**4/24 - 2*x**3/3 + 3*x**2 - 4*x + 1
