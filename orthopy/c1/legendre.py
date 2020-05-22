@@ -1,6 +1,5 @@
 import itertools
 
-from ..tools import Iterator1D
 from . import gegenbauer
 
 
@@ -8,7 +7,7 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
-class Iterator(Iterator1D):
+class Iterator(gegenbauer.Iterator):
     """Legendre. The first few are:
 
     scaling == "monic":
@@ -36,21 +35,5 @@ class Iterator(Iterator1D):
         63*sqrt(22)*x**5/16 - 35*sqrt(22)*x**3/8 + 15*sqrt(22)*x/16
     """
 
-    def __init__(self, X, scaling, *args, **kwargs):
-        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, cls(*args, **kwargs))
-
-
-class RCMonic(gegenbauer.RCMonic):
-    def __init__(self, symbolic=False):
-        super().__init__(0, symbolic)
-
-
-class RCClassical(gegenbauer.RCClassical):
-    def __init__(self, symbolic=False):
-        super().__init__(0, symbolic)
-
-
-class RCNormal(gegenbauer.RCNormal):
-    def __init__(self, symbolic=False):
-        super().__init__(0, symbolic)
+    def __init__(self, X, scaling, symbolic=False):
+        super().__init__(X, scaling, 0, symbolic)

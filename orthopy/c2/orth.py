@@ -10,7 +10,7 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(CNIterator):
-    def __init__(self, X, symbolic=False):
+    def __init__(self, X, **kwargs):
         X = numpy.asarray(X)
         assert X.shape[0] == 2, "X has incorrect shape (X.shape[0] != 2)."
-        super().__init__(X, symbolic)
+        super().__init__(X, **kwargs)
