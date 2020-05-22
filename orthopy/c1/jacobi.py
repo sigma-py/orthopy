@@ -33,14 +33,17 @@ class RCMonic:
         self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.nan = None if symbolic else numpy.nan
 
         self.p0 = 1
-        self.int_1 = (
-            2 ** (alpha + beta + 1)
-            * self.gamma(alpha + 1)
-            * self.gamma(beta + 1)
-            / self.gamma(alpha + beta + 2)
-        )
+
+        # c[0] is not used in the actual recurrence, but is traditionally defined as the
+        # integral of the weight function of the domain, i.e.,
+        # ```
+        # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
+        #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
+        # ```
+        # This is bad practice; the value could accidentally be used.
 
     def get(self, N):
         frac = self.frac
@@ -57,16 +60,10 @@ class RCMonic:
                 (2 * N + alpha + beta) * (2 * N + alpha + beta + 2),
             )
 
-        # c[0] is not used in the actual recurrence, but is often defined as the
-        # integral of the weight function of the domain, i.e.,
-        # ```
-        # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
-        #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
-        # ```
-        # Note also that we have the treat the case N==1 separately to avoid division by
-        # 0 for alpha=beta=-1/2.
+        # Note that we have the treat the case N==1 separately to avoid division by 0
+        # for alpha=beta=-1/2.
         if N == 0:
-            c = self.int_1
+            c = self.nan
         elif N == 1:
             c = frac(
                 4 * (1 + alpha) * (1 + beta),
@@ -85,17 +82,19 @@ class RCMonic:
 class RCClassical:
     def __init__(self, alpha, beta, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.nan = None if symbolic else numpy.nan
         self.alpha = alpha
         self.beta = beta
 
         self.p0 = 1
-        gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
-        self.int_1 = (
-            2 ** (alpha + beta + 1)
-            * gamma(alpha + 1)
-            * gamma(beta + 1)
-            / gamma(alpha + beta + 2)
-        )
+
+        # gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
+        # self.int_1 = (
+        #     2 ** (alpha + beta + 1)
+        #     * gamma(alpha + 1)
+        #     * gamma(beta + 1)
+        #     / gamma(alpha + beta + 2)
+        # )
 
     def get(self, N):
         frac = self.frac
@@ -106,7 +105,7 @@ class RCClassical:
         if N == 0:
             a = frac(alpha + beta + 2, 2)
             b = frac(beta - alpha, 2)
-            c = self.int_1
+            c = self.nan
         else:
             a = frac(
                 (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 2),
@@ -128,6 +127,7 @@ class RCNormal:
     def __init__(self, alpha, beta, symbolic=False):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.nan = None if symbolic else numpy.nan
         self.alpha = alpha
         self.beta = beta
 
@@ -167,7 +167,7 @@ class RCNormal:
             )
 
         if N == 0:
-            c = self.int_1
+            c = self.nan
         elif N == 1:
             c = frac(4 + alpha + beta, 2 + alpha + beta) * sqrt(
                 frac(

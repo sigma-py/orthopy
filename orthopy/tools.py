@@ -82,15 +82,15 @@ class ProductIterator:
     In the same manner this can be repeated for `dim` dimensions.
     """
 
-    def __init__(self, rc_iterator, X, symbolic):
-        self.rc_iterator = rc_iterator
+    def __init__(self, rc, X, symbolic):
+        self.rc = rc
 
         self.a = []
         self.b = []
         self.c = []
         X = numpy.asarray(X)
         dim = X.shape[0]
-        self.p0n = rc_iterator.p0 ** dim
+        self.p0n = rc.p0 ** dim
         self.k = 0
         self.X = X
         self.last = [None, None]
@@ -110,7 +110,7 @@ class ProductIterator:
         if L == 0:
             out = numpy.full([1] + list(X.shape[1:]), self.p0n)
         else:
-            aa, bb, cc = next(self.rc_iterator)
+            aa, bb, cc = self.rc.get(L - 1)
             a.append(aa)
             b.append(bb)
             c.append(cc)

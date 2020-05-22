@@ -54,13 +54,14 @@ def test_jacobi(symbolic):
     if symbolic:
         assert numpy.all(alpha == 1)
         assert numpy.all(beta == 0)
-        assert numpy.all(gamma == [S(4) / 3, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
+        assert numpy.all(gamma == [None, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
     else:
         tol = 1.0e-14
         assert numpy.all(numpy.abs(alpha - 1) < tol)
         assert numpy.all(numpy.abs(beta) < tol)
-        ref_gamma = [4 / 3, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
-        assert numpy.all(numpy.abs(gamma - ref_gamma) < tol)
+        ref_gamma = [numpy.nan, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
+        assert numpy.isnan(gamma[0])
+        assert numpy.all(numpy.abs(gamma[1:] - ref_gamma[1:]) < tol)
 
 
 if __name__ == "__main__":
