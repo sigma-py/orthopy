@@ -53,10 +53,10 @@ class Iterator(Iterator1D):
             "physicist": {
                 "monic": RCPhysicistMonic,
                 "classical": RCPhysicistMonic,
-                "normal": RCPhysicistMonic,
+                "normal": RCPhysicistNormal,
             },
-        }[standardization][scaling]
-        super().__init__(X, rc(*args, **kwargs))
+        }[standardization][scaling](*args, **kwargs)
+        super().__init__(X, rc)
 
 
 class RCProbabilistMonic:
