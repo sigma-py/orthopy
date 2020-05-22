@@ -39,7 +39,7 @@ class Iterator1D:
         if self.k == 0:
             out = full_like(self.x, self.rc.p0)
         else:
-            a, b, c = self.rc.get(self.k - 1)
+            a, b, c = self.rc[self.k - 1]
             out = self.last[0] * (self.x * a - b)
             if self.k > 1:
                 out -= self.last[1] * c
@@ -110,7 +110,7 @@ class ProductIterator:
         if L == 0:
             out = numpy.full([1] + list(X.shape[1:]), self.p0n)
         else:
-            aa, bb, cc = self.rc.get(L - 1)
+            aa, bb, cc = self.rc[L - 1]
             a.append(aa)
             b.append(bb)
             c.append(cc)

@@ -9,7 +9,7 @@ import orthopy
 def test_clenshaw(tol=1.0e-14):
     n = 5
     rc = orthopy.c1.legendre.RCMonic()
-    _, alpha, beta = numpy.array([rc.get(k) for k in range(n)]).T
+    _, alpha, beta = numpy.array([rc[k] for k in range(n)]).T
 
     t = 1.0
 

@@ -49,7 +49,7 @@ def test_jacobi_monic(scaling, n, y):
 def test_jacobi(symbolic):
     n = 5
     rc = orthopy.c1.jacobi.RCMonic(1, 1, symbolic)
-    alpha, beta, gamma = numpy.array([rc.get(k) for k in range(n)]).T
+    alpha, beta, gamma = numpy.array([rc[k] for k in range(n)]).T
 
     if symbolic:
         assert numpy.all(alpha == 1)

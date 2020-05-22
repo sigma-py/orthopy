@@ -45,7 +45,7 @@ class RCMonic:
         # ```
         # This is bad practice; the value could accidentally be used.
 
-    def get(self, N):
+    def __getitem__(self, N):
         frac = self.frac
         alpha = self.alpha
         beta = self.beta
@@ -96,7 +96,7 @@ class RCClassical:
         #     / gamma(alpha + beta + 2)
         # )
 
-    def get(self, N):
+    def __getitem__(self, N):
         frac = self.frac
         alpha = self.alpha
         beta = self.beta
@@ -140,7 +140,7 @@ class RCNormal:
         )
         self.p0 = self.sqrt(1 / self.int_1)
 
-    def get(self, N):
+    def __getitem__(self, N):
         frac = self.frac
         sqrt = self.sqrt
         alpha = self.alpha
