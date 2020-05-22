@@ -9,7 +9,7 @@ from helpers import get_nth
 
 
 @pytest.mark.parametrize(
-    "standardization, n, y",
+    "scaling, n, y",
     [
         ("monic", 0, [1, 1, 1]),
         ("monic", 1, [S(1) / 7, S(9) / 14, S(8) / 7]),
@@ -33,21 +33,17 @@ from helpers import get_nth
         ("normal", 5, [3 * sqrt(105) / 64, -333 * sqrt(105) / 2048, 4 * sqrt(105)]),
     ],
 )
-def test_jacobi_monic(standardization, n, y):
+def test_jacobi_monic(scaling, n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
     alpha = 3
     beta = 2
     symbolic = True
 
-    y2 = get_nth(
-        orthopy.c1.jacobi.Iterator(x[2], standardization, alpha, beta, symbolic), n
-    )
+    y2 = get_nth(orthopy.c1.jacobi.Iterator(x[2], scaling, alpha, beta, symbolic), n)
     assert y2 == y[2]
 
-    val = get_nth(
-        orthopy.c1.jacobi.Iterator(x, standardization, alpha, beta, symbolic), n
-    )
+    val = get_nth(orthopy.c1.jacobi.Iterator(x, scaling, alpha, beta, symbolic), n)
     assert all(val == y)
 
 

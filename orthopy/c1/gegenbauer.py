@@ -9,12 +9,12 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, standardization, *args, **kwargs):
+    def __init__(self, X, scaling, *args, **kwargs):
         cls = {
             "monic": IteratorRCMonic,
             "classical": IteratorRCClassical,
             "normal": IteratorRCNormal,
-        }[standardization]
+        }[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 

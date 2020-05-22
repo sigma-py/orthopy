@@ -3,6 +3,8 @@ import itertools
 import numpy
 import sympy
 
+from ..tools import full_like
+
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
@@ -44,23 +46,17 @@ class Iterator:
     """
 
     def __init__(
-        self,
-        x,
-        standardization,
-        phi=None,
-        with_condon_shortley_phase=True,
-        symbolic=False,
+        self, x, scaling, phi=None, with_condon_shortley_phase=True, symbolic=False,
     ):
         # assert numpy.all(numpy.abs(x) <= 1.0)
-        d = {
+        fun, args = {
             "natural": (_Natural, [x, symbolic]),
             "spherical": (_Spherical, [x, symbolic]),
             "complex spherical": (_ComplexSpherical, [x, phi, symbolic, False]),
             "complex spherical 1": (_ComplexSpherical, [x, phi, symbolic, True]),
             "normal": (_Normal, [x, symbolic]),
             "schmidt": (_Schmidt, [x, phi, symbolic]),
-        }
-        fun, args = d[standardization]
+        }[scaling]
         self.c = fun(*args)
 
         if with_condon_shortley_phase:
@@ -82,11 +78,9 @@ class Iterator:
 
     def __next__(self):
         # Here comes the actual loop.
-        e = numpy.ones_like(self.x, dtype=int)
         if self.k == 0:
-            out = numpy.array([e * self.c.p0])
+            out = numpy.array([full_like(self.x, self.c.p0)])
         else:
-            [self.last[0][0] * self.c.z0_factor(self.k)]
             out = numpy.concatenate(
                 [
                     [self.last[0][0] * self.c.z0_factor(self.k)],
@@ -96,7 +90,7 @@ class Iterator:
             )
 
             if self.k > 1:
-                out[2:-2] -= numpy.multiply.outer(self.c.C1(self.k), e) * self.last[1]
+                out[2:-2] -= (self.last[1].T * self.c.C1(self.k)).T
 
         self.last[1] = self.last[0]
         self.last[0] = out
@@ -229,7 +223,6 @@ class _Schmidt:
             self.exp_iphi = exp(imag_unit * phi)
 
         self.sqrt1mx2 = self.sqrt(1 - x ** 2)
-        return
 
     def z0_factor(self, L):
         return self.sqrt1mx2 * self.sqrt(self.frac(2 * L - 1, 2 * L)) / self.exp_iphi

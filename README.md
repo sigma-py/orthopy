@@ -43,10 +43,10 @@ Recurrence coefficients can be explicitly retrieved by
 ```python
 p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
 ```
-Possible choices for the standardization are
+Possible choices for the scaling are
   * `"monic"` (leading coefficient 1),
   * `"classical"`, (_p(1) = (n+alpha over n)_), and
-  * `"normal"` (integral over the domain is 1).
+  * `"normal"` (integral over the squared function is 1).
 
 
 #### Associated Legendre polynomials
@@ -65,7 +65,7 @@ vals = orthopy.c1.associated_legendre.tree(
 
 (Generalized) Laguerre polynomials.
 ```python
-vals = orthopy.e1r.tree(x, 4, alpha=0, standardization="normal", symbolic=False)
+vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal", symbolic=False)
 ```
 
 
@@ -94,7 +94,7 @@ for level in orthopy.t2.Iterator(x, "normal", symbolic=False):
 # or for the entire tree up to degree 4
 vals = orthopy.t2.tree(x, 4, "normal", symbolic=False)
 ```
-Available standardizations are
+Available scalings are
   * `"normal"` (normalized polynomials, i.e., the integral of the squared function equals 1) and
   * `"1"` where the polynomial is `1` in at least one corner of the triangle.
 

@@ -4,7 +4,7 @@ import numpy
 import sympy
 
 
-def tree(bary, n, standardization, symbolic=False):
+def tree(bary, n, scaling, symbolic=False):
     """Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
@@ -25,11 +25,11 @@ def tree(bary, n, standardization, symbolic=False):
     (The formulation there is more complicated than necessary, however, and doesn't
     include the normalization.)
     """
-    return list(itertools.islice(Iterator(bary, standardization, symbolic), n + 1))
+    return list(itertools.islice(Iterator(bary, scaling, symbolic), n + 1))
 
 
 class Iterator:
-    def __init__(self, bary, standardization, symbolic=False):
+    def __init__(self, bary, scaling, symbolic=False):
         S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
 
@@ -38,7 +38,7 @@ class Iterator:
         self.k = 0
         self.last = [None, None]
 
-        if standardization == "1":
+        if scaling == "1":
             self.p0 = 1
 
             def alpha(n):
@@ -88,7 +88,7 @@ class Iterator:
             #
             #   int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2).
             #
-            assert standardization == "normal"
+            assert scaling == "normal"
             self.p0 = sqrt(2)
 
             def alpha(n):

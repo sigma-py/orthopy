@@ -69,7 +69,7 @@ def ff(l, m):
     ],
 )
 @pytest.mark.parametrize(
-    "standardization,factor",
+    "scaling,factor",
     [
         ("natural", lambda L, m: 1),
         (
@@ -81,11 +81,11 @@ def ff(l, m):
         ("schmidt", lambda L, m: 2 * sympy.sqrt(ff(L, m))),
     ],
 )
-def test_exact(x, standardization, factor):
+def test_exact(x, scaling, factor):
     """Test for the exact values.
     """
     L = 4
-    vals = orthopy.c1.associated_legendre.tree(L, x, standardization, symbolic=True)
+    vals = orthopy.c1.associated_legendre.tree(L, x, scaling, symbolic=True)
 
     exacts = exact_natural(x)
     exacts = [
@@ -102,7 +102,7 @@ def test_plot():
     L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
     vals = orthopy.c1.associated_legendre.tree(
-        L, x, standardization="normal", with_condon_shortley_phase=True, symbolic=False
+        L, x, scaling="normal", with_condon_shortley_phase=True, symbolic=False
     )
 
     for val in vals[L]:

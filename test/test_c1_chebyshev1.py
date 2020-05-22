@@ -44,17 +44,15 @@ def test_chebyshev1_monic(n, y):
 def test_chebyshev1_p11(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
-    standardization = "classical"
+    scaling = "classical"
 
-    y0 = get_nth(
-        orthopy.c1.chebyshev1.Iterator(x[0], standardization, symbolic=True), n
-    )
+    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     alpha = -Rational(1, 2)
     assert sympy.binomial(n + alpha, n) == y[2]
 
-    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, standardization, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -72,14 +70,12 @@ def test_chebyshev1_p11(n, y):
 def test_chebyshev1_normal(n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
-    standardization = "normal"
+    scaling = "normal"
 
-    y0 = get_nth(
-        orthopy.c1.chebyshev1.Iterator(x[0], standardization, symbolic=True), n
-    )
+    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
-    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, standardization, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 

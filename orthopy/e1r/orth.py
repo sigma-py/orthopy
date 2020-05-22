@@ -17,7 +17,7 @@ class Iterator(Iterator1D):
 
     The first few are (for alpha=0):
 
-    standardization == "monic":
+    scaling == "monic":
         1
         x - 1
         x**2 - 4*x + 2
@@ -25,7 +25,7 @@ class Iterator(Iterator1D):
         x**4 - 16*x**3 + 72*x**2 - 96*x + 24
         x**5 - 25*x**4 + 200*x**3 - 600*x**2 + 600*x - 120
 
-    standardization == "classical" or "normal"
+    scaling == "classical" or "normal"
         1
         1 - x
         x**2/2 - 2*x + 1
@@ -36,15 +36,13 @@ class Iterator(Iterator1D):
     The classical and normal standarizations differ for alpha != 0.
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
-        if standardization == "monic":
+    def __init__(self, X, scaling, *args, **kwargs):
+        if scaling == "monic":
             iterator = IteratorRCMonic(*args, **kwargs)
-        elif standardization == "classical":
+        elif scaling == "classical":
             iterator = IteratorRCClassical(*args, **kwargs)
         else:
-            assert (
-                standardization == "normal"
-            ), "Unknown Laguerre standardization '{}'.".format(standardization)
+            assert scaling == "normal", "Unknown Laguerre scaling '{}'.".format(scaling)
             iterator = IteratorRCNormal(*args, **kwargs)
 
         super().__init__(X, iterator)

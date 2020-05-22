@@ -6,17 +6,16 @@ import sympy
 from ..c1 import associated_legendre
 
 
-def tree_sph(polar, azimuthal, n, standardization, symbolic=False):
-    """Evaluate all spherical harmonics of degree at most `n` at angles `polar`,
-    `azimuthal`.
-    """
-    return list(
-        itertools.islice(Iterator(polar, azimuthal, standardization, symbolic), n + 1)
-    )
+def tree_sph(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
 class Iterator(associated_legendre.Iterator):
-    def __init__(self, polar, azimuthal, standardization, symbolic=False):
+    """Evaluate all spherical harmonics of degree at most `n` at angles `polar`,
+    `azimuthal`.
+    """
+
+    def __init__(self, polar, azimuthal, scaling, symbolic=False):
         cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
 
         # Conventions from
@@ -26,12 +25,12 @@ class Iterator(associated_legendre.Iterator):
             "quantum mechanic": ("complex spherical", True),
             "geodetic": ("complex spherical 1", False),
             "schmidt": ("schmidt", False),
-        }[standardization]
+        }[scaling]
 
         super().__init__(
             cos(polar),
             phi=azimuthal,
-            standardization=standard,
+            scaling=standard,
             with_condon_shortley_phase=cs_phase,
             symbolic=symbolic,
         )

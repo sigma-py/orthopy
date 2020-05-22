@@ -11,7 +11,7 @@ def tree(n, *args, **kwargs):
 class Iterator(Iterator1D):
     """Legendre. The first few are:
 
-    standardization == "monic":
+    scaling == "monic":
         1
         x
         x**2 - 1/3
@@ -19,7 +19,7 @@ class Iterator(Iterator1D):
         x**4 - 6*x**2/7 + 3/35
         x**5 - 10*x**3/9 + 5*x/21
 
-    standardization == "classical":
+    scaling == "classical":
         1
         x
         3*x**2/2 - 1/2
@@ -27,7 +27,7 @@ class Iterator(Iterator1D):
         35*x**4/8 - 15*x**2/4 + 3/8
         63*x**5/8 - 35*x**3/4 + 15*x/8
 
-    standardization == "normal":
+    scaling == "normal":
         sqrt(2)/2
         sqrt(6)*x/2
         3*sqrt(10)*x**2/4 - sqrt(10)/4
@@ -36,12 +36,12 @@ class Iterator(Iterator1D):
         63*sqrt(22)*x**5/16 - 35*sqrt(22)*x**3/8 + 15*sqrt(22)*x/16
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
+    def __init__(self, X, scaling, *args, **kwargs):
         cls = {
             "monic": IteratorRCMonic,
             "classical": IteratorRCClassical,
             "normal": IteratorRCNormal,
-        }[standardization]
+        }[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 

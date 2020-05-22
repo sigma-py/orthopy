@@ -14,11 +14,11 @@ class Iterator(Iterator1D):
     """Recurrence coefficients for Hermite polynomials.
 
     Check <https://en.wikipedia.org/wiki/Hermite_polynomials> for the different
-    standardizations.
+    scalings.
 
     The first few are:
 
-    standardization in ["probabilist", "monic"]:
+    scaling in ["probabilist", "monic"]:
         1
         x
         x**2 - 1
@@ -26,7 +26,7 @@ class Iterator(Iterator1D):
         x**4 - 6*x**2 + 3
         x**5 - 10*x**3 + 15*x
 
-    standardization == "physicist":
+    scaling == "physicist":
         1
         2*x
         4*x**2 - 2
@@ -34,7 +34,7 @@ class Iterator(Iterator1D):
         16*x**4 - 48*x**2 + 12
         32*x**5 - 160*x**3 + 120*x
 
-    standardization == "normal":
+    scaling == "normal":
         pi**(-1/4)
         sqrt(2)*x/pi**(1/4)
         sqrt(2)*x**2/pi**(1/4) - sqrt(2)/(2*pi**(1/4))
@@ -43,15 +43,13 @@ class Iterator(Iterator1D):
         2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
-        if standardization in ["probabilist", "monic"]:
+    def __init__(self, X, scaling, *args, **kwargs):
+        if scaling in ["probabilist", "monic"]:
             iterator = IteratorRCMonic(*args, **kwargs)
-        elif standardization == "physicist":
+        elif scaling == "physicist":
             iterator = IteratorRCPhysicist(*args, **kwargs)
         else:
-            assert (
-                standardization == "normal"
-            ), f"Unknown standardization '{standardization}'."
+            assert scaling == "normal", f"Unknown scaling '{scaling}'."
             iterator = IteratorRCNormal(*args, **kwargs)
 
         super().__init__(X, iterator)

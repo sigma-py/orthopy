@@ -13,7 +13,7 @@ def tree(n, *args, **kwargs):
 class Iterator(Iterator1D):
     """Chebyshev polynomials of the first kind. The first few are:
 
-    standardization == "monic":
+    scaling == "monic":
         1
         x
         x**2 - 1/2
@@ -21,7 +21,7 @@ class Iterator(Iterator1D):
         x**4 - x**2 + 1/8
         x**5 - 5*x**3/4 + 5*x/16
 
-    standardization == "classical":
+    scaling == "classical":
         1
         x/2
         3*x**2/4 - 3/8
@@ -29,7 +29,7 @@ class Iterator(Iterator1D):
         35*x**4/16 - 35*x**2/16 + 35/128
         63*x**5/16 - 315*x**3/64 + 315*x/256
 
-    standardization == "normal":
+    scaling == "normal":
         1/sqrt(pi)
         sqrt(2)*x/sqrt(pi)
         2*sqrt(2)*x**2/sqrt(pi) - sqrt(2)/sqrt(pi)
@@ -38,12 +38,12 @@ class Iterator(Iterator1D):
         16*sqrt(2)*x**5/sqrt(pi) - 20*sqrt(2)*x**3/sqrt(pi) + 5*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, standardization, *args, **kwargs):
+    def __init__(self, X, scaling, *args, **kwargs):
         cls = {
             "monic": IteratorRCMonic,
             "classical": IteratorRCClassical,
             "normal": IteratorRCNormal,
-        }[standardization]
+        }[scaling]
         super().__init__(X, cls(*args, **kwargs))
 
 
