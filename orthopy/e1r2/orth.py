@@ -44,71 +44,50 @@ class Iterator(Iterator1D):
     """
 
     def __init__(self, X, scaling, *args, **kwargs):
-        if scaling in ["probabilist", "monic"]:
-            iterator = IteratorRCMonic(*args, **kwargs)
-        elif scaling == "physicist":
-            iterator = IteratorRCPhysicist(*args, **kwargs)
-        else:
-            assert scaling == "normal", f"Unknown scaling '{scaling}'."
-            iterator = IteratorRCNormal(*args, **kwargs)
-
-        super().__init__(X, iterator)
+        rc = {
+            "probabilst": RCMonic,
+            "monic": RCMonic,
+            "physicist": RCPhysicist,
+            "normal": RCNormal,
+        }[scaling]
+        super().__init__(X, rc(*args, **kwargs))
 
 
-class IteratorRCMonic:
+class RCMonic:
     def __init__(self, symbolic=False):
-        self.k = 0
         self.p0 = 1
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         a = 1
         b = 0
         # Note: The first c is never actually used.
-        c = self.k
-
-        self.k += 1
+        c = k
         return a, b, c
 
 
-class IteratorRCPhysicist:
+class RCPhysicist:
     def __init__(self, symbolic=False):
-        self.k = 0
         self.p0 = 1
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         a = 2
         b = 0
         # Note: The first c is never actually used.
-        c = 2 * self.k
-
-        self.k += 1
+        c = 2 * k
         return a, b, c
 
 
-class IteratorRCNormal:
+class RCNormal:
     def __init__(self, symbolic=False):
-        self.k = 0
-
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         pi = sympy.pi if symbolic else numpy.pi
 
         self.p0 = 1 / self.sqrt(self.sqrt(pi))
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        a = self.sqrt(self.frac(2, self.k + 1))
+    def __getitem__(self, k):
+        a = self.sqrt(self.frac(2, k + 1))
         b = 0
         # Note: The first c is never actually used.
-        c = self.sqrt(self.frac(self.k, self.k + 1))
-
-        self.k += 1
+        c = self.sqrt(self.frac(k, k + 1))
         return a, b, c

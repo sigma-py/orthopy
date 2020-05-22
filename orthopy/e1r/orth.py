@@ -37,82 +37,53 @@ class Iterator(Iterator1D):
     """
 
     def __init__(self, X, scaling, *args, **kwargs):
-        if scaling == "monic":
-            iterator = IteratorRCMonic(*args, **kwargs)
-        elif scaling == "classical":
-            iterator = IteratorRCClassical(*args, **kwargs)
-        else:
-            assert scaling == "normal", "Unknown Laguerre scaling '{}'.".format(scaling)
-            iterator = IteratorRCNormal(*args, **kwargs)
-
-        super().__init__(X, iterator)
+        rc = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
+        super().__init__(X, rc(*args, **kwargs))
 
 
-class IteratorRCMonic:
+class RCMonic:
     def __init__(self, alpha=0, symbolic=False):
         self.alpha = alpha
         self.p0 = 1
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        alpha = self.alpha
-        k = self.k
-
+    def __getitem__(self, k):
         a = 1
-        b = 2 * k + 1 + alpha
-        c = k * (k + alpha)
-
-        self.k += 1
+        b = 2 * k + 1 + self.alpha
+        c = k * (k + self.alpha)
         return a, b, c
 
 
-class IteratorRCClassical:
+class RCClassical:
     def __init__(self, alpha=0, symbolic=False):
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
         self.p0 = 1
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         alpha = self.alpha
         S = self.S
-        k = self.k
 
         a = -S(1) / (k + 1)
         b = -S(2 * k + 1 + alpha) / (k + 1)
         c = S(k + alpha) / (k + 1)
-
-        self.k += 1
         return a, b, c
 
 
-class IteratorRCNormal:
+class RCNormal:
     def __init__(self, alpha=0, symbolic=False):
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        gamma = sympy.gamma if symbolic else math.gamma
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
+
+        gamma = sympy.gamma if symbolic else math.gamma
         self.p0 = 1 / self.sqrt(gamma(alpha + 1))
-        self.k = 0
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
+    def __getitem__(self, k):
         sqrt = self.sqrt
         S = self.S
         alpha = self.alpha
-        k = self.k
 
         a = -1 / sqrt((k + 1) * (k + 1 + alpha))
         b = -(2 * k + 1 + alpha) / sqrt((k + 1) * (k + 1 + alpha))
         c = sqrt(k * S(k + alpha) / ((k + 1) * (k + 1 + alpha)))
-
-        self.k += 1
         return a, b, c
