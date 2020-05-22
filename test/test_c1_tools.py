@@ -1,4 +1,3 @@
-import itertools
 import math
 
 import numpy
@@ -9,8 +8,8 @@ import orthopy
 
 def test_clenshaw(tol=1.0e-14):
     n = 5
-    iterator = orthopy.c1.legendre.IteratorRCMonic("monic")
-    _, alpha, beta = numpy.array(list(itertools.islice(iterator, 5))).T
+    rc = orthopy.c1.legendre.RCMonic()
+    _, alpha, beta = numpy.array([rc.get(k) for k in range(n)]).T
 
     t = 1.0
 
