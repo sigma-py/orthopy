@@ -59,15 +59,7 @@ class Iterator:
         }[scaling]
         self.c = fun(*args)
 
-        if with_condon_shortley_phase:
-
-            def z1_factor_CSP(L):
-                return -1 * self.c.z1_factor(L)
-
-        else:
-            z1_factor_CSP = self.c.z1_factor
-
-        self.z1_factor_CSP = z1_factor_CSP
+        self.phase = -1 if with_condon_shortley_phase else 1
 
         self.k = 0
         self.x = x
@@ -77,7 +69,6 @@ class Iterator:
         return self
 
     def __next__(self):
-        # Here comes the actual loop.
         if self.k == 0:
             out = numpy.array([full_like(self.x, self.c.p0)])
         else:
@@ -85,7 +76,7 @@ class Iterator:
                 [
                     [self.last[0][0] * self.c.z0_factor(self.k)],
                     self.last[0] * numpy.multiply.outer(self.c.C0(self.k), self.x),
-                    [self.last[0][-1] * self.z1_factor_CSP(self.k)],
+                    [self.last[0][-1] * self.phase * self.c.z1_factor(self.k)],
                 ]
             )
 
