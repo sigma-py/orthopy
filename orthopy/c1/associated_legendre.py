@@ -114,7 +114,7 @@ class _Natural:
 
 class _Spherical:
     def __init__(self, symbolic):
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         pi = sympy.pi if symbolic else numpy.pi
 
@@ -125,16 +125,17 @@ class _Spherical:
         z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
         #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
             m = numpy.arange(-L + 2, L - 1)
-            d = (L + m) * (L - m)
-            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-                (2 * L - 3) * d
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
             )
         return z0, z1, c0, c1
 
@@ -144,7 +145,7 @@ class _ComplexSpherical:
         pi = sympy.pi if symbolic else numpy.pi
         imag_unit = sympy.I if symbolic else 1j
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
         exp = sympy.exp if symbolic else numpy.exp
 
         # The starting value 1 has the effect of multiplying the entire tree by
@@ -158,16 +159,17 @@ class _ComplexSpherical:
         z1 = self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.exp_iphi
         #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
             m = numpy.arange(-L + 2, L - 1)
-            d = (L + m) * (L - m)
-            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-                (2 * L - 3) * d
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
             )
         return z0, z1, c0, c1
 
@@ -175,7 +177,7 @@ class _ComplexSpherical:
 class _Normal:
     def __init__(self, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         self.p0 = 1 / self.sqrt(2)
 
@@ -184,16 +186,17 @@ class _Normal:
         z1 = self.sqrt(self.frac(2 * L + 1, 2 * L))
         #
         m = numpy.arange(-L + 1, L)
-        d = (L + m) * (L - m)
-        c0 = self.sqrt((2 * L - 1) * (2 * L + 1)) / self.sqrt(d)
+        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
             m = numpy.arange(-L + 2, L - 1)
-            d = (L + m) * (L - m)
-            c1 = self.sqrt((L + m - 1) * (L - m - 1) * (2 * L + 1)) / self.sqrt(
-                (2 * L - 3) * d
+            c1 = self.sqrt(
+                self.frac(
+                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
+                    (2 * L - 3) * (L + m) * (L - m),
+                )
             )
         return z0, z1, c0, c1
 
@@ -201,7 +204,7 @@ class _Normal:
 class _Schmidt:
     def __init__(self, phi, symbolic):
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
+        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         if phi is None:
             self.p0 = 2
@@ -217,13 +220,11 @@ class _Schmidt:
         z1 = self.sqrt(self.frac(2 * L - 1, 2 * L)) * self.exp_iphi
         #
         m = numpy.arange(-L + 1, L)
-        d = self.sqrt((L + m) * (L - m))
-        c0 = (2 * L - 1) / d
+        c0 = (2 * L - 1) / self.sqrt((L + m) * (L - m))
         #
         if L == 1:
             c1 = None
         else:
             m = numpy.arange(-L + 2, L - 1)
-            d = self.sqrt((L + m) * (L - m))
-            c1 = self.sqrt((L + m - 1) * (L - m - 1)) / d
+            c1 = self.sqrt(self.frac((L + m - 1) * (L - m - 1), (L + m) * (L - m)))
         return z0, z1, c0, c1
