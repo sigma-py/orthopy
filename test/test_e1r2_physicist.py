@@ -26,20 +26,20 @@ def test_integral0(scaling, int0, n=4):
 
 @pytest.mark.parametrize("scaling", ["monic", "classical", "normal"])
 def test_orthogonality(scaling, n=4):
-    tree = orthopy.e1r2.tree(n, x, scaling, symbolic=True)
+    tree = orthopy.e1r2.tree(n, x, standardization, scaling, symbolic=True)
     vals = tree * numpy.roll(tree, 1, axis=0)
     for val in vals:
         assert _integrate(val) == 0
 
 
 def test_normality(n=4):
-    tree = orthopy.e1r2.tree(n, x, "normal", symbolic=True)
+    tree = orthopy.e1r2.tree(n, x, standardization, "normal", symbolic=True)
     for val in tree:
         assert _integrate(val ** 2) == 1
 
 
 def test_show():
-    orthopy.e1r2.show(L=4)
+    orthopy.e1r2.show(4, standardization, "normal")
 
 
 if __name__ == "__main__":

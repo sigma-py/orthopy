@@ -36,7 +36,7 @@ def test_normality(n=4):
 
 
 def test_show():
-    orthopy.e1r2.show(L=4)
+    orthopy.e1r2.show(4, standardization, "normal")
 
 
 if __name__ == "__main__":
