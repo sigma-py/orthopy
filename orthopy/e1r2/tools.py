@@ -12,13 +12,13 @@ def show(*args, **kwargs):
     plt.show()
 
 
-def plot(L):
+def plot(L, *args, **kwargs):
     import matplotlib.pyplot as plt
 
     xlim = [-2.0, +2.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
 
-    for val in itertools.islice(Iterator(x, "normal"), L + 1):
+    for val in itertools.islice(Iterator(x, *args, **kwargs), L + 1):
         plt.plot(x, val)
 
     plt.xlim(*xlim)
