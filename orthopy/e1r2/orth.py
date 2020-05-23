@@ -82,12 +82,7 @@ class RCProbabilistNormal:
     def __getitem__(self, k):
         a = 1 / self.sqrt(k + 1)
         b = 0
-        c = k / self.sqrt(k + 1) if k > 0 else self.nan
-
-        # a /= self.sqrt(k + 1)
-        # b /= self.sqrt(k + 1)
-        # if k > 0:
-        #     c /= self.sqrt(k + 1)
+        c = self.sqrt(self.frac(k, k + 1)) if k > 0 else self.nan
         return a, b, c
 
 
