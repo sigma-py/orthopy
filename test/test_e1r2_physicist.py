@@ -15,16 +15,12 @@ def _integrate(f):
 
 @pytest.mark.parametrize(
     "scaling,int0",
-    [("classical", sqrt(pi)), ("monic", sqrt(pi)), ("normal", sqrt(sqrt(pi))),],
+    [("classical", sqrt(pi)), ("monic", sqrt(pi)), ("normal", sqrt(sqrt(pi)))],
 )
 def test_integral0(scaling, int0, n=4):
     vals = orthopy.e1r2.tree(n, x, standardization, scaling, symbolic=True)
-
-    print(scaling)
-
     assert _integrate(vals[0]) == int0
     for val in vals[1:]:
-        print(val)
         assert _integrate(val) == 0
 
 
