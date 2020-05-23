@@ -46,13 +46,14 @@ class Iterator(Iterator1D):
     def __init__(self, X, standardization, scaling, *args, **kwargs):
         rc = {
             "probabilist": {
+                # The classical scheme is monic
                 "monic": RCProbabilistMonic,
                 "classical": RCProbabilistMonic,
-                "normal": RCProbabilistMonic,
+                "normal": RCProbabilistNormal,
             },
             "physicist": {
                 "monic": RCPhysicistMonic,
-                "classical": RCPhysicistMonic,
+                "classical": RCPhysicistClassical,
                 "normal": RCPhysicistNormal,
             },
         }[standardization][scaling](*args, **kwargs)
@@ -76,26 +77,30 @@ class RCProbabilistNormal:
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
-
-        pi = sympy.pi if symbolic else math.pi
-        self.p0 = 1 / self.sqrt(self.sqrt(pi))
+        self.p0 = 1
 
     def __getitem__(self, k):
-        a = self.sqrt(self.frac(2, k + 1))
+        a = 1 / self.sqrt(k + 1)
         b = 0
-        c = self.sqrt(self.frac(k, k + 1)) if k > 0 else self.nan
+        c = k / self.sqrt(k + 1) if k > 0 else self.nan
+
+        # a /= self.sqrt(k + 1)
+        # b /= self.sqrt(k + 1)
+        # if k > 0:
+        #     c /= self.sqrt(k + 1)
         return a, b, c
 
 
 class RCPhysicistMonic:
     def __init__(self, symbolic=False):
+        self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan
         self.p0 = 1
 
     def __getitem__(self, k):
         a = 1
         b = 0
-        c = k if k > 0 else self.nan
+        c = self.frac(k, 2) if k > 0 else self.nan
         return a, b, c
 
 

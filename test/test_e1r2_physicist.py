@@ -1,10 +1,9 @@
 import numpy
 import pytest
 import sympy
-from sympy import oo, sqrt, pi
+from sympy import oo, pi, sqrt
 
 import orthopy
-
 
 standardization = "physicist"
 x = sympy.Symbol("x")
@@ -14,11 +13,10 @@ def _integrate(f):
     return sympy.integrate(f * sympy.exp(-(x ** 2)), (x, -oo, +oo))
 
 
-@pytest.mark.parametrize("scaling,int0", [
-    ("classical", sqrt(pi)),
-    ("monic", sqrt(pi)),
-    ("normal", sqrt(sqrt(pi))),
-])
+@pytest.mark.parametrize(
+    "scaling,int0",
+    [("classical", sqrt(pi)), ("monic", sqrt(pi)), ("normal", sqrt(sqrt(pi))),],
+)
 def test_integral0(scaling, int0, n=4):
     vals = orthopy.e1r2.tree(n, x, standardization, scaling, symbolic=True)
 
