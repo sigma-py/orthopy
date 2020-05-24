@@ -78,9 +78,7 @@ def stieltjes(integrate, n):
         mu[0] = integrate(t, pi[0] ** 2)
         alpha[k] = integrate(t, t * pi[0] ** 2) / mu[0]
 
-        if k == 0:
-            beta[k] = None
-        else:
+        if k > 1:
             beta[k] = mu[0] / mu[1]
 
     return alpha, beta
