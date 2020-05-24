@@ -14,4 +14,4 @@ class Iterator(jacobi.Iterator):
 
 class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
     def __init__(self, lmbda, scaling, symbolic=False):
-        super().__init__(scaling, lmbda, lmbda, scaling, symbolic)
+        super().__init__(lmbda, lmbda, scaling, symbolic)

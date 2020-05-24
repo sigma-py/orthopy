@@ -91,8 +91,8 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
 
-    scheme = orthopy.c1.legendre.RCMonic(symbolic=False)
-    _, _, b, c = orthopy.c1.legendre.RCMonic(2 * n, "monic", symbolic=False)
+    rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=False)
+    _, b, c = numpy.array([rc[k] for k in range(2 * n)]).T
 
     alpha, beta = orthopy.tools.chebyshev_modified(moments, b, c)
 

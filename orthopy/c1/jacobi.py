@@ -20,7 +20,7 @@ class RecurrenceCoefficients:
     def __init__(self, alpha, beta, scaling, symbolic=False):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         self.rc = cls(alpha, beta, symbolic)
-        self.p0 = self.cls.p0
+        self.p0 = self.rc.p0
 
     def __getitem__(self, N):
         return self.rc[N]
@@ -43,8 +43,9 @@ class RCMonic:
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.nan = None if symbolic else math.nan
+        self.one = 1 if symbolic else 1.0
 
-        self.p0 = 1
+        self.p0 = self.one
 
         # c[0] is not used in the actual recurrence, but is traditionally defined as the
         # integral of the weight function of the domain, i.e.,
@@ -59,7 +60,7 @@ class RCMonic:
         alpha = self.alpha
         beta = self.beta
 
-        a = 1
+        a = self.one
 
         if N == 0:
             b = frac(beta - alpha, alpha + beta + 2)
@@ -95,7 +96,7 @@ class RCClassical:
         self.alpha = alpha
         self.beta = beta
 
-        self.p0 = 1
+        self.p0 = 1 if symbolic else 1.0
 
         # gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
         # self.int_1 = (
