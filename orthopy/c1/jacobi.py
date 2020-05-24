@@ -11,9 +11,8 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, alpha, beta, scaling, symbolic=False):
-        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, cls(alpha, beta, symbolic))
+    def __init__(self, X, *args, **kwargs):
+        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
 
 
 class RecurrenceCoefficients:
