@@ -1,4 +1,15 @@
-from .iterators import Iterator1D, ProductIterator
-from .misc import full_like
+from .generate_rc import (
+    golub_welsch,
+    stieltjes,
+    chebyshev,
+    chebyshev_modified,
+    gautschi_test_3,
+)
 
-__all__ = ["Iterator1D", "ProductIterator", "full_like"]
+__all__ = [
+    "golub_welsch",
+    "stieltjes",
+    "chebyshev",
+    "chebyshev_modified",
+    "gautschi_test_3",
+]

@@ -1,5 +1,6 @@
 from . import c1, c2, c3, cn, e1r, e1r2, e2r2, e3r2, enr2, s2, t2, u3
 from .__about__ import __version__
+from . import tools
 
 __all__ = [
     "__version__",
@@ -15,4 +16,5 @@ __all__ = [
     "s2",
     "t2",
     "u3",
+    "tools"
 ]

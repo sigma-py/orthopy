@@ -3,7 +3,7 @@ import math
 
 import sympy
 
-from ..tools import Iterator1D
+from ..helpers import Iterator1D
 
 
 def tree(n, *args, **kwargs):
