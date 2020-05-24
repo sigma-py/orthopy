@@ -11,9 +11,19 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, scaling, *args, **kwargs):
+    def __init__(self, X, alpha, beta, scaling, symbolic=False):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, cls(*args, **kwargs))
+        super().__init__(X, cls(alpha, beta, symbolic))
+
+
+class RecurrenceCoefficients:
+    def __init__(self, alpha, beta, scaling, symbolic=False):
+        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
+        self.rc = cls(alpha, beta, symbolic)
+        self.p0 = self.cls.p0
+
+    def __getitem__(self, N):
+        return self.rc[N]
 
 
 class RCMonic:
@@ -26,7 +36,7 @@ class RCMonic:
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
 
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
         self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
@@ -79,7 +89,7 @@ class RCMonic:
 
 
 class RCClassical:
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.nan = None if symbolic else math.nan
         self.alpha = alpha
@@ -123,7 +133,7 @@ class RCClassical:
 
 
 class RCNormal:
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.nan = None if symbolic else math.nan

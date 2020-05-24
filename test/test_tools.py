@@ -36,7 +36,7 @@ def test_golub_welsch(tol=1.0e-14):
 def test_chebyshev(dtype):
     alpha = 2
 
-    # Get the moment corresponding to the weight function omega(x) =
+    # Get the moments corresponding to the weight function omega(x) =
     # x^alpha:
     #
     #                                     / 0 if k is odd,
@@ -76,32 +76,32 @@ def test_chebyshev(dtype):
         )
 
 
-# def test_chebyshev_modified(tol=1.0e-14):
-#     alpha = 2.0
-#
-#     # Get the moments corresponding to the Legendre polynomials and the weight
-#     # function omega(x) = |x^alpha|:
-#     #
-#     #                                        / 2/3   if k == 0,
-#     #    int_{-1}^{+1} |x^alpha| P_k(x) dx ={  8/45  if k == 2,
-#     #                                        \ 0     otherwise.
-#     #
-#     n = 5
-#     moments = numpy.zeros(2 * n)
-#     moments[0] = 2.0 / 3.0
-#     moments[2] = 8.0 / 45.0
-#     _, _, b, c = orthopy.c1.recurrence_coefficients.legendre(
-#         2 * n, "monic", symbolic=False
-#     )
-#
-#     alpha, beta = orthopy.tools.chebyshev_modified(moments, b, c)
-#
-#     assert numpy.all(abs(alpha) < tol)
-#     assert numpy.all(
-#         abs(beta - [2.0 / 3.0, 3.0 / 5.0, 4.0 / 35.0, 25.0 / 63.0, 16.0 / 99.0]) < tol
-#     )
-#
-#
+def test_chebyshev_modified(tol=1.0e-14):
+    alpha = 2.0
+
+    # Get the moments corresponding to the Legendre polynomials and the weight
+    # function omega(x) = |x^alpha|:
+    #
+    #                                        / 2/3   if k == 0,
+    #    int_{-1}^{+1} |x^alpha| P_k(x) dx ={  8/45  if k == 2,
+    #                                        \ 0     otherwise.
+    #
+    n = 5
+    moments = numpy.zeros(2 * n)
+    moments[0] = 2.0 / 3.0
+    moments[2] = 8.0 / 45.0
+
+    scheme = orthopy.c1.legendre.RCMonic(symbolic=False)
+    _, _, b, c = orthopy.c1.legendre.RCMonic(2 * n, "monic", symbolic=False)
+
+    alpha, beta = orthopy.tools.chebyshev_modified(moments, b, c)
+
+    assert numpy.all(abs(alpha) < tol)
+    assert numpy.all(
+        abs(beta - [2.0 / 3.0, 3.0 / 5.0, 4.0 / 35.0, 25.0 / 63.0, 16.0 / 99.0]) < tol
+    )
+
+
 # def test_integrate():
 #     moments = orthopy.tools.integrate(lambda x: [x ** k for k in range(5)], -1, +1)
 #     assert (moments == [2, 0, sympy.S(2) / 3, 0, sympy.S(2) / 5]).all()
