@@ -102,52 +102,12 @@ def test_chebyshev_modified(tol=1.0e-14):
     )
 
 
-# def test_integrate():
-#     moments = orthopy.tools.integrate(lambda x: [x ** k for k in range(5)], -1, +1)
-#     assert (moments == [2, 0, sympy.S(2) / 3, 0, sympy.S(2) / 5]).all()
-#
-#     moments = orthopy.tools.integrate(
-#         lambda x: orthopy.c1.tree_legendre(x, 4, "monic", symbolic=True),
-#         -1,
-#         +1,
-#     )
-#     assert (moments == [2, 0, 0, 0, 0]).all()
-#
-#     # Example from Gautschi's "How to and how not to" article
-#     moments = orthopy.tools.integrate(
-#         lambda x: [x ** k * sympy.exp(-(x ** 3) / 3) for k in range(5)], 0, sympy.oo
-#     )
-#     S = numpy.vectorize(sympy.S)
-#     gamma = numpy.vectorize(sympy.gamma)
-#     n = numpy.arange(5)
-#     reference = 3 ** (S(n - 2) / 3) * gamma(S(n + 1) / 3)
-#     assert numpy.all([sympy.simplify(m - r) == 0 for m, r in zip(moments, reference)])
-#
-#
-# def test_stieltjes():
-#     alpha0, beta0 = orthopy.tools.stieltjes(lambda t: 1, -1, +1, 5)
-#     _, _, alpha1, beta1 = orthopy.c1.recurrence_coefficients.legendre(
-#         5, "monic", symbolic=True
-#     )
-#     assert (alpha0 == alpha1).all()
-#     assert (beta0 == beta1).all()
+def test_stieltjes():
+    n = 5
+    alpha0, beta0 = orthopy.tools.stieltjes(lambda t: 1, -1, +1, n)
 
+    rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=True)
+    _, alpha1, beta1 = numpy.array([rc[k] for k in range(n)]).T
 
-# def test_expt3():
-#     '''Full example from Gautschi's "How to and how not to" article.
-#     '''
-#     # moments = orthopy.tools.integrate(
-#     #         lambda x: sympy.exp(-x**3/3),
-#     #         0, sympy.oo,
-#     #         31
-#     #         )
-#     # print(moments)
-#     # alpha, beta = orthopy.tools.chebyshev(moments)
-#
-#     alpha, beta = orthopy.tools.stieltjes(
-#             lambda x: sympy.exp(-x**3/3),
-#             0, sympy.oo,
-#             5
-#             )
-#     print(alpha)
-#     print(beta)
+    assert (alpha0 == alpha1).all()
+    assert (beta0 == beta1).all()
