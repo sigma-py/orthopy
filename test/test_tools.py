@@ -104,7 +104,9 @@ def test_chebyshev_modified(tol=1.0e-14):
 
 def test_stieltjes():
     n = 5
-    alpha0, beta0 = orthopy.tools.stieltjes(lambda t: 1, -1, +1, n)
+    alpha0, beta0 = orthopy.tools.stieltjes(
+        lambda t, ft: sympy.integrate(ft, (t, -1, 1)), n
+    )
 
     rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=True)
     _, alpha1, beta1 = numpy.array([rc[k] for k in range(n)]).T
