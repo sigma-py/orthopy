@@ -137,24 +137,6 @@ def chebyshev_modified(nu, a, b):
     return alpha, beta
 
 
-# def integrate(f, a, b, **kwargs):
-#     """Symbolically calculate the integrals
-#
-#       int_a^b f_k(x) dx.
-#
-#     Useful for computing the moments `w(x) * P_k(x)`, e.g.,
-#
-#     moments = orthopy.tools.integrate(
-#         lambda x: [x**k for k in range(5)],
-#         -1, +1
-#     )
-#
-#     Any keyword arguments are passed directly to `sympy.integrate` function.
-#     """
-#     x = sympy.Symbol("x")
-#     return numpy.array([sympy.integrate(fun, (x, a, b), **kwargs) for fun in f(x)])
-
-
 def gautschi_test_3(moments, alpha, beta):
     """In his article [3], Walter Gautschi suggests a method for checking if a
     quadrature rule is sane. This method implements test #3 for the article.
