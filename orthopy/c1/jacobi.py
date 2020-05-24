@@ -3,7 +3,7 @@ import math
 
 import sympy
 
-from ..tools import Iterator1D
+from ..helpers import Iterator1D
 
 
 def tree(n, *args, **kwargs):
@@ -11,9 +11,18 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(Iterator1D):
-    def __init__(self, X, scaling, *args, **kwargs):
+    def __init__(self, X, *args, **kwargs):
+        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
+
+
+class RecurrenceCoefficients:
+    def __init__(self, alpha, beta, scaling, symbolic=False):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, cls(*args, **kwargs))
+        self.rc = cls(alpha, beta, symbolic)
+        self.p0 = self.rc.p0
+
+    def __getitem__(self, N):
+        return self.rc[N]
 
 
 class RCMonic:
@@ -26,15 +35,16 @@ class RCMonic:
     <https://en.wikipedia.org/wiki/Jacobi_polynomials#Recurrence_relations>.
     """
 
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.alpha = alpha
         self.beta = beta
         self.gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
 
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.nan = None if symbolic else math.nan
+        self.one = 1 if symbolic else 1.0
 
-        self.p0 = 1
+        self.p0 = self.one
 
         # c[0] is not used in the actual recurrence, but is traditionally defined as the
         # integral of the weight function of the domain, i.e.,
@@ -49,7 +59,7 @@ class RCMonic:
         alpha = self.alpha
         beta = self.beta
 
-        a = 1
+        a = self.one
 
         if N == 0:
             b = frac(beta - alpha, alpha + beta + 2)
@@ -79,13 +89,13 @@ class RCMonic:
 
 
 class RCClassical:
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.beta = beta
 
-        self.p0 = 1
+        self.p0 = 1 if symbolic else 1.0
 
         # gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
         # self.int_1 = (
@@ -123,7 +133,7 @@ class RCClassical:
 
 
 class RCNormal:
-    def __init__(self, alpha, beta, symbolic=False):
+    def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.nan = None if symbolic else math.nan
@@ -145,25 +155,21 @@ class RCNormal:
         alpha = self.alpha
         beta = self.beta
 
-        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2
-        # (Chebyshev 1).
+        # Treat N==0 separately to avoid division by 0 for alpha=beta=-1/2 (Chebyshev 1)
+        # and alpha=beta=0 (Legendre).
         if N == 0:
-            w = sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
-            a = frac(alpha + beta + 2, 2) * w
-            b = frac(beta - alpha, 2) * w
+            t = sqrt(frac(alpha + beta + 3, (alpha + 1) * (beta + 1)))
+            a = frac(alpha + beta + 2, 2) * t
+            b = frac(beta - alpha, 2) * t
         else:
-            a = frac(2 * N + alpha + beta + 2, 2) * sqrt(
+            t = sqrt(
                 frac(
                     (2 * N + alpha + beta + 1) * (2 * N + alpha + beta + 3),
                     (N + 1) * (N + alpha + 1) * (N + beta + 1) * (N + alpha + beta + 1),
                 )
             )
-            b = frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta)) * sqrt(
-                frac(
-                    (2 * N + alpha + beta + 3) * (2 * N + alpha + beta + 1),
-                    (N + 1) * (N + alpha + 1) * (N + beta + 1) * (N + alpha + beta + 1),
-                )
-            )
+            a = frac(2 * N + alpha + beta + 2, 2) * t
+            b = frac(beta ** 2 - alpha ** 2, 2 * (2 * N + alpha + beta)) * t
 
         if N == 0:
             c = self.nan

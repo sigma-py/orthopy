@@ -8,5 +8,10 @@ def tree(n, *args, **kwargs):
 
 
 class Iterator(jacobi.Iterator):
-    def __init__(self, X, scaling, lmbda, symbolic):
-        super().__init__(X, scaling, lmbda, lmbda, symbolic)
+    def __init__(self, X, lmbda, scaling, symbolic=False):
+        super().__init__(X, lmbda, lmbda, scaling, symbolic)
+
+
+class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
+    def __init__(self, lmbda, scaling, symbolic=False):
+        super().__init__(lmbda, lmbda, scaling, symbolic)

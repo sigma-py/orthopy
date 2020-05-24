@@ -1,7 +1,7 @@
 import itertools
 
 from ..c1 import jacobi
-from ..tools import ProductIterator
+from ..helpers import ProductIterator
 
 
 def tree(n, *args, **kwargs):

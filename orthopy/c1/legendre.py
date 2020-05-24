@@ -36,4 +36,9 @@ class Iterator(gegenbauer.Iterator):
     """
 
     def __init__(self, X, scaling, symbolic=False):
-        super().__init__(X, scaling, 0, symbolic)
+        super().__init__(X, 0, scaling, symbolic)
+
+
+class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):
+    def __init__(self, scaling, symbolic=False):
+        super().__init__(0, scaling, symbolic)

@@ -3,7 +3,7 @@ import itertools
 import numpy
 import sympy
 
-from ..tools import full_like
+from ..helpers import full_like
 
 
 def tree(n, *args, **kwargs):

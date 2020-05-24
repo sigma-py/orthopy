@@ -3,7 +3,7 @@ import math
 
 import sympy
 
-from ..tools import Iterator1D
+from ..helpers import Iterator1D
 
 
 def tree(n, *args, **kwargs):
@@ -35,13 +35,22 @@ class Iterator(Iterator1D):
     The classical and normal standarizations differ for alpha != 0.
     """
 
-    def __init__(self, X, scaling, *args, **kwargs):
-        rc = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
-        super().__init__(X, rc(*args, **kwargs))
+    def __init__(self, X, *args, **kwargs):
+        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
+
+
+class RecurrenceCoefficients:
+    def __init__(self, scaling, alpha=0, symbolic=False):
+        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
+        self.rc = cls(alpha, symbolic)
+        self.p0 = self.rc.p0
+
+    def __getitem__(self, N):
+        return self.rc[N]
 
 
 class RCMonic:
-    def __init__(self, alpha=0, symbolic=False):
+    def __init__(self, alpha, symbolic):
         self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.p0 = 1
@@ -54,7 +63,7 @@ class RCMonic:
 
 
 class RCClassical:
-    def __init__(self, alpha=0, symbolic=False):
+    def __init__(self, alpha, symbolic):
         self.nan = None if symbolic else math.nan
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
@@ -71,7 +80,7 @@ class RCClassical:
 
 
 class RCNormal:
-    def __init__(self, alpha=0, symbolic=False):
+    def __init__(self, alpha, symbolic):
         self.nan = None if symbolic else math.nan
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.S = sympy.S if symbolic else lambda a: a

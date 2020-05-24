@@ -10,10 +10,10 @@ from helpers import get_nth
 
 
 def op(i, j, x, y):
-    # stand = "monic"
-    stand = "classical"
+    # scaling = "monic"
+    scaling = "classical"
 
-    iterator = orthopy.c1.jacobi.Iterator((x - y) / (x + y), stand, 0, 0)
+    iterator = orthopy.c1.jacobi.Iterator((x - y) / (x + y), 0, 0, scaling)
     val1 = get_nth(iterator, i)
 
     # val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
@@ -26,7 +26,7 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    iterator = orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), stand, 2 * i + 1, 0)
+    iterator = orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), 2 * i + 1, 0, scaling)
     val2 = get_nth(iterator, j)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 

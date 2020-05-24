@@ -3,7 +3,7 @@ import math
 
 import sympy
 
-from ..tools import Iterator1D
+from ..helpers import Iterator1D
 
 
 def tree(n, *args, **kwargs):
@@ -59,11 +59,15 @@ class Iterator(Iterator1D):
             2*sqrt(3)*x**3/(3*pi**(1/4)) - sqrt(3)*x/pi**(1/4)
             sqrt(6)*x**4/(3*pi**(1/4)) - sqrt(6)*x**2/pi**(1/4) + sqrt(6)/(4*pi**(1/4))
             2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
-
     """
 
-    def __init__(self, X, standardization, scaling, *args, **kwargs):
-        rc = {
+    def __init__(self, X, *args, **kwargs):
+        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
+
+
+class RecurrenceCoefficients:
+    def __init__(self, standardization, scaling, symbolic=False):
+        self.rc = {
             "probabilist": {
                 # The classical scheme is monic
                 "monic": RCProbabilistMonic,
@@ -75,8 +79,11 @@ class Iterator(Iterator1D):
                 "classical": RCPhysicistClassical,
                 "normal": RCPhysicistNormal,
             },
-        }[standardization][scaling](*args, **kwargs)
-        super().__init__(X, rc)
+        }[standardization][scaling](symbolic)
+        self.p0 = self.rc.p0
+
+    def __getitem__(self, N):
+        return self.rc[N]
 
 
 class RCProbabilistMonic:
