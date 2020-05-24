@@ -109,10 +109,10 @@ class RCNormal:
     The Legendre integral is 1/(2*r+1), and one gets
 
       int_T P_{n, r}^2 = 1 / (2*r+1) / (2*n+2)
-          sum_{i=0}^{n-r} sum_{j=0}^{n-r}
-              (-1)**(i+j) * binom(n+r+1, i) * binom(n-r, i)
-                          * binom(n+r+1, j) * binom(n-r, j)
-                          / binom(2*n+1, i+j)
+                         * sum_{i=0}^{n-r} sum_{j=0}^{n-r}
+                              (-1)**(i+j) * binom(n+r+1, i) * binom(n-r, i)
+                                          * binom(n+r+1, j) * binom(n-r, j)
+                                          / binom(2*n+1, i+j)
 
     Astonishingly, the double sum is always 1, hence
 
