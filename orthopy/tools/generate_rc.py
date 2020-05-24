@@ -62,21 +62,26 @@ def stieltjes(integrate, n):
     alpha = n * [None]
     beta = n * [None]
     mu = n * [None]
-    pi = n * [None]
+    pi = [None, None, None]
 
-    k = 0
-    pi[k] = 1
-    mu[k] = integrate(t, pi[k] ** 2)
-    alpha[k] = integrate(t, t * pi[k] ** 2) / mu[k]
-    beta[k] = None
+    for k in range(n):
+        pi[2] = pi[1]
+        pi[1] = pi[0]
 
-    for k in range(1, n):
-        pi[k] = (t - alpha[k - 1]) * pi[k - 1]
-        if k > 1:
-            pi[k] -= beta[k - 1] * pi[k - 2]
-        mu[k] = integrate(t, pi[k] ** 2)
-        alpha[k] = integrate(t, t * pi[k] ** 2) / mu[k]
-        beta[k] = mu[k] / mu[k - 1]
+        if k == 0:
+            pi[0] = 1
+        else:
+            pi[0] = (t - alpha[k - 1]) * pi[1]
+            if k > 1:
+                pi[0] -= beta[k - 1] * pi[2]
+
+        mu[k] = integrate(t, pi[0] ** 2)
+        alpha[k] = integrate(t, t * pi[0] ** 2) / mu[k]
+
+        if k == 0:
+            beta[k] = None
+        else:
+            beta[k] = mu[k] / mu[k - 1]
 
     return alpha, beta
 
