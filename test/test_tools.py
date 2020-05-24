@@ -57,7 +57,7 @@ def test_chebyshev(dtype):
         assert math.isnan(beta[0])
         assert (
             beta[1:]
-            == [sympy.S(3) / 5, sympy.S(4) / 35, sympy.S(25) / 63, sympy.S(16) / 99,]
+            == [sympy.S(3) / 5, sympy.S(4) / 35, sympy.S(25) / 63, sympy.S(16) / 99]
         ).all()
     else:
         assert dtype == numpy.float
