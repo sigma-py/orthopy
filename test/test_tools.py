@@ -1,3 +1,5 @@
+import math
+
 import numpy
 import pytest
 import sympy
@@ -51,15 +53,11 @@ def test_chebyshev(dtype):
         alpha, beta = orthopy.tools.chebyshev(moments)
 
         assert all([a == 0 for a in alpha])
+        print(beta)
+        assert math.isnan(beta[0])
         assert (
-            beta
-            == [
-                sympy.S(2) / 3,
-                sympy.S(3) / 5,
-                sympy.S(4) / 35,
-                sympy.S(25) / 63,
-                sympy.S(16) / 99,
-            ]
+            beta[1:]
+            == [sympy.S(3) / 5, sympy.S(4) / 35, sympy.S(25) / 63, sympy.S(16) / 99,]
         ).all()
     else:
         assert dtype == numpy.float
@@ -70,10 +68,8 @@ def test_chebyshev(dtype):
         alpha, beta = orthopy.tools.chebyshev(moments)
 
         assert numpy.all(abs(alpha) < tol)
-        assert numpy.all(
-            abs(beta - [2.0 / 3.0, 3.0 / 5.0, 4.0 / 35.0, 25.0 / 63.0, 16.0 / 99.0])
-            < tol
-        )
+        assert numpy.isnan(beta[0])
+        assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
 
 
 def test_chebyshev_modified(tol=1.0e-14):
@@ -97,9 +93,8 @@ def test_chebyshev_modified(tol=1.0e-14):
     alpha, beta = orthopy.tools.chebyshev_modified(moments, b, c)
 
     assert numpy.all(abs(alpha) < tol)
-    assert numpy.all(
-        abs(beta - [2.0 / 3.0, 3.0 / 5.0, 4.0 / 35.0, 25.0 / 63.0, 16.0 / 99.0]) < tol
-    )
+    assert math.isnan(beta[0])
+    assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
 
 
 def test_stieltjes():

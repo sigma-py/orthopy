@@ -21,6 +21,7 @@
     June 1983, Volume 23, Issue 2, pp 209–216,
     <https://doi.org/10.1007/BF02218441>.
 """
+import math
 
 import numpy
 import sympy
@@ -111,31 +112,27 @@ def chebyshev_modified(nu, a, b):
 
     alpha = numpy.empty(n, dtype=a.dtype)
     beta = numpy.empty(n, dtype=a.dtype)
-    # Actually overkill. One could alternatively make sigma a list, and store the
-    # shrinking rows there, only ever keeping the last two.
-    sigma = numpy.empty((n, 2 * n), dtype=a.dtype)
+    sigma = [None, None, None]
 
     if n > 0:
         k = 0
-        sigma[k, k : 2 * n - k] = nu
+        sigma[0] = numpy.asarray(nu)
         alpha[0] = a[0] + nu[1] / nu[0]
-        beta[0] = nu[0]
+        beta[0] = math.nan
 
     for k in range(1, n):
-        L = numpy.arange(k, 2 * n - k)
+        sigma[2] = sigma[1]
+        sigma[1] = sigma[0]
 
-        sigma[k, L] = (
-            sigma[k - 1, L + 1]
-            - (alpha[k - 1] - a[L]) * sigma[k - 1, L]
-            + b[L] * sigma[k - 1, L - 1]
+        L = numpy.arange(k, 2 * n - k)
+        sigma[0] = (
+            sigma[0][2:] - (alpha[k - 1] - a[L]) * sigma[0][1:-1] + b[L] * sigma[1][:-2]
         )
         if k > 1:
-            sigma[k, L] -= beta[k - 1] * sigma[k - 2, L]
+            sigma[0] -= beta[k - 1] * sigma[2][2:-2]
 
-        alpha[k] = (
-            a[k] + sigma[k, k + 1] / sigma[k, k] - sigma[k - 1, k] / sigma[k - 1, k - 1]
-        )
-        beta[k] = sigma[k, k] / sigma[k - 1, k - 1]
+        alpha[k] = a[k] + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0]
+        beta[k] = sigma[0][0] / sigma[1][0]
 
     return alpha, beta
 
