@@ -50,8 +50,6 @@ def golub_welsch(moments):
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    # TODO don't square here, but adapt _gauss to accept square-rooted values
-    #      as input
     beta = numpy.hstack([Rd[0], Rd[1:-1] / Rd[:-2]]) ** 2
     return alpha, beta
 
