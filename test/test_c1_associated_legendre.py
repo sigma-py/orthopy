@@ -6,6 +6,7 @@ import sympy
 import orthopy
 
 
+# https://en.wikipedia.org/wiki/Associated_Legendre_polynomials#The_first_few_associated_Legendre_functions
 def exact_natural(x):
     sqrt = numpy.vectorize(sympy.sqrt)
     sqrt1mx2 = sqrt(1 - x ** 2)
@@ -71,14 +72,15 @@ def ff(l, m):
 @pytest.mark.parametrize(
     "scaling,factor",
     [
-        ("natural", lambda L, m: 1),
-        (
-            "spherical",
-            # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
-            lambda L, m: sympy.sqrt(sympy.S(2 * L + 1) / (4 * sympy.pi) * ff(L, m)),
-        ),
+        ("classical", lambda L, m: 1),
         ("normal", lambda L, m: sympy.sqrt(sympy.S(2 * L + 1) / 2 * ff(L, m))),
-        ("schmidt", lambda L, m: 2 * sympy.sqrt(ff(L, m))),
+        # TODO move these to u3
+        # (
+        #     "spherical",
+        #     # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
+        #     lambda L, m: sympy.sqrt(sympy.S(2 * L + 1) / (4 * sympy.pi) * ff(L, m)),
+        # ),
+        # ("schmidt", lambda L, m: 2 * sympy.sqrt(ff(L, m))),
     ],
 )
 def test_exact(x, scaling, factor):
@@ -101,9 +103,7 @@ def test_exact(x, scaling, factor):
 def test_plot():
     L = 3
     x = numpy.linspace(-1.0, +1.0, 500)
-    vals = orthopy.c1.associated_legendre.tree(
-        L, x, scaling="normal", with_condon_shortley_phase=True, symbolic=False
-    )
+    vals = orthopy.c1.associated_legendre.tree(L, x, scaling="normal", symbolic=False)
 
     for val in vals[L]:
         plt.plot(x, val)

@@ -125,5 +125,42 @@ def test_write():
     orthopy.u3.write("sph.vtk", sph22)
 
 
+# from associated_legendre
+# @pytest.mark.parametrize(
+#     "x",
+#     [
+#         sympy.S(1) / 10,
+#         sympy.S(1) / 1000,
+#         numpy.array([sympy.S(3) / 7, sympy.S(1) / 13]),
+#     ],
+# )
+# @pytest.mark.parametrize(
+#     "scaling,factor",
+#     [
+#         (
+#             "spherical",
+#             # sqrt((2*L+1) / 4 / pi * factorial(l-m) / factorial(l+m))
+#             lambda L, m: sympy.sqrt(sympy.S(2 * L + 1) / (4 * sympy.pi) * ff(L, m)),
+#         ),
+#         ("schmidt", lambda L, m: 2 * sympy.sqrt(ff(L, m))),
+#     ],
+# )
+# def test_exact(x, scaling, factor):
+#     """Test for the exact values.
+#     """
+#     L = 4
+#     vals = orthopy.c1.associated_legendre.tree(L, x, scaling, symbolic=True)
+#
+#     exacts = exact_natural(x)
+#     exacts = [
+#         [val * factor(L, m - L) for m, val in enumerate(ex)]
+#         for L, ex in enumerate(exacts)
+#     ]
+#
+#     for val, ex in zip(vals, exacts):
+#         for v, e in zip(val, ex):
+#             assert numpy.all(v == e)
+
+
 if __name__ == "__main__":
     test_normality(n=3)

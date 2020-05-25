@@ -2,6 +2,7 @@ import math
 import sys
 
 import numpy
+import sympy
 
 
 def _math_comb(n, k):
@@ -138,6 +139,62 @@ class ProductIterator:
             level.append([val])
 
             out = numpy.concatenate(level)
+
+        self.last[1] = self.last[0]
+        self.last[0] = out
+        self.k += 1
+        return out
+
+
+class Iterator135:
+    """Evaluates a 1-3-5-tree as seen with associated Legendre polynomials and spherical
+    harmonics.
+
+    There are many recurrence relations that can be used to construct the associated
+    Legendre polynomials. However, only few are numerically stable. Many implementations
+    (including this one) use the classical Legendre recurrence relation with increasing
+    L.
+
+    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
+    `k`th level of the tree
+
+                              (0, 0)
+                    (-1, 1)   (0, 1)   (1, 1)
+          (-2, 2)   (-1, 2)   (0, 2)   (1, 2)   (2, 2)
+            ...       ...       ...     ...       ...
+    """
+
+    def __init__(self, rc, x, symbolic=False):
+        sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.rc = rc
+
+        self.k = 0
+        self.x = x
+        self.sqrt1mx2 = sqrt(1 - x ** 2)
+        self.last = [None, None]
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.k == 0:
+            out = numpy.array([full_like(self.x, self.rc.p0)])
+        else:
+            z0, z1, c0, c1 = self.rc[self.k]
+            # Make sure that self.sqrt1mx2 is listed first
+            # https://github.com/sympy/sympy/issues/19399
+            a = self.sqrt1mx2 * z0
+            b = self.sqrt1mx2 * z1
+            out = numpy.concatenate(
+                [
+                    [self.last[0][0] * a],
+                    self.last[0] * numpy.multiply.outer(c0, self.x),
+                    [self.last[0][-1] * b],
+                ]
+            )
+
+            if self.k > 1:
+                out[2:-2] -= (self.last[1].T * c1).T
 
         self.last[1] = self.last[0]
         self.last[0] = out
