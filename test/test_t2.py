@@ -1,4 +1,3 @@
-import matplotlib as mpl
 import numpy
 import pytest
 import scipy.special
@@ -160,8 +159,8 @@ def test_show(n=2, r=1):
     def f(bary):
         return orthopy.t2.tree(bary, n, "normal")[n][r]
 
-    cmap = mpl.colors.ListedColormap(["white", "black"])
-    orthopy.t2.show(corners, f, n=1000, colorbar=False, colormap=cmap)
+    # cmap = mpl.colors.ListedColormap(["white", "black"])
+    orthopy.t2.show(corners, f, n=100, colorbar=False)
 
     # orthopy.t2.plot(corners, f)
     # import matplotlib.pyplot as plt
@@ -172,4 +171,4 @@ if __name__ == "__main__":
     # x_ = numpy.array([0.24, 0.65])
     # # x_ = numpy.random.rand(3, 2)
     # test_t2_orth(x=x_)
-    test_show(n=3, r=1)
+    test_show(n=2, r=1)
