@@ -166,7 +166,6 @@ class Iterator135:
 
     def __init__(self, rc, x, symbolic=False):
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        assert numpy.all(numpy.abs(x) <= 1.0)
         self.rc = rc
 
         self.k = 0
