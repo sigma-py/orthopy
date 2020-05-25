@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import pytest
 import sympy
@@ -81,8 +83,8 @@ def test_chebyshev2_normal(n, y):
     assert all(val == y)
 
 
-def _integrate(f, x):
-    return sympy.integrate(f * sqrt(1 - x ** 2), (x, -1, +1))
+# def _integrate(f, x):
+#     return sympy.integrate(f * sqrt(1 - x ** 2), (x, -1, +1))
 
 
 # This function returns the integral of all monomials up to a given degree.
@@ -112,28 +114,37 @@ def test_integral0(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
     vals = orthopy.c1.chebyshev2.tree(n, p, "normal", symbolic=True)
+    vals[0] = sympy.poly(vals[0], x)
 
-    assert _integrate(vals[0], x) == sqrt(pi) / sqrt(2)
+    assert _integrate_poly(vals[0], x) == sqrt(pi) / sqrt(2)
     for val in vals[1:]:
         # assert _integrate(val, x) == 0
         assert _integrate_poly(val, x) == 0
 
 
-# def test_normality(n=3):
-#     x = sympy.Symbol("x")
-#     vals = orthopy.c1.chebyshev2.tree(n, x, "normal", symbolic=True)
-#
-#     for val in vals:
-#         assert _integrate(val ** 2, x) == 1
-#
-#
-# def test_orthogonality(n=4):
-#     x = sympy.Symbol("x")
-#     vals = orthopy.c1.tree_chebyshev2(x, n, "normal", symbolic=True)
-#     out = vals * numpy.roll(vals, 1, axis=0)
-#
-#     for val in out:
-#         assert sympy.simplify(sympy.integrate(val * sqrt(1 - x ** 2), (x, -1, +1))) == 0
+def test_normality(n=4):
+    x = sympy.Symbol("x")
+    p = sympy.poly(x)
+
+    iterator = orthopy.c1.chebyshev2.tree(n, p, "normal", symbolic=True)
+    for k, val in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            val = sympy.poly(val, x)
+        # sympy integration isn't only slow, but also wrong,
+        # <https://github.com/sympy/sympy/issues/19427>
+        # assert _integrate(val ** 2, x) == 1
+        assert _integrate_poly(val ** 2, x) == 1
+
+
+def test_orthogonality(n=4):
+    x = sympy.Symbol("x")
+    p = sympy.poly(x)
+    vals = orthopy.c1.chebyshev2.tree(n, p, "normal", symbolic=True)
+    out = vals * numpy.roll(vals, 1, axis=0)
+
+    for val in out:
+        # assert sympy.simplify(_integrate(val, x)) == 0
+        assert _integrate_poly(val, x) == 0
 
 
 @pytest.mark.parametrize(
