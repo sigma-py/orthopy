@@ -21,6 +21,7 @@
     June 1983, Volume 23, Issue 2, pp 209–216,
     <https://doi.org/10.1007/BF02218441>.
 """
+import math
 
 import numpy
 import sympy
@@ -49,8 +50,6 @@ def golub_welsch(moments):
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    # TODO don't square here, but adapt _gauss to accept square-rooted values
-    #      as input
     beta = numpy.hstack([Rd[0], Rd[1:-1] / Rd[:-2]]) ** 2
     return alpha, beta
 
@@ -60,26 +59,25 @@ def stieltjes(integrate, n):
 
     alpha = n * [None]
     beta = n * [None]
-    mu = n * [None]
-    pi = n * [None]
+    mu = [None, None]
+    pi = [None, None, None]
 
-    k = 0
-    pi[k] = 1
-    mu[k] = integrate(t, pi[k] ** 2)
-    alpha[k] = integrate(t, t * pi[k] ** 2) / mu[k]
-    beta[k] = None
+    for k in range(n):
+        pi[1], pi[2] = pi[0], pi[1]
+        mu[1] = mu[0]
 
-    k = 1
-    pi[k] = (t - alpha[k - 1]) * pi[k - 1]
-    mu[k] = integrate(t, pi[k] ** 2)
-    alpha[k] = integrate(t, t * pi[k] ** 2) / mu[k]
-    beta[k] = mu[k] / mu[k - 1]
+        if k == 0:
+            pi[0] = 1
+        else:
+            pi[0] = (t - alpha[k - 1]) * pi[1]
+            if k > 1:
+                pi[0] -= beta[k - 1] * pi[2]
 
-    for k in range(2, n):
-        pi[k] = (t - alpha[k - 1]) * pi[k - 1] - beta[k - 1] * pi[k - 2]
-        mu[k] = integrate(t, pi[k] ** 2)
-        alpha[k] = integrate(t, t * pi[k] ** 2) / mu[k]
-        beta[k] = mu[k] / mu[k - 1]
+        mu[0] = integrate(t, pi[0] ** 2)
+        alpha[k] = integrate(t, t * pi[0] ** 2) / mu[0]
+
+        if k > 0:
+            beta[k] = mu[0] / mu[1]
 
     return alpha, beta
 
@@ -111,61 +109,29 @@ def chebyshev_modified(nu, a, b):
 
     alpha = numpy.empty(n, dtype=a.dtype)
     beta = numpy.empty(n, dtype=a.dtype)
-    # Actually overkill. One could alternatively make sigma a list, and store the
-    # shrinking rows there, only ever keeping the last two.
-    sigma = numpy.empty((n, 2 * n), dtype=a.dtype)
+    sigma = [None, None, None]
 
     if n > 0:
         k = 0
-        sigma[k, k : 2 * n - k] = nu
+        sigma[0] = numpy.asarray(nu)
         alpha[0] = a[0] + nu[1] / nu[0]
-        beta[0] = nu[0]
+        beta[0] = math.nan
 
-    if n > 1:
-        k = 1
-        L = numpy.arange(k, 2 * n - k)
-        sigma[k, L] = (
-            sigma[k - 1, L + 1]
-            - (alpha[k - 1] - a[L]) * sigma[k - 1, L]
-            + b[L] * sigma[k - 1, L - 1]
-        )
-        alpha[k] = (
-            a[k] + sigma[k, k + 1] / sigma[k, k] - sigma[k - 1, k] / sigma[k - 1, k - 1]
-        )
-        beta[k] = sigma[k, k] / sigma[k - 1, k - 1]
+    for k in range(1, n):
+        sigma[2] = sigma[1]
+        sigma[1] = sigma[0]
 
-    for k in range(2, n):
         L = numpy.arange(k, 2 * n - k)
-        sigma[k, L] = (
-            sigma[k - 1, L + 1]
-            - (alpha[k - 1] - a[L]) * sigma[k - 1, L]
-            - beta[k - 1] * sigma[k - 2, L]
-            + b[L] * sigma[k - 1, L - 1]
+        sigma[0] = (
+            sigma[0][2:] - (alpha[k - 1] - a[L]) * sigma[0][1:-1] + b[L] * sigma[1][:-2]
         )
-        alpha[k] = (
-            a[k] + sigma[k, k + 1] / sigma[k, k] - sigma[k - 1, k] / sigma[k - 1, k - 1]
-        )
-        beta[k] = sigma[k, k] / sigma[k - 1, k - 1]
+        if k > 1:
+            sigma[0] -= beta[k - 1] * sigma[2][2:-2]
+
+        alpha[k] = a[k] + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0]
+        beta[k] = sigma[0][0] / sigma[1][0]
 
     return alpha, beta
-
-
-# def integrate(f, a, b, **kwargs):
-#     """Symbolically calculate the integrals
-#
-#       int_a^b f_k(x) dx.
-#
-#     Useful for computing the moments `w(x) * P_k(x)`, e.g.,
-#
-#     moments = orthopy.tools.integrate(
-#         lambda x: [x**k for k in range(5)],
-#         -1, +1
-#     )
-#
-#     Any keyword arguments are passed directly to `sympy.integrate` function.
-#     """
-#     x = sympy.Symbol("x")
-#     return numpy.array([sympy.integrate(fun, (x, a, b), **kwargs) for fun in f(x)])
 
 
 def gautschi_test_3(moments, alpha, beta):
