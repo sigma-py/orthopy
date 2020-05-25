@@ -5,7 +5,6 @@ from sympy import gamma
 
 import orthopy
 
-
 # def _integrate(f, alpha, x):
 #     return sympy.integrate(f * x ** alpha * sympy.exp(-x), (x, 0, +oo))
 
