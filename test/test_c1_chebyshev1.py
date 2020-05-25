@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import pytest
 import sympy
@@ -80,7 +82,8 @@ def test_chebyshev1_normal(n, y):
 
 
 def _integrate(f, x):
-    return sympy.integrate(f / sqrt(1 - x ** 2), (x, -1, +1))
+    # expanding makes sympy work a lot faster here
+    return sympy.integrate(sympy.expand(f) / sqrt(1 - x ** 2), (x, -1, +1))
 
 
 def test_integral0(n=4):
@@ -94,10 +97,9 @@ def test_integral0(n=4):
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    for k, val in enumerate(orthopy.c1.chebyshev1.Iterator(x, "normal", symbolic=True)):
+    iterator = orthopy.c1.chebyshev1.Iterator(x, "normal", symbolic=True)
+    for val in itertools.islice(iterator, 5):
         assert _integrate(val ** 2, x) == 1
-        if k == n:
-            break
 
 
 def test_orthogonality(n=4):
