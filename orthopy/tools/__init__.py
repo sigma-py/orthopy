@@ -1,10 +1,5 @@
-from .generate_rc import (
-    chebyshev,
-    chebyshev_modified,
-    gautschi_test_3,
-    golub_welsch,
-    stieltjes,
-)
+from .generate_rc import (chebyshev, chebyshev_modified, gautschi_test_3,
+                          golub_welsch, stieltjes)
 
 __all__ = [
     "golub_welsch",
