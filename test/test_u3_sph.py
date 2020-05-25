@@ -12,12 +12,10 @@ azimuthal = sympy.Symbol("phi", real=True)
 
 
 def _integrate(f):
-    return sympy.integrate(
-        sympy.simplify(f * sympy.sin(polar)), (azimuthal, 0, 2 * pi), (polar, 0, pi)
-    )
+    return sympy.integrate(f * sympy.sin(polar), (azimuthal, 0, 2 * pi), (polar, 0, pi))
 
 
-def test_integral0(n=4):
+def test_integral0(n=3):
     iterator = orthopy.u3.Iterator(
         polar, azimuthal, scaling="quantum mechanic", symbolic=True
     )
@@ -31,32 +29,29 @@ def test_integral0(n=4):
 
 def test_normality(n=3):
     scaling = "quantum mechanic"
-    iterator = itertools.islice(
-        orthopy.u3.Iterator(polar, azimuthal, scaling, symbolic=True), n
-    )
-    for level in iterator:
+    iterator = orthopy.u3.Iterator(polar, azimuthal, scaling, symbolic=True)
+    for level in itertools.islice(iterator, n):
         for val in level:
-            assert _integrate(val * val.conjugate()) == 1
+            assert _integrate(sympy.simplify(val * val.conjugate())) == 1
 
 
 @pytest.mark.parametrize("scaling", ["quantum mechanic", "schmidt"])
-def test_orthogonality(scaling, n=4):
+def test_orthogonality(scaling, n=3):
     tree = numpy.concatenate(
         orthopy.u3.tree_sph(n, polar, azimuthal, scaling=scaling, symbolic=True)
     )
     vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
 
     for val in vals:
-        assert _integrate(val) == 0
+        assert _integrate(sympy.expand(val)) == 0
 
 
 def test_schmidt_seminormality(n=3):
-    iterator = itertools.islice(
-        orthopy.u3.Iterator(polar, azimuthal, scaling="schmidt", symbolic=True), n
-    )
-    for k, level in enumerate(iterator):
+    iterator = orthopy.u3.Iterator(polar, azimuthal, scaling="schmidt", symbolic=True)
+    for k, level in enumerate(itertools.islice(iterator, n)):
+        ref = 4 * pi / (2 * k + 1)
         for val in level:
-            assert _integrate(val * val.conjugate()) == 4 * pi / (2 * k + 1)
+            assert _integrate(sympy.simplify(val * val.conjugate())) == ref
 
 
 def sph_exact2(theta, phi):
