@@ -16,7 +16,7 @@ def test_integral0(n=4, dim=5):
         assert sympy.integrate(val, *integration_limits) == 0
 
 
-def test_orthogonality(n=4, dim=5):
+def test_orthogonality(n=3, dim=5):
     variables = numpy.array([sympy.Symbol("x{}".format(k)) for k in range(dim)])
 
     tree = numpy.concatenate(orthopy.cn.tree(n, variables, symbolic=True))
@@ -27,7 +27,7 @@ def test_orthogonality(n=4, dim=5):
         assert sympy.integrate(val, *integration_limits) == 0
 
 
-def test_normality(n=4, dim=5):
+def test_normality(n=3, dim=5):
     variables = numpy.array([sympy.Symbol("x{}".format(k)) for k in range(dim)])
 
     tree = numpy.concatenate(orthopy.cn.tree(n, variables, symbolic=True))

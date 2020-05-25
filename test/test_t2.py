@@ -1,4 +1,5 @@
-import matplotlib as mpl
+import itertools
+
 import numpy
 import pytest
 import scipy.special
@@ -7,6 +8,13 @@ from sympy import S
 
 import orthopy
 from helpers import get_nth
+
+b0 = sympy.Symbol("b0")
+b1 = sympy.Symbol("b1")
+
+
+def _integrate(f):
+    return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
 
 
 def op(i, j, x, y):
@@ -116,38 +124,34 @@ def test_t2_orth_1_exact():
 
 
 def test_integral0(n=4):
-    b0 = sympy.Symbol("b0")
-    b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
-    assert sympy.integrate(tree[0], (b0, 0, 1 - b1), (b1, 0, 1)) == sympy.sqrt(2) / 2
-    for val in tree[1:]:
-        assert sympy.integrate(val, (b0, 0, 1 - b1), (b1, 0, 1)) == 0
+    it = orthopy.t2.Iterator(b, "normal", symbolic=True)
+
+    assert _integrate(next(it)[0]) == sympy.sqrt(2) / 2
+    for _ in range(n):
+        for val in next(it):
+            assert _integrate(val) == 0
 
 
 def test_normality(n=4):
     """Make sure that the polynomials are orthonormal
     """
-    b0 = sympy.Symbol("b0")
-    b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
-    for val in tree:
-        assert sympy.integrate(val ** 2, (b0, 0, 1 - b1), (b1, 0, 1)) == 1
+    for level in itertools.islice(orthopy.t2.Iterator(b, "normal", symbolic=True), n):
+        for val in level:
+            assert _integrate(val ** 2) == 1
 
 
 def test_orthogonality(n=4):
-    b0 = sympy.Symbol("b0")
-    b1 = sympy.Symbol("b1")
     b = numpy.array([b0, b1, 1 - b0 - b1])
     tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
 
     for val in shifts:
-        assert sympy.integrate(val, (b0, 0, 1 - b1), (b1, 0, 1)) == 0
+        assert _integrate(val) == 0
 
 
 def test_show(n=2, r=1):
@@ -160,8 +164,8 @@ def test_show(n=2, r=1):
     def f(bary):
         return orthopy.t2.tree(bary, n, "normal")[n][r]
 
-    cmap = mpl.colors.ListedColormap(["white", "black"])
-    orthopy.t2.show(corners, f, n=1000, colorbar=False, colormap=cmap)
+    # cmap = mpl.colors.ListedColormap(["white", "black"])
+    orthopy.t2.show(corners, f, n=100, colorbar=False)
 
     # orthopy.t2.plot(corners, f)
     # import matplotlib.pyplot as plt
@@ -172,4 +176,4 @@ if __name__ == "__main__":
     # x_ = numpy.array([0.24, 0.65])
     # # x_ = numpy.random.rand(3, 2)
     # test_t2_orth(x=x_)
-    test_show(n=3, r=1)
+    test_show(n=2, r=1)

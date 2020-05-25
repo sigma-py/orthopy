@@ -14,7 +14,7 @@ def _integrate3(f, x, y, z):
     )
 
 
-def test_integral0(n=4):
+def test_integral0(n=3):
     xyz = sympy.symbols("x, y, z")
     vals = numpy.concatenate(orthopy.enr2.tree(xyz, n, symbolic=True))
 
@@ -23,7 +23,7 @@ def test_integral0(n=4):
         assert _integrate3(val, *xyz) == 0
 
 
-def test_orthogonality(n=4):
+def test_orthogonality(n=3):
     x, y, z = sympy.symbols("x, y, z")
     tree = numpy.concatenate(
         orthopy.enr2.tree(numpy.array([x, y, z]), n, symbolic=True)
@@ -34,7 +34,7 @@ def test_orthogonality(n=4):
         assert _integrate3(val, x, y, z) == 0
 
 
-def test_normality(n=4):
+def test_normality(n=3):
     xyz = numpy.array(sympy.symbols("x, y, z"))
 
     for k, level in enumerate(orthopy.enr2.Iterator(xyz, symbolic=True)):
