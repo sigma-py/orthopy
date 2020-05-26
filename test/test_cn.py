@@ -1,28 +1,18 @@
-import math
-import operator
-import sys
-from functools import reduce
-
 import numpy
 import sympy
 
 import orthopy
+from helpers import prod
 
 # def _integrate(f, X):
 #     integration_limits = [(x, -1, +1) for x in X]
 #     return sympy.integrate(f, *integration_limits)
 
 
-def _prod(iterable):
-    if sys.version < "3.8":
-        return reduce(operator.mul, iterable, 1)
-    return math.prod(iterable)
-
-
 def _integrate_monomial(exponents):
     if any(k % 2 == 1 for k in exponents):
         return 0
-    return _prod(sympy.Rational(2, k + 1) for k in exponents)
+    return prod(sympy.Rational(2, k + 1) for k in exponents)
 
 
 def _integrate_poly(p):
