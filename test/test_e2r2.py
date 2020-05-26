@@ -4,6 +4,8 @@ from sympy import oo
 
 import orthopy
 
+standardization = "physicist"
+
 
 def _integrate(f, x, y):
     return sympy.integrate(
@@ -12,39 +14,34 @@ def _integrate(f, x, y):
 
 
 def test_integral0(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    vals = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
+    X = sympy.symbols("x, y")
+    vals = numpy.concatenate(orthopy.e2r2.tree(n, X, standardization, symbolic=True))
 
-    assert _integrate(vals[0], x, y) == sympy.sqrt(sympy.pi)
+    assert _integrate(vals[0], *X) == sympy.sqrt(sympy.pi)
     for val in vals[1:]:
-        assert _integrate(val, x, y) == 0
+        assert _integrate(val, *X) == 0
 
 
 def test_orthogonality(n=4):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
+    X = sympy.symbols("x, y")
+    tree = numpy.concatenate(orthopy.e2r2.tree(n, X, standardization, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert _integrate(val, x, y) == 0
+        assert _integrate(val, *X) == 0
 
 
 def test_normality(n=4):
-    x = sympy.Symbol("x")
-    y = sympy.Symbol("y")
-    tree = numpy.concatenate(orthopy.e2r2.tree(numpy.array([x, y]), n, symbolic=True))
+    X = sympy.symbols("x, y")
+    tree = numpy.concatenate(orthopy.e2r2.tree(n, X, standardization, symbolic=True))
 
     for val in tree:
-        assert _integrate(val ** 2, x, y) == 1
+        assert _integrate(val ** 2, *X) == 1
 
 
 def test_show(n=2, r=1, d=1.5):
     def f(X):
-        return orthopy.e2r2.tree(X, n)[n][r]
+        return orthopy.e2r2.tree(n, X, standardization)[n][r]
 
     orthopy.e2r2.show(f, d=d)
     # orthopy.e2r2.plot(f, d=d)

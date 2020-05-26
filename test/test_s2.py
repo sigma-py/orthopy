@@ -26,7 +26,7 @@ def test_integral0(n=4):
         assert _integrate(val, *xy) == 0
 
 
-def test_orthogonality(n=3):
+def test_orthogonality(n=4):
     xy = sympy.symbols("x, y")
     tree = numpy.concatenate(orthopy.s2.tree(xy, n, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)

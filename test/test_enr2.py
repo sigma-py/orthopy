@@ -1,8 +1,12 @@
+import itertools
+
 import numpy
 import sympy
 from sympy import oo
 
 import orthopy
+
+standaridization = "physicist"
 
 
 def _integrate3(f, x, y, z):
@@ -15,33 +19,29 @@ def _integrate3(f, x, y, z):
 
 
 def test_integral0(n=3):
-    xyz = sympy.symbols("x, y, z")
-    vals = numpy.concatenate(orthopy.enr2.tree(xyz, n, symbolic=True))
+    X = sympy.symbols("x, y, z")
+    vals = numpy.concatenate(orthopy.enr2.tree(n, X, standaridization, symbolic=True))
 
-    assert _integrate3(vals[0], *xyz) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** 3
+    assert _integrate3(vals[0], *X) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** 3
     for val in vals[1:]:
-        assert _integrate3(val, *xyz) == 0
+        assert _integrate3(val, *X) == 0
 
 
 def test_orthogonality(n=3):
-    x, y, z = sympy.symbols("x, y, z")
-    tree = numpy.concatenate(
-        orthopy.enr2.tree(numpy.array([x, y, z]), n, symbolic=True)
-    )
+    X = sympy.symbols("x, y, z")
+    tree = numpy.concatenate(orthopy.enr2.tree(n, X, standaridization, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert _integrate3(val, x, y, z) == 0
+        assert _integrate3(val, *X) == 0
 
 
 def test_normality(n=3):
-    xyz = numpy.array(sympy.symbols("x, y, z"))
-
-    for k, level in enumerate(orthopy.enr2.Iterator(xyz, symbolic=True)):
+    X = sympy.symbols("x, y, z")
+    iterator = orthopy.enr2.Iterator(X, standaridization, symbolic=True)
+    for level in itertools.islice(iterator, n):
         for val in level:
-            assert _integrate3(val ** 2, *xyz) == 1
-        if k == n:
-            break
+            assert _integrate3(val ** 2, *X) == 1
 
 
 if __name__ == "__main__":

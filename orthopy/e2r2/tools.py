@@ -16,9 +16,9 @@ def plot(f, n=100, d=1.0):
     x = numpy.linspace(-d, +d, n)
     y = numpy.linspace(-d, +d, n)
     X, Y = numpy.meshgrid(x, y)
-    XY = numpy.stack([X, Y])
+    XY = numpy.array([X, Y])
 
-    z = numpy.array(f(XY), dtype=float)
+    z = numpy.asarray(f(XY), dtype=float)
 
     triang = matplotlib.tri.Triangulation(X.flatten(), Y.flatten())
     plt.tripcolor(triang, z.flatten(), shading="flat")
