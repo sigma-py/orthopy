@@ -8,17 +8,17 @@ import orthopy
 X = sympy.symbols("x, y")
 
 
-def _integrate(f):
-    # Cartesian integration in sympy is bugged, cf.
-    # <https://github.com/sympy/sympy/issues/13816>.
-    # Simply transform to polar coordinates for now.
-    r = sympy.Symbol("r")
-    phi = sympy.Symbol("phi")
-    return sympy.integrate(
-        r * f.subs([(X[0], r * sympy.cos(phi)), (X[1], r * sympy.sin(phi))]),
-        (r, 0, 1),
-        (phi, 0, 2 * sympy.pi),
-    )
+# def _integrate(f):
+#     # Cartesian integration in sympy is bugged, cf.
+#     # <https://github.com/sympy/sympy/issues/13816>.
+#     # Simply transform to polar coordinates for now.
+#     r = sympy.Symbol("r")
+#     phi = sympy.Symbol("phi")
+#     return sympy.integrate(
+#         r * f.subs([(X[0], r * sympy.cos(phi)), (X[1], r * sympy.sin(phi))]),
+#         (r, 0, 1),
+#         (phi, 0, 2 * sympy.pi),
+#     )
 
 
 def volume_nball(n, symbolic, r=1):
@@ -31,7 +31,7 @@ def volume_nball(n, symbolic, r=1):
     return volume_nball(n - 2, symbolic, r=r) * 2 * pi / n * r ** 2
 
 
-def _integrate_monomial(k, symbolic=False, r=1):
+def _integrate_monomial(k, symbolic=True, r=1):
     frac = sympy.Rational if symbolic else lambda a, b: a / b
     if any(a % 2 == 1 for a in k):
         return 0
@@ -49,30 +49,36 @@ def _integrate_monomial(k, symbolic=False, r=1):
 
 
 def _integrate_poly(p):
-    return sum(c * _integrate_monomial(k) for c, k in zip(p.coeffs(), p.monoms()))
+    return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
 
 def test_integral0(n=4):
-    vals = numpy.concatenate(orthopy.s2.tree(n, X, symbolic=True))
+    p = [sympy.poly(x, X) for x in X]
+    vals = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
+    vals[0] = sympy.poly(vals[0], X)
 
-    assert _integrate(vals[0]) == sympy.sqrt(sympy.pi)
+    assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.pi)
     for val in vals[1:]:
-        assert _integrate(val) == 0
+        assert _integrate_poly(val) == 0
 
 
 def test_orthogonality(n=4):
-    tree = numpy.concatenate(orthopy.s2.tree(n, X, symbolic=True))
+    p = [sympy.poly(x, X) for x in X]
+    tree = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
-        assert _integrate(val) == 0
+        assert _integrate_poly(val) == 0
 
 
 def test_normality(n=4):
-    iterator = orthopy.s2.Iterator(X, symbolic=True)
-    for k, level in enumerate(itertools.islice(iterator, n)):
-        for val in level:
-            assert _integrate(val ** 2) == 1
+    p = [sympy.poly(x, X) for x in X]
+    iterator = orthopy.s2.Iterator(p, symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            vals[0] = sympy.poly(vals[0], X)
+        for val in vals:
+            assert _integrate_poly(val ** 2) == 1
 
 
 def test_show(n=2, r=1):
