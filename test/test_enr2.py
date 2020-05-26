@@ -3,7 +3,7 @@ import itertools
 import numpy
 import pytest
 import sympy
-from sympy import sqrt, pi, Rational
+from sympy import Rational, pi, sqrt
 
 import orthopy
 

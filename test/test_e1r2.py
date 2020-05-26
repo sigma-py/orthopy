@@ -3,7 +3,7 @@ import itertools
 import numpy
 import pytest
 import sympy
-from sympy import sqrt, pi, Rational
+from sympy import Rational, pi, sqrt
 
 import orthopy
 
@@ -52,13 +52,16 @@ def _integrate_poly(p, standardization):
     return sum(coeff * mono_int for coeff, mono_int in zip(coeffs, int_all_monomials))
 
 
-@pytest.mark.parametrize("standardization,scaling,int0", [
-    ("physicist", "classical", sqrt(pi)),
-    ("physicist", "monic", sqrt(pi)),
-    ("physicist", "normal", sqrt(sqrt(pi))),
-    ("probabilist", "monic", 1),
-    ("probabilist", "normal", 1)
-])
+@pytest.mark.parametrize(
+    "standardization,scaling,int0",
+    [
+        ("physicist", "classical", sqrt(pi)),
+        ("physicist", "monic", sqrt(pi)),
+        ("physicist", "normal", sqrt(sqrt(pi))),
+        ("probabilist", "monic", 1),
+        ("probabilist", "normal", 1),
+    ],
+)
 def test_integral0(standardization, scaling, int0, n=4):
     p = sympy.poly(x)
     vals = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
