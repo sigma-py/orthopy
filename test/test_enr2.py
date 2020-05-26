@@ -1,6 +1,7 @@
 import itertools
 
 import numpy
+import pytest
 import sympy
 from sympy import sqrt, pi, Rational
 
@@ -34,7 +35,8 @@ def _integrate_poly(p):
     return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
 
-def test_integral0(n=3, d=5):
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_integral0(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     vals = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
@@ -45,7 +47,8 @@ def test_integral0(n=3, d=5):
         assert _integrate_poly(val) == 0
 
 
-def test_orthogonality(n=3, d=5):
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_orthogonality(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
@@ -55,7 +58,8 @@ def test_orthogonality(n=3, d=5):
         assert _integrate_poly(val) == 0
 
 
-def test_normality(n=3, d=5):
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_normality(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     iterator = orthopy.enr2.Iterator(p, standardization, symbolic=True)
