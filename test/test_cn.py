@@ -1,4 +1,5 @@
 import numpy
+import pytest
 import sympy
 
 import orthopy
@@ -19,21 +20,23 @@ def _integrate_poly(p):
     return sum(c * _integrate_monomial(k) for c, k in zip(p.coeffs(), p.monoms()))
 
 
-def test_integral0(n=4, dim=5):
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_integral0(d, n=4):
     """Make sure that the polynomials are orthonormal
     """
-    X = [sympy.Symbol("x{}".format(k)) for k in range(dim)]
+    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
     vals[0] = sympy.poly(vals[0], X)
 
-    assert _integrate_poly(vals[0]) == sympy.sqrt(2) ** dim
+    assert _integrate_poly(vals[0]) == sympy.sqrt(2) ** d
     for val in vals[1:]:
         assert _integrate_poly(val) == 0
 
 
-def test_orthogonality(n=4, dim=5):
-    X = [sympy.Symbol("x{}".format(k)) for k in range(dim)]
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_orthogonality(d, n=4):
+    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
 
     tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
@@ -43,8 +46,9 @@ def test_orthogonality(n=4, dim=5):
         assert _integrate_poly(val) == 0
 
 
-def test_normality(n=4, dim=5):
-    X = [sympy.Symbol("x{}".format(k)) for k in range(dim)]
+@pytest.mark.parametrize("d", [2, 3, 5])
+def test_normality(d, n=4):
+    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
 
     vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
