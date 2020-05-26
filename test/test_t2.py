@@ -143,30 +143,32 @@ def test_t2_orth_classical_exact():
             assert numpy.all(v == e)
 
 
-def test_integral0(n=4):
-    b = numpy.array([b0, b1, 1 - b0 - b1])
+@pytest.mark.parametrize(
+    "scaling,int0", [("classical", Rational(1, 2)), ("normal", sympy.sqrt(2) / 2)]
+)
+def test_integral0(scaling, int0, n=4):
+    b = [b0, b1, 1 - b0 - b1]
 
-    it = orthopy.t2.Iterator(b, "normal", symbolic=True)
+    it = orthopy.t2.Iterator(b, scaling, symbolic=True)
 
-    assert _integrate(next(it)[0]) == sympy.sqrt(2) / 2
+    assert _integrate(next(it)[0]) == int0
     for _ in range(n):
         for val in next(it):
             assert _integrate(val) == 0
 
 
 def test_normality(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    b = numpy.array([b0, b1, 1 - b0 - b1])
+    b = [b0, b1, 1 - b0 - b1]
 
     for level in itertools.islice(orthopy.t2.Iterator(b, "normal", symbolic=True), n):
         for val in level:
             assert _integrate(val ** 2) == 1
 
 
-def test_orthogonality(n=4):
-    b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.t2.tree(n, b, "normal", symbolic=True))
+@pytest.mark.parametrize("scaling", ["classical", "normal"])
+def test_orthogonality(scaling, n=4):
+    b = [b0, b1, 1 - b0 - b1]
+    tree = numpy.concatenate(orthopy.t2.tree(n, b, scaling, symbolic=True))
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
 
