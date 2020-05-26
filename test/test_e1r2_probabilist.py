@@ -3,7 +3,6 @@ import itertools
 import numpy
 import pytest
 import sympy
-from sympy import oo, pi, sqrt
 
 import orthopy
 
@@ -11,8 +10,8 @@ standardization = "probabilist"
 x = sympy.Symbol("x")
 
 
-def _integrate(f):
-    return sympy.integrate(f * sympy.exp(-(x ** 2 / 2)), (x, -oo, +oo)) / sqrt(2 * pi)
+# def _integrate(f):
+#     return sympy.integrate(f * sympy.exp(-(x ** 2 / 2)), (x, -oo, +oo)) / sqrt(2 * pi)
 
 
 # This function returns the integral of all monomials up to a given degree.
