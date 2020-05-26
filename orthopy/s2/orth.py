@@ -4,8 +4,8 @@ import numpy
 import sympy
 
 
-def tree(X, n, symbolic=False):
-    return list(itertools.islice(Iterator(X, symbolic), n + 1))
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
 class Iterator:

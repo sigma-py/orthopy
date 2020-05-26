@@ -1,10 +1,11 @@
 import itertools
+import math
 
 import numpy
 import pytest
 import scipy.special
 import sympy
-from sympy import S
+from sympy import Rational, S
 
 import orthopy
 from helpers import get_nth
@@ -15,6 +16,25 @@ b1 = sympy.Symbol("b1")
 
 def _integrate(f):
     return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
+
+
+def _integrate_monomial(k):
+    assert all(kk >= 0 for kk in k)
+
+    n = len(k)
+    if all(kk == 0 for kk in k):
+        return Rational(1, math.factorial(n))
+
+    # find first nonzero
+    idx = next(i for i, j in enumerate(k) if j > 0)
+    alpha = Rational(k[idx], sum(k) + n)
+    k2 = k.copy()
+    k2[idx] -= 1
+    return _integrate_monomial(k2) * alpha
+
+
+def _integrate_poly(p):
+    return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
 
 def op(i, j, x, y):
@@ -77,7 +97,7 @@ def test_t2_orth(x, tol=1.0e-12):
     exacts = eval_orthpolys4(x)
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(bary, L, "normal")
+    vals = orthopy.t2.tree(L, bary, "normal")
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -99,14 +119,14 @@ def test_t2_orth_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(bary, L, "normal", symbolic=True)
+    vals = orthopy.t2.tree(L, bary, "normal", symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert v == e
 
 
-def test_t2_orth_1_exact():
+def test_t2_orth_classical_exact():
     x = numpy.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
 
     L = 2
@@ -116,37 +136,39 @@ def test_t2_orth_1_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(bary, L, "1", symbolic=True)
+    vals = orthopy.t2.tree(L, bary, "classical", symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
 
 
-def test_integral0(n=4):
-    b = numpy.array([b0, b1, 1 - b0 - b1])
+@pytest.mark.parametrize(
+    "scaling,int0", [("classical", Rational(1, 2)), ("normal", sympy.sqrt(2) / 2)]
+)
+def test_integral0(scaling, int0, n=4):
+    b = [b0, b1, 1 - b0 - b1]
 
-    it = orthopy.t2.Iterator(b, "normal", symbolic=True)
+    it = orthopy.t2.Iterator(b, scaling, symbolic=True)
 
-    assert _integrate(next(it)[0]) == sympy.sqrt(2) / 2
+    assert _integrate(next(it)[0]) == int0
     for _ in range(n):
         for val in next(it):
             assert _integrate(val) == 0
 
 
 def test_normality(n=4):
-    """Make sure that the polynomials are orthonormal
-    """
-    b = numpy.array([b0, b1, 1 - b0 - b1])
+    b = [b0, b1, 1 - b0 - b1]
 
     for level in itertools.islice(orthopy.t2.Iterator(b, "normal", symbolic=True), n):
         for val in level:
             assert _integrate(val ** 2) == 1
 
 
-def test_orthogonality(n=4):
-    b = numpy.array([b0, b1, 1 - b0 - b1])
-    tree = numpy.concatenate(orthopy.t2.tree(b, n, "normal", symbolic=True))
+@pytest.mark.parametrize("scaling", ["classical", "normal"])
+def test_orthogonality(scaling, n=4):
+    b = [b0, b1, 1 - b0 - b1]
+    tree = numpy.concatenate(orthopy.t2.tree(n, b, scaling, symbolic=True))
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
 
@@ -162,7 +184,7 @@ def test_show(n=2, r=1):
     # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
     def f(bary):
-        return orthopy.t2.tree(bary, n, "normal")[n][r]
+        return orthopy.t2.tree(n, bary, "normal")[n][r]
 
     # cmap = mpl.colors.ListedColormap(["white", "black"])
     orthopy.t2.show(corners, f, n=100, colorbar=False)
