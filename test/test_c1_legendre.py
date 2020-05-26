@@ -45,13 +45,17 @@ def test_legendre_monic(scaling, n, y):
     assert all(val == y)
 
 
+def _integrate(f, x):
+    return sympy.integrate(f, (x, -1, +1))
+
+
 def test_integral0(n=4):
     x = sympy.Symbol("x")
     vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
 
-    assert sympy.integrate(vals[0], (x, -1, +1)) == sqrt(2)
+    assert _integrate(vals[0], x) == sqrt(2)
     for val in vals[1:]:
-        assert sympy.integrate(val, (x, -1, +1)) == 0
+        assert _integrate(val, x) == 0
 
 
 def test_normality(n=4):
@@ -59,7 +63,7 @@ def test_normality(n=4):
     vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
 
     for val in vals:
-        assert sympy.integrate(val ** 2, (x, -1, +1)) == 1
+        assert _integrate(val ** 2, x) == 1
 
 
 def test_orthogonality(n=4):
@@ -68,7 +72,7 @@ def test_orthogonality(n=4):
     out = vals * numpy.roll(vals, 1, axis=0)
 
     for val in out:
-        assert sympy.integrate(val, (x, -1, +1)) == 0
+        assert _integrate(val, x) == 0
 
 
 @pytest.mark.parametrize(
