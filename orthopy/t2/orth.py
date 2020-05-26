@@ -4,8 +4,8 @@ import numpy
 import sympy
 
 
-def tree(bary, n, scaling, symbolic=False):
-    return list(itertools.islice(Iterator(bary, scaling, symbolic), n + 1))
+def tree(n, *args, **kwargs):
+    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 
 class Iterator:
@@ -36,7 +36,7 @@ class Iterator:
         self.k = 0
         self.last = [None, None]
 
-        self.rc = {"1": RC1, "normal": RCNormal}[scaling](symbolic)
+        self.rc = {"classical": RCClassical, "normal": RCNormal}[scaling](symbolic)
 
     def __iter__(self):
         return self
@@ -65,7 +65,7 @@ class Iterator:
         return out
 
 
-class RC1:
+class RCClassical:
     def __init__(self, symbolic):
         self.S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
         self.p0 = 1
