@@ -8,6 +8,27 @@ import orthopy
 X = sympy.symbols("x, y")
 
 
+# def test_zernicke():
+#     p = [sympy.poly(x, X) for x in X]
+#     vals = numpy.concatenate(orthopy.s2.tree(3, p, symbolic=True))
+#     vals[0] = sympy.poly(vals[0], X)
+#
+#     for val in vals:
+#         print(val)
+#
+#     # https://en.wikipedia.org/wiki/Zernike_polynomials
+#     r = [
+#         {0: lambda r: 1},
+#         {1: lambda r: r},
+#         {0: lambda r: 2 * r ** 2 - 1, 2: lambda r: r ** 2}
+#     ]
+#
+#     zmn = r[m][n] * cos(m * phi)
+#
+#     exit(1)
+#     return
+
+
 # def _integrate(f):
 #     # Cartesian integration in sympy is bugged, cf.
 #     # <https://github.com/sympy/sympy/issues/13816>.
@@ -92,4 +113,4 @@ def test_show(n=2, r=1):
 
 
 if __name__ == "__main__":
-    test_show()
+    test_zernicke()

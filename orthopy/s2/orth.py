@@ -64,10 +64,20 @@ class Iterator:
 
 
 class RCNormal:
-    def __init__(self, symbolic):
+    """Recurrence coefficients for the disk with the Gegenbauer-style weight function
+    $$
+    \\frac{\\mu + 1/2}{\\pi} (1 - x^2 - y^2)^{\\mu - 1/2}
+    $$
+    scaled for normality.
+    """
+
+    def __init__(self, symbolic, mu=None):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
         self.mu = self.frac(1, 2)
+        # default: weight function 1
+        self.mu = self.frac(1, 2) if mu is None else mu
+        assert self.mu > -self.frac(1, 2)
 
         pi = sympy.pi if symbolic else numpy.pi
         self.p0 = 1 / self.sqrt(pi)
@@ -92,28 +102,44 @@ class RCNormal:
                 (n + 2 * self.mu - 1) * n,
             )
         )
-        gamma = numpy.array(
-            [
-                self.sqrt(
+        if n in [0, 1]:
+            gamma = None
+            delta = None
+        else:  # n > 1
+            gamma = numpy.array(
+                [
+                    self.sqrt(
+                        self.frac(
+                            (n - 1 - k)
+                            * (n + self.mu + self.frac(1, 2))
+                            * (n + k + 2 * self.mu - 1),
+                            (n - k)
+                            * (n + self.mu - self.frac(3, 2))
+                            * (n + k + 2 * self.mu),
+                        )
+                    )
+                    for k in range(n - 1)
+                ]
+            )
+            # case distinction to avoid undefined expressions for mu = 0.
+            if n == 2:
+                delta = self.sqrt(
                     self.frac(
-                        (n - 1 - k)
-                        * (n + self.mu + self.frac(1, 2))
-                        * (n + k + 2 * self.mu - 1),
-                        (n - k)
-                        * (n + self.mu - self.frac(3, 2))
-                        * (n + k + 2 * self.mu),
+                        (self.frac(3, 2) + self.mu) * (self.frac(5, 2) + self.mu),
+                        (1 + 2 * self.mu) * (1 + self.mu),
                     )
                 )
-                for k in range(n - 1)
-            ]
-        )
-        delta = self.sqrt(
-            self.frac(
-                (n - 1)
-                * (n + 2 * self.mu - 2)
-                * (n + self.mu - self.frac(1, 2))
-                * (n + self.mu + self.frac(1, 2)),
-                n * (n + 2 * self.mu - 1) * (n + self.mu - 1) * (n + self.mu - 2),
-            )
-        )
+            else:
+                delta = self.sqrt(
+                    self.frac(
+                        (n - 1)
+                        * (n + 2 * self.mu - 2)
+                        * (n + self.mu - self.frac(1, 2))
+                        * (n + self.mu + self.frac(1, 2)),
+                        n
+                        * (n + 2 * self.mu - 1)
+                        * (n + self.mu - 1)
+                        * (n + self.mu - 2),
+                    )
+                )
         return alpha, beta, gamma, delta
