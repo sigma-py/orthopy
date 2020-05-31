@@ -30,8 +30,8 @@ class Iterator:
     recurrence relation can be worked out from there.
     """
 
-    def __init__(self, X, symbolic=False):
-        self.rc = RCNormal(symbolic)
+    def __init__(self, X, scaling, symbolic=False):
+        self.rc = {"monic": RCMonic, "normal": RCNormal}[scaling](symbolic)
 
         self.X = X
         self.one_min_x2 = 1 - self.X[0] ** 2
@@ -66,80 +66,58 @@ class Iterator:
 class RCNormal:
     """Recurrence coefficients for the disk with the Gegenbauer-style weight function
     $$
-    \\frac{\\mu + 1/2}{\\pi} (1 - x^2 - y^2)^{\\mu - 1/2}
+    \\frac{\\mu + 1}{2\\pi} (1 - x^2 - y^2)^{(\\mu - 1)/2}
     $$
     scaled for normality.
+
+    In some other tests, one finds a rescaled mu.
+    $$
+    \\frac{\\mu + 1/2}{\\pi} (1 - x^2 - y^2)^{\\mu - 1/2}
+    $$
     """
 
-    def __init__(self, symbolic, mu=None):
-        self.frac = sympy.Rational if symbolic else lambda x, y: x / y
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
-        self.mu = self.frac(1, 2)
-        # default: weight function 1
-        self.mu = self.frac(1, 2) if mu is None else mu
-        assert self.mu > -self.frac(1, 2)
+    # default: weight function 1
+    def __init__(self, symbolic, mu=1):
+        self.S = sympy.S if symbolic else lambda x: x
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.mu = mu
+        assert self.mu > -1
 
         pi = sympy.pi if symbolic else numpy.pi
         self.p0 = 1 / self.sqrt(pi)
 
     def __getitem__(self, n):
-        alpha = numpy.array(
-            [
-                2
-                * self.sqrt(
-                    self.frac(
-                        (n + self.mu + self.frac(1, 2))
-                        * (n + self.mu - self.frac(1, 2)),
-                        (n - k) * (n + k + 2 * self.mu),
-                    )
-                )
-                for k in range(n)
-            ]
+        n = self.S(n)
+        mu = self.mu
+
+        k = numpy.arange(n)
+        alpha = self.sqrt(
+            (2 * n + mu + 1) * (2 * n + mu - 1) / ((n - k) * (n + k + mu))
         )
-        beta = 2 * self.sqrt(
-            self.frac(
-                (n + self.mu - 1) * (n + self.mu + self.frac(1, 2)),
-                (n + 2 * self.mu - 1) * n,
-            )
-        )
-        if n in [0, 1]:
+
+        beta = self.sqrt((2 * n + mu - 2) * (2 * n + mu + 1) / (n * (n + mu - 1)))
+
+        if n == 1:
             gamma = None
             delta = None
         else:  # n > 1
-            gamma = numpy.array(
-                [
-                    self.sqrt(
-                        self.frac(
-                            (n - 1 - k)
-                            * (n + self.mu + self.frac(1, 2))
-                            * (n + k + 2 * self.mu - 1),
-                            (n - k)
-                            * (n + self.mu - self.frac(3, 2))
-                            * (n + k + 2 * self.mu),
-                        )
-                    )
-                    for k in range(n - 1)
-                ]
+            k = numpy.arange(n - 1)
+            gamma = self.sqrt(
+                (n - 1 - k)
+                * (2 * n + mu + 1)
+                * (n + k + mu - 1)
+                / ((n - k) * (2 * n + mu - 3) * (n + k + mu))
             )
-            # case distinction to avoid undefined expressions for mu = 0.
+            # case distinction to avoid undefined expression for mu = 0.
             if n == 2:
-                delta = self.sqrt(
-                    self.frac(
-                        (self.frac(3, 2) + self.mu) * (self.frac(5, 2) + self.mu),
-                        (1 + 2 * self.mu) * (1 + self.mu),
-                    )
-                )
+                two = self.S(2)
+                delta = self.sqrt((3 + mu) * (5 + mu) / (two * (1 + mu) * (2 + mu)))
             else:
                 delta = self.sqrt(
-                    self.frac(
-                        (n - 1)
-                        * (n + 2 * self.mu - 2)
-                        * (n + self.mu - self.frac(1, 2))
-                        * (n + self.mu + self.frac(1, 2)),
-                        n
-                        * (n + 2 * self.mu - 1)
-                        * (n + self.mu - 1)
-                        * (n + self.mu - 2),
-                    )
+                    (n - 1)
+                    * (n + mu - 2)
+                    * (2 * n + mu - 1)
+                    * (2 * n + mu + 1)
+                    / (n * (n + mu - 1) * (2 * n + mu - 2) * (2 * n + mu - 4))
                 )
         return alpha, beta, gamma, delta
