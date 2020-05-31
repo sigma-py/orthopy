@@ -3,7 +3,6 @@ def show(*args, **kwargs):
 
     plot(*args, **kwargs)
     plt.show()
-    return
 
 
 def plot(f, lcar=5.0e-2):
@@ -37,4 +36,3 @@ def plot(f, lcar=5.0e-2):
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
-    return

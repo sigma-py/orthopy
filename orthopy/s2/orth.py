@@ -63,6 +63,39 @@ class Iterator:
         return out
 
 
+class RCMonic:
+    def __init__(self, symbolic, mu=1):
+        self.S = sympy.S if symbolic else lambda x: x
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.mu = mu
+        assert self.mu > -1
+
+        self.p0 = 1
+
+    def __getitem__(self, n):
+        n = self.S(n)
+        mu = self.mu
+
+        alpha = numpy.ones(n, dtype=int)
+        beta = 1
+
+        if n == 1:
+            gamma = None
+            delta = None
+        else:  # n > 1
+            k = numpy.arange(n - 1)
+            gamma = (
+                (n - 1 - k) * (n + k + mu - 1) / ((2 * n + mu - 3) * (2 * n + mu - 1))
+            )
+            # case distinction to avoid undefined expression for mu = 0.
+            if n == 2:
+                delta = self.S(1) / (mu + 2)
+            else:
+                delta = (n - 1) * (n + mu - 2) / ((2 * n + mu - 2) * (2 * n + mu - 4))
+
+        return alpha, beta, gamma, delta
+
+
 class RCNormal:
     """Recurrence coefficients for the disk with the Gegenbauer-style weight function
     $$

@@ -1,6 +1,7 @@
 import itertools
 
 import numpy
+import pytest
 import sympy
 
 import orthopy
@@ -73,19 +74,25 @@ def _integrate_poly(p):
     return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
 
-def test_integral0(n=4):
+@pytest.mark.parametrize(
+    "scaling,int0", [("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))]
+)
+def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, X) for x in X]
-    vals = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
+    vals = numpy.concatenate(orthopy.s2.tree(n, p, scaling, symbolic=True))
     vals[0] = sympy.poly(vals[0], X)
 
-    assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.pi)
+    assert _integrate_poly(vals[0]) == int0
     for val in vals[1:]:
         assert _integrate_poly(val) == 0
 
 
-def test_orthogonality(n=4):
+@pytest.mark.parametrize(
+    "scaling", ["monic", "normal"]
+)
+def test_orthogonality(scaling, n=4):
     p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.tree(n, p, scaling, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
@@ -94,7 +101,7 @@ def test_orthogonality(n=4):
 
 def test_normality(n=4):
     p = [sympy.poly(x, X) for x in X]
-    iterator = orthopy.s2.Iterator(p, symbolic=True)
+    iterator = orthopy.s2.Iterator(p, "normal", symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             vals[0] = sympy.poly(vals[0], X)
@@ -104,7 +111,7 @@ def test_normality(n=4):
 
 def test_show(n=2, r=1):
     def f(X):
-        return orthopy.s2.tree(n, X)[n][r]
+        return orthopy.s2.tree(n, X, "normal")[n][r]
 
     orthopy.s2.show(f)
     # orthopy.s2.plot(f, lcar=2.0e-2)
@@ -112,5 +119,5 @@ def test_show(n=2, r=1):
     # plt.savefig('s2.png', transparent=True)
 
 
-if __name__ == "__main__":
-    test_zernicke()
+# if __name__ == "__main__":
+#     test_zernicke()
