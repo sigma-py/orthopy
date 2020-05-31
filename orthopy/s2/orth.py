@@ -31,7 +31,9 @@ class Iterator:
     """
 
     def __init__(self, X, scaling, symbolic=False):
-        self.rc = {"monic": RCMonic, "normal": RCNormal}[scaling](symbolic)
+        self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
+            scaling
+        ](symbolic)
 
         self.X = X
         self.one_min_x2 = 1 - self.X[0] ** 2
@@ -63,7 +65,72 @@ class Iterator:
         return out
 
 
+class RCClassical:
+    """The maximum values (which are attained at (1, 0) for the first and (0, 1) for the
+    last polynomial in each level) is 1.
+    """
+
+    def __init__(self, symbolic, mu=1):
+        self.S = sympy.S if symbolic else lambda x: x
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.mu = mu
+        assert self.mu > -1
+
+        self.p0 = 1
+
+    # How to get from the monic representation to this one:
+    # The value at (0, 1) needs to be 1, so
+    #
+    # self.last[0][-1] * beta * self.X[1] - self.last[1][-1] * delta * self.one_min_x2
+    # = beta - delta
+    #
+    # (from the recurrence) needs to be 1. Hence
+    #
+    #  beta_new = beta / (beta - delta)
+    #  delta_new = delta / (beta - delta) / beta_min_delta_from_previous_step
+    #
+    # Calling z = beta - delta, this establishes the formula
+    #
+    #     z(n) = beta(n) - delta(n) / z(n-1)
+    #
+    # which is a continued fraction. Using sympy, it can be shown that
+    #
+    #   z(n) = (mu + n - 1) / (mu + 2 * (n - 1))
+    #
+    # so
+    #
+    #   beta(n) = (mu + 2 * (n - 1)) / (mu + n - 1)
+    #
+    # and delta accordingly.
+    #
+    def __getitem__(self, n):
+        n = self.S(n)
+        mu = self.mu
+
+        alpha = numpy.ones(n, dtype=int)
+        # case distinction for mu==0
+        if n == 1:
+            beta = 1
+        else:
+            beta = (mu + 2 * (n - 1)) / (mu + n - 1)
+
+        if n == 1:
+            gamma = None
+            delta = None
+        else:  # n > 1
+            k = numpy.arange(n - 1)
+            gamma = (
+                (n - 1 - k) * (n + k + mu - 1) / ((2 * n + mu - 3) * (2 * n + mu - 1))
+            )
+            delta = (n - 1) / (mu + n - 1)
+
+        return alpha, beta, gamma, delta
+
+
 class RCMonic:
+    """alpha and beta both equal 1.
+    """
+
     def __init__(self, symbolic, mu=1):
         self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt

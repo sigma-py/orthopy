@@ -75,7 +75,11 @@ def _integrate_poly(p):
 
 
 @pytest.mark.parametrize(
-    "scaling,int0", [("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))]
+    "scaling,int0", [
+        ("classical", sympy.pi),
+        ("monic", sympy.pi),
+        ("normal", sympy.sqrt(sympy.pi))
+    ]
 )
 def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, X) for x in X]
@@ -88,7 +92,7 @@ def test_integral0(scaling, int0, n=4):
 
 
 @pytest.mark.parametrize(
-    "scaling", ["monic", "normal"]
+    "scaling", ["classical", "monic", "normal"]
 )
 def test_orthogonality(scaling, n=4):
     p = [sympy.poly(x, X) for x in X]
@@ -109,9 +113,9 @@ def test_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-def test_show(n=2, r=1):
+def test_show(scaling="normal", n=2, r=1):
     def f(X):
-        return orthopy.s2.tree(n, X, "normal")[n][r]
+        return orthopy.s2.tree(n, X, scaling)[n][r]
 
     orthopy.s2.show(f)
     # orthopy.s2.plot(f, lcar=2.0e-2)
@@ -119,5 +123,11 @@ def test_show(n=2, r=1):
     # plt.savefig('s2.png', transparent=True)
 
 
-# if __name__ == "__main__":
-#     test_zernicke()
+if __name__ == "__main__":
+    # p = [sympy.poly(x, X) for x in X]
+    X = [0.0, 1.0]
+    iterator = orthopy.s2.Iterator(X, "classical", symbolic=False)
+    for vals in itertools.islice(iterator, 10):
+        print(vals[-1])
+    # test_zernicke()
+    # test_show("monic", n=5, r=5)
