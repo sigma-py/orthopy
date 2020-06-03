@@ -1,4 +1,4 @@
-from .orth import Iterator, RecurrenceCoefficients, tree
+from .orth import Eval, RecurrenceCoefficients, tree
 from .tools import plot, show
 
-__all__ = ["tree", "Iterator", "RecurrenceCoefficients", "show", "plot"]
+__all__ = ["tree", "Eval", "RecurrenceCoefficients", "show", "plot"]

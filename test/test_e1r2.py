@@ -85,7 +85,7 @@ def test_orthogonality(standardization, scaling, n=4):
 @pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
 def test_normality(standardization, n=4):
     p = sympy.poly(x)
-    iterator = orthopy.e1r2.Iterator(p, standardization, "normal", symbolic=True)
+    iterator = orthopy.e1r2.Eval(p, standardization, "normal", symbolic=True)
     for k, val in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             val = sympy.poly(val, x)

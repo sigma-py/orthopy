@@ -1,4 +1,4 @@
-from .orth import Iterator, tree
+from .orth import Eval, tree
 from .tools import plot, show
 
-__all__ = ["Iterator", "tree", "show", "plot"]
+__all__ = ["Eval", "tree", "show", "plot"]

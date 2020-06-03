@@ -2,7 +2,7 @@ import itertools
 
 import numpy
 
-from .orth import Iterator
+from .orth import Eval
 
 
 def show(*args, **kwargs):
@@ -18,7 +18,7 @@ def plot(L):
     xlim = [0.0, +5.0]
     x = numpy.linspace(xlim[0], xlim[1], 500)
 
-    for val in itertools.islice(Iterator(x, "normal"), L + 1):
+    for val in itertools.islice(Eval(x, "normal"), L + 1):
         plt.plot(x, val)
 
     # plt.axes().set_aspect('equal')

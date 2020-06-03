@@ -40,10 +40,10 @@ def test_jacobi_monic(scaling, n, y):
     beta = 2
     symbolic = True
 
-    y2 = get_nth(orthopy.c1.jacobi.Iterator(x[2], alpha, beta, scaling, symbolic), n)
+    y2 = get_nth(orthopy.c1.jacobi.Eval(x[2], alpha, beta, scaling, symbolic), n)
     assert y2 == y[2]
 
-    val = get_nth(orthopy.c1.jacobi.Iterator(x, alpha, beta, scaling, symbolic), n)
+    val = get_nth(orthopy.c1.jacobi.Eval(x, alpha, beta, scaling, symbolic), n)
     assert all(val == y)
 
 

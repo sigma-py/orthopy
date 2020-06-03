@@ -3,14 +3,14 @@ import math
 
 import sympy
 
-from ..helpers import Iterator1D
+from ..helpers import Eval1D
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-class Iterator(Iterator1D):
+class Eval(Eval1D):
     """Recurrence coefficients for Hermite polynomials.
 
     The physicicist's standardization is with respect to the weight function exp(-x^2),

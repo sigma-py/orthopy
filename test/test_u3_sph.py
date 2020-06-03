@@ -16,7 +16,7 @@ def _integrate(f):
 
 
 def test_integral0(n=3):
-    iterator = orthopy.u3.Iterator(
+    iterator = orthopy.u3.Eval(
         polar, azimuthal, scaling="quantum mechanic", symbolic=True
     )
     out = next(iterator)
@@ -29,7 +29,7 @@ def test_integral0(n=3):
 
 def test_normality(n=3):
     scaling = "quantum mechanic"
-    iterator = orthopy.u3.Iterator(polar, azimuthal, scaling, symbolic=True)
+    iterator = orthopy.u3.Eval(polar, azimuthal, scaling, symbolic=True)
     for level in itertools.islice(iterator, n):
         for val in level:
             assert _integrate(sympy.simplify(val * val.conjugate())) == 1
@@ -47,7 +47,7 @@ def test_orthogonality(scaling, n=3):
 
 
 def test_schmidt_seminormality(n=3):
-    iterator = orthopy.u3.Iterator(polar, azimuthal, scaling="schmidt", symbolic=True)
+    iterator = orthopy.u3.Eval(polar, azimuthal, scaling="schmidt", symbolic=True)
     for k, level in enumerate(itertools.islice(iterator, n)):
         ref = 4 * pi / (2 * k + 1)
         for val in level:

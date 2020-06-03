@@ -100,7 +100,7 @@ def test_orthogonality(scaling, n=4):
 
 def test_normality(n=4):
     p = [sympy.poly(x, X) for x in X]
-    iterator = orthopy.s2.Iterator(p, "normal", symbolic=True)
+    iterator = orthopy.s2.Eval(p, "normal", symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             vals[0] = sympy.poly(vals[0], X)
@@ -119,7 +119,7 @@ def test_show(scaling="normal", n=2, r=1):
     # print(f(x0))
 
     # p = [sympy.poly(x, X) for x in X]
-    # iterator = orthopy.s2.Iterator(p, "classical", symbolic=True)
+    # iterator = orthopy.s2.Eval(p, "classical", symbolic=True)
     # for k, vals in enumerate(itertools.islice(iterator, 10)):
     #     print()
     #     for val in vals:
@@ -135,7 +135,7 @@ def test_show(scaling="normal", n=2, r=1):
 if __name__ == "__main__":
     # p = [sympy.poly(x, X) for x in X]
     # X = [1.0, 0.0]
-    # iterator = orthopy.s2.Iterator(X, "classical", symbolic=False)
+    # iterator = orthopy.s2.Eval(X, "classical", symbolic=False)
     # for vals in itertools.islice(iterator, 10):
     #     print(vals[0])
     # test_zernicke()

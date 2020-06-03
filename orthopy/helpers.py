@@ -26,7 +26,7 @@ def full_like(x, val):
     return val
 
 
-class Iterator1D:
+class Eval1D:
     def __init__(self, x, rc):
         self.rc = rc
         self.x = x
@@ -51,7 +51,7 @@ class Iterator1D:
         return out
 
 
-class ProductIterator:
+class ProductEval:
     """Evaluates the entire tree of orthogonal polynomials for an n-dimensional product
     domain.
 
@@ -146,7 +146,7 @@ class ProductIterator:
         return out
 
 
-class Iterator135:
+class Eval135:
     """Evaluates a 1-3-5-tree as seen with associated Legendre polynomials and spherical
     harmonics.
 

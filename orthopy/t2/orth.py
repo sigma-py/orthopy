@@ -5,10 +5,10 @@ import sympy
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-class Iterator:
+class Eval:
     """Evaluates the entire tree of orthogonal triangle polynomials.
 
     The return value is a list of arrays, where `out[k]` hosts the `2*k+1`

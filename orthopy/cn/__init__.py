@@ -1,3 +1,3 @@
-from .orth import Iterator, tree
+from .orth import Eval, tree
 
-__all__ = ["Iterator", "tree"]
+__all__ = ["Eval", "tree"]

@@ -3,14 +3,14 @@ import itertools
 import numpy
 import sympy
 
-from ..helpers import Iterator135
+from ..helpers import Eval135
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-class Iterator(Iterator135):
+class Eval(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 

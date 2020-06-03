@@ -26,11 +26,11 @@ def test_chebyshev2_monic(n, y):
     scaling = "monic"
 
     # Test evaluation of one value
-    y0 = get_nth(orthopy.c1.chebyshev2.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev2.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = get_nth(orthopy.c1.chebyshev2.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev2.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -50,13 +50,13 @@ def test_chebyshev2_p11(n, y):
 
     scaling = "classical"
 
-    y0 = get_nth(orthopy.c1.chebyshev2.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev2.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     alpha = Rational(1, 2)
     assert sympy.binomial(n + alpha, n) == y[2]
 
-    val = get_nth(orthopy.c1.chebyshev2.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev2.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -76,10 +76,10 @@ def test_chebyshev2_normal(n, y):
 
     scaling = "normal"
 
-    y0 = get_nth(orthopy.c1.chebyshev2.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev2.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
-    val = get_nth(orthopy.c1.chebyshev2.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev2.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -158,7 +158,7 @@ def test_orthogonality(n=4):
 )
 def test_eval(t, ref):
     n = 5
-    value = get_nth(orthopy.c1.chebyshev2.Iterator(t, "monic", symbolic=True), n)
+    value = get_nth(orthopy.c1.chebyshev2.Eval(t, "monic", symbolic=True), n)
     assert numpy.all(value == ref)
 
 
