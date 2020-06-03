@@ -164,12 +164,13 @@ class Eval135:
             ...       ...       ...     ...       ...
     """
 
-    def __init__(self, rc, x, symbolic=False):
+    def __init__(self, rc, x, exp_iphi=1, symbolic=False):
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         self.rc = rc
 
         self.k = 0
         self.x = x
+        self.exp_iphi = exp_iphi
         self.sqrt1mx2 = sqrt(1 - x ** 2)
         self.last = [None, None]
 
@@ -183,8 +184,8 @@ class Eval135:
             z0, z1, c0, c1 = self.rc[self.k]
             # Make sure that self.sqrt1mx2 is listed first
             # https://github.com/sympy/sympy/issues/19399
-            a = self.sqrt1mx2 * z0
-            b = self.sqrt1mx2 * z1
+            a = self.sqrt1mx2 / self.exp_iphi * z0
+            b = self.sqrt1mx2 * self.exp_iphi * z1
             out = numpy.concatenate(
                 [
                     [self.last[0][0] * a],
