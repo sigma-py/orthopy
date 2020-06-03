@@ -32,7 +32,7 @@ class Iterator(Iterator135):
 
 class RCSpherical:
     def __init__(self, with_cs_phase, symbolic):
-        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
+        self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
         pi = sympy.pi if symbolic else numpy.pi
 
@@ -40,21 +40,23 @@ class RCSpherical:
         self.phase = -1 if with_cs_phase else 1
 
     def __getitem__(self, L):
-        z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
-        z1 = self.sqrt(self.frac(2 * L + 1, 2 * L)) * self.phase
+        L = self.S(L)
+
+        z0 = self.sqrt((2 * L + 1) / (2 * L))
+        z1 = z0 * self.phase
         #
         m = numpy.arange(-L + 1, L)
-        c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
+        c0 = self.sqrt((2 * L - 1) * (2 * L + 1) / ((L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
             m = numpy.arange(-L + 2, L - 1)
             c1 = self.sqrt(
-                self.frac(
-                    (L + m - 1) * (L - m - 1) * (2 * L + 1),
-                    (2 * L - 3) * (L + m) * (L - m),
-                )
+                (L + m - 1)
+                * (L - m - 1)
+                * (2 * L + 1)
+                / ((2 * L - 3) * (L + m) * (L - m))
             )
         return z0, z1, c0, c1
 
