@@ -172,14 +172,62 @@ class RCMonic:
 class RCNormal:
     """Recurrence coefficients for the disk with the Gegenbauer-style weight function
     $$
-    \\frac{\\mu + 1}{2\\pi} (1 - x^2 - y^2)^{(\\mu - 1)/2}
+       W_{\\mu}(x, y) = \\frac{\\mu + 1}{2\\pi} (1 - x^2 - y^2)^{(\\mu - 1)/2}
     $$
-    scaled for normality.
+    scaled for normality. The default choice is \\mu=1, giving W_1(x, y) = 1.
 
     In some other tests, one finds a rescaled mu.
     $$
     \\frac{\\mu + 1/2}{\\pi} (1 - x^2 - y^2)^{\\mu - 1/2}
     $$
+
+    This is based on the first orthonormal basis in section 3.2 of
+
+    Yuan Xu,
+    Orthogonal polynomials of several variables,
+    <https://arxiv.org/pdf/1701.02709.pdf>,
+
+    specifically equation (3.4)
+
+      P_k^n(x, y) = h_{k,}^{-1}
+                    C_{n-k}^{k+\\mu+1/2}(x)
+                    \\sqrt{1-x^2}^k C_k^{\\mu}(y/\\sqrt(1-x^2)
+
+    with C_n^{\\lambda} being the Gegenbauer polynomial, scaled such that
+    $C_n^{\\lambda}(1)=\\frac{(\\lambda+1)_n}{n!}$ and
+
+      h_{k,n}^2 = \\frac{(2k+2\\mu+1)_{n-k} (2\\mu)_k (\\mu)_k (\\mu+1/2)}
+                        {(n-k)!k! (\\mu+1/2)_k (n+\\mu+1/2)}.
+
+    The recurrence coefficients are retrieved by exploiting the Gegenbauer recurrence
+
+       C_n^{\\lambda}(t) =
+           1/n (
+               + 2t (n+\\lambda+1) C_{n-1}^{\\lambda}(t)
+               - (n+2\\lambda-2) C_{n-2}^{\\lambda}(t)
+               )
+
+    One gets
+
+        P_k^n(x, y) = + 2 \\alpha_{k,n} x P_k^{n-1}(x, y)
+                      - \\beta_{k, n} P_k^{n-2}(x, y)
+
+    with
+
+        \\alpha_{k, n}^2 = \\frac{(n+\\mu+1/2)(n+\\mu-1/2)}{(n-k)(n+k+2\\mu)},
+        \\beta_{k, n}^2 = \\frac{(n-k-1) (n+\\mu+1/2)(n+k+2\\mu-1)}
+                                {(n-k)(n+\\mu-3/2)(n+k+2\\mu)},
+
+    and
+
+        P_n^n(x, y) = + 2 \\gamma_{k,n} y P_{n-1}^{n-1}(x, y)
+                      - \\delta_{k, n} (1-x^2) P_{n-1}^{n-2}(x, y)
+
+    with
+
+        \\gamma_{k, n}^2 = \\frac{(n+\\mu-1)(n+\\mu+1/2)}{n (n+2\\mu-1)},
+        \\delta_{k, n}^2 = \\frac{(n+2\\mu-2) (n-1) (n+\\mu-1/2) (n+\\mu+1/2)}
+                                 {n (n+2\\mu-1) (n+\\mu-1) (n+\\mu-2)}.
     """
 
     # default: weight function 1
