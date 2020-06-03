@@ -85,8 +85,11 @@ class RCClassical:
             epsilon = None
         else:
             r = numpy.arange(n - 1)
-            gamma = (n - r - 1) * (n + r) * (2 * n + 1) / (
-                (n - r) * (n + r + 1) * (2 * n - 1)
+            gamma = (
+                (n - r - 1)
+                * (n + r)
+                * (2 * n + 1)
+                / ((n - r) * (n + r + 1) * (2 * n - 1))
             )
             epsilon = (n - 1) / n
         return alpha, beta, gamma, delta, epsilon
@@ -161,9 +164,7 @@ class RCNormal:
         r = numpy.arange(n)
         alpha = sqrt((n + 1) * n) * ((2 * n + 1) / ((n - r) * (n + r + 1)))
         beta = (
-            sqrt((n + 1) * n)
-            * (2 * r + 1) ** 2
-            / ((n - r) * (n + r + 1) * (2 * n - 1))
+            sqrt((n + 1) * n) * (2 * r + 1) ** 2 / ((n - r) * (n + r + 1) * (2 * n - 1))
         )
         delta = sqrt((2 * n + 1) * (n + 1) * (2 * n - 1) / n ** 3)
 
@@ -173,7 +174,9 @@ class RCNormal:
         else:
             r = numpy.arange(n - 1)
             gamma = sqrt((n + 1) / (n - 1)) * (
-                (n - r - 1) * (n + r) * (2 * n + 1)
+                (n - r - 1)
+                * (n + r)
+                * (2 * n + 1)
                 / ((n - r) * (n + r + 1) * (2 * n - 1))
             )
             epsilon = sqrt((2 * n + 1) * (n + 1) * (n - 1) / ((2 * n - 3) * n ** 2))
