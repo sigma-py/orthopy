@@ -144,7 +144,12 @@ def test_t2_orth_classical_exact():
 
 
 @pytest.mark.parametrize(
-    "scaling,int0", [("classical", Rational(1, 2)), ("normal", sympy.sqrt(2) / 2)]
+    "scaling,int0",
+    [
+        ("classical", Rational(1, 2)),
+        ("monic", Rational(1, 2)),
+        ("normal", sympy.sqrt(2) / 2),
+    ],
 )
 def test_integral0(scaling, int0, n=4):
     b = [b0, b1, 1 - b0 - b1]
@@ -165,7 +170,7 @@ def test_normality(n=4):
             assert _integrate(val ** 2) == 1
 
 
-@pytest.mark.parametrize("scaling", ["classical", "normal"])
+@pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_orthogonality(scaling, n=4):
     b = [b0, b1, 1 - b0 - b1]
     tree = numpy.concatenate(orthopy.t2.tree(n, b, scaling, symbolic=True))

@@ -36,7 +36,9 @@ class Iterator:
         self.k = 0
         self.last = [None, None]
 
-        self.rc = {"classical": RCClassical, "normal": RCNormal}[scaling](symbolic)
+        self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
+            scaling
+        ](symbolic)
 
     def __iter__(self):
         return self
@@ -87,6 +89,34 @@ class RCClassical:
                 (n - r) * (n + r + 1) * (2 * n - 1)
             )
             epsilon = S(n - 1) / n
+        return alpha, beta, gamma, delta, epsilon
+
+
+class RCMonic:
+    def __init__(self, symbolic):
+        self.S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
+        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+
+        self.p0 = 1
+
+    def __getitem__(self, n):
+        assert n > 0
+
+        r = numpy.arange(n)
+        alpha = numpy.ones(n, dtype=int)
+        delta = 1
+        n = self.S(n)
+
+        beta = (2 * r + 1) ** 2 / ((2 * n - 1) * (2 * n + 1))
+
+        if n == 1:
+            gamma = None
+            epsilon = None
+        else:
+            r = numpy.arange(n - 1)
+            gamma = (n - r - 1) ** 2 * (n + r) ** 2 / ((2 * n - 1) ** 2 * (n - 1) * n)
+            epsilon = (n - 1) ** 2 / ((2 * n - 1) * (2 * n - 3))
+
         return alpha, beta, gamma, delta, epsilon
 
 

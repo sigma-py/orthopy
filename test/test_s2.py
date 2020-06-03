@@ -75,11 +75,8 @@ def _integrate_poly(p):
 
 
 @pytest.mark.parametrize(
-    "scaling,int0", [
-        ("classical", sympy.pi),
-        ("monic", sympy.pi),
-        ("normal", sympy.sqrt(sympy.pi))
-    ]
+    "scaling,int0",
+    [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))],
 )
 def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, X) for x in X]
@@ -91,9 +88,7 @@ def test_integral0(scaling, int0, n=4):
         assert _integrate_poly(val) == 0
 
 
-@pytest.mark.parametrize(
-    "scaling", ["classical", "monic", "normal"]
-)
+@pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_orthogonality(scaling, n=4):
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.s2.tree(n, p, scaling, symbolic=True))
