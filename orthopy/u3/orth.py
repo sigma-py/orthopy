@@ -6,7 +6,7 @@ import sympy
 from ..helpers import Iterator135
 
 
-def tree_sph(n, *args, **kwargs):
+def tree(n, *args, **kwargs):
     return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
 
 

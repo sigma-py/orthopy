@@ -157,7 +157,7 @@ for level in orthopy.u3.Iterator(polar, azimuthal, standardization="quantum mech
     pass
 
 # or for the entire tree up to degree n
-vals = orthopy.u3.tree_sph(
+vals = orthopy.u3.tree(
     polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
 )
 ```

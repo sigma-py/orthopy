@@ -38,7 +38,7 @@ def test_normality(n=3):
 @pytest.mark.parametrize("scaling", ["quantum mechanic", "schmidt"])
 def test_orthogonality(scaling, n=3):
     tree = numpy.concatenate(
-        orthopy.u3.tree_sph(n, polar, azimuthal, scaling=scaling, symbolic=True)
+        orthopy.u3.tree(n, polar, azimuthal, scaling=scaling, symbolic=True)
     )
     vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
 
@@ -98,7 +98,7 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree_sph(L, theta, phi, scaling="quantum mechanic", symbolic=True)
+    vals = orthopy.u3.tree(L, theta, phi, scaling="quantum mechanic", symbolic=True)
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -109,7 +109,7 @@ def test_spherical_harmonics(theta, phi):
 def test_spherical_harmonics_numpy(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree_sph(L, theta, phi, scaling="quantum mechanic")
+    vals = orthopy.u3.tree(L, theta, phi, scaling="quantum mechanic")
 
     cmplx = numpy.vectorize(complex)
     for val, ex in zip(vals, exacts):
@@ -118,9 +118,7 @@ def test_spherical_harmonics_numpy(theta, phi):
 
 def test_write():
     def sph22(polar, azimuthal):
-        return orthopy.u3.tree_sph(5, polar, azimuthal, scaling="quantum mechanic")[5][
-            3
-        ]
+        return orthopy.u3.tree(5, polar, azimuthal, scaling="quantum mechanic")[5][3]
 
     orthopy.u3.write("sph.vtk", sph22)
 
