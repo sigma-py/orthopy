@@ -1,11 +1,33 @@
 import itertools
 
 import numpy
+import pytest
 import sympy
 
 import orthopy
 
 X = sympy.symbols("x, y")
+
+
+# def test_zernicke():
+#     p = [sympy.poly(x, X) for x in X]
+#     vals = numpy.concatenate(orthopy.s2.tree(3, p, symbolic=True))
+#     vals[0] = sympy.poly(vals[0], X)
+#
+#     for val in vals:
+#         print(val)
+#
+#     # https://en.wikipedia.org/wiki/Zernike_polynomials
+#     r = [
+#         {0: lambda r: 1},
+#         {1: lambda r: r},
+#         {0: lambda r: 2 * r ** 2 - 1, 2: lambda r: r ** 2}
+#     ]
+#
+#     zmn = r[m][n] * cos(m * phi)
+#
+#     exit(1)
+#     return
 
 
 # def _integrate(f):
@@ -52,19 +74,24 @@ def _integrate_poly(p):
     return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
 
-def test_integral0(n=4):
+@pytest.mark.parametrize(
+    "scaling,int0",
+    [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))],
+)
+def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, X) for x in X]
-    vals = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
+    vals = numpy.concatenate(orthopy.s2.tree(n, p, scaling, symbolic=True))
     vals[0] = sympy.poly(vals[0], X)
 
-    assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.pi)
+    assert _integrate_poly(vals[0]) == int0
     for val in vals[1:]:
         assert _integrate_poly(val) == 0
 
 
-def test_orthogonality(n=4):
+@pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
+def test_orthogonality(scaling, n=4):
     p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.s2.tree(n, p, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.tree(n, p, scaling, symbolic=True))
     vals = tree * numpy.roll(tree, 1, axis=0)
 
     for val in vals:
@@ -73,7 +100,7 @@ def test_orthogonality(n=4):
 
 def test_normality(n=4):
     p = [sympy.poly(x, X) for x in X]
-    iterator = orthopy.s2.Iterator(p, symbolic=True)
+    iterator = orthopy.s2.Iterator(p, "normal", symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             vals[0] = sympy.poly(vals[0], X)
@@ -81,15 +108,35 @@ def test_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-def test_show(n=2, r=1):
+def test_show(scaling="normal", n=2, r=1):
     def f(X):
-        return orthopy.s2.tree(n, X)[n][r]
+        return orthopy.s2.tree(n, X, scaling)[n][r]
 
-    orthopy.s2.show(f)
+    # k = numpy.linspace(0, 2 * numpy.pi, 100000)
+    # X = numpy.array([numpy.cos(k), numpy.sin(k)])
+    # print(numpy.min(f(X)), numpy.max(f(X)))
+    # x0 = [numpy.sqrt(1 / (n)), numpy.sqrt((n-1) / (n))]
+    # print(f(x0))
+
+    # p = [sympy.poly(x, X) for x in X]
+    # iterator = orthopy.s2.Iterator(p, "classical", symbolic=True)
+    # for k, vals in enumerate(itertools.islice(iterator, 10)):
+    #     print()
+    #     for val in vals:
+    #         print(val)
+    # exit(1)
+
+    orthopy.s2.show(f, lcar=1.0e-2)
     # orthopy.s2.plot(f, lcar=2.0e-2)
     # import matplotlib.pyplot as plt
     # plt.savefig('s2.png', transparent=True)
 
 
 if __name__ == "__main__":
-    test_show()
+    # p = [sympy.poly(x, X) for x in X]
+    # X = [1.0, 0.0]
+    # iterator = orthopy.s2.Iterator(X, "classical", symbolic=False)
+    # for vals in itertools.islice(iterator, 10):
+    #     print(vals[0])
+    # test_zernicke()
+    test_show("classical", n=5, r=4)
