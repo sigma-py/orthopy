@@ -79,6 +79,8 @@ class RCSchmidt:
         self.p0 = 1
 
     def __getitem__(self, L):
+        L = self.S(L)
+
         z0 = self.sqrt((2 * L - 1) / (2 * L))
         z1 = z0 * self.phase
         #
@@ -90,4 +92,5 @@ class RCSchmidt:
         else:
             m = numpy.arange(-L + 2, L - 1)
             c1 = self.sqrt((L + m - 1) * (L - m - 1) / ((L + m) * (L - m)))
+
         return z0, z1, c0, c1
