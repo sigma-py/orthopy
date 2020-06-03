@@ -101,27 +101,31 @@ class RCClassical:
     #
     #   beta(n) = (mu + 2 * (n - 1)) / (mu + n - 1)
     #
-    # and delta accordingly.
+    # and delta accordingly. The same reasoning can be applied to alpha and gamma, the
+    # result will be
     #
+    #   z(n) = (mu + n) / (mu + 2 * n - 1)
+    #
+    # TODO only the leftmost and rightmost values are correct
     def __getitem__(self, n):
+        assert n > 0
+
         n = self.S(n)
         mu = self.mu
 
-        alpha = numpy.ones(n, dtype=int)
+        alpha = numpy.full(n, (mu + 2 * n - 1) / (mu + n))
         # case distinction for mu==0
         if n == 1:
             beta = 1
         else:
-            beta = (mu + 2 * (n - 1)) / (mu + n - 1)
+            beta = (mu + 2 * n - 2) / (mu + n - 1)
 
         if n == 1:
             gamma = None
             delta = None
         else:  # n > 1
             k = numpy.arange(n - 1)
-            gamma = (
-                (n - 1 - k) * (n + k + mu - 1) / ((2 * n + mu - 3) * (2 * n + mu - 1))
-            )
+            gamma = (n - 1 - k) * (n + k + mu - 1) / ((mu + n) * (mu + n - 1))
             delta = (n - 1) / (mu + n - 1)
 
         return alpha, beta, gamma, delta
@@ -140,6 +144,8 @@ class RCMonic:
         self.p0 = 1
 
     def __getitem__(self, n):
+        assert n > 0
+
         n = self.S(n)
         mu = self.mu
 
@@ -149,7 +155,7 @@ class RCMonic:
         if n == 1:
             gamma = None
             delta = None
-        else:  # n > 1
+        else:
             k = numpy.arange(n - 1)
             gamma = (
                 (n - 1 - k) * (n + k + mu - 1) / ((2 * n + mu - 3) * (2 * n + mu - 1))
@@ -187,6 +193,8 @@ class RCNormal:
         self.p0 = 1 / self.sqrt(pi)
 
     def __getitem__(self, n):
+        assert n > 0
+
         n = self.S(n)
         mu = self.mu
 
@@ -200,7 +208,7 @@ class RCNormal:
         if n == 1:
             gamma = None
             delta = None
-        else:  # n > 1
+        else:
             k = numpy.arange(n - 1)
             gamma = self.sqrt(
                 (n - 1 - k)

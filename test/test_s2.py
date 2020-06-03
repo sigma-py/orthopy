@@ -117,7 +117,21 @@ def test_show(scaling="normal", n=2, r=1):
     def f(X):
         return orthopy.s2.tree(n, X, scaling)[n][r]
 
-    orthopy.s2.show(f)
+    # k = numpy.linspace(0, 2 * numpy.pi, 100000)
+    # X = numpy.array([numpy.cos(k), numpy.sin(k)])
+    # print(numpy.min(f(X)), numpy.max(f(X)))
+    # x0 = [numpy.sqrt(1 / (n)), numpy.sqrt((n-1) / (n))]
+    # print(f(x0))
+
+    # p = [sympy.poly(x, X) for x in X]
+    # iterator = orthopy.s2.Iterator(p, "classical", symbolic=True)
+    # for k, vals in enumerate(itertools.islice(iterator, 10)):
+    #     print()
+    #     for val in vals:
+    #         print(val)
+    # exit(1)
+
+    orthopy.s2.show(f, lcar=1.0e-2)
     # orthopy.s2.plot(f, lcar=2.0e-2)
     # import matplotlib.pyplot as plt
     # plt.savefig('s2.png', transparent=True)
@@ -125,9 +139,9 @@ def test_show(scaling="normal", n=2, r=1):
 
 if __name__ == "__main__":
     # p = [sympy.poly(x, X) for x in X]
-    X = [0.0, 1.0]
-    iterator = orthopy.s2.Iterator(X, "classical", symbolic=False)
-    for vals in itertools.islice(iterator, 10):
-        print(vals[-1])
+    # X = [1.0, 0.0]
+    # iterator = orthopy.s2.Iterator(X, "classical", symbolic=False)
+    # for vals in itertools.islice(iterator, 10):
+    #     print(vals[0])
     # test_zernicke()
-    # test_show("monic", n=5, r=5)
+    test_show("classical", n=5, r=4)

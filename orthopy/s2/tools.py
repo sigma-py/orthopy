@@ -10,10 +10,9 @@ def plot(f, lcar=5.0e-2):
     """
     import matplotlib
     import matplotlib.pyplot as plt
-    import dmsh
+    import meshzoo
 
-    geo = dmsh.Circle([0.0, 0.0], 1.0)
-    points, cells = dmsh.generate(geo, lcar)
+    points, cells = meshzoo.disk(6, 100)
 
     x = points[:, 0]
     y = points[:, 1]
