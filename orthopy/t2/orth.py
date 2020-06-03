@@ -69,33 +69,32 @@ class Iterator:
 
 class RCClassical:
     def __init__(self, symbolic):
-        self.S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
+        self.S = sympy.S if symbolic else lambda x: x
         self.p0 = 1
 
     def __getitem__(self, n):
-        S = self.S
+        n = self.S(n)
 
         r = numpy.arange(n)
-        alpha = S(n * (2 * n + 1)) / ((n - r) * (n + r + 1))
-        beta = S(n * (2 * r + 1) ** 2) / ((n - r) * (n + r + 1) * (2 * n - 1))
-        delta = S(2 * n - 1) / n
+        alpha = n * (2 * n + 1) / ((n - r) * (n + r + 1))
+        beta = n * (2 * r + 1) ** 2 / ((n - r) * (n + r + 1) * (2 * n - 1))
+        delta = (2 * n - 1) / n
 
         if n in [0, 1]:
             gamma = None
             epsilon = None
         else:
             r = numpy.arange(n - 1)
-            gamma = S((n - r - 1) * (n + r) * (2 * n + 1)) / (
+            gamma = (n - r - 1) * (n + r) * (2 * n + 1) / (
                 (n - r) * (n + r + 1) * (2 * n - 1)
             )
-            epsilon = S(n - 1) / n
+            epsilon = (n - 1) / n
         return alpha, beta, gamma, delta, epsilon
 
 
 class RCMonic:
     def __init__(self, symbolic):
-        self.S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.S = sympy.S if symbolic else lambda x: x
 
         self.p0 = 1
 
@@ -150,33 +149,33 @@ class RCNormal:
     """
 
     def __init__(self, symbolic):
-        self.S = numpy.vectorize(sympy.S) if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.S = sympy.S if symbolic else lambda x: x
+        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
 
         self.p0 = self.sqrt(2)
 
     def __getitem__(self, n):
-        S = self.S
+        n = self.S(n)
         sqrt = self.sqrt
 
         r = numpy.arange(n)
-        alpha = sqrt((n + 1) * n) * (S(2 * n + 1) / ((n - r) * (n + r + 1)))
+        alpha = sqrt((n + 1) * n) * ((2 * n + 1) / ((n - r) * (n + r + 1)))
         beta = (
             sqrt((n + 1) * n)
-            * S((2 * r + 1) ** 2)
+            * (2 * r + 1) ** 2
             / ((n - r) * (n + r + 1) * (2 * n - 1))
         )
-        delta = sqrt(S((2 * n + 1) * (n + 1) * (2 * n - 1)) / n ** 3)
+        delta = sqrt((2 * n + 1) * (n + 1) * (2 * n - 1) / n ** 3)
 
         if n in [0, 1]:
             gamma = None
             epsilon = None
         else:
             r = numpy.arange(n - 1)
-            gamma = sqrt(S(n + 1) / (n - 1)) * (
-                S((n - r - 1) * (n + r) * (2 * n + 1))
+            gamma = sqrt((n + 1) / (n - 1)) * (
+                (n - r - 1) * (n + r) * (2 * n + 1)
                 / ((n - r) * (n + r + 1) * (2 * n - 1))
             )
-            epsilon = sqrt(S((2 * n + 1) * (n + 1) * (n - 1)) / ((2 * n - 3) * n ** 2))
+            epsilon = sqrt((2 * n + 1) * (n + 1) * (n - 1) / ((2 * n - 3) * n ** 2))
 
         return alpha, beta, gamma, delta, epsilon
