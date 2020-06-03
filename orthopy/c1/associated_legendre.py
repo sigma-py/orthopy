@@ -34,7 +34,7 @@ class Eval(Eval135):
     def __init__(self, X, scaling, symbolic=False):
         cls = {"classical": RCClassical, "normal": RCNormal}[scaling]
         rc = cls(symbolic)
-        super().__init__(rc, X, symbolic)
+        super().__init__(rc, X, symbolic=symbolic)
 
 
 class RCClassical:
