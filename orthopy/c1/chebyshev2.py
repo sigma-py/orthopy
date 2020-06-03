@@ -6,10 +6,10 @@ from . import gegenbauer
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-class Iterator(gegenbauer.Iterator):
+class Eval(gegenbauer.Eval):
     """Chebyshev polynomials of the second kind. The first few are:
 
     scaling == "monic":

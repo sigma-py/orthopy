@@ -86,7 +86,7 @@ All polynomials are normalized over the measure.
 n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
 
 ```python
-for level in orthopy.t2.Iterator(x, "normal", symbolic=False):
+for level in orthopy.t2.Eval(x, "normal", symbolic=False):
     # `level` contains all evalutations of the orthogonal polynomials with the next
     # degree at the points x
     pass
@@ -118,7 +118,7 @@ All polynomials are normalized on the quadrilateral.
 n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
 
 ```python
-for level in orthopy.s2.Iterator(x, symbolic=False):
+for level in orthopy.s2.Eval(x, symbolic=False):
     # `level` contains all evalutations of the orthogonal polynomials with the next
     # degree at the points x
     pass
@@ -151,13 +151,13 @@ Complex-valued _spherical harmonics,_ plotted with
 [cplot](https://github.com/nschloe/cplot/) coloring.
 
 ```python
-for level in orthopy.u3.Iterator(polar, azimuthal, standardization="quantum mechanic", symbolic=False):
+for level in orthopy.u3.Eval(polar, azimuthal, standardization="quantum mechanic", symbolic=False):
     # `level` contains all evalutations of the spherical harmonics with the next
     # degree at the points x
     pass
 
 # or for the entire tree up to degree n
-vals = orthopy.u3.tree_sph(
+vals = orthopy.u3.tree(
     polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
 )
 ```

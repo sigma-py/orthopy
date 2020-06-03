@@ -4,10 +4,10 @@ from . import jacobi
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Iterator(*args, **kwargs), n + 1))
+    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-class Iterator(jacobi.Iterator):
+class Eval(jacobi.Eval):
     def __init__(self, X, lmbda, scaling, symbolic=False):
         super().__init__(X, lmbda, lmbda, scaling, symbolic)
 

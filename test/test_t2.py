@@ -41,7 +41,7 @@ def op(i, j, x, y):
     # scaling = "monic"
     scaling = "classical"
 
-    iterator = orthopy.c1.jacobi.Iterator((x - y) / (x + y), 0, 0, scaling)
+    iterator = orthopy.c1.jacobi.Eval((x - y) / (x + y), 0, 0, scaling)
     val1 = get_nth(iterator, i)
 
     # val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
@@ -54,7 +54,7 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    iterator = orthopy.c1.jacobi.Iterator(1 - 2 * (x + y), 2 * i + 1, 0, scaling)
+    iterator = orthopy.c1.jacobi.Eval(1 - 2 * (x + y), 2 * i + 1, 0, scaling)
     val2 = get_nth(iterator, j)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 
@@ -155,7 +155,7 @@ def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
 
-    it = orthopy.t2.Iterator(p, scaling, symbolic=True)
+    it = orthopy.t2.Eval(p, scaling, symbolic=True)
 
     assert _integrate(next(it)[0]) == int0
     for _ in range(n):
@@ -166,7 +166,7 @@ def test_integral0(scaling, int0, n=4):
 def test_normality(n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
-    iterator = orthopy.t2.Iterator(p, "normal", symbolic=True)
+    iterator = orthopy.t2.Eval(p, "normal", symbolic=True)
 
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:

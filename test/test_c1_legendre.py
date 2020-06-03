@@ -37,11 +37,11 @@ def test_legendre_monic(scaling, n, y):
     x = numpy.array([0, S(1) / 2, 1])
 
     # Test evaluation of one value
-    y0 = get_nth(orthopy.c1.legendre.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.legendre.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = get_nth(orthopy.c1.legendre.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.legendre.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -86,7 +86,7 @@ def test_orthogonality(n=4):
 )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    value = get_nth(orthopy.c1.legendre.Iterator(t, "monic", symbolic=True), n)
+    value = get_nth(orthopy.c1.legendre.Eval(t, "monic", symbolic=True), n)
     assert numpy.all(value == ref)
 
     # Evaluating the Legendre polynomial in this way is rather unstable, so don't go too

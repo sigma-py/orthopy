@@ -62,7 +62,7 @@ def test_orthogonality(d, n=4):
 def test_normality(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    iterator = orthopy.enr2.Iterator(p, standardization, symbolic=True)
+    iterator = orthopy.enr2.Eval(p, standardization, symbolic=True)
 
     for k, level in enumerate(itertools.islice(iterator, n)):
         if k == 0:

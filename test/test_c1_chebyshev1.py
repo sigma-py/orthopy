@@ -24,11 +24,11 @@ def test_chebyshev1_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
 
     # Test evaluation of one value
-    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], "monic", symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev1.Eval(x[0], "monic", symbolic=True), n)
     assert y0 == y[0]
 
     # Test evaluation of multiple values
-    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, "monic", symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev1.Eval(x, "monic", symbolic=True), n)
     assert all(val == y)
 
 
@@ -48,13 +48,13 @@ def test_chebyshev1_p11(n, y):
 
     scaling = "classical"
 
-    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev1.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
     alpha = -Rational(1, 2)
     assert sympy.binomial(n + alpha, n) == y[2]
 
-    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev1.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -74,10 +74,10 @@ def test_chebyshev1_normal(n, y):
 
     scaling = "normal"
 
-    y0 = get_nth(orthopy.c1.chebyshev1.Iterator(x[0], scaling, symbolic=True), n)
+    y0 = get_nth(orthopy.c1.chebyshev1.Eval(x[0], scaling, symbolic=True), n)
     assert y0 == y[0]
 
-    val = get_nth(orthopy.c1.chebyshev1.Iterator(x, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.chebyshev1.Eval(x, scaling, symbolic=True), n)
     assert all(val == y)
 
 
@@ -122,7 +122,7 @@ def test_integral0(n=4):
 def test_normality(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x, x)
-    iterator = orthopy.c1.chebyshev1.Iterator(p, "normal", symbolic=True)
+    iterator = orthopy.c1.chebyshev1.Eval(p, "normal", symbolic=True)
     for k, val in enumerate(itertools.islice(iterator, 5)):
         if k == 0:
             val = sympy.poly(val, x)
@@ -150,7 +150,7 @@ def test_orthogonality(n=4):
 )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
-    value = get_nth(orthopy.c1.chebyshev1.Iterator(t, "monic", symbolic=True), n)
+    value = get_nth(orthopy.c1.chebyshev1.Eval(t, "monic", symbolic=True), n)
     assert numpy.all(value == ref)
 
 
