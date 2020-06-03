@@ -152,33 +152,39 @@ def test_t2_orth_classical_exact():
     ],
 )
 def test_integral0(scaling, int0, n=4):
-    b = [b0, b1, 1 - b0 - b1]
+    p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
+    # b = [b0, b1, 1 - b0 - b1]
 
-    it = orthopy.t2.Iterator(b, scaling, symbolic=True)
+    it = orthopy.t2.Iterator(p, scaling, symbolic=True)
 
     assert _integrate(next(it)[0]) == int0
     for _ in range(n):
         for val in next(it):
-            assert _integrate(val) == 0
+            assert _integrate_poly(val) == 0
 
 
 def test_normality(n=4):
-    b = [b0, b1, 1 - b0 - b1]
+    p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
+    # b = [b0, b1, 1 - b0 - b1]
+    iterator = orthopy.t2.Iterator(p, "normal", symbolic=True)
 
-    for level in itertools.islice(orthopy.t2.Iterator(b, "normal", symbolic=True), n):
-        for val in level:
-            assert _integrate(val ** 2) == 1
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            vals[0] = sympy.poly(vals[0], [b0, b1])
+        for val in vals:
+            assert _integrate_poly(val ** 2) == 1
 
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_orthogonality(scaling, n=4):
-    b = [b0, b1, 1 - b0 - b1]
-    tree = numpy.concatenate(orthopy.t2.tree(n, b, scaling, symbolic=True))
+    p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
+    # b = [b0, b1, 1 - b0 - b1]
+    tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))
 
     shifts = tree * numpy.roll(tree, 1, axis=0)
 
     for val in shifts:
-        assert _integrate(val) == 0
+        assert _integrate_poly(val) == 0
 
 
 def test_show(n=2, r=1):
