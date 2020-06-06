@@ -9,15 +9,8 @@ def tree(n, *args, **kwargs):
 
 class Eval:
     """
-    Similar to
-
-    Torben B. Andersen,
-    Efficient and robust recurrence relations for the Zernike circle polynomials and
-    their derivatives in Cartesian coordinates,
-    Optics Express Vol. 26, Issue 15, pp. 18878-18896 (2018),
-    <https://doi.org/10.1364/OE.26.018878>
-
-    but a lot simpler. Can probably be generalized to n-ball.
+    Similar to regular Zernike, but a lot simpler. Can probably be generalized to
+    n-ball.
     """
 
     def __init__(self, X, scaling, symbolic=False):
