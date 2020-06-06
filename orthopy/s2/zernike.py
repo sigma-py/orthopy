@@ -53,10 +53,9 @@ class Eval:
             last_Y = last_Y[::-1]
 
             n = self.L + 1
+            half = n // 2
 
             if n % 2 == 0:
-                half = n // 2
-
                 # left-hand side, m < 0
                 out[:half - 1] += last_X[:half - 1]
                 out[:half] += last_Y[:half]
@@ -65,11 +64,10 @@ class Eval:
 
                 # right-hand side, m > 0
                 out[half:] += last_X[half - 1:]
+                out[half:-1] += last_Y[half:]
                 out[half:-1] += last_X[half:]
                 out[half + 1:] -= last_Y[half:]
-                out[half:-1] += last_Y[half:]
             else:
-                half = n // 2
                 # left-hand side, m < 0
                 out[:half] += last_X[:half]
                 out[:half] += last_Y[:half]
@@ -82,9 +80,9 @@ class Eval:
 
                 # right-hand side, m > 0
                 out[half + 1:] += last_X[half:]
+                out[half + 1:-1] += last_Y[half + 1:]
                 out[half + 1:-1] += last_X[half + 1:]
                 out[half + 1:] -= last_Y[half:]
-                out[half + 1:-1] += last_Y[half + 1:]
 
             if self.L > 1:
                 out[1:-1] -= self.last[1]
