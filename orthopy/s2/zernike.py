@@ -57,32 +57,32 @@ class Eval:
 
             if n % 2 == 0:
                 # left-hand side, m < 0
-                out[:half - 1] += last_X[:half - 1]
+                out[: half - 1] += last_X[: half - 1]
                 out[:half] += last_Y[:half]
-                out[1:half] += last_X[:half - 1]
-                out[1:half] -= last_Y[:half - 1]
+                out[1:half] += last_X[: half - 1]
+                out[1:half] -= last_Y[: half - 1]
 
                 # right-hand side, m > 0
-                out[half:] += last_X[half - 1:]
+                out[half:] += last_X[half - 1 :]
                 out[half:-1] += last_Y[half:]
                 out[half:-1] += last_X[half:]
-                out[half + 1:] -= last_Y[half:]
+                out[half + 1 :] -= last_Y[half:]
             else:
                 # left-hand side, m < 0
                 out[:half] += last_X[:half]
                 out[:half] += last_Y[:half]
-                out[1:half] += last_X[:half - 1]
-                out[1:half] -= last_Y[:half - 1]
+                out[1:half] += last_X[: half - 1]
+                out[1:half] -= last_Y[: half - 1]
 
                 # middle, m = 0
                 out[half] += 2 * last_X[half]
                 out[half] += 2 * last_Y[half]
 
                 # right-hand side, m > 0
-                out[half + 1:] += last_X[half:]
-                out[half + 1:-1] += last_Y[half + 1:]
-                out[half + 1:-1] += last_X[half + 1:]
-                out[half + 1:] -= last_Y[half:]
+                out[half + 1 :] += last_X[half:]
+                out[half + 1 : -1] += last_Y[half + 1 :]
+                out[half + 1 : -1] += last_X[half + 1 :]
+                out[half + 1 :] -= last_Y[half:]
 
             if self.L > 1:
                 out[1:-1] -= self.last[1]

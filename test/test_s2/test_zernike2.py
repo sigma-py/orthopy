@@ -1,9 +1,10 @@
 import itertools
+
+import numpy
 import pytest
 import sympy
-import numpy
-import orthopy
 
+import orthopy
 from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")

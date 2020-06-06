@@ -1,9 +1,10 @@
 import itertools
+
+import numpy
 import pytest
 import sympy
-import numpy
-import orthopy
 
+import orthopy
 from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
@@ -68,7 +69,7 @@ def test_zernike_explicit():
             (10 * (x ** 2 + y ** 2) ** 2 - 12 * (x ** 2 + y ** 2) + 3) * x,
             (5 * (x ** 2 + y ** 2) - 4) * (x ** 3 - 3 * y ** 2 * x),
             x ** 5 - 10 * y ** 2 * x ** 3 + 5 * y ** 4 * x,
-        ]
+        ],
     ]
     iterator = orthopy.s2.zernike.Eval(X, "classical", symbolic=True)
     for ref_level, vals in zip(ref, itertools.islice(iterator, 6)):

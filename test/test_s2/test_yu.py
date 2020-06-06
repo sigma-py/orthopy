@@ -5,7 +5,6 @@ import pytest
 import sympy
 
 import orthopy
-
 from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
