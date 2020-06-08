@@ -1,4 +1,5 @@
 import itertools
+import math
 
 import numpy
 import sympy
@@ -15,7 +16,9 @@ class Eval:
     """
 
     def __init__(self, X, scaling, symbolic=False):
-        self.rc = {"classical": RCClassical(), "monic": RCMonic(symbolic)}[scaling]
+        self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
+            scaling
+        ](symbolic)
         self.X = X
         self.L = 0
         self.last = [None, None]
@@ -50,10 +53,12 @@ class Eval:
 
 
 class RCClassical:
-    def __init__(self):
+    def __init__(self, symbolic):
         self.p0 = 1
 
     def __getitem__(self, n):
+        assert n > 0
+
         alpha = 1
         beta = 1
         if n == 1:
@@ -78,4 +83,25 @@ class RCMonic:
             gamma = None
         else:
             gamma = numpy.array([i * (n - i) / (n * (n - 1)) for i in range(1, n)])
+        return alpha, beta, gamma
+
+
+class RCNormal:
+    def __init__(self, symbolic):
+        self.S = sympy.S if symbolic else lambda x: x
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
+        pi = sympy.pi if symbolic else math.pi
+        self.p0 = 1 / self.sqrt(pi)
+
+    def __getitem__(self, n):
+        assert n > 0
+        n = self.S(n)
+        sqrt = self.sqrt
+
+        alpha = sqrt((n + 1) / n)
+        beta = sqrt((n + 1) / n)
+        if n == 1:
+            gamma = None
+        else:
+            gamma = sqrt((n + 1) / (n - 1))
         return alpha, beta, gamma

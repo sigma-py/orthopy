@@ -113,10 +113,10 @@ def test_zernike2_explicit():
             assert sympy.simplify(r - val) == 0, f"ref = {r}  !=   {val}"
 
 
-@pytest.mark.parametrize("scaling,int0", [
-    ("classical", sympy.pi),
-    ("monic", sympy.pi),
-])
+@pytest.mark.parametrize(
+    "scaling,int0",
+    [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi)),],
+)
 def test_zernike2_integral0(scaling, int0, n=4):
     iterator = orthopy.s2.zernike2.Eval(P, scaling, symbolic=True)
 
@@ -128,25 +128,28 @@ def test_zernike2_integral0(scaling, int0, n=4):
                 assert _integrate_poly(val) == 0
 
 
-@pytest.mark.parametrize("scaling", ["classical", "monic"])
+@pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_zernike2_orthogonality(scaling, n=4):
     tree = numpy.concatenate(orthopy.s2.zernike2.tree(n, P, scaling, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
-# def test_zernike2_normality(n=4):
-#     iterator = orthopy.s2.zernike2.Eval(p, "normal", symbolic=True)
-#     for k, vals in enumerate(itertools.islice(iterator, n)):
-#         if k == 0:
-#             vals[0] = sympy.poly(vals[0], X)
-#         for val in vals:
-#             assert _integrate_poly(val ** 2) == 1
+def test_zernike2_normality(n=4):
+    iterator = orthopy.s2.zernike2.Eval(P, "normal", symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        for val in vals:
+            assert _integrate_poly(val ** 2) == 1
 
 
 if __name__ == "__main__":
-    iterator = orthopy.s2.zernike2.Eval(P, "monic", symbolic=True)
+    # iterator = orthopy.s2.zernike2.Eval(P, "monic", symbolic=True)
+    # for k, vals in enumerate(itertools.islice(iterator, 5)):
+    #     print()
+    #     for val in vals:
+    #         print(val)
+    iterator = orthopy.s2.zernike2.Eval(P, "normal", symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, 5)):
         print()
         for val in vals:
-            print(val)
+            print(_integrate_poly(val ** 2), val)
