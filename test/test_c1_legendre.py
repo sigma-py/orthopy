@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import pytest
 import scipy.special
@@ -61,7 +63,6 @@ def test_integral0(n=4):
 def test_normality(n=4):
     x = sympy.Symbol("x")
     vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
-
     for val in vals:
         assert _integrate(val ** 2, x) == 1
 
@@ -69,9 +70,8 @@ def test_normality(n=4):
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
     tree = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
-    for i in range(len(tree)):
-        for j in range(i + 1, len(tree)):
-            assert _integrate(tree[i] * tree[j], x) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate(f0 * f1, x) == 0
 
 
 @pytest.mark.parametrize(

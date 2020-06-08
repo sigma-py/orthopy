@@ -1,4 +1,5 @@
 import itertools
+
 import pytest
 import sympy
 from sympy import gamma
