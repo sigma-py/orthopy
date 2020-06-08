@@ -41,10 +41,8 @@ def test_yu_integral0(scaling, int0, n=4):
 def test_yu_orthogonality(scaling, n=4):
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.s2.yu.tree(n, p, scaling, symbolic=True))
-    vals = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in vals:
-        assert _integrate_poly(val) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * f1) == 0
 
 
 def test_yu_normality(n=4):

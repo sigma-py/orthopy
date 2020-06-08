@@ -139,12 +139,10 @@ def test_normality(n=4):
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    vals = orthopy.c1.chebyshev2.tree(n, p, "normal", symbolic=True)
-    out = vals * numpy.roll(vals, 1, axis=0)
-
-    for val in out:
-        # assert sympy.simplify(_integrate(val, x)) == 0
-        assert _integrate_poly(val) == 0
+    tree = orthopy.c1.chebyshev2.tree(n, p, "normal", symbolic=True)
+    for i in range(len(tree)):
+        for j in range(i + 1, len(tree)):
+            assert _integrate_poly(tree[i] * tree[j]) == 0
 
 
 @pytest.mark.parametrize(

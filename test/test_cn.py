@@ -38,12 +38,10 @@ def test_integral0(d, n=4):
 def test_orthogonality(d, n=4):
     X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-
     tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
-    vals = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in vals:
-        assert _integrate_poly(val) == 0
+    for i in range(len(tree)):
+        for j in range(i + 1, len(tree)):
+            assert _integrate_poly(tree[i] * tree[j]) == 0
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])

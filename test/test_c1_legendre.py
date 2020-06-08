@@ -68,11 +68,10 @@ def test_normality(n=4):
 
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
-    out = vals * numpy.roll(vals, 1, axis=0)
-
-    for val in out:
-        assert _integrate(val, x) == 0
+    tree = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
+    for i in range(len(tree)):
+        for j in range(i + 1, len(tree)):
+            assert _integrate(tree[i] * tree[j], x) == 0
 
 
 @pytest.mark.parametrize(

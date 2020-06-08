@@ -40,8 +40,10 @@ def test_orthogonality(scaling, n=3):
     tree = numpy.concatenate(
         orthopy.u3.tree(n, polar, azimuthal, scaling=scaling, symbolic=True)
     )
+    # Testing all combinations takes way too long. :/
+    # for f0, f1 in itertools.combinations(tree, 2):
+    #     assert _integrate(f0 * sympy.conjugate(f1)) == 0
     vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
-
     for val in vals:
         assert _integrate(sympy.expand(val)) == 0
 

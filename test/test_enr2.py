@@ -52,10 +52,8 @@ def test_orthogonality(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
-    vals = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in vals:
-        assert _integrate_poly(val) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * f1) == 0
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])

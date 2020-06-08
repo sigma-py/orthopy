@@ -180,11 +180,8 @@ def test_orthogonality(scaling, n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
     tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))
-
-    shifts = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in shifts:
-        assert _integrate_poly(val) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * f1) == 0
 
 
 def test_show(n=2, r=1):

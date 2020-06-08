@@ -1,6 +1,5 @@
 import itertools
 
-import numpy
 import pytest
 import sympy
 from sympy import Rational, pi, sqrt
@@ -77,9 +76,9 @@ def test_integral0(standardization, scaling, int0, n=4):
 def test_orthogonality(standardization, scaling, n=4):
     p = sympy.poly(x)
     tree = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
-    vals = tree * numpy.roll(tree, 1, axis=0)
-    for val in vals:
-        assert _integrate_poly(val, standardization) == 0
+    for i in range(len(tree)):
+        for j in range(i + 1, len(tree)):
+            assert _integrate_poly(tree[i] * tree[j]) == 0
 
 
 @pytest.mark.parametrize("standardization", ["probabilist", "physicist"])

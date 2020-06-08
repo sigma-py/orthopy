@@ -1,4 +1,4 @@
-import numpy
+import itertools
 import pytest
 import sympy
 from sympy import gamma
@@ -46,10 +46,8 @@ def test_orthogonality(alpha, scaling, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
     tree = orthopy.e1r.tree(n, p, scaling, alpha=alpha, symbolic=True)
-    vals = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in vals:
-        assert _integrate_poly(val, alpha, x) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * f1, alpha, x) == 0
 
 
 @pytest.mark.parametrize("alpha", [0, 1])
