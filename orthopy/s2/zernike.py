@@ -40,23 +40,19 @@ class Eval:
 
             last_X = self.last[0] * self.X[0]
             last_Y = self.last[0] * self.X[1]
-            last_Y = last_Y[::-1]
 
+            out[:-1] += last_X + last_Y[::-1]
+            out[1:] += last_X - last_Y[::-1]
+
+            # It works without this seam correction, too.
             n = self.L + 1
             half = n // 2
-
-            x_plus_y = last_X + last_Y
-            x_minus_y = last_X - last_Y
-
-            out[:-1] += x_plus_y
-            out[1:] += x_minus_y
-
-            # It works without this correction, too.
             if n % 2 == 0:
                 out[half - 1] -= last_X[half - 1]
                 out[half] += last_Y[half - 1]
             else:
-                out[half] += x_plus_y[half]
+                out[half] += last_X[half]
+                out[half] += last_Y[half - 1]
 
             if self.L > 1:
                 out[1:-1] -= self.last[1]
