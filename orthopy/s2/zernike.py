@@ -1,4 +1,5 @@
 import itertools
+import math
 
 import numpy
 import sympy
@@ -18,7 +19,7 @@ class Eval:
     """
 
     def __init__(self, X, scaling, symbolic=False):
-        self.rc = RCClassical(symbolic)
+        self.rc = {"classical": RCClassical, "normal": RCNormal}[scaling](symbolic)
 
         self.X = X
         self.L = 0
@@ -30,19 +31,8 @@ class Eval:
     def __next__(self):
         if self.L == 0:
             out = numpy.array([0 * self.X[0] + self.rc.p0])
-        elif self.L == 1:
-            # unfortunately, this needs to be treated as a separate case
-            shape = list(self.last[0].shape)
-            shape[0] += 1
-            out = numpy.zeros(shape, dtype=self.last[0].dtype)
-
-            last_X = self.last[0] * self.X[0]
-            last_Y = self.last[0] * self.X[1]
-
-            out[0] = last_Y[0]
-            out[1] = last_X[0]
         else:
-            alpha, beta, gamma, delta = self.rc[self.L]
+            alpha, beta, gamma = self.rc[self.L]
 
             shape = list(self.last[0].shape)
             shape[0] += 1
@@ -78,33 +68,30 @@ class Eval:
 
 
 class RCClassical:
-    def __init__(self, symbolic, mu=1):
-        self.S = sympy.S if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.mu = mu
-        assert self.mu > -1
-
+    def __init__(self, symbolic):
         self.p0 = 1
 
     def __getitem__(self, n):
         assert n > 0
 
-        n = self.S(n)
-        mu = self.mu
+        alpha = 1
+        beta = 1
+        gamma = None if n == 1 else 1
 
-        alpha = numpy.full(n, (mu + 2 * n - 1) / (mu + n))
-        # case distinction for mu==0
-        if n == 1:
-            beta = 1
-        else:
-            beta = (mu + 2 * n - 2) / (mu + n - 1)
+        return alpha, beta, gamma
 
-        if n == 1:
-            gamma = None
-            delta = None
-        else:  # n > 1
-            k = numpy.arange(n - 1)
-            gamma = (n - 1 - k) * (n + k + mu - 1) / ((mu + n) * (mu + n - 1))
-            delta = (n - 1) / (mu + n - 1)
 
-        return alpha, beta, gamma, delta
+class RCNormal:
+    def __init__(self, symbolic):
+        self.sqrt = sympy.sqrt if symbolic else math.sqrt
+        pi = sympy.pi if symbolic else math.pi
+        self.p0 = 1 / self.sqrt(pi)
+
+    def __getitem__(self, n):
+        assert n > 0
+
+        alpha = 1
+        beta = 1
+        gamma = None if n == 1 else 1
+
+        return alpha, beta, gamma
