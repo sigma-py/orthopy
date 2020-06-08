@@ -8,6 +8,7 @@ import orthopy
 from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
+P = [sympy.poly(x, X) for x in X]
 
 
 def test_zernike2_explicit():
@@ -112,29 +113,40 @@ def test_zernike2_explicit():
             assert sympy.simplify(r - val) == 0, f"ref = {r}  !=   {val}"
 
 
-@pytest.mark.parametrize("scaling,int0", [("classical", sympy.pi)])
+@pytest.mark.parametrize("scaling,int0", [
+    ("classical", sympy.pi),
+    ("monic", sympy.pi),
+])
 def test_zernike2_integral0(scaling, int0, n=4):
-    p = [sympy.poly(x, X) for x in X]
-    vals = numpy.concatenate(orthopy.s2.zernike2.tree(n, p, scaling, symbolic=True))
+    iterator = orthopy.s2.zernike2.Eval(P, scaling, symbolic=True)
 
-    assert _integrate_poly(vals[0]) == int0
-    for val in vals[1:]:
-        assert _integrate_poly(val) == 0
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            assert _integrate_poly(vals[0]) == int0
+        else:
+            for val in vals:
+                assert _integrate_poly(val) == 0
 
 
-@pytest.mark.parametrize("scaling", ["classical"])
+@pytest.mark.parametrize("scaling", ["classical", "monic"])
 def test_zernike2_orthogonality(scaling, n=4):
-    p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.s2.zernike2.tree(n, p, scaling, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.zernike2.tree(n, P, scaling, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
 # def test_zernike2_normality(n=4):
-#     p = [sympy.poly(x, X) for x in X]
 #     iterator = orthopy.s2.zernike2.Eval(p, "normal", symbolic=True)
 #     for k, vals in enumerate(itertools.islice(iterator, n)):
 #         if k == 0:
 #             vals[0] = sympy.poly(vals[0], X)
 #         for val in vals:
 #             assert _integrate_poly(val ** 2) == 1
+
+
+if __name__ == "__main__":
+    iterator = orthopy.s2.zernike2.Eval(P, "monic", symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, 5)):
+        print()
+        for val in vals:
+            print(val)
