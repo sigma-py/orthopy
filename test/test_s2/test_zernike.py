@@ -104,3 +104,11 @@ def test_zernike_orthogonality(scaling, n=4):
 #             vals[0] = sympy.poly(vals[0], X)
 #         for val in vals:
 #             assert _integrate_poly(val ** 2) == 1
+
+
+if __name__ == "__main__":
+    iterator = orthopy.s2.zernike.Eval(P, "normal", symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, 5)):
+        print()
+        for val in vals:
+            print(_integrate_poly(val ** 2), val)
