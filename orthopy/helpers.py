@@ -22,8 +22,8 @@ def _math_comb(n, k):
 def full_like(x, val):
     if isinstance(x, numpy.ndarray):
         return numpy.full_like(x, val)
-    # assume x is just a float or int
-    return val
+    # assume x is just a float or int or sympy.Poly
+    return x * 0 + val
 
 
 class Eval1D:
@@ -109,7 +109,7 @@ class ProductEval:
         dim = X.shape[0]
 
         if L == 0:
-            out = numpy.full([1] + list(X.shape[1:]), self.p0n)
+            out = numpy.array([X[0] * 0 + self.p0n])
         else:
             aa, bb, cc = self.rc[L - 1]
             a.append(aa)

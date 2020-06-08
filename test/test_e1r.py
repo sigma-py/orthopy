@@ -34,7 +34,6 @@ def test_integral0(alpha, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
     vals = orthopy.e1r.tree(n, p, alpha=alpha, scaling="normal", symbolic=True)
-    vals[0] = sympy.poly(vals[0], x)
 
     assert _integrate_poly(vals[0], alpha, x) == 1
     for val in vals[1:]:

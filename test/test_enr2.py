@@ -40,7 +40,6 @@ def test_integral0(d, n=4):
     X = [sympy.symbols("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     vals = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
-    vals[0] = sympy.poly(vals[0], X)
 
     assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** d
     for val in vals[1:]:

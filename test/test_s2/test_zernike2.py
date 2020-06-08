@@ -116,7 +116,6 @@ def test_zernike2_explicit():
 def test_zernike2_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, X) for x in X]
     vals = numpy.concatenate(orthopy.s2.zernike2.tree(n, p, scaling, symbolic=True))
-    vals[0] = sympy.poly(vals[0], X)
 
     assert _integrate_poly(vals[0]) == int0
     for val in vals[1:]:

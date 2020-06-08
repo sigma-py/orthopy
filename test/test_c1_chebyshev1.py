@@ -112,7 +112,6 @@ def test_integral0(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
     vals = orthopy.c1.chebyshev1.tree(n, p, "normal", symbolic=True)
-    vals[0] = sympy.poly(vals[0], x)
 
     assert _integrate_poly(vals[0]) == sqrt(pi)
     for val in vals[1:]:

@@ -47,7 +47,7 @@ class Eval:
         u, v, w = self.bary
 
         if self.k == 0:
-            out = numpy.array([numpy.zeros_like(u) + self.rc.p0])
+            out = numpy.array([u * 0 + self.rc.p0])
         else:
             alpha, beta, gamma, delta, epsilon = self.rc[self.k]
             out = numpy.concatenate(

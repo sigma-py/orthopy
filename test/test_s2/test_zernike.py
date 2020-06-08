@@ -8,6 +8,7 @@ import orthopy
 from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
+P = [sympy.poly(x, X) for x in X]
 
 
 def test_zernike_vals():
@@ -42,8 +43,6 @@ def test_zernike_vals():
 
 
 def test_zernike_explicit():
-
-    X = sympy.symbols("x, y")
     x, y = X
     ref = [
         [1],
@@ -81,19 +80,18 @@ def test_zernike_explicit():
 
 @pytest.mark.parametrize("scaling,int0", [("classical", sympy.pi)])
 def test_zernike_integral0(scaling, int0, n=4):
-    p = [sympy.poly(x, X) for x in X]
-    vals = numpy.concatenate(orthopy.s2.zernike.tree(n, p, scaling, symbolic=True))
-    vals[0] = sympy.poly(vals[0], X)
-
-    assert _integrate_poly(vals[0]) == int0
-    for val in vals[1:]:
-        assert _integrate_poly(val) == 0
+    iterator = orthopy.s2.zernike.Eval(P, scaling, symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            assert _integrate_poly(vals[0]) == int0
+        else:
+            for val in vals:
+                assert _integrate_poly(val) == 0
 
 
 @pytest.mark.parametrize("scaling", ["classical"])
 def test_zernike_orthogonality(scaling, n=4):
-    p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.s2.zernike.tree(n, p, scaling, symbolic=True))
+    tree = numpy.concatenate(orthopy.s2.zernike.tree(n, P, scaling, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 

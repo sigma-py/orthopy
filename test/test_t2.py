@@ -155,22 +155,20 @@ def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
 
-    it = orthopy.t2.Eval(p, scaling, symbolic=True)
-
-    assert _integrate(next(it)[0]) == int0
-    for _ in range(n):
-        for val in next(it):
-            assert _integrate_poly(val) == 0
+    iterator = orthopy.t2.Eval(p, scaling, symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            assert _integrate_poly(vals[0]) == int0
+        else:
+            for val in vals:
+                assert _integrate_poly(val) == 0
 
 
 def test_normality(n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
     iterator = orthopy.t2.Eval(p, "normal", symbolic=True)
-
-    for k, vals in enumerate(itertools.islice(iterator, n)):
-        if k == 0:
-            vals[0] = sympy.poly(vals[0], [b0, b1])
+    for vals in itertools.islice(iterator, n):
         for val in vals:
             assert _integrate_poly(val ** 2) == 1
 
