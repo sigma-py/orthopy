@@ -78,7 +78,9 @@ def test_zernike_explicit():
             assert sympy.simplify(r - val) == 0, f"ref = {r}  !=   {val}"
 
 
-@pytest.mark.parametrize("scaling,int0", [("classical", sympy.pi)])
+@pytest.mark.parametrize(
+    "scaling,int0", [("classical", sympy.pi), ("normal", sympy.sqrt(sympy.pi))]
+)
 def test_zernike_integral0(scaling, int0, n=4):
     iterator = orthopy.s2.zernike.Eval(P, scaling, symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, n)):
@@ -89,21 +91,18 @@ def test_zernike_integral0(scaling, int0, n=4):
                 assert _integrate_poly(val) == 0
 
 
-@pytest.mark.parametrize("scaling", ["classical"])
+@pytest.mark.parametrize("scaling", ["classical", "normal"])
 def test_zernike_orthogonality(scaling, n=4):
     tree = numpy.concatenate(orthopy.s2.zernike.tree(n, P, scaling, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
-# def test_zernike_normality(n=4):
-#     p = [sympy.poly(x, X) for x in X]
-#     iterator = orthopy.s2.zernike.Eval(p, "normal", symbolic=True)
-#     for k, vals in enumerate(itertools.islice(iterator, n)):
-#         if k == 0:
-#             vals[0] = sympy.poly(vals[0], X)
-#         for val in vals:
-#             assert _integrate_poly(val ** 2) == 1
+def test_zernike_normality(n=5):
+    iterator = orthopy.s2.zernike.Eval(P, "normal", symbolic=True)
+    for vals in itertools.islice(iterator, n):
+        for val in vals:
+            assert _integrate_poly(val ** 2) == 1
 
 
 if __name__ == "__main__":

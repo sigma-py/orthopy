@@ -38,11 +38,10 @@ class Eval:
 
             last_X = self.last[0] * self.X[0]
             last_Y = self.last[0] * self.X[1]
-            last_Y = last_Y[::-1]
 
             # The minus sign could go onto the other last_Y, too.
-            out[1:] += alpha * (last_X + last_Y)
-            out[:-1] += beta * (last_X - last_Y)
+            out[1:] += alpha * (last_X + last_Y[::-1])
+            out[:-1] += beta * (last_X - last_Y[::-1])
             if self.L > 1:
                 out[1:-1] -= gamma * self.last[1]
 

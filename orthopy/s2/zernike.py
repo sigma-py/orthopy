@@ -38,15 +38,19 @@ class Eval:
             shape[0] += 1
             out = numpy.zeros(shape, dtype=self.last[0].dtype)
 
-            last_X = self.last[0] * self.X[0]
-            last_Y = self.last[0] * self.X[1]
+            n = self.L + 1
+            half = n // 2
+
+            if n % 2 == 0 and n > 2:
+                self.last[0][half - 1] *= beta
+
+            last_X = alpha * self.last[0] * self.X[0]
+            last_Y = alpha * self.last[0] * self.X[1]
 
             out[:-1] += last_X + last_Y[::-1]
             out[1:] += last_X - last_Y[::-1]
 
-            # It works without this seam correction, too.
-            n = self.L + 1
-            half = n // 2
+            # It works without this seam correction, too. See zernike2.
             if n % 2 == 0:
                 out[half - 1] -= last_X[half - 1]
                 out[half] += last_Y[half - 1]
@@ -55,7 +59,10 @@ class Eval:
                 out[half] += last_Y[half - 1]
 
             if self.L > 1:
-                out[1:-1] -= self.last[1]
+                out[1:-1] -= gamma * self.last[1]
+
+            if n % 2 == 1:
+                out[half] *= 1 / beta
 
         self.last[1] = self.last[0]
         self.last[0] = out
@@ -79,15 +86,24 @@ class RCClassical:
 
 class RCNormal:
     def __init__(self, symbolic):
+        self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         pi = sympy.pi if symbolic else math.pi
         self.p0 = 1 / self.sqrt(pi)
 
     def __getitem__(self, n):
         assert n > 0
+        n = self.S(n)
 
-        alpha = 1
-        beta = 1
-        gamma = None if n == 1 else 1
+        beta = sympy.sqrt(2)
+        if n == 1:
+            alpha = self.sqrt(2 * (n + 1) / n)
+            gamma = None
+        elif n == 2:
+            alpha = self.sqrt((n + 1) / n)
+            gamma = self.sqrt(2 * (n + 1) / (n - 1))
+        else:
+            alpha = self.sqrt((n + 1) / n)
+            gamma = self.sqrt((n + 1) / (n - 1))
 
         return alpha, beta, gamma
