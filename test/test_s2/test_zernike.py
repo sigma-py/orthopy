@@ -105,6 +105,13 @@ def test_zernike_normality(n=5):
             assert _integrate_poly(val ** 2) == 1
 
 
+def test_show(scaling="normal", n=2, r=1):
+    def f(X):
+        return orthopy.s2.zernike.tree(n, X, scaling)[n][r]
+
+    orthopy.s2.show(f, lcar=1.0e-2)
+
+
 if __name__ == "__main__":
     iterator = orthopy.s2.zernike.Eval(P, "normal", symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, 5)):

@@ -95,7 +95,7 @@ class RCNormal:
         assert n > 0
         n = self.S(n)
 
-        beta = sympy.sqrt(2)
+        beta = self.sqrt(2)
         if n == 1:
             alpha = self.sqrt(2 * (n + 1) / n)
             gamma = None

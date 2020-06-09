@@ -54,7 +54,7 @@ def test_yu_normality(n=4):
 
 def test_show(scaling="normal", n=2, r=1):
     def f(X):
-        return orthopy.s2.zernike.tree(n, X, scaling)[n][r]
+        return orthopy.s2.yu.tree(n, X, scaling)[n][r]
 
     # k = numpy.linspace(0, 2 * numpy.pi, 100000)
     # X = numpy.array([numpy.cos(k), numpy.sin(k)])
@@ -77,5 +77,4 @@ def test_show(scaling="normal", n=2, r=1):
 
 
 if __name__ == "__main__":
-    # test_zernike()
     test_show("classical", n=5, r=2)
