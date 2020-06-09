@@ -1,3 +1,5 @@
+import itertools
+
 import numpy
 import pytest
 import sympy
@@ -26,24 +28,23 @@ def test_integral0(d, n=4):
     """
     X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
-    vals[0] = sympy.poly(vals[0], X)
+    iterator = orthopy.cn.Eval(p, symbolic=True)
 
-    assert _integrate_poly(vals[0]) == sympy.sqrt(2) ** d
-    for val in vals[1:]:
-        assert _integrate_poly(val) == 0
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        if k == 0:
+            assert _integrate_poly(vals[0]) == sympy.sqrt(2) ** d
+        else:
+            for val in vals:
+                assert _integrate_poly(val) == 0
 
 
-@pytest.mark.parametrize("d", [2, 3, 5])
-def test_orthogonality(d, n=4):
+@pytest.mark.parametrize("d,n", [(2, 4), (3, 4), (5, 3)])
+def test_orthogonality(d, n):
     X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-
     tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
-    vals = tree * numpy.roll(tree, 1, axis=0)
-
-    for val in vals:
-        assert _integrate_poly(val) == 0
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * f1) == 0
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])
@@ -52,7 +53,6 @@ def test_normality(d, n=4):
     p = [sympy.poly(x, X) for x in X]
 
     vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
-    vals[0] = sympy.poly(vals[0], X)
 
     for val in vals:
         assert _integrate_poly(val ** 2) == 1
