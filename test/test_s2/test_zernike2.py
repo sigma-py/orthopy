@@ -115,7 +115,7 @@ def test_zernike2_explicit():
 
 @pytest.mark.parametrize(
     "scaling,int0",
-    [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi)),],
+    [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))],
 )
 def test_zernike2_integral0(scaling, int0, n=4):
     iterator = orthopy.s2.zernike2.Eval(P, scaling, symbolic=True)
