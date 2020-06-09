@@ -7,10 +7,52 @@ from ..helpers import Eval135
 
 
 def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+    return list(itertools.islice(EvalPolar(*args, **kwargs), n + 1))
 
 
 class Eval(Eval135):
+    """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
+    """
+
+    def __init__(self, X, scaling, complex_valued=True, symbolic=False):
+        assert len(X) == 3
+        # assert X[0] ** 2 + X[1] ** 2 + X[2] ** 2
+
+        # Conventions from
+        # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
+        rc = {
+            "acoustic": RCSpherical(False, symbolic, geodetic=False),
+            "quantum mechanic": RCSpherical(True, symbolic, geodetic=False),
+            "geodetic": RCSpherical(False, symbolic, geodetic=True),
+            "schmidt": RCSchmidt(False, symbolic),
+        }[scaling]
+
+        if complex_valued:
+            # sqrt(1 - x**2) / exp(i * phi)
+            # = (X[0] ** 2 + X[1] ** 2) / (X[0] + imag_unit * X[1])
+            # = (X[0] - imag_unit * X[1])
+            #
+            # sqrt(1 - x**2) * exp(i * phi)
+            # = (X[0] + imag_unit * X[1])
+            #
+            # x = sin(polar) * cos(azimuthal)
+            # y = sin(polar) * sin(azimuthal)
+            # z = cos(polar)
+            #
+            # exp_iphi = exp(imag_unit * azimuthal)
+            # exp_iphi = (X[0] + imag_unit * X[1]) / sqrt(X[0] ** 2 + X[1] ** 2)
+            #
+            imag_unit = sympy.I if symbolic else 1j
+            xi0 = X[0] - imag_unit * X[1]
+            # xi1 = X[0] + imag_unit * X[1]
+        else:
+            sqrt = sympy.sqrt if symbolic else numpy.sqrt
+            xi0 = sqrt(X[0] ** 2 + X[1] ** 2)
+
+        super().__init__(rc, X[2], xi0, symbolic=symbolic)
+
+
+class EvalPolar(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
@@ -24,14 +66,25 @@ class Eval(Eval135):
             "schmidt": RCSchmidt(False, symbolic),
         }[scaling]
 
-        cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
+        sin = sympy.sin if symbolic else numpy.sin
+        cos = sympy.cos if symbolic else numpy.cos
+        exp = sympy.exp if symbolic else numpy.exp
+
+        sin_polar = sin(polar)
+        cos_polar = cos(polar)
+
+        # X = [
+        #     sin_polar * cos_azimu,
+        #     sin_polar * sin_azimu,
+        #     cos_polar,
+        # ]
+
+        xi0 = sin_polar
         if complex_valued:
-            exp = sympy.exp if symbolic else numpy.exp
             imag_unit = sympy.I if symbolic else 1j
-            exp_iphi = exp(imag_unit * azimuthal)
-        else:
-            exp_iphi = 1
-        super().__init__(rc, cos(polar), exp_iphi, symbolic=symbolic)
+            xi0 = xi0 / exp(imag_unit * azimuthal)
+
+        super().__init__(rc, cos_polar, xi0, symbolic=symbolic)
 
 
 class RCSpherical:

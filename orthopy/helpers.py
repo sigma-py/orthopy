@@ -164,14 +164,22 @@ class Eval135:
             ...       ...       ...     ...       ...
     """
 
-    def __init__(self, rc, x, exp_iphi=1, symbolic=False):
+    def __init__(self, rc, x, xi0=None, symbolic=False):
         sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        conj = numpy.vectorize(sympy.conjugate) if symbolic else numpy.conjugate
         self.rc = rc
 
         self.k = 0
         self.x = x
-        self.exp_iphi = exp_iphi
-        self.sqrt1mx2 = sqrt(1 - x ** 2)
+        # xi0 == sqrt(1 - x**2) / exp(i*phi)
+        # xi1 == sqrt(1 - x**2) * exp(i*phi)
+        if xi0 is None:
+            self.xi0 = sqrt(1 - x ** 2)
+            self.xi1 = self.xi0
+        else:
+            self.xi0 = xi0
+            self.xi1 = conj(self.xi0)
+
         self.last = [None, None]
 
     def __iter__(self):
@@ -182,15 +190,11 @@ class Eval135:
             out = numpy.array([full_like(self.x, self.rc.p0)])
         else:
             z0, z1, c0, c1 = self.rc[self.k]
-            # Make sure that self.sqrt1mx2 is listed first
-            # https://github.com/sympy/sympy/issues/19399
-            a = self.sqrt1mx2 / self.exp_iphi * z0
-            b = self.sqrt1mx2 * self.exp_iphi * z1
             out = numpy.concatenate(
                 [
-                    [self.last[0][0] * a],
+                    [self.last[0][0] * (self.xi0 * z0)],
                     self.last[0] * numpy.multiply.outer(c0, self.x),
-                    [self.last[0][-1] * b],
+                    [self.last[0][-1] * (self.xi1 * z1)],
                 ]
             )
 
