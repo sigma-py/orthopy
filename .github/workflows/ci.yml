@@ -1,10 +1,6 @@
 name: ci
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+on: [pull_request]
 
 jobs:
   lint:
@@ -33,9 +29,6 @@ jobs:
       with:
         python-version: "3.x"
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: |
-        sudo apt-get install -y gnuplot
     - name: Test with tox
       run: |
         pip install tox
