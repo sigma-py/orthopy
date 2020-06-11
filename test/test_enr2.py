@@ -3,8 +3,8 @@ import itertools
 import numpy
 import pytest
 import sympy
-from sympy import Rational, pi, sqrt
 
+import ndim
 import orthopy
 
 standardization = "physicist"
@@ -15,24 +15,11 @@ standardization = "physicist"
 #     return sympy.integrate(f * sympy.exp(-(sum(x ** 2 for x in X))), *ranges)
 
 
-def _integrate_monomial(exponents):
-    if any(k % 2 == 1 for k in exponents):
-        return 0
-
-    if all(k == 0 for k in exponents):
-        n = len(exponents)
-        return sqrt(pi) ** n
-
-    # find first nonzero
-    idx = next(i for i, j in enumerate(exponents) if j > 0)
-    alpha = Rational(exponents[idx] - 1, 2)
-    k2 = exponents.copy()
-    k2[idx] -= 2
-    return _integrate_monomial(k2) * alpha
-
-
 def _integrate_poly(p):
-    return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
+    return sum(
+        c * ndim.enr2.integrate_monomial(k, "physicists", symbolic=True)
+        for c, k in zip(p.coeffs(), p.monoms())
+    )
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])

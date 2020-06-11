@@ -7,6 +7,7 @@ from sympy import pi, sqrt
 
 import orthopy
 
+X = sympy.symbols("x, y, z")
 polar = sympy.Symbol("theta", real=True)
 azimuthal = sympy.Symbol("phi", real=True)
 
@@ -15,16 +16,40 @@ def _integrate(f):
     return sympy.integrate(f * sympy.sin(polar), (azimuthal, 0, 2 * pi), (polar, 0, pi))
 
 
-def test_integral0(n=3):
-    iterator = orthopy.u3.EvalPolar(
-        polar, azimuthal, scaling="quantum mechanic", symbolic=True
-    )
-    out = next(iterator)
-    assert _integrate(out[0]) == 2 * sqrt(pi)
+# def _integrate_monomial(exponents):
+#     if any(k % 2 == 1 for k in exponents):
+#         return 0
+#
+#     if all(k == 0 for k in exponents):
+#         n = len(exponents)
+#         return sqrt(pi) ** n
+#
+#     # find first nonzero
+#     idx = next(i for i, j in enumerate(exponents) if j > 0)
+#     alpha = Rational(exponents[idx] - 1, 2)
+#     k2 = exponents.copy()
+#     k2[idx] -= 2
+#     return _integrate_monomial(k2) * alpha
+#
+#
+# def _integrate_poly(p):
+#     return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
 
-    for _ in range(n):
-        for val in next(iterator):
-            assert _integrate(val) == 0
+
+@pytest.mark.parametrize(
+    "scaling,int0",
+    [
+        ("acoustic", 2 * sqrt(pi)),
+        ("geodetic", 4 * pi),
+        ("quantum mechanic", 2 * sqrt(pi)),
+        ("schmidt", 4 * pi),
+    ],
+)
+def test_integral0(scaling, int0, n=5):
+    iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        for val in vals:
+            assert _integrate(val) == (int0 if k == 0 else 0)
 
 
 def test_normality(n=3):
@@ -35,7 +60,9 @@ def test_normality(n=3):
             assert _integrate(sympy.simplify(val * val.conjugate())) == 1
 
 
-@pytest.mark.parametrize("scaling", ["quantum mechanic", "schmidt"])
+@pytest.mark.parametrize(
+    "scaling", ["acoustic", "geodetic", "quantum mechanic", "schmidt"]
+)
 def test_orthogonality(scaling, n=3):
     tree = numpy.concatenate(
         orthopy.u3.tree(n, polar, azimuthal, scaling=scaling, symbolic=True)
