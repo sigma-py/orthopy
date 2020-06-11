@@ -5,9 +5,11 @@ import pytest
 import sympy
 from sympy import pi, sqrt
 
+import ndim
 import orthopy
 
 X = sympy.symbols("x, y, z")
+P = [sympy.poly(x, X) for x in X]
 polar = sympy.Symbol("theta", real=True)
 azimuthal = sympy.Symbol("phi", real=True)
 
@@ -16,24 +18,11 @@ def _integrate(f):
     return sympy.integrate(f * sympy.sin(polar), (azimuthal, 0, 2 * pi), (polar, 0, pi))
 
 
-# def _integrate_monomial(exponents):
-#     if any(k % 2 == 1 for k in exponents):
-#         return 0
-#
-#     if all(k == 0 for k in exponents):
-#         n = len(exponents)
-#         return sqrt(pi) ** n
-#
-#     # find first nonzero
-#     idx = next(i for i, j in enumerate(exponents) if j > 0)
-#     alpha = Rational(exponents[idx] - 1, 2)
-#     k2 = exponents.copy()
-#     k2[idx] -= 2
-#     return _integrate_monomial(k2) * alpha
-#
-#
-# def _integrate_poly(p):
-#     return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
+def _integrate_poly(p):
+    return sum(
+        c * ndim.nsphere.integrate_monomial(k, symbolic=True)
+        for c, k in zip(p.coeffs(), p.monoms())
+    )
 
 
 @pytest.mark.parametrize(
@@ -46,18 +35,27 @@ def _integrate(f):
     ],
 )
 def test_integral0(scaling, int0, n=5):
-    iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         for val in vals:
-            assert _integrate(val) == (int0 if k == 0 else 0)
+            assert _integrate_poly(val) == (int0 if k == 0 else 0)
 
 
-def test_normality(n=3):
-    scaling = "quantum mechanic"
-    iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
-    for level in itertools.islice(iterator, n):
+def _conj(p):
+    # https://stackoverflow.com/a/62325596/353337
+    # https://github.com/sympy/sympy/issues/19531
+    return sympy.Poly.from_dict(
+        {m: p.coeff_monomial(m).conjugate() for m in p.monoms()}, p.gens
+    )
+
+
+@pytest.mark.parametrize("scaling", ["acoustic", "quantum mechanic"])
+def test_normality(scaling, n=5):
+    # iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
+    for k, level in enumerate(itertools.islice(iterator, n)):
         for val in level:
-            assert _integrate(sympy.simplify(val * val.conjugate())) == 1
+            assert _integrate_poly(val * _conj(val)) == 1
 
 
 @pytest.mark.parametrize(

@@ -43,13 +43,16 @@ class Eval(Eval135):
             # exp_iphi = (X[0] + imag_unit * X[1]) / sqrt(X[0] ** 2 + X[1] ** 2)
             #
             imag_unit = sympy.I if symbolic else 1j
-            xi0 = X[0] - imag_unit * X[1]
-            # xi1 = X[0] + imag_unit * X[1]
+            xi = [
+                X[0] - imag_unit * X[1],
+                X[0] + imag_unit * X[1],
+            ]
         else:
             sqrt = sympy.sqrt if symbolic else numpy.sqrt
-            xi0 = sqrt(X[0] ** 2 + X[1] ** 2)
+            a = sqrt(X[0] ** 2 + X[1] ** 2)
+            xi = [a, a]
 
-        super().__init__(rc, X[2], xi0, symbolic=symbolic)
+        super().__init__(rc, X[2], xi, symbolic=symbolic)
 
 
 class EvalPolar(Eval135):
@@ -79,12 +82,15 @@ class EvalPolar(Eval135):
         #     cos_polar,
         # ]
 
-        xi0 = sin_polar
+        xi = [sin_polar, sin_polar]
         if complex_valued:
             imag_unit = sympy.I if symbolic else 1j
-            xi0 = xi0 / exp(imag_unit * azimuthal)
+            xi = [
+                xi[0] / exp(imag_unit * azimuthal),
+                xi[1] * exp(imag_unit * azimuthal),
+            ]
 
-        super().__init__(rc, cos_polar, xi0, symbolic=symbolic)
+        super().__init__(rc, cos_polar, xi, symbolic=symbolic)
 
 
 class RCSpherical:

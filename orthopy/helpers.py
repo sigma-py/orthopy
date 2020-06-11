@@ -22,6 +22,7 @@ def _math_comb(n, k):
 def full_like(x, val):
     if isinstance(x, numpy.ndarray):
         return numpy.full_like(x, val)
+
     # assume x is just a float or int or sympy.Poly
     return x * 0 + val
 
@@ -164,21 +165,19 @@ class Eval135:
             ...       ...       ...     ...       ...
     """
 
-    def __init__(self, rc, x, xi0=None, symbolic=False):
-        sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        conj = numpy.vectorize(sympy.conjugate) if symbolic else numpy.conjugate
+    def __init__(self, rc, x, xi=None, symbolic=False):
         self.rc = rc
 
         self.k = 0
         self.x = x
-        # xi0 == sqrt(1 - x**2) / exp(i*phi)
-        # xi1 == sqrt(1 - x**2) * exp(i*phi)
-        if xi0 is None:
-            self.xi0 = sqrt(1 - x ** 2)
-            self.xi1 = self.xi0
+        # xi[0] == sqrt(1 - x**2) / exp(i*phi)
+        # xi[1] == sqrt(1 - x**2) * exp(i*phi)
+        if xi is None:
+            sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+            a = sqrt(1 - x ** 2)
+            self.xi = [a, a]
         else:
-            self.xi0 = xi0
-            self.xi1 = conj(self.xi0)
+            self.xi = xi
 
         self.last = [None, None]
 
@@ -192,9 +191,9 @@ class Eval135:
             z0, z1, c0, c1 = self.rc[self.k]
             out = numpy.concatenate(
                 [
-                    [self.last[0][0] * (self.xi0 * z0)],
+                    [self.last[0][0] * (self.xi[0] * z0)],
                     self.last[0] * numpy.multiply.outer(c0, self.x),
-                    [self.last[0][-1] * (self.xi1 * z1)],
+                    [self.last[0][-1] * (self.xi[1] * z1)],
                 ]
             )
 
