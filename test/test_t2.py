@@ -162,7 +162,7 @@ def test_normality(n=4):
 
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
-def test_orthogonality(scaling, n=4):
+def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
     tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))
