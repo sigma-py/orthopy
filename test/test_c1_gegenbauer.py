@@ -18,7 +18,7 @@ from helpers import get_nth
         (5, [0, Rational(1, 32), Rational(1, 16)]),
     ],
 )
-def test_gegenbauer_chebyshev1_monic(n, y):
+def test_gegenbauer_monic(n, y):
     x = numpy.array([0, Rational(1, 2), 1])
     lmbda = -Rational(1, 2)
 

@@ -1,5 +1,4 @@
 import itertools
-import math
 
 import numpy
 import pytest
@@ -7,6 +6,7 @@ import scipy.special
 import sympy
 from sympy import Rational, S
 
+import ndim
 import orthopy
 from helpers import get_nth
 
@@ -14,27 +14,15 @@ b0 = sympy.Symbol("b0")
 b1 = sympy.Symbol("b1")
 
 
-def _integrate(f):
-    return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
-
-
-def _integrate_monomial(k):
-    assert all(kk >= 0 for kk in k)
-
-    n = len(k)
-    if all(kk == 0 for kk in k):
-        return Rational(1, math.factorial(n))
-
-    # find first nonzero
-    idx = next(i for i, j in enumerate(k) if j > 0)
-    alpha = Rational(k[idx], sum(k) + n)
-    k2 = k.copy()
-    k2[idx] -= 1
-    return _integrate_monomial(k2) * alpha
+# def _integrate(f):
+#     return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
 
 
 def _integrate_poly(p):
-    return sum(c * _integrate_monomial(list(k)) for c, k in zip(p.coeffs(), p.monoms()))
+    return sum(
+        c * ndim.nsimplex.integrate_monomial(k, symbolic=True)
+        for c, k in zip(p.coeffs(), p.monoms())
+    )
 
 
 def op(i, j, x, y):
@@ -174,7 +162,7 @@ def test_normality(n=4):
 
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
-def test_orthogonality(scaling, n=4):
+def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
     tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))

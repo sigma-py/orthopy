@@ -5,55 +5,74 @@ import pytest
 import sympy
 from sympy import pi, sqrt
 
+import ndim
 import orthopy
 
+X = sympy.symbols("x, y, z")
+P = [sympy.poly(x, X) for x in X]
 polar = sympy.Symbol("theta", real=True)
 azimuthal = sympy.Symbol("phi", real=True)
 
 
-def _integrate(f):
-    return sympy.integrate(f * sympy.sin(polar), (azimuthal, 0, 2 * pi), (polar, 0, pi))
+# def _integrate(f):
+#     return sympy.integrate(f * sympy.sin(polar), (azimuthal, 0, 2 * pi), (polar, 0, pi))
 
 
-def test_integral0(n=3):
-    iterator = orthopy.u3.Eval(
-        polar, azimuthal, scaling="quantum mechanic", symbolic=True
+def _integrate_poly(p):
+    return sum(
+        c * ndim.nsphere.integrate_monomial(k, symbolic=True)
+        for c, k in zip(p.coeffs(), p.monoms())
     )
-    out = next(iterator)
-    assert _integrate(out[0]) == 2 * sqrt(pi)
-
-    for _ in range(n):
-        for val in next(iterator):
-            assert _integrate(val) == 0
 
 
-def test_normality(n=3):
-    scaling = "quantum mechanic"
-    iterator = orthopy.u3.Eval(polar, azimuthal, scaling, symbolic=True)
-    for level in itertools.islice(iterator, n):
+@pytest.mark.parametrize(
+    "scaling,int0",
+    [
+        ("acoustic", 2 * sqrt(pi)),
+        ("geodetic", 4 * pi),
+        ("quantum mechanic", 2 * sqrt(pi)),
+        ("schmidt", 4 * pi),
+    ],
+)
+def test_integral0(scaling, int0, n=5):
+    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
+    for k, vals in enumerate(itertools.islice(iterator, n)):
+        for val in vals:
+            assert _integrate_poly(val) == (int0 if k == 0 else 0)
+
+
+def _conj(p):
+    # https://stackoverflow.com/a/62325596/353337
+    # https://github.com/sympy/sympy/issues/19531
+    return sympy.Poly.from_dict(
+        {m: p.coeff_monomial(m).conjugate() for m in p.monoms()}, p.gens
+    )
+
+
+@pytest.mark.parametrize("scaling", ["acoustic", "quantum mechanic"])
+def test_normality(scaling, n=5):
+    # iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
+    for k, level in enumerate(itertools.islice(iterator, n)):
         for val in level:
-            assert _integrate(sympy.simplify(val * val.conjugate())) == 1
+            assert _integrate_poly(val * _conj(val)) == 1
 
 
-@pytest.mark.parametrize("scaling", ["quantum mechanic", "schmidt"])
+@pytest.mark.parametrize(
+    "scaling", ["acoustic", "geodetic", "quantum mechanic", "schmidt"]
+)
 def test_orthogonality(scaling, n=3):
-    tree = numpy.concatenate(
-        orthopy.u3.tree(n, polar, azimuthal, scaling=scaling, symbolic=True)
-    )
-    # Testing all combinations takes way too long. :/
-    # for f0, f1 in itertools.combinations(tree, 2):
-    #     assert _integrate(f0 * sympy.conjugate(f1)) == 0
-    vals = tree * sympy.conjugate(numpy.roll(tree, 1, axis=0))
-    for val in vals:
-        assert _integrate(sympy.expand(val)) == 0
+    tree = numpy.concatenate(orthopy.u3.tree(n, P, scaling=scaling, symbolic=True))
+    for f0, f1 in itertools.combinations(tree, 2):
+        assert _integrate_poly(f0 * _conj(f1)) == 0
 
 
 def test_schmidt_seminormality(n=3):
-    iterator = orthopy.u3.Eval(polar, azimuthal, scaling="schmidt", symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling="schmidt", symbolic=True)
     for k, level in enumerate(itertools.islice(iterator, n)):
         ref = 4 * pi / (2 * k + 1)
         for val in level:
-            assert _integrate(sympy.simplify(val * val.conjugate())) == ref
+            assert _integrate_poly(val * _conj(val)) == ref
 
 
 def sph_exact2(theta, phi):
@@ -100,7 +119,9 @@ def sph_exact2(theta, phi):
 def test_spherical_harmonics(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree(L, theta, phi, scaling="quantum mechanic", symbolic=True)
+    vals = orthopy.u3.tree_polar(
+        L, theta, phi, scaling="quantum mechanic", symbolic=True
+    )
 
     for val, ex in zip(vals, exacts):
         for v, e in zip(val, ex):
@@ -111,7 +132,7 @@ def test_spherical_harmonics(theta, phi):
 def test_spherical_harmonics_numpy(theta, phi):
     L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree(L, theta, phi, scaling="quantum mechanic")
+    vals = orthopy.u3.tree_polar(L, theta, phi, scaling="quantum mechanic")
 
     cmplx = numpy.vectorize(complex)
     for val, ex in zip(vals, exacts):
@@ -120,7 +141,9 @@ def test_spherical_harmonics_numpy(theta, phi):
 
 def test_write():
     def sph22(polar, azimuthal):
-        return orthopy.u3.tree(5, polar, azimuthal, scaling="quantum mechanic")[5][3]
+        return orthopy.u3.tree_polar(5, polar, azimuthal, scaling="quantum mechanic")[
+            5
+        ][3]
 
     orthopy.u3.write("sph.vtk", sph22)
 
