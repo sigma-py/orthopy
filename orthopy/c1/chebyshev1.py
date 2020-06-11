@@ -40,9 +40,3 @@ class Eval(gegenbauer.Eval):
     def __init__(self, X, scaling, symbolic=False):
         lmbda = -sympy.S(1) / 2 if symbolic else -0.5
         super().__init__(X, lmbda, scaling, symbolic)
-
-
-class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):
-    def __init__(self, scaling, symbolic=False):
-        lmbda = -sympy.S(1) / 2 if symbolic else -0.5
-        super().__init__(lmbda, scaling, symbolic=False)
