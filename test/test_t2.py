@@ -14,8 +14,8 @@ b0 = sympy.Symbol("b0")
 b1 = sympy.Symbol("b1")
 
 
-def _integrate(f):
-    return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
+# def _integrate(f):
+#     return sympy.integrate(f, (b0, 0, 1 - b1), (b1, 0, 1))
 
 
 def _integrate_poly(p):
