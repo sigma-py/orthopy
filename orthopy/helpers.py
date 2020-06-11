@@ -174,6 +174,12 @@ class Eval135:
         # xi[1] == sqrt(1 - x**2) * exp(i*phi)
         if xi is None:
             sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+            # Such functions aren't always polynomials, see, e.g.,
+            # <https://en.wikipedia.org/wiki/Associated_Legendre_polynomials>:
+            #
+            # > In general, when l and m are integers, the regular solutions are
+            # > sometimes called "associated Legendre polynomials", even though they are
+            # > not polynomials when m is odd.
             a = sqrt(1 - x ** 2)
             self.xi = [a, a]
         else:

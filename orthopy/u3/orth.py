@@ -20,7 +20,7 @@ class Eval(Eval135):
 
     def __init__(self, X, scaling, complex_valued=True, symbolic=False):
         assert len(X) == 3
-        # assert X[0] ** 2 + X[1] ** 2 + X[2] ** 2
+        # assert X[0] ** 2 + X[1] ** 2 + X[2] ** 2 == 1
 
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
@@ -32,19 +32,21 @@ class Eval(Eval135):
         }[scaling]
 
         if complex_valued:
-            # sqrt(1 - x**2) / exp(i * phi)
-            # = (X[0] ** 2 + X[1] ** 2) / (X[0] + imag_unit * X[1])
-            # = (X[0] - imag_unit * X[1])
-            #
-            # sqrt(1 - x**2) * exp(i * phi)
-            # = (X[0] + imag_unit * X[1])
             #
             # x = sin(polar) * cos(azimuthal)
             # y = sin(polar) * sin(azimuthal)
             # z = cos(polar)
             #
-            # exp_iphi = exp(imag_unit * azimuthal)
-            # exp_iphi = (X[0] + imag_unit * X[1]) / sqrt(X[0] ** 2 + X[1] ** 2)
+            # exp_iphi
+            # = exp(imag_unit * azimuthal)
+            # = (X[0] + imag_unit * X[1]) / sqrt(X[0] ** 2 + X[1] ** 2)
+            #
+            # sqrt(1 - X[2]**2) / exp(i * phi)
+            # = (X[0] ** 2 + X[1] ** 2) / (X[0] + imag_unit * X[1])
+            # = X[0] - imag_unit * X[1]
+            #
+            # sqrt(1 - X[2]**2) * exp(i * phi)
+            # = X[0] + imag_unit * X[1]
             #
             imag_unit = sympy.I if symbolic else 1j
             xi = [
@@ -52,6 +54,8 @@ class Eval(Eval135):
                 X[0] + imag_unit * X[1],
             ]
         else:
+            # real-valued, but not always a polynomial; see associated legendre
+            # functions
             sqrt = sympy.sqrt if symbolic else numpy.sqrt
             a = sqrt(X[0] ** 2 + X[1] ** 2)
             xi = [a, a]
