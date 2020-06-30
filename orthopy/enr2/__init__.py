@@ -1,3 +1,3 @@
-from .orth import Eval, tree
+from .main import Eval, tree
 
 __all__ = ["Eval", "tree"]

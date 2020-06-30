@@ -91,8 +91,8 @@ class ProductEval:
         self.b = []
         self.c = []
         X = numpy.asarray(X)
-        dim = X.shape[0]
-        self.p0n = rc.p0 ** dim
+        self.dim = X.shape[0]
+        self.p0n = rc.p0 ** self.dim
         self.k = 0
         self.X = X
         self.last = [None, None]
