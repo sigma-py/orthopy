@@ -23,7 +23,7 @@ def _integrate_poly(p):
 def test_integral0(d, n=4):
     """Make sure that the polynomials are orthonormal
     """
-    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
+    X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     iterator = orthopy.cn.Eval(p, symbolic=True)
 
@@ -37,7 +37,7 @@ def test_integral0(d, n=4):
 
 @pytest.mark.parametrize("d,n", [(2, 4), (3, 4), (5, 3)])
 def test_orthogonality(d, n):
-    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
+    X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
@@ -46,7 +46,7 @@ def test_orthogonality(d, n):
 
 @pytest.mark.parametrize("d", [2, 3, 5])
 def test_normality(d, n=4):
-    X = [sympy.Symbol("x{}".format(k)) for k in range(d)]
+    X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
 
     vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))

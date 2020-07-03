@@ -2,7 +2,7 @@ import itertools
 
 import numpy
 
-from .orth import Eval
+from .main import Eval
 
 
 def show(*args, **kwargs):

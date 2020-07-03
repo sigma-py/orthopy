@@ -1,6 +1,6 @@
 import itertools
 
-from ..e1r2.orth import RCPhysicistNormal, RCProbabilistNormal
+from ..e1r2.main import RCPhysicistNormal, RCProbabilistNormal
 from ..helpers import ProductEval
 
 
