@@ -60,8 +60,9 @@ def test_normality(alpha, n=4):
         assert _integrate_poly(val ** 2, alpha, x) == 1
 
 
-def test_show():
-    orthopy.e1r.show(L=4)
+def test_show(n=5):
+    orthopy.e1r.show(n, "normal", alpha=0)
+    orthopy.e1r.savefig("e1r.svg", n, "normal", alpha=0)
 
 
 if __name__ == "__main__":

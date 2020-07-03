@@ -89,10 +89,18 @@ def test_normality(standardization, n=4):
         assert _integrate_poly(val ** 2, standardization) == 1
 
 
-@pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
-def test_show(standardization):
-    orthopy.e1r2.show(4, standardization, "normal")
+# @pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
+# def test_show(standardization):
+#     orthopy.e1r2.show(4, standardization, "normal")
+
+
+def test_show(n=5):
+    orthopy.e1r2.show(n, "probabilist", "normal")
+    orthopy.e1r2.savefig("e1r2.svg", n, "probabilist", "normal")
 
 
 if __name__ == "__main__":
     test_show()
+    # import matplotlib.pyplot as plt
+    # plt.show()
+    # plt.savefig("e1r.png", transparent=True)
