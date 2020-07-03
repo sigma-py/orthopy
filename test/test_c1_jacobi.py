@@ -66,5 +66,10 @@ def test_jacobi(symbolic):
         assert numpy.all(numpy.abs(gamma[1:] - ref_gamma[1:]) < tol)
 
 
+def test_show(n=5):
+    orthopy.c1.jacobi.show(n, 0, 0, "normal")
+    orthopy.c1.jacobi.savefig("jacobi.svg", n, 0, 0, "normal")
+
+
 if __name__ == "__main__":
-    test_jacobi_monic(0, [1, 1, 1])
+    test_show()

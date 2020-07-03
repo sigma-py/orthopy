@@ -1,6 +1,9 @@
 import itertools
 import math
 
+import dufte
+import numpy
+import matplotlib.pyplot as plt
 import sympy
 
 from ..helpers import Eval1D
@@ -8,6 +11,37 @@ from ..helpers import Eval1D
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+
+
+def plot(n, *args, **kwargs):
+    plt.style.use(dufte.style)
+
+    x = numpy.linspace(-1.0, 1.0, 100)
+    for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
+        plt.plot(x, level, label=f"n={k}")
+
+    plt.grid(axis="x")
+    dufte.legend()
+    # plt.legend()
+    ax = plt.gca()
+    ax.spines["top"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+
+    alpha, beta, scaling = args
+    plt.title(f"Jacobi polynomials (α={alpha}, β={beta}, scaling={scaling})")
+    ax.spines["right"].set_visible(True)
+    ax.spines["left"].set_visible(True)
+    plt.xlim(-1.0, 1.0)
+
+
+def show(*args, **kwargs):
+    plot(*args, **kwargs)
+    plt.show()
+
+
+def savefig(filename, *args, **kwargs):
+    plot(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 class Eval(Eval1D):
@@ -28,7 +62,7 @@ class RecurrenceCoefficients:
 class RCMonic:
     """Generate the recurrence coefficients a_k, b_k, c_k in
 
-    P_{k+1}(x) = (a_k x - b_k)*P_{k}(x) - c_k P_{k-1}(x)
+    P_{k+1}(x) = (a_k x - b_k) * P_{k}(x) - c_k * P_{k-1}(x)
 
     for the Jacobi polynomials which are orthogonal on [-1, 1] with respect to the
     weight w(x)=[(1-x)^alpha]*[(1+x)^beta]; see
@@ -45,14 +79,6 @@ class RCMonic:
         self.one = 1 if symbolic else 1.0
 
         self.p0 = self.one
-
-        # c[0] is not used in the actual recurrence, but is traditionally defined as the
-        # integral of the weight function of the domain, i.e.,
-        # ```
-        # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
-        #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
-        # ```
-        # This is bad practice; the value could accidentally be used.
 
     def __getitem__(self, N):
         frac = self.frac
@@ -72,6 +98,13 @@ class RCMonic:
         # Note that we have the treat the case N==1 separately to avoid division by 0
         # for alpha=beta=-1/2.
         if N == 0:
+            # c[0] is not used in the actual recurrence, but is traditionally defined as
+            # the integral of the weight function of the domain, i.e.,
+            # ```
+            # int_{-1}^{+1} (1-x)^a * (1+x)^b dx =
+            #     2^(a+b+1) * Gamma(a+1) * Gamma(b+1) / Gamma(a+b+2).
+            # ```
+            # This is bad practice; the value could accidentally be used.
             c = self.nan
         elif N == 1:
             c = frac(

@@ -123,6 +123,11 @@ def test_plot():
     plt.grid()
 
 
+def test_show(n=3):
+    orthopy.c1.jacobi.show(n, 0, 0, "normal")
+    orthopy.c1.jacobi.savefig("associated-legendre.svg", n, 0, 0, "normal")
+
+
 if __name__ == "__main__":
     # x_ = 0.43
     # x_ = numpy.random.rand(3, 2)

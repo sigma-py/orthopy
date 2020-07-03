@@ -1,6 +1,7 @@
 import itertools
 
 import numpy
+import matplotlib.pyplot as plt
 import sympy
 
 from ..helpers import Eval135
@@ -8,6 +9,31 @@ from ..helpers import Eval135
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+
+
+def plot(n, *args, **kwargs):
+    x = numpy.linspace(-1.0, 1.0, 100)
+    for level in itertools.islice(Eval(x, *args, **kwargs), n + 1):
+        plt.plot(x, level)
+
+    plt.grid()
+    plt.gcf().patch.set_visible(False)
+    ax = plt.gca()
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    plt.xlim(-1.0, 1.0)
+
+
+def show(*args, **kwargs):
+    plot(*args, **kwargs)
+    plt.show()
+
+
+def savefig(filename, *args, **kwargs):
+    plot(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 class Eval(Eval135):
