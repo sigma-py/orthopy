@@ -24,7 +24,7 @@ def _integrate_poly(p):
 
 @pytest.mark.parametrize("d", [2, 3, 5])
 def test_integral0(d, n=4):
-    X = [sympy.symbols("x{}".format(k)) for k in range(d)]
+    X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     vals = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
 
@@ -35,7 +35,7 @@ def test_integral0(d, n=4):
 
 @pytest.mark.parametrize("d,n", [(2, 4), (3, 4), (5, 3)])
 def test_orthogonality(d, n):
-    X = [sympy.symbols("x{}".format(k)) for k in range(d)]
+    X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     tree = numpy.concatenate(orthopy.enr2.tree(n, p, standardization, symbolic=True))
     for f0, f1 in itertools.combinations(tree, 2):
@@ -44,7 +44,7 @@ def test_orthogonality(d, n):
 
 @pytest.mark.parametrize("d", [2, 3, 5])
 def test_normality(d, n=4):
-    X = [sympy.symbols("x{}".format(k)) for k in range(d)]
+    X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     iterator = orthopy.enr2.Eval(p, standardization, symbolic=True)
 
