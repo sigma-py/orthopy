@@ -1,9 +1,7 @@
 import itertools
 import math
 
-import dufte
 import numpy
-import matplotlib.pyplot as plt
 import sympy
 
 from ..helpers import Eval1D
@@ -14,6 +12,8 @@ def tree(n, *args, **kwargs):
 
 
 def plot(n, *args, **kwargs):
+    import dufte
+    import matplotlib.pyplot as plt
     plt.style.use(dufte.style)
 
     x = numpy.linspace(-1.0, 1.0, 100)
@@ -35,11 +35,13 @@ def plot(n, *args, **kwargs):
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
 
 
 def savefig(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 

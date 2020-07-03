@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy
 import pytest
 import sympy
@@ -100,39 +99,10 @@ def test_exact(x, scaling, factor):
             assert numpy.all(v == e)
 
 
-def test_plot():
-    L = 3
-    x = numpy.linspace(-1.0, +1.0, 500)
-    vals = orthopy.c1.associated_legendre.tree(L, x, scaling="normal", symbolic=False)
-
-    for val in vals[L]:
-        plt.plot(x, val)
-
-    plt.xlim(-1, +1)
-    # plt.ylim(-2, +2)
-    plt.tick_params(
-        axis="both",
-        which="both",
-        bottom="off",
-        top="off",
-        left="off",
-        right="off",
-        labelbottom="off",
-        labelleft="off",
-    )
-    plt.grid()
-
-
-def test_show(n=3):
-    orthopy.c1.jacobi.show(n, 0, 0, "normal")
-    orthopy.c1.jacobi.savefig("associated-legendre.svg", n, 0, 0, "normal")
+def test_show(n=2):
+    orthopy.c1.associated_legendre.show(n, "normal")
+    orthopy.c1.associated_legendre.savefig("associated-legendre.svg", n, "normal")
 
 
 if __name__ == "__main__":
-    # x_ = 0.43
-    # x_ = numpy.random.rand(3, 2)
-    # test_unnormalized(x=x_)
-    # test_full(x=x_)
-    test_plot()
-    # plt.show()
-    plt.savefig("alp.png", transparent=True)
+    test_show()

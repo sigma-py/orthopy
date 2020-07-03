@@ -1,7 +1,6 @@
 import itertools
 
 import numpy
-import matplotlib.pyplot as plt
 import sympy
 
 from ..helpers import Eval135
@@ -12,26 +11,43 @@ def tree(n, *args, **kwargs):
 
 
 def plot(n, *args, **kwargs):
-    x = numpy.linspace(-1.0, 1.0, 100)
-    for level in itertools.islice(Eval(x, *args, **kwargs), n + 1):
-        plt.plot(x, level)
+    import dufte
+    import matplotlib.pyplot as plt
+    plt.style.use(dufte.style)
 
-    plt.grid()
-    plt.gcf().patch.set_visible(False)
+    x = numpy.linspace(-1.0, 1.0, 200)
+    for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
+        # Choose all colors in each level approximately equal, around the reference
+        # color.
+        ref_color = plt.rcParams['axes.prop_cycle'].by_key()['color'][k]
+        ref_rgb = numpy.array(list(int(ref_color[1:][i:i + 2], 16) / 255 for i in (0, 2, 4)))
+        for l, entry in enumerate(level):
+            col = ref_rgb * (1 + (l - k) / (2 * (k + 1)))
+            col[col < 0.0] = 0.0
+            col[col > 1.0] = 1.0
+            plt.plot(x, entry, label=f"n={k}, r={l - k}", color=col)
+
+    plt.grid(axis="x")
+    dufte.legend()
     ax = plt.gca()
     ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
     ax.spines["bottom"].set_visible(False)
-    ax.spines["left"].set_visible(False)
+
+    scaling, = args
+    plt.title(f"Associated Legendre \"polynomials\" (scaling={scaling})")
+    ax.spines["right"].set_visible(True)
+    ax.spines["left"].set_visible(True)
     plt.xlim(-1.0, 1.0)
 
 
 def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.show()
 
 
 def savefig(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
     plot(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
