@@ -1,6 +1,5 @@
-import itertools
-
 import numpy
+import itertools
 
 from .main import Eval
 
@@ -10,15 +9,18 @@ def plot(n, *args, **kwargs):
     import matplotlib.pyplot as plt
     plt.style.use(dufte.style)
 
-    x = numpy.linspace(-2.2, 2.2, 100)
+    x = numpy.linspace(0.0, 4.4, 100)
     for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
         plt.plot(x, level, label=f"n={k}")
 
     plt.grid(axis="x")
     dufte.legend()
+    ax = plt.gca()
 
-    variant, scaling = args
-    plt.title(f"Hermite polynomials ({variant}, scaling={scaling})")
+    scaling, = args
+    alpha = kwargs["alpha"]
+    plt.title(f"(Generalized) Laguerre polynomials (α={alpha}, scaling={scaling})")
+    ax.spines["left"].set_visible(True)
 
 
 def show(*args, **kwargs):

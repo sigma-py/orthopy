@@ -22,16 +22,12 @@ def plot(n, *args, **kwargs):
 
     plt.grid(axis="x")
     dufte.legend()
-    # plt.legend()
     ax = plt.gca()
-    ax.spines["top"].set_visible(False)
-    ax.spines["bottom"].set_visible(False)
 
     alpha, beta, scaling = args
     plt.title(f"Jacobi polynomials (α={alpha}, β={beta}, scaling={scaling})")
     ax.spines["right"].set_visible(True)
     ax.spines["left"].set_visible(True)
-    plt.xlim(-1.0, 1.0)
 
 
 def show(*args, **kwargs):
