@@ -30,7 +30,7 @@ rules as well. Those have moved over to [quadpy](https://github.com/nschloe/quad
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
-<img src="https://nschloe.github.io/orthopy/jacobi.svg" width="25%">
+<img src="https://nschloe.github.io/orthopy/jacobi.svg" width="45%">
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
@@ -51,7 +51,7 @@ Possible choices for the scaling are
 
 #### Associated Legendre polynomials
 
-<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="25%">
+<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
 ```python
 vals = orthopy.c1.associated_legendre.tree(
@@ -61,7 +61,7 @@ vals = orthopy.c1.associated_legendre.tree(
 ```
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
-<img src="https://nschloe.github.io/orthopy/e1r.svg" width="25%">
+<img src="https://nschloe.github.io/orthopy/e1r.svg" width="45%">
 
 (Generalized) Laguerre polynomials.
 ```python
@@ -70,7 +70,7 @@ vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal", symbolic=False)
 
 
 ### 1D space with weight function exp(-r<sup>2</sup>)
-<img src="https://nschloe.github.io/orthopy/e1r2.svg" width="25%">
+<img src="https://nschloe.github.io/orthopy/e1r2.svg" width="45%">
 
 Hermite polynomials.
 ```python
