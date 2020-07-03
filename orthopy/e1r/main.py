@@ -1,7 +1,6 @@
 import itertools
 import math
 
-import numpy
 import sympy
 
 from ..helpers import Eval1D
