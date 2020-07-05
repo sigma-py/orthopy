@@ -20,7 +20,7 @@ def show_single(*args, **kwargs):
 
 
 def plot_single(
-    degrees, res=100, scaling="normal", colorbar=True, cmap="viridis", corners=None
+    degrees, res=100, scaling="normal", colorbar=True, cmap="RdBu_r", corners=None
 ):
     import matplotlib.pyplot as plt
     import meshzoo

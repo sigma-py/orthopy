@@ -1,29 +1,31 @@
-def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
+import itertools
 
-    plot(*args, **kwargs)
-    plt.show()
+import numpy
 
 
-def plot(f, lcar=5.0e-2):
-    """Plot function over a disk.
-    """
-    import matplotlib
+def plot_single(
+    name, evaluator, degrees, res=50, scaling="normal", colorbar=True, cmap="RdBu_r"
+):
     import matplotlib.pyplot as plt
     import meshzoo
 
-    points, cells = meshzoo.disk(6, 100)
+    n = sum(degrees)
+    r = degrees[0]
 
-    x = points[:, 0]
-    y = points[:, 1]
-    triang = matplotlib.tri.Triangulation(x, y, cells)
+    def f(bary):
+        for k, level in enumerate(evaluator(bary, scaling)):
+            if k == n:
+                return level[r]
 
-    plt.tripcolor(triang, f(points.T), shading="flat")
-    plt.colorbar()
+    points, cells = meshzoo.disk(6, res)
+    z = numpy.array(f(points.T), dtype=float)
 
-    # Choose a diverging colormap such that the zeros are clearly
-    # distinguishable.
-    plt.set_cmap("coolwarm")
+    plt.tripcolor(points[:, 0], points[:, 1], cells, z, shading="flat")
+
+    if colorbar:
+        plt.colorbar()
+    # Choose a diverging colormap such that the zeros are clearly distinguishable.
+    plt.set_cmap(cmap)
     # Make sure the color map limits are symmetric around 0.
     clim = plt.gci().get_clim()
     mx = max(abs(clim[0]), abs(clim[1]))
@@ -35,3 +37,56 @@ def plot(f, lcar=5.0e-2):
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
+    plt.title(
+        f"{name} orthogonal polynomial on disk "
+        f"([{degrees[0]}, {degrees[1]}], {scaling})"
+    )
+
+
+def savefig_tree(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_tree(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.show()
+
+
+# Use a diverging colormap by default so the zeros are well recognizable
+# https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
+def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=None):
+    import matplotlib.pyplot as plt
+    import meshzoo
+
+    bary, cells = meshzoo.triangle(res)
+    evaluator = Eval(bary, scaling)
+
+    plt.set_cmap(cmap)
+    plt.gca().set_aspect("equal")
+    plt.axis("off")
+
+    for k, level in enumerate(itertools.islice(evaluator, n + 1)):
+        for r, z in enumerate(level):
+            alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
+            corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
+            corners[0] += 2.1 * (r - k / 2)
+            corners[1] -= 1.9 * k
+            x, y = numpy.dot(corners, bary)
+
+            if k == 0:
+                z[:] = 3.0
+
+            plt.tripcolor(x, y, cells, z, shading="flat")
+            plt.clim(clim)
+
+            # triangle outlines
+            X = numpy.column_stack([corners, corners[:, 0]])
+            plt.plot(X[0], X[1], "-k")
+
+    if colorbar:
+        plt.colorbar()

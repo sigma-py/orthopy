@@ -3,9 +3,29 @@ import itertools
 import numpy
 import sympy
 
+from .tools import plot_single as ps
+
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+
+
+def savefig_single(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_single(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_single(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_single(*args, **kwargs)
+    plt.show()
+
+
+def plot_single(*args, **kwargs):
+    ps("Yu", Eval, *args, **kwargs)
 
 
 class Eval:

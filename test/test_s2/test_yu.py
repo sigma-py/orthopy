@@ -52,29 +52,10 @@ def test_yu_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-def test_show(scaling="normal", n=2, r=1):
-    def f(X):
-        return orthopy.s2.yu.tree(n, X, scaling)[n][r]
-
-    # k = numpy.linspace(0, 2 * numpy.pi, 100000)
-    # X = numpy.array([numpy.cos(k), numpy.sin(k)])
-    # print(numpy.min(f(X)), numpy.max(f(X)))
-    # x0 = [numpy.sqrt(1 / (n)), numpy.sqrt((n-1) / (n))]
-    # print(f(x0))
-
-    # p = [sympy.poly(x, X) for x in X]
-    # iterator = orthopy.s2.yu.Eval(p, "classical", symbolic=True)
-    # for k, vals in enumerate(itertools.islice(iterator, 10)):
-    #     print()
-    #     for val in vals:
-    #         print(val)
-    # exit(1)
-
-    orthopy.s2.show(f, lcar=1.0e-2)
-    # orthopy.s2.plot(f, lcar=2.0e-2)
-    # import matplotlib.pyplot as plt
-    # plt.savefig('s2.png', transparent=True)
+@pytest.mark.parametrize("degrees", (2, 1))
+def test_show(degrees, scaling="normal"):
+    orthopy.s2.yu.show_single(degrees)
 
 
 if __name__ == "__main__":
-    test_show("classical", n=5, r=2)
+    test_show((3, 2), "normal")
