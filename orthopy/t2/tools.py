@@ -1,20 +1,43 @@
 import numpy
 
+from .main import Eval
 
-def show(*args, **kwargs):
+
+def savefig_single(filename, *args, **kwargs):
     import matplotlib.pyplot as plt
 
-    plot(*args, **kwargs)
+    plot_single(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_single(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_single(*args, **kwargs)
     plt.show()
 
 
-def plot(corners, f, n=100, colorbar=True, cmap="viridis"):
+def plot_single(
+    degrees, res=100, scaling="normal", colorbar=True, cmap="viridis", corners=None
+):
     """Plot function over a triangle.
     """
     import matplotlib.pyplot as plt
     import meshzoo
 
-    bary, cells = meshzoo.triangle(n)
+    n = sum(degrees)
+    r = degrees[0]
+
+    def f(bary):
+        for k, level in enumerate(Eval(bary, scaling)):
+            if k == n:
+                return level[r]
+
+    if corners is None:
+        alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
+        corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
+
+    bary, cells = meshzoo.triangle(res)
     x, y = numpy.dot(corners, bary)
     z = numpy.array(f(bary), dtype=float)
 
@@ -35,3 +58,6 @@ def plot(corners, f, n=100, colorbar=True, cmap="viridis"):
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
+    plt.title(
+        f"Orthogonal polynomial on triangle ([{degrees[0]}, {degrees[1]}], {scaling})"
+    )

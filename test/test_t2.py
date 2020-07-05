@@ -170,26 +170,13 @@ def test_orthogonality(scaling, n=3):
         assert _integrate_poly(f0 * f1) == 0
 
 
-def test_show(n=2, r=1):
-    # plot the t2
-    alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
-    corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
-
-    # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
-
-    def f(bary):
-        return orthopy.t2.tree(n, bary, "normal")[n][r]
-
-    # cmap = mpl.colors.ListedColormap(["white", "black"])
-    orthopy.t2.show(corners, f, n=100, colorbar=False)
-
-    # orthopy.t2.plot(corners, f)
-    # import matplotlib.pyplot as plt
-    # plt.savefig('t2.png', transparent=True)
+def test_show_single(degrees=(1, 1)):
+    orthopy.t2.show_single(degrees, colorbar=False)
+    orthopy.t2.savefig_single("triangle.png", degrees, colorbar=False)
 
 
 if __name__ == "__main__":
     # x_ = numpy.array([0.24, 0.65])
     # # x_ = numpy.random.rand(3, 2)
     # test_t2_orth(x=x_)
-    test_show(n=2, r=1)
+    test_show_single((2, 1))
