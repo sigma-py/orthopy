@@ -29,6 +29,26 @@ def plot_single(*args, **kwargs):
     ps("Zernike-2", Eval, *args, **kwargs)
 
 
+def savefig_tree(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_tree(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.show()
+
+
+def plot_tree(*args, **kwargs):
+    from .tools import plot_tree as pt
+
+    pt("Zernike-2", Eval, *args, **kwargs)
+
+
 class Eval:
     """
     Similar to regular Zernike, but a lot simpler. Can probably be generalized to

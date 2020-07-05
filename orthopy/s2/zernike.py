@@ -4,8 +4,6 @@ import math
 import numpy
 import sympy
 
-from .tools import plot_single as ps
-
 
 def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
@@ -26,7 +24,29 @@ def show_single(*args, **kwargs):
 
 
 def plot_single(*args, **kwargs):
+    from .tools import plot_single as ps
+
     ps("Zernike", Eval, *args, **kwargs)
+
+
+def savefig_tree(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_tree(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.show()
+
+
+def plot_tree(*args, **kwargs):
+    from .tools import plot_tree as pt
+
+    pt("Zernike", Eval, *args, **kwargs)
 
 
 class Eval:

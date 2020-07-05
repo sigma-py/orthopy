@@ -59,12 +59,21 @@ def show_tree(*args, **kwargs):
 
 # Use a diverging colormap by default so the zeros are well recognizable
 # https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
-def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=None):
+def plot_tree(
+    name,
+    evaluator,
+    n,
+    res=50,
+    scaling="normal",
+    colorbar=False,
+    cmap="RdBu_r",
+    clim=None,
+):
     import matplotlib.pyplot as plt
     import meshzoo
 
-    bary, cells = meshzoo.triangle(res)
-    evaluator = Eval(bary, scaling)
+    points, cells = meshzoo.disk(6, res)
+    evaluator = evaluator(points.T, scaling)
 
     plt.set_cmap(cmap)
     plt.gca().set_aspect("equal")
@@ -72,21 +81,20 @@ def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=
 
     for k, level in enumerate(itertools.islice(evaluator, n + 1)):
         for r, z in enumerate(level):
-            alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
-            corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
-            corners[0] += 2.1 * (r - k / 2)
-            corners[1] -= 1.9 * k
-            x, y = numpy.dot(corners, bary)
+            pts = points.copy()
+            offset = [2.6 * (r - k / 2), -2.3 * k]
 
-            if k == 0:
-                z[:] = 3.0
+            pts[:, 0] += offset[0]
+            pts[:, 1] += offset[1]
 
-            plt.tripcolor(x, y, cells, z, shading="flat")
+            plt.tripcolor(pts[:, 0], pts[:, 1], cells, z, shading="flat")
             plt.clim(clim)
 
-            # triangle outlines
-            X = numpy.column_stack([corners, corners[:, 0]])
-            plt.plot(X[0], X[1], "-k")
+            # circle outline
+            circle = plt.Circle(offset, 1.0, edgecolor="k", fill=False)
+            plt.gca().add_artist(circle)
 
     if colorbar:
         plt.colorbar()
+
+    plt.title(f"{name} orthogonal polynomials on the disk ({scaling})")

@@ -147,5 +147,14 @@ def test_show(degrees, scaling="normal"):
     orthopy.s2.zernike2.show_single(degrees)
 
 
+@pytest.mark.parametrize("n", 2)
+def test_show_tree(n, scaling="normal"):
+    orthopy.s2.zernike2.show_tree(n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7))
+    orthopy.s2.zernike2.savefig_tree(
+        "disk-zernike2-tree.png", n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7)
+    )
+
+
 if __name__ == "__main__":
-    test_show((3, 2), "normal")
+    # test_show((3, 2), "normal")
+    test_show_tree(3, "normal")

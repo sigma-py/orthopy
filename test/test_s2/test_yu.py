@@ -54,8 +54,18 @@ def test_yu_normality(n=4):
 
 @pytest.mark.parametrize("degrees", (2, 1))
 def test_show(degrees, scaling="normal"):
-    orthopy.s2.yu.show_single(degrees)
+    orthopy.s2.yu.show_single(degrees, scaling=scaling)
+    orthopy.s2.yu.savefig_single("disk-yu.png", degrees, scaling=scaling)
+
+
+@pytest.mark.parametrize("n", 2)
+def test_show_tree(n, scaling="normal"):
+    orthopy.s2.yu.show_tree(n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7))
+    orthopy.s2.yu.savefig_tree(
+        "disk-yu-tree.png", n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7)
+    )
 
 
 if __name__ == "__main__":
-    test_show((3, 2), "normal")
+    # test_show((3, 2), "normal")
+    test_show_tree(3, "normal")
