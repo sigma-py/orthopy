@@ -120,4 +120,4 @@ def test_show_tree(n, scaling="normal"):
 
 if __name__ == "__main__":
     # test_show((3, 2), "normal")
-    test_show_tree(3, "normal")
+    test_show_tree(5, "normal")

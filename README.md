@@ -102,18 +102,6 @@ Available scalings are
   * `"1"` where the polynomial is `1` in at least one corner of the triangle.
 
 
-### Quadrilateral (_C<sub>2</sub>_)
-
-<img src="https://nschloe.github.io/orthopy/quad-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
-
-```python
-vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
-```
-All polynomials are normalized on the quadrilateral.
-
-
 ### Disk (_S<sub>2</sub>_)
 
 <img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
@@ -130,18 +118,6 @@ for level in orthopy.s2.Eval(x, symbolic=False):
 vals = orthopy.s2.tree(4, x, symbolic=False)
 ```
 All polynomials are normalized on the unit disk.
-
-
-### 2D space with weight function exp(-r<sup>2</sup>) (_E<sub>2</sub><sup>r<sup>2</sup></sup>_)
-
-<img src="https://nschloe.github.io/orthopy/e2r2-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
-
-```python
-vals = orthopy.e2r2.tree(4, x, symbolic=False)
-```
-All polynomials are normalized over the measure.
 
 
 ### Sphere (_U<sub>3</sub>_)
@@ -164,19 +140,6 @@ vals = orthopy.u3.tree(
     polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
 )
 ```
-
-
-### Hexahedron (_C<sub>3</sub>_)
-
-<img src="https://nschloe.github.io/orthopy/hexa-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-5-5.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=5, k=5  |
-
-```python
-vals = orthopy.c3.tree(3, x, symbolic=False)
-```
-All polynomials are normalized on the hexahedron.
-
 
 ### n-Cube (_C<sub>n</sub>_)
 
