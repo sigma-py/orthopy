@@ -116,9 +116,9 @@ All polynomials are normalized on the quadrilateral.
 
 ### Disk (_S<sub>2</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/disk-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-4-3.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
+<img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
+:------------:|:-----------------:|:-----------:|
+Yu            |  Zernike          |  Zernike 2  |
 
 ```python
 for level in orthopy.s2.Eval(x, symbolic=False):
