@@ -44,9 +44,15 @@ for level in orthopy.c1.legendre.Eval(x, "normal"):
 -0.6131941618102092
 ...
 ```
-You can provide an array of arbitrary shape for `x`, all computations will be
-vectorized. You can also use sympy for symbolic computation; make sure to pass a
-variable and set `symbolic=True`:
+You can iterate only over the first `n` items with
+```python
+import itertools
+
+list(itertools.islice(Eval(x, "normal"), n + 1))
+```
+You can provide an array of arbitrary shape for `x` for the polynomials to be evaluated
+at once for all points. The computations will be vectorized. You can also use sympy for
+symbolic computation; make sure to pass a variable and set `symbolic=True`:
 ```python
 import orthopy
 import sympy
@@ -83,10 +89,11 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 (α=β=0) polynomials.
 
 ```python
-vals = orthopy.c1.legendre.tree(4, x, "normal", symbolic=False)
-vals = orthopy.c1.chebyshev1.tree(4, x, "normal", symbolic=False)
-vals = orthopy.c1.chebyshev2.tree(4, x, "normal", symbolic=False)
-vals = orthopy.c1.jacobi.tree(4, x, alpha, beta, "normal", symbolic=False)
+orthopy.c1.legendre.Eval(x, "normal", symbolic=False)
+orthopy.c1.chebyshev1.Eval(x, "normal", symbolic=False)
+orthopy.c1.chebyshev2.tree(x, "normal", symbolic=False)
+orthopy.c1.gegenbauer.tree(x, lmbda, "normal", symbolic=False)
+orthopy.c1.jacobi.tree(x, alpha, beta, "normal", symbolic=False)
 ```
 
 Recurrence coefficients can be explicitly retrieved by
