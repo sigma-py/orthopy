@@ -26,15 +26,15 @@ arithmetic_](#symbolic-and-numerical-computation).
 
 ### Basic usage
 
-All submodules contain an iterator `Eval` which evaluates the series of orthogonal
-polynomials with increasing degree, e.g.,
+The main function of all submodules is the iterator `Eval` which evaluates the series of
+orthogonal polynomials with increasing degree, e.g.,
 ```python
 import orthopy
 
 x = 0.5
 
-for level in orthopy.c1.legendre.Eval(x, "normal"):
-     print(level)
+for val in orthopy.c1.legendre.Eval(x, "normal"):
+     print(val)
 ```
 ```python
 0.7071067811865476    # P_0(0.5)
@@ -44,15 +44,16 @@ for level in orthopy.c1.legendre.Eval(x, "normal"):
 -0.6131941618102092   # P_4(0.5)
 ...
 ```
-You can iterate only over the first `n` items with
+If you'd like to get the first `n` items, you can use
 ```python
 import itertools
 
 list(itertools.islice(Eval(x, "normal"), n + 1))
 ```
 You can provide an array of arbitrary shape for `x` for the polynomials to be evaluated
-at once for all points. The computations will be vectorized. You can also use sympy for
-symbolic computation; make sure to pass a variable and set `symbolic=True`:
+at once for all points. The computation are fully be vectorized and usually very fast.
+You can also use sympy for symbolic computation; make sure to pass a variable and set
+`symbolic=True`:
 ```python
 import orthopy
 import sympy
