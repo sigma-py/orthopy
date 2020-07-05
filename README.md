@@ -15,18 +15,63 @@
 
 orthopy provides various orthogonal polynomial classes for
 [lines](#line-segment--1-1-with-weight-function-1-x%CE%B1-1-x%CE%B2),
-[triangles](#triangle-T2),
-[quadrilaterals](#quadrilateral),
-[disks](#disk),
-[spheres](#sphere),
-[hexahedra](#hexahedron), and
-[n-cubes](#n-cube).
+[triangles](#triangle-42),
+[disks](#disk-s2),
+[spheres](#sphere-u2),
+[n-cubes](#n-cube-cn),
+[nD space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
 All computations are done using numerically stable recurrence schemes.
 Furthermore, all functions are fully vectorized and can return results in [_exact
 arithmetic_](#symbolic-and-numerical-computation).
 
-_Note:_ In previous versions, orthopy contained tools for working with Gauss quadrature
-rules as well. Those have moved over to [quadpy](https://github.com/nschloe/quadpy).
+### Basic usage
+
+All submodules contain an iterator `Eval` which evaluates the series of orthogonal
+polynomials with increasing degree, e.g.,
+```python
+import orthopy
+
+x = 0.5
+
+for level in orthopy.c1.legendre.Eval(x, "normal"):
+     print(level)
+```
+```
+0.7071067811865476
+0.6123724356957946
+-0.19764235376052364
+-0.8184875533567997
+-0.6131941618102092
+...
+```
+You can provide an array of arbitrary shape for `x`, all computations will be
+vectorized. You can also use sympy for symbolic computation; make sure to pass a
+variable and set `symbolic=True`:
+```python
+import orthopy
+import sympy
+
+x = sympy.Symbol("x")
+
+for level in orthopy.c1.legendre.Eval(x, "normal", symbolic=True):
+     print(level)
+```
+```
+sqrt(2)/2
+sqrt(6)*x/2
+3*sqrt(10)*x**2/4 - sqrt(10)/4
+sqrt(35)*x*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/3 - sqrt(14)*x/3
+3*sqrt(7)*x*(sqrt(35)*x*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/3 - sqrt(14)*x/3)/4 - 9*sqrt(5)*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/20
+...
+```
+All `Eval` methods have a `scaling` argument which can be set to three values:
+
+  * `"monic"`: The leading coefficient is 1,
+  * `"classical"`: _p(1) = (n+alpha over n)_ (for C_1, otherwise typically , and
+  * `"normal"`: The integral of the squared function over the domain is 1.
+
+
+
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
@@ -165,28 +210,6 @@ determined by `X.shape[0]`.
    ```python
    vals = orthopy.c1.clenshaw(a, alpha, beta, t)
    ```
-
-
-#### Symbolic and numerical computation
-
-By default, all operations are performed numerically. However, if `symbolic=True` is
-specified, all computations are performed symbolically. This can be used, for example,
-to get explicit representations of the polynomials:
-```python
-import numpy
-import orthopy
-import sympy
-
-b0, b1, b2 = sympy.Symbol("b0"), sympy.Symbol("b1"), sympy.Symbol("b2")
-
-tree = orthopy.t2.tree(numpy.array([b0, b1, b2]), 3, "normal", symbolic=True)
-
-print(sympy.expand(tree[3][1]))
-```
-```
-42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2
-+ 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
-```
 
 
 ### Installation
