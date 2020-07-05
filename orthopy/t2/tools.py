@@ -98,9 +98,6 @@ def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=
             corners[1] -= 1.9 * k
             x, y = numpy.dot(corners, bary)
 
-            if k == 0:
-                z[:] = 3.0
-
             plt.tripcolor(x, y, cells, z, shading="flat")
             plt.clim(clim)
 
