@@ -175,8 +175,11 @@ def test_show_single(degrees=(1, 1)):
     orthopy.t2.savefig_single("triangle.png", degrees, colorbar=False)
 
 
+def test_show_tree(n=3):
+    orthopy.t2.show_tree(n, colorbar=True, clim=(-10, 10))
+    orthopy.t2.savefig_tree("triangle-tree.png", n, colorbar=True, clim=(-10, 10))
+
+
 if __name__ == "__main__":
-    # x_ = numpy.array([0.24, 0.65])
-    # # x_ = numpy.random.rand(3, 2)
-    # test_t2_orth(x=x_)
-    test_show_single((2, 1))
+    # test_show_single((2, 1))
+    test_show_tree(3)
