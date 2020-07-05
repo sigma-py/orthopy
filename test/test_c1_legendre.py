@@ -94,8 +94,9 @@ def test_eval(t, ref, tol=1.0e-14):
     assert numpy.all(numpy.abs(value - approx_ref) < tol)
 
 
-def test_show(n=4):
-    orthopy.c1.show(n, 0, 0)
+def test_show(n=5):
+    orthopy.c1.legendre.show(n, "normal")
+    orthopy.c1.legendre.savefig("legendre.svg", n, "normal")
 
 
 if __name__ == "__main__":

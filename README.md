@@ -49,7 +49,7 @@ Possible choices for the scaling are
   * `"normal"` (integral over the squared function is 1).
 
 
-#### Associated Legendre polynomials
+#### Associated Legendre "polynomials"
 
 <img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 

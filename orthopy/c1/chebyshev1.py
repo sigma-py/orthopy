@@ -9,6 +9,24 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
+def plot(n, *args, **kwargs):
+    gegenbauer.plot(n, *args, **kwargs)
+
+
+def show(*args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot(*args, **kwargs)
+    plt.show()
+
+
+def savefig(filename, *args, **kwargs):
+    import matplotlib.pyplot as plt
+
+    plot(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
 class Eval(gegenbauer.Eval):
     """Chebyshev polynomials of the first kind. The first few are:
 
