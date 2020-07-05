@@ -30,12 +30,17 @@ rules as well. Those have moved over to [quadpy](https://github.com/nschloe/quad
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
-<img src="https://nschloe.github.io/orthopy/jacobi.svg" width="45%">
+<img src="https://nschloe.github.io/orthopy/legendre.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev2.svg" width="100%">
+:-------------------:|:------------------:|:-------------:|
+Legendre             |  Chebyshev 1       |  Chebyshev 2  |
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
 
 ```python
+vals = orthopy.c1.legendre.tree(4, x, "normal", symbolic=False)
+vals = orthopy.c1.chebyshev1.tree(4, x, "normal", symbolic=False)
+vals = orthopy.c1.chebyshev2.tree(4, x, "normal", symbolic=False)
 vals = orthopy.c1.jacobi.tree(4, x, alpha, beta, "normal", symbolic=False)
 ```
 

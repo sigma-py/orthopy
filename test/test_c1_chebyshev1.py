@@ -151,13 +151,10 @@ def test_eval(t, ref, tol=1.0e-14):
     assert numpy.all(value == ref)
 
 
-def test_plot(n=4):
-    orthopy.c1.plot(n, -0.5, -0.5)
+def test_show(n=5):
+    orthopy.c1.chebyshev1.show(n, "normal")
+    orthopy.c1.chebyshev1.savefig("chebyshev1.svg", n, "normal")
 
 
 if __name__ == "__main__":
-    test_plot()
-    import matplotlib.pyplot as plt
-
-    # plt.show()
-    plt.savefig("line-segment-chebyshev1.png", transparent=True)
+    test_show()

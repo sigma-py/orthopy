@@ -7,8 +7,8 @@ def tree(n, *args, **kwargs):
     return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
-def plot(n, *args, **kwargs):
-    gegenbauer.plot(n, *args, **kwargs)
+def plot(n, scaling):
+    gegenbauer.plot(n, 0, scaling)
 
 
 def show(*args, **kwargs):
