@@ -139,13 +139,8 @@ def test_spherical_harmonics_numpy(theta, phi):
         assert numpy.all(abs(val - cmplx(ex)) < 1.0e-12)
 
 
-def test_write():
-    def sph22(polar, azimuthal):
-        return orthopy.u3.tree_polar(5, polar, azimuthal, scaling="quantum mechanic")[
-            5
-        ][3]
-
-    orthopy.u3.write("sph.vtk", sph22)
+def test_write(n=5, r=3):
+    orthopy.u3.write_single(f"sph{n}{r}.vtk", n, r, "quantum mechanic")
 
 
 # from associated_legendre
@@ -186,4 +181,4 @@ def test_write():
 
 
 if __name__ == "__main__":
-    test_normality(n=3)
+    test_write()
