@@ -182,15 +182,14 @@ All polynomials are normalized on the unit disk.
 
 ### Sphere (_U<sub>3</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/sphere-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-5-3.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=5, k=3  |
+
+<img src="https://nschloe.github.io/orthopy/sph-tree.png" width="50%">
 
 Complex-valued _spherical harmonics,_ plotted with
 [cplot](https://github.com/nschloe/cplot/) coloring.
 
 ```python
-for level in orthopy.u3.Eval(polar, azimuthal, standardization="quantum mechanic", symbolic=False):
+for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
     # `level` contains all evalutations of the spherical harmonics with the next
     # degree at the points x
     pass
