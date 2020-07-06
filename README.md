@@ -33,51 +33,62 @@ import orthopy
 
 x = 0.5
 
-for val in orthopy.c1.legendre.Eval(x, "normal"):
+for k, val in enumerate(orthopy.c1.legendre.Eval(x, "classical")):
      print(val)
+     if k == 4:
+         break
 ```
 ```python
-0.7071067811865476    # P_0(0.5)
-0.6123724356957946    # P_1(0.5)
--0.19764235376052364  # P_2(0.5)
--0.8184875533567997   # P_3(0.5)
--0.6131941618102092   # P_4(0.5)
-...
+1.0          # P_0(0.5)
+0.5          # P_1(0.5)
+-0.125       # P_2(0.5)
+-0.4375      # P_3(0.5)
+-0.2890625   # P_4(0.5)
 ```
-If you'd like to get the first `n` items, you can use
+Another way of getting the first `n` items is to use
+[itertools](https://docs.python.org/3/library/itertools.html):
 ```python
 import itertools
 
-list(itertools.islice(Eval(x, "normal"), n + 1))
+vals = list(itertools.islice(Eval(x, "normal"), n + 1))
 ```
-You can provide an array of arbitrary shape for `x` for the polynomials to be evaluated
-at once for all points. The computation are fully be vectorized and usually very fast.
-You can also use sympy for symbolic computation; make sure to pass a variable and set
+Instead of evaluating at only one point, you can provide an array of arbitrary shape for
+`x`. The polynomials will then be evaluated for all points at once. The computation are
+fully be vectorized and usually very fast.  You can also use sympy for symbolic
+computation; make sure to pass a variable and set
 `symbolic=True`:
 ```python
+import itertools
 import orthopy
 import sympy
 
 x = sympy.Symbol("x")
 
-for level in orthopy.c1.legendre.Eval(x, "normal", symbolic=True):
-     print(level)
+evaluator = orthopy.c1.legendre.Eval(x, "classical", symbolic=True)
+for level in itertools.islice(evaluator, 5):
+     print(sympy.expand(level))
 ```
 ```
-sqrt(2)/2
-sqrt(6)*x/2
-3*sqrt(10)*x**2/4 - sqrt(10)/4
-sqrt(35)*x*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/3 - sqrt(14)*x/3
-3*sqrt(7)*x*(sqrt(35)*x*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/3 - sqrt(14)*x/3)/4 - 9*sqrt(5)*(3*sqrt(10)*x**2/4 - sqrt(10)/4)/20
-...
+1
+x
+3*x**2/2 - 1/2
+5*x**3/2 - 3*x/2
+35*x**4/8 - 15*x**2/4 + 3/8
 ```
+(Set `x` to `0.5` to get the values above.)
+
 All `Eval` methods have a `scaling` argument which can be set to three values:
 
-  * `"monic"`: The leading coefficient is 1,
-  * `"classical"`: _p(1) = (n+alpha over n)_ (for C_1, otherwise typically , and
+  * `"monic"`: The leading coefficient is 1.
+  * `"classical"`: The maximum value is 1 (or  (n+alpha over n)).
   * `"normal"`: The integral of the squared function over the domain is 1.
 
+For univariate ("one-dimensional") integrals, every level contains one functions. For
+bivariate ("two-dimensional") functions, every level will contain one functions more
+than the previous.
 
+
+See the trees for triangles and disks below.
 
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
@@ -101,10 +112,6 @@ Recurrence coefficients can be explicitly retrieved by
 ```python
 p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
 ```
-Possible choices for the scaling are
-  * `"monic"` (leading coefficient 1),
-  * `"classical"`, (_p(1) = (n+alpha over n)_), and
-  * `"normal"` (integral over the squared function is 1).
 
 
 #### Associated Legendre "polynomials"
@@ -159,7 +166,7 @@ Available scalings are
 
 <img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
 :------------:|:-----------------:|:-----------:|
-Yu            |  Zernike          |  Zernike 2  |
+Yu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
 
 ```python
 for level in orthopy.s2.Eval(x, symbolic=False):
