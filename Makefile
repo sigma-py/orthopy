@@ -27,7 +27,7 @@ clean:
 	@rm -rf *.egg-info/ build/ dist/
 
 format:
-	isort -rc .
+	isort .
 	black .
 
 black:

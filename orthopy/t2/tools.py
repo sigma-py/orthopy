@@ -6,14 +6,14 @@ from .main import Eval
 
 
 def savefig_single(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_single(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 def show_single(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_single(*args, **kwargs)
     plt.show()
@@ -22,8 +22,8 @@ def show_single(*args, **kwargs):
 def plot_single(
     degrees, res=100, scaling="normal", colorbar=True, cmap="RdBu_r", corners=None
 ):
-    import matplotlib.pyplot as plt
     import meshzoo
+    from matplotlib import pyplot as plt
 
     n = sum(degrees)
     r = degrees[0]
@@ -64,14 +64,14 @@ def plot_single(
 
 
 def savefig_tree(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 def show_tree(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.show()
@@ -80,8 +80,8 @@ def show_tree(*args, **kwargs):
 # Use a diverging colormap by default so the zeros are well recognizable
 # https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
 def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=None):
-    import matplotlib.pyplot as plt
     import meshzoo
+    from matplotlib import pyplot as plt
 
     bary, cells = meshzoo.triangle(res)
     evaluator = Eval(bary, scaling)

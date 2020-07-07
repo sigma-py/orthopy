@@ -3,10 +3,10 @@ import itertools
 import numpy
 import pytest
 import sympy
+from helpers import get_nth
 from sympy import Rational, S, pi, sqrt
 
 import orthopy
-from helpers import get_nth
 
 
 @pytest.mark.parametrize(

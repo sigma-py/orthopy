@@ -1,11 +1,11 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import sympy
 from sympy import pi, sqrt
 
-import ndim
 import orthopy
 
 X = sympy.symbols("x, y, z")

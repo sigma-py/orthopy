@@ -6,8 +6,8 @@ import numpy
 def plot_single(
     name, evaluator, degrees, res=50, scaling="normal", colorbar=True, cmap="RdBu_r"
 ):
-    import matplotlib.pyplot as plt
     import meshzoo
+    from matplotlib import pyplot as plt
 
     n = sum(degrees)
     r = degrees[0]
@@ -44,14 +44,14 @@ def plot_single(
 
 
 def savefig_tree(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 def show_tree(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.show()
@@ -69,8 +69,8 @@ def plot_tree(
     cmap="RdBu_r",
     clim=None,
 ):
-    import matplotlib.pyplot as plt
     import meshzoo
+    from matplotlib import pyplot as plt
 
     points, cells = meshzoo.disk(6, res)
     evaluator = evaluator(points.T, scaling)

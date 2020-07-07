@@ -3,9 +3,9 @@ import itertools
 import numpy
 import pytest
 import sympy
+from helpers_s2 import _integrate_poly
 
 import orthopy
-from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
 P = [sympy.poly(x, X) for x in X]

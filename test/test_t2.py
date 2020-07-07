@@ -1,14 +1,14 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import scipy.special
 import sympy
+from helpers import get_nth
 from sympy import Rational, S
 
-import ndim
 import orthopy
-from helpers import get_nth
 
 b0 = sympy.Symbol("b0")
 b1 = sympy.Symbol("b1")

@@ -1,4 +1,5 @@
 import itertools
+
 import numpy
 
 from .main import Eval
@@ -8,9 +9,9 @@ def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
     """This function creates a sphere mesh with "srgb1" values. Can be views in ParaView
     by disabling "Map Scalars".
     """
+    import cplot
     import meshio
     import meshzoo
-    import cplot
 
     points, cells = meshzoo.icosa_sphere(res)
 
@@ -30,9 +31,9 @@ def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
 
 
 def write_tree(filename, n, scaling, res=20, colors_enhancement=2.5):
+    import cplot
     import meshio
     import meshzoo
-    import cplot
 
     points, cells = meshzoo.icosa_sphere(res)
 

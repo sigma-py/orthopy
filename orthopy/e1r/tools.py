@@ -7,7 +7,7 @@ from .main import Eval
 
 def plot(n, *args, **kwargs):
     import dufte
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plt.style.use(dufte.style)
 
@@ -26,14 +26,14 @@ def plot(n, *args, **kwargs):
 
 
 def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.show()
 
 
 def savefig(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")

@@ -1,10 +1,10 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import sympy
 
-import ndim
 import orthopy
 
 # def _integrate(f, X):

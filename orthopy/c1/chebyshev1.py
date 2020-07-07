@@ -9,14 +9,14 @@ def plot(n, scaling):
 
 
 def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.show()
 
 
 def savefig(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")

@@ -7,14 +7,14 @@ from .tools import plot_single as ps
 
 
 def savefig_single(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_single(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 def show_single(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_single(*args, **kwargs)
     plt.show()
@@ -25,14 +25,14 @@ def plot_single(*args, **kwargs):
 
 
 def savefig_tree(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 def show_tree(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
     plt.show()
