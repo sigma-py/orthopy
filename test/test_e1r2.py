@@ -63,19 +63,20 @@ def _integrate_poly(p, standardization):
 )
 def test_integral0(standardization, scaling, int0, n=4):
     p = sympy.poly(x)
-    vals = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
+    evaluator = orthopy.e1r2.Eval(p, standardization, scaling, symbolic=True)
 
-    assert _integrate_poly(vals[0], standardization) == int0
-    for val in vals[1:]:
-        assert _integrate_poly(val, standardization) == 0
+    assert _integrate_poly(next(evaluator), standardization) == int0
+    for _ in range(n + 1):
+        assert _integrate_poly(next(evaluator), standardization) == 0
 
 
 @pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_orthogonality(standardization, scaling, n=4):
     p = sympy.poly(x)
-    tree = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.e1r2.Eval(p, standardization, scaling, symbolic=True)
+    vals = [next(evaluator) for _ in range(n + 1)]
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, standardization) == 0
 
 

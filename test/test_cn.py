@@ -39,7 +39,8 @@ def test_integral0(d, n=4):
 def test_orthogonality(d, n):
     X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
+    evaluator = orthopy.cn.Eval(p, symbolic=True)
+    tree = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
@@ -49,7 +50,8 @@ def test_normality(d, n=4):
     X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
 
-    vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
+    evaluator = orthopy.cn.Eval(p, symbolic=True)
+    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
 
     for val in vals:
         assert _integrate_poly(val ** 2) == 1

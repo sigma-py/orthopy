@@ -81,13 +81,13 @@ def eval_orthpolys4(bary):
 
 @pytest.mark.parametrize("x", [numpy.array([0.24, 0.65]), numpy.random.rand(2, 5)])
 def test_t2_orth(x, tol=1.0e-12):
-    L = 4
     exacts = eval_orthpolys4(x)
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "normal")
+    evaluator = orthopy.t2.Eval(bary, "normal")
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
 
@@ -95,7 +95,6 @@ def test_t2_orth(x, tol=1.0e-12):
 def test_t2_orth_exact():
     x = numpy.array([S(1) / 3, S(1) / 7])
 
-    L = 2
     exacts = [
         [sympy.sqrt(2)],
         [-S(8) / 7, 8 * sympy.sqrt(3) / 21],
@@ -107,9 +106,10 @@ def test_t2_orth_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "normal", symbolic=True)
+    evaluator = orthopy.t2.Eval(bary, "normal", symbolic=True)
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert v == e
 
@@ -117,16 +117,16 @@ def test_t2_orth_exact():
 def test_t2_orth_classical_exact():
     x = numpy.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
 
-    L = 2
     exacts = [
         [[1, 1, 1]],
         [[-S(34) / 35, S(2) / 35, S(38) / 35], [S(2) / 35, S(4) / 35, S(6) / 35]],
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "classical", symbolic=True)
+    evaluator = orthopy.t2.Eval(bary, "classical", symbolic=True)
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
 
@@ -165,7 +165,8 @@ def test_normality(n=4):
 def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
-    tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))
+    evaluator = orthopy.t2.Eval(p, scaling, symbolic=True)
+    tree = numpy.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 

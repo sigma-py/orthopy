@@ -1,4 +1,4 @@
-from .main import Eval, tree
+from .main import Eval
 from .tools import (
     plot_single,
     plot_tree,
@@ -9,7 +9,6 @@ from .tools import (
 )
 
 __all__ = [
-    "tree",
     "Eval",
     "plot_single",
     "show_single",

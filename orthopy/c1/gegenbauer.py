@@ -1,10 +1,4 @@
-import itertools
-
 from . import jacobi
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 def plot(n, lmbda, scaling):

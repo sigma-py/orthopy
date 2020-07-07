@@ -1,12 +1,6 @@
-import itertools
-
 import sympy
 
 from . import gegenbauer
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 def plot(n, scaling):

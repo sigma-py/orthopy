@@ -33,11 +33,11 @@ def _integrate_poly(p, alpha, x):
 def test_integral0(alpha, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    vals = orthopy.e1r.tree(n, p, alpha=alpha, scaling="normal", symbolic=True)
+    evaluator = orthopy.e1r.Eval(p, alpha=alpha, scaling="normal", symbolic=True)
 
-    assert _integrate_poly(vals[0], alpha, x) == 1
-    for val in vals[1:]:
-        assert _integrate_poly(val, alpha, x) == 0
+    assert _integrate_poly(next(evaluator), alpha, x) == 1
+    for _ in range(n + 1):
+        assert _integrate_poly(next(evaluator), alpha, x) == 0
 
 
 @pytest.mark.parametrize("alpha", [0, 1])
@@ -45,8 +45,9 @@ def test_integral0(alpha, n=4):
 def test_orthogonality(alpha, scaling, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    tree = orthopy.e1r.tree(n, p, scaling, alpha=alpha, symbolic=True)
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.e1r.Eval(p, scaling, alpha=alpha, symbolic=True)
+    vals = [next(evaluator) for _ in range(n + 1)]
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, alpha, x) == 0
 
 
@@ -54,9 +55,11 @@ def test_orthogonality(alpha, scaling, n=4):
 def test_normality(alpha, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    tree = orthopy.e1r.tree(n, p, "normal", alpha=alpha, symbolic=True)
-    tree[0] = sympy.poly(tree[0], x)
-    for val in tree:
+    evaluator = orthopy.e1r.Eval(p, "normal", alpha=alpha, symbolic=True)
+    for k in range(n + 1):
+        val = next(evaluator)
+        if k == 0:
+            val = sympy.poly(val, x)
         assert _integrate_poly(val ** 2, alpha, x) == 1
 
 

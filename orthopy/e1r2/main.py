@@ -1,13 +1,8 @@
-import itertools
 import math
 
 import sympy
 
 from ..helpers import Eval1D
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 class Eval(Eval1D):

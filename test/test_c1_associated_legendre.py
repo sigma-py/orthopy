@@ -85,8 +85,7 @@ def ff(l, m):
 def test_exact(x, scaling, factor):
     """Test for the exact values.
     """
-    L = 4
-    vals = orthopy.c1.associated_legendre.tree(L, x, scaling, symbolic=True)
+    evaluator = orthopy.c1.associated_legendre.Eval(x, scaling, symbolic=True)
 
     exacts = exact_natural(x)
     exacts = [
@@ -94,7 +93,8 @@ def test_exact(x, scaling, factor):
         for L, ex in enumerate(exacts)
     ]
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
 

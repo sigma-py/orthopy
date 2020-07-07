@@ -53,24 +53,25 @@ def _integrate(f, x):
 
 def test_integral0(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
+    evaluator = orthopy.c1.legendre.Eval(x, "normal", symbolic=True)
 
-    assert _integrate(vals[0], x) == sqrt(2)
-    for val in vals[1:]:
-        assert _integrate(val, x) == 0
+    assert _integrate(next(evaluator), x) == sqrt(2)
+    for _ in range(n + 1):
+        assert _integrate(next(evaluator), x) == 0
 
 
 def test_normality(n=4):
     x = sympy.Symbol("x")
-    vals = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
-    for val in vals:
-        assert _integrate(val ** 2, x) == 1
+    evaluator = orthopy.c1.legendre.Eval(x, "normal", symbolic=True)
+    for _ in range(n + 1):
+        assert _integrate(next(evaluator) ** 2, x) == 1
 
 
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
-    tree = orthopy.c1.legendre.tree(n, x, "normal", symbolic=True)
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.c1.legendre.Eval(x, "normal", symbolic=True)
+    vals = [next(evaluator) for _ in range(n + 1)]
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate(f0 * f1, x) == 0
 
 

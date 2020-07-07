@@ -1,14 +1,9 @@
-import itertools
 import math
 
 import numpy
 import sympy
 
 from .tools import plot_single as ps
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 def savefig_single(filename, *args, **kwargs):

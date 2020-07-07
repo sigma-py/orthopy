@@ -1,12 +1,7 @@
-import itertools
 import math
 
 import numpy
 import sympy
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 def savefig_single(filename, *args, **kwargs):

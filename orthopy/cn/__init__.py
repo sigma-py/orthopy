@@ -1,3 +1,3 @@
-from .main import Eval, tree
+from .main import Eval
 
-__all__ = ["Eval", "tree"]
+__all__ = ["Eval"]

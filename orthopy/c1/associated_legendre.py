@@ -6,10 +6,6 @@ import sympy
 from ..helpers import Eval135
 
 
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
-
-
 def plot(n, *args, **kwargs):
     import dufte
     import matplotlib.pyplot as plt
