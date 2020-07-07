@@ -45,11 +45,12 @@ for k, val in enumerate(orthopy.c1.legendre.Eval(x, "classical")):
 -0.4375      # P_3(0.5)
 -0.2890625   # P_4(0.5)
 ```
-Another way of getting the first `n` items is to use
-[itertools](https://docs.python.org/3/library/itertools.html):
+Other ways of getting the first `n` items are
 ```python
-import itertools
+evaluator = Eval(x, "normal")
+vals = [next(evaluator) for _ in range(n)]
 
+import itertools
 vals = list(itertools.islice(Eval(x, "normal"), n + 1))
 ```
 Instead of evaluating at only one point, you can provide an array of arbitrary shape for
@@ -186,21 +187,18 @@ All polynomials are normalized on the unit disk.
 <img src="https://nschloe.github.io/orthopy/sph-tree.png" width="50%">
 
 Complex-valued _spherical harmonics,_ plotted with
-[cplot](https://github.com/nschloe/cplot/) coloring.
+[cplot](https://github.com/nschloe/cplot/) coloring (black=zero, green=real positive,
+pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
+in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
 
 ```python
 for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
     # `level` contains all evalutations of the spherical harmonics with the next
     # degree at the points x
     pass
-
-# or for the entire tree up to degree n
-vals = orthopy.u3.tree(
-    polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
-)
 ```
 
-### n-Cube (_C<sub>n</sub>_)
+### _n_-Cube (_C<sub>n</sub>_)
 
 ```python
 vals = orthopy.cn.tree(6, x, symbolic=False)
@@ -208,7 +206,7 @@ vals = orthopy.cn.tree(6, x, symbolic=False)
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
 
-### nD space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
+### _n_D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
 
 ```python
 vals = orthopy.enr2.tree(4, x, symbolic=False)
