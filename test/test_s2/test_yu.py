@@ -40,8 +40,9 @@ def test_yu_integral0(scaling, int0, n=4):
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_yu_orthogonality(scaling, n=4):
-    tree = numpy.concatenate(orthopy.s2.yu.tree(n, P, scaling, symbolic=True))
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.s2.yu.Eval(P, scaling, symbolic=True)
+    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
@@ -52,13 +53,13 @@ def test_yu_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-@pytest.mark.parametrize("degrees", (2, 1))
+@pytest.mark.parametrize("degrees", [(2, 1)])
 def test_show(degrees, scaling="normal"):
     orthopy.s2.yu.show_single(degrees, scaling=scaling)
     orthopy.s2.yu.savefig_single("disk-yu.png", degrees, scaling=scaling)
 
 
-@pytest.mark.parametrize("n", 2)
+@pytest.mark.parametrize("n", [2])
 def test_show_tree(n, scaling="normal"):
     orthopy.s2.yu.show_tree(n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7))
     orthopy.s2.yu.savefig_tree(
@@ -68,4 +69,4 @@ def test_show_tree(n, scaling="normal"):
 
 if __name__ == "__main__":
     # test_show((3, 2), "normal")
-    test_show_tree(3, "normal")
+    test_show_tree(5, "normal")
