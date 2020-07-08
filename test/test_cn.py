@@ -61,9 +61,9 @@ def test_show_tree(n):
     alpha = 0.0
     beta = 0.0
 
-    # # 1D
-    # orthopy.cn.show_tree_1d(n, alpha, beta, scaling)
-    # orthopy.cn.savefig_tree_1d("c1.svg", n, alpha, beta, scaling)
+    # 1D
+    orthopy.cn.show_tree_1d(n, alpha, beta, "normal")
+    orthopy.cn.savefig_tree_1d("c1.svg", n, alpha, beta, "normal")
 
     # 2D
     orthopy.cn.show_tree_2d(n, alpha, beta, clim=(-1, 1))

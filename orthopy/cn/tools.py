@@ -11,6 +11,7 @@ def show_tree_1d(*args, **kwargs):
 
     plot_tree_1d(*args, **kwargs)
     plt.show()
+    plt.close()
 
 
 def savefig_tree_1d(filename, *args, **kwargs):
@@ -18,6 +19,7 @@ def savefig_tree_1d(filename, *args, **kwargs):
 
     plot_tree_1d(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
+    plt.close()
 
 
 def plot_tree_1d(n, *args, **kwargs):
@@ -29,6 +31,7 @@ def show_tree_2d(*args, **kwargs):
 
     plot_tree_2d(*args, **kwargs)
     plt.show()
+    plt.close()
 
 
 def savefig_tree_2d(filename, *args, **kwargs):
@@ -36,11 +39,15 @@ def savefig_tree_2d(filename, *args, **kwargs):
 
     plot_tree_2d(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")
+    plt.close()
 
 
 def plot_tree_2d(n, *args, res=100, colorbar=True, cmap="RdBu_r", clim=None, **kwargs):
+    import dufte
     import meshzoo
     from matplotlib import pyplot as plt
+
+    plt.style.use(dufte.style)
 
     points, cells = meshzoo.rectangle(-1.0, 1.0, -1.0, 1.0, res, res)
     evaluator = Eval(points.T, *args, **kwargs)

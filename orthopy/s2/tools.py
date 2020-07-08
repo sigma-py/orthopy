@@ -69,8 +69,11 @@ def plot_tree(
     cmap="RdBu_r",
     clim=None,
 ):
+    import dufte
     import meshzoo
     from matplotlib import pyplot as plt
+
+    plt.style.use(dufte.style)
 
     points, cells = meshzoo.disk(6, res)
     evaluator = evaluator(points.T, scaling)
