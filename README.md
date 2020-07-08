@@ -223,11 +223,19 @@ determined by `X.shape[0]`.
 
 ### _n_D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
 
+<img src="https://nschloe.github.io/orthopy/e1r2.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/e2r2.png" width="100%"> | <img src="https://nschloe.github.io/orthopy/e3r2.png" width="100%">
+:-------------------------:|:------------------:|:---------------:|
+_E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></sup>_     | _E<sub>3</sub><sup>r<sup>2</sup></sup>_  |
+
 ```python
-vals = orthopy.enr2.tree(4, x, symbolic=False)
+evaluator = orthopy.enr2.Eval(
+    x,
+    standardization="probabilists",  # or "physicists"
+    symbolic=False
+)
 ```
-All polynomials are normalized over the measure. The dimensionality is
-determined by `X.shape[0]`.
+All polynomials are normalized over the measure. The dimensionality is determined by
+`X.shape[0]`.
 
 
 ### Other tools
