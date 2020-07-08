@@ -180,7 +180,6 @@ All polynomials are normalized on the unit disk.
 
 ### Sphere (_U<sub>3</sub>_)
 
-
 <img src="https://nschloe.github.io/orthopy/sph-tree.png" width="50%">
 
 Complex-valued _spherical harmonics,_ plotted with
@@ -197,8 +196,12 @@ for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
 
 ### _n_-Cube (_C<sub>n</sub>_)
 
+<img src="https://nschloe.github.io/orthopy/c1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/c2.png" width="100%"> |
+:-------------------------:|:------------------:|:---------------:|
+C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
+
 ```python
-vals = orthopy.cn.tree(6, x, symbolic=False)
+evaluator = orthopy.cn.Eval(X, symbolic=False)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
