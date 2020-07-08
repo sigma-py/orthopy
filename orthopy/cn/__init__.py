@@ -6,7 +6,7 @@ from .tools import (
     savefig_tree_2d,
     show_tree_1d,
     show_tree_2d,
-    write_tree_3d
+    write_tree_3d,
 )
 
 __all__ = [

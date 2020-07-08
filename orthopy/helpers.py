@@ -102,15 +102,12 @@ class ProductEval:
         self.k = 0
         self.X = X
         self.last_values = [None, None]
-        self.last_degrees = None
+        self.last_degrees = [None, None]
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        a = self.a
-        b = self.b
-        c = self.c
 
         X = self.X
         L = self.k
@@ -121,40 +118,75 @@ class ProductEval:
             degrees = numpy.array([numpy.zeros(dim, dtype=int)])
         else:
             aa, bb, cc = self.rc[L - 1]
-            a.append(aa)
-            b.append(bb)
-            c.append(cc)
+            self.a = numpy.append(self.a, aa)
+            self.b = numpy.append(self.b, bb)
+            self.c = numpy.append(self.c, cc)
+
+            a = self.a
+            b = self.b
+            c = self.c
 
             values = []
             degrees = []
-            mask = numpy.ones(len(self.last_degrees), dtype=bool)
+
+            mask0 = numpy.ones(len(self.last_degrees[0]), dtype=bool)
+            if L > 1:
+                mask1 = numpy.ones(len(self.last_degrees[1]), dtype=bool)
+
+            print("L", L)
+            print("a", a)
+
             for i in range(dim - 1):
-                m1 = _math_comb(L + dim - i - 2, dim - i - 1)
-                last0 = self.last_values[0][-m1:]
+                lv0 = self.last_values[0][mask0]
+                ld0 = self.last_degrees[0][mask0]
+
+                # idx = ld0[:, i]
+                # val = lv0 * (a[idx] * X[i] - b[idx])
+
                 if L > 1:
-                    m2 = _math_comb(L + dim - i - 3, dim - i - 1)
-                    last1 = self.last_values[1][-m2:]
+                    lv1 = self.last_values[1][mask1]
+                    ld1 = self.last_degrees[1][mask1]
+
+                #     idx = ld1[:, i]
+                #     for k, j in enumerate(idx):
+                #         if j > 0:
+                #             val[k] -= lv1[k] * c[j]
+
+                # print(L, val)
+                # values.append(val)
+
+                idx0 = ld0[:, i]
+                val0 = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
+
+                if L > 1:
+                    idx1 = ld1[:, i]
+
                 r = 0
+                print("L", L)
                 for k in range(L):
                     m = _math_comb(k + dim - i - 2, dim - i - 2)
-                    val = last0[r : r + m] * (a[L - k - 1] * X[i] - b[L - k - 1])
+                    val = val0[r : r + m]
                     if L - k > 1:
-                        val -= last1[r : r + m] * c[L - k - 1]
+                        # assert numpy.all(idx0[r : r + m] == L - k - 1)
+                        assert numpy.all(idx1[r : r + m] + 1 == L - k - 1)
+                        val -= lv1[r : r + m] * c[L - k - 1]
                     r += m
                     values.append(val)
 
-                deg = self.last_degrees[mask]
+                deg = self.last_degrees[0][mask0]
                 deg[:, i] += 1
                 degrees.append(deg)
-                # mask is True for all entries where the first k degrees are 0
-                mask &= (self.last_degrees[:, i] == 0)
+                # mask is True for all entries where the first `i` degrees are 0
+                mask0 &= self.last_degrees[0][:, i] == 0
+                if L > 1:
+                    mask1 &= self.last_degrees[1][:, i] == 0
 
             # treat the last one separately
             val = self.last_values[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
             if L > 1:
                 val -= self.last_values[1][-1] * c[L - 1]
             values.append([val])
-            deg = self.last_degrees[-1]
+            deg = self.last_degrees[0][-1]
             deg[-1] += 1
             degrees.append([deg])
 
@@ -164,7 +196,8 @@ class ProductEval:
         self.last_values[1] = self.last_values[0]
         self.last_values[0] = values
 
-        self.last_degrees = degrees
+        self.last_degrees[1] = self.last_degrees[0]
+        self.last_degrees[0] = degrees
         self.k += 1
 
         # assert len(values) == len(degrees)

@@ -27,12 +27,13 @@ def test_integral0(d, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
-    for k in range(n + 1):
-        for val in next(evaluator):
-            if k == 0:
-                assert _integrate_poly(val) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** d
-            else:
-                assert _integrate_poly(val) == 0
+
+    vals, _ = next(evaluator)
+    assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** d
+    for k in range(n):
+        vals, _ = next(evaluator)
+        for val in vals:
+            assert _integrate_poly(val) == 0
 
 
 @pytest.mark.parametrize("d,n", [(2, 4), (3, 4), (5, 3)])
@@ -40,7 +41,7 @@ def test_orthogonality(d, n):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
-    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    vals = numpy.concatenate([next(evaluator)[0] for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
@@ -49,12 +50,15 @@ def test_orthogonality(d, n):
 def test_normality(d, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    iterator = orthopy.enr2.Eval(p, standardization, symbolic=True)
+    evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
 
-    for k, level in enumerate(itertools.islice(iterator, n)):
-        if k == 0:
-            level[0] = sympy.poly(level[0], X)
-        for val in level:
+    vals, _ = next(evaluator)
+    val = sympy.poly(vals[0], X)
+    assert _integrate_poly(val ** 2) == 1
+
+    for k in range(n + 1):
+        vals, _ = next(evaluator)
+        for val in vals:
             assert _integrate_poly(val ** 2) == 1
 
 
