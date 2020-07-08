@@ -169,7 +169,7 @@ evaluator = orthopy.t2.Eval(bary, "normal")
 
 ### Disk (_S<sub>2</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/disk-xu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
 :------------:|:-----------------:|:-----------:|
 Xu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
 
@@ -182,7 +182,7 @@ import orthopy
 
 x = [0.1, -0.3]
 
-evaluator = orthopy.s2.yu.Eval(x, "normal")
+evaluator = orthopy.s2.xu.Eval(x, "normal")
 # evaluator = orthopy.s2.zernike.Eval(x, "normal")
 # evaluator = orthopy.s2.zernike2.Eval(x, "normal")
 ```
