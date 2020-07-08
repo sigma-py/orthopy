@@ -221,7 +221,7 @@ evaluator = orthopy.cn.Eval(X, symbolic=False)
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
 
-### _n_D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
+### <i>n</i>D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
 
 <img src="https://nschloe.github.io/orthopy/e1r2.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/e2r2.png" width="100%"> | <img src="https://nschloe.github.io/orthopy/e3r2.png" width="100%">
 :-------------------------:|:------------------:|:---------------:|
