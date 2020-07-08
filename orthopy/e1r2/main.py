@@ -63,13 +63,13 @@ class Eval(Eval1D):
 class RecurrenceCoefficients:
     def __init__(self, standardization, scaling, symbolic=False):
         self.rc = {
-            "probabilist": {
+            "probabilists": {
                 # The classical scheme is monic
                 "monic": RCProbabilistMonic,
                 "classical": RCProbabilistMonic,
                 "normal": RCProbabilistNormal,
             },
-            "physicist": {
+            "physicists": {
                 "monic": RCPhysicistMonic,
                 "classical": RCPhysicistClassical,
                 "normal": RCPhysicistNormal,

@@ -7,60 +7,87 @@ import sympy
 
 import orthopy
 
-standardization = "physicist"
-
-
 # def _integrate(f, X):
 #     ranges = [(x, -oo, +oo) for x in X]
 #     return sympy.integrate(f * sympy.exp(-(sum(x ** 2 for x in X))), *ranges)
 
 
-def _integrate_poly(p):
+def _integrate_poly(p, standardization):
     return sum(
-        c * ndim.enr2.integrate_monomial(k, "physicists", symbolic=True)
+        c * ndim.enr2.integrate_monomial(k, standardization, symbolic=True)
         for c, k in zip(p.coeffs(), p.monoms())
     )
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])
-def test_integral0(d, n=4):
+@pytest.mark.parametrize("standardization", ["physicists", "probabilists"])
+def test_integral0(d, standardization, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
 
     vals, _ = next(evaluator)
-    assert _integrate_poly(vals[0]) == sympy.sqrt(sympy.sqrt(sympy.pi)) ** d
+    ref = (
+        sympy.sqrt(sympy.sqrt(sympy.pi)) ** d if standardization == "physicists" else 1
+    )
+    assert _integrate_poly(vals[0], standardization) == ref
     for k in range(n):
         vals, _ = next(evaluator)
         for val in vals:
-            assert _integrate_poly(val) == 0
+            assert _integrate_poly(val, standardization) == 0
 
 
 @pytest.mark.parametrize("d,n", [(2, 4), (3, 4), (5, 3)])
-def test_orthogonality(d, n):
+@pytest.mark.parametrize("standardization", ["physicists", "probabilists"])
+def test_orthogonality(d, n, standardization):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
     vals = numpy.concatenate([next(evaluator)[0] for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
-        assert _integrate_poly(f0 * f1) == 0
+        assert _integrate_poly(f0 * f1, standardization) == 0
 
 
 @pytest.mark.parametrize("d", [2, 3, 5])
-def test_normality(d, n=4):
+@pytest.mark.parametrize("standardization", ["physicists", "probabilists"])
+def test_normality(d, standardization, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
 
     vals, _ = next(evaluator)
     val = sympy.poly(vals[0], X)
-    assert _integrate_poly(val ** 2) == 1
+    assert _integrate_poly(val ** 2, standardization) == 1
 
     for k in range(n + 1):
         vals, _ = next(evaluator)
         for val in vals:
-            assert _integrate_poly(val ** 2) == 1
+            assert _integrate_poly(val ** 2, standardization) == 1
 
 
-if __name__ == "__main__":
-    test_normality()
+# @pytest.mark.parametrize("n", [2])
+# def test_show_tree(n):
+#     alpha = 0.0
+#     beta = 0.0
+#
+#     # 1D
+#     orthopy.enr2.show_tree_1d(n, alpha, beta, "normal")
+#     orthopy.enr2.savefig_tree_1d("c1.svg", n, alpha, beta, "normal")
+#
+#     # 2D
+#     orthopy.enr2.show_tree_2d(n, alpha, beta, clim=(-1, 1))
+#     orthopy.enr2.savefig_tree_2d("c2.png", n, alpha, beta, clim=(-1, 1))
+#
+#
+# @pytest.mark.parametrize("n", [2])
+# def test_write_tree(n):
+#     alpha = 0.0
+#     beta = 0.0
+#
+#     # 3D
+#     orthopy.enr2.write_tree_3d("c3.vtk", n, alpha, beta)
+#
+#
+# if __name__ == "__main__":
+#     test_write_tree(5)
+#     # test_show_tree(5)

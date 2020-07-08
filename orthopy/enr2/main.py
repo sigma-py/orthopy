@@ -4,7 +4,7 @@ from ..helpers import ProductEval
 
 class Eval(ProductEval):
     def __init__(self, X, standardization, symbolic=False):
-        rc = {"probabilist": RCProbabilistNormal, "physicist": RCPhysicistNormal}[
+        rc = {"probabilists": RCProbabilistNormal, "physicists": RCPhysicistNormal}[
             standardization
         ](symbolic)
         super().__init__(rc, X, symbolic)
