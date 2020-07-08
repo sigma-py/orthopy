@@ -64,7 +64,7 @@ class Eval(Eval1D):
 
 
 class RecurrenceCoefficients:
-    def __init__(self, standardization, scaling, symbolic=False):
+    def __init__(self, standardization, scaling, symbolic):
         self.rc = {
             "probabilists": {
                 # The classical scheme is monic
@@ -85,7 +85,7 @@ class RecurrenceCoefficients:
 
 
 class RCProbabilistMonic:
-    def __init__(self, symbolic=False):
+    def __init__(self, symbolic):
         self.nan = None if symbolic else math.nan
         self.p0 = 1
 
@@ -97,7 +97,7 @@ class RCProbabilistMonic:
 
 
 class RCProbabilistNormal:
-    def __init__(self, symbolic=False):
+    def __init__(self, symbolic):
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
@@ -111,7 +111,7 @@ class RCProbabilistNormal:
 
 
 class RCPhysicistMonic:
-    def __init__(self, symbolic=False):
+    def __init__(self, symbolic):
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan
         self.p0 = 1
@@ -124,7 +124,7 @@ class RCPhysicistMonic:
 
 
 class RCPhysicistClassical:
-    def __init__(self, symbolic=False):
+    def __init__(self, symbolic):
         self.nan = None if symbolic else math.nan
         self.p0 = 1
 
@@ -136,7 +136,7 @@ class RCPhysicistClassical:
 
 
 class RCPhysicistNormal:
-    def __init__(self, symbolic=False):
+    def __init__(self, symbolic):
         self.frac = sympy.Rational if symbolic else lambda a, b: a / b
         self.nan = None if symbolic else math.nan
         self.sqrt = sympy.sqrt if symbolic else math.sqrt

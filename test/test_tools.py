@@ -53,7 +53,6 @@ def test_chebyshev(dtype):
         alpha, beta = orthopy.tools.chebyshev(moments)
 
         assert all([a == 0 for a in alpha])
-        print(beta)
         assert math.isnan(beta[0])
         assert (
             beta[1:]

@@ -5,7 +5,6 @@ from . import gegenbauer
 
 
 def plot(n, scaling):
-    print("A")
     gegenbauer.plot(n, -0.5, scaling)
 
 

@@ -84,5 +84,5 @@ def test_write_tree(n):
 
 
 if __name__ == "__main__":
-    # test_show_tree(5)
-    test_write_tree(5)
+    test_show_tree(5)
+    # test_write_tree(5)
