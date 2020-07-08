@@ -1,22 +1,5 @@
-import math
-import sys
-
 import numpy
 import sympy
-
-
-def _math_comb(n, k):
-    if sys.version < "3.8":
-        if k > n - k:
-            k = n - k
-
-        out = 1
-        for i in range(k):
-            out *= n - i
-            out //= i + 1
-        return out
-
-    return math.comb(n, k)
 
 
 def full_like(x, val):
@@ -108,7 +91,6 @@ class ProductEval:
         return self
 
     def __next__(self):
-
         X = self.X
         L = self.k
         dim = X.shape[0]
@@ -133,45 +115,19 @@ class ProductEval:
             if L > 1:
                 mask1 = numpy.ones(len(self.last_degrees[1]), dtype=bool)
 
-            print("L", L)
-            print("a", a)
-
-            for i in range(dim - 1):
+            for i in range(dim):
                 lv0 = self.last_values[0][mask0]
-                ld0 = self.last_degrees[0][mask0]
+                idx0 = self.last_degrees[0][mask0][:, i]
 
-                # idx = ld0[:, i]
-                # val = lv0 * (a[idx] * X[i] - b[idx])
+                val = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
 
                 if L > 1:
                     lv1 = self.last_values[1][mask1]
-                    ld1 = self.last_degrees[1][mask1]
+                    idx1 = self.last_degrees[1][mask1][:, i]
+                    yy = idx1 + 1 > 0
+                    val[: len(idx1)][yy] -= (lv1[yy].T * c[idx1[yy] + 1]).T
 
-                #     idx = ld1[:, i]
-                #     for k, j in enumerate(idx):
-                #         if j > 0:
-                #             val[k] -= lv1[k] * c[j]
-
-                # print(L, val)
-                # values.append(val)
-
-                idx0 = ld0[:, i]
-                val0 = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
-
-                if L > 1:
-                    idx1 = ld1[:, i]
-
-                r = 0
-                print("L", L)
-                for k in range(L):
-                    m = _math_comb(k + dim - i - 2, dim - i - 2)
-                    val = val0[r : r + m]
-                    if L - k > 1:
-                        # assert numpy.all(idx0[r : r + m] == L - k - 1)
-                        assert numpy.all(idx1[r : r + m] + 1 == L - k - 1)
-                        val -= lv1[r : r + m] * c[L - k - 1]
-                    r += m
-                    values.append(val)
+                values.append(val)
 
                 deg = self.last_degrees[0][mask0]
                 deg[:, i] += 1
@@ -180,15 +136,6 @@ class ProductEval:
                 mask0 &= self.last_degrees[0][:, i] == 0
                 if L > 1:
                     mask1 &= self.last_degrees[1][:, i] == 0
-
-            # treat the last one separately
-            val = self.last_values[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
-            if L > 1:
-                val -= self.last_values[1][-1] * c[L - 1]
-            values.append([val])
-            deg = self.last_degrees[0][-1]
-            deg[-1] += 1
-            degrees.append([deg])
 
             values = numpy.concatenate(values)
             degrees = numpy.concatenate(degrees)
@@ -200,7 +147,6 @@ class ProductEval:
         self.last_degrees[0] = degrees
         self.k += 1
 
-        # assert len(values) == len(degrees)
         return values, degrees
 
 
