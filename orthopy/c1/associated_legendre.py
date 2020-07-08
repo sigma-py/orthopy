@@ -74,8 +74,10 @@ class Eval(Eval135):
     <https://doi.org/10.1016/j.cpc.2010.08.038>.
     """
 
-    def __init__(self, X, scaling, symbolic=False):
+    def __init__(self, X, scaling, symbolic="auto"):
         cls = {"classical": RCClassical, "normal": RCNormal}[scaling]
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
         rc = cls(symbolic)
         super().__init__(rc, X, symbolic=symbolic)
 

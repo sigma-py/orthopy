@@ -50,7 +50,10 @@ class Eval:
     n-ball.
     """
 
-    def __init__(self, X, scaling, symbolic=False):
+    def __init__(self, X, scaling, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+
         self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
             scaling
         ](symbolic)

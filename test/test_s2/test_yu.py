@@ -29,7 +29,7 @@ P = [sympy.poly(x, X) for x in X]
     [("classical", sympy.pi), ("monic", sympy.pi), ("normal", sympy.sqrt(sympy.pi))],
 )
 def test_yu_integral0(scaling, int0, n=4):
-    iterator = orthopy.s2.yu.Eval(P, scaling, symbolic=True)
+    iterator = orthopy.s2.yu.Eval(P, scaling)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             assert _integrate_poly(vals[0]) == int0
@@ -40,14 +40,14 @@ def test_yu_integral0(scaling, int0, n=4):
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_yu_orthogonality(scaling, n=4):
-    evaluator = orthopy.s2.yu.Eval(P, scaling, symbolic=True)
+    evaluator = orthopy.s2.yu.Eval(P, scaling)
     vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
 def test_yu_normality(n=4):
-    iterator = orthopy.s2.yu.Eval(P, "normal", symbolic=True)
+    iterator = orthopy.s2.yu.Eval(P, "normal")
     for vals in itertools.islice(iterator, n):
         for val in vals:
             assert _integrate_poly(val ** 2) == 1

@@ -1,5 +1,6 @@
 import math
 
+import numpy
 import sympy
 
 from ..helpers import Eval1D
@@ -56,8 +57,10 @@ class Eval(Eval1D):
             2*sqrt(15)*x**5/(15*pi**(1/4)) - 2*sqrt(15)*x**3/(3*pi**(1/4)) + sqrt(15)*x/(2*pi**(1/4))
     """
 
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
+    def __init__(self, X, *args, symbolic="auto", **kwargs):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+        super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs))
 
 
 class RecurrenceCoefficients:

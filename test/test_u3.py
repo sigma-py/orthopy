@@ -35,7 +35,7 @@ def _integrate_poly(p):
     ],
 )
 def test_integral0(scaling, int0, n=5):
-    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         for val in vals:
             assert _integrate_poly(val) == (int0 if k == 0 else 0)
@@ -51,8 +51,8 @@ def _conj(p):
 
 @pytest.mark.parametrize("scaling", ["acoustic", "quantum mechanic"])
 def test_normality(scaling, n=5):
-    # iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling, symbolic=True)
-    iterator = orthopy.u3.Eval(P, scaling, symbolic=True)
+    # iterator = orthopy.u3.EvalPolar(polar, azimuthal, scaling)
+    iterator = orthopy.u3.Eval(P, scaling)
     for k, level in enumerate(itertools.islice(iterator, n)):
         for val in level:
             assert _integrate_poly(val * _conj(val)) == 1
@@ -62,14 +62,14 @@ def test_normality(scaling, n=5):
     "scaling", ["acoustic", "geodetic", "quantum mechanic", "schmidt"]
 )
 def test_orthogonality(scaling, n=3):
-    evaluator = orthopy.u3.Eval(P, scaling=scaling, symbolic=True)
+    evaluator = orthopy.u3.Eval(P, scaling=scaling)
     tree = numpy.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * _conj(f1)) == 0
 
 
 def test_schmidt_seminormality(n=3):
-    iterator = orthopy.u3.Eval(P, scaling="schmidt", symbolic=True)
+    iterator = orthopy.u3.Eval(P, scaling="schmidt")
     for k, level in enumerate(itertools.islice(iterator, n)):
         ref = 4 * pi / (2 * k + 1)
         for val in level:
@@ -119,9 +119,7 @@ def sph_exact2(theta, phi):
 )
 def test_spherical_harmonics(theta, phi):
     exacts = sph_exact2(theta, phi)
-    evaluator = orthopy.u3.EvalPolar(
-        theta, phi, scaling="quantum mechanic", symbolic=True
-    )
+    evaluator = orthopy.u3.EvalPolar(theta, phi, scaling="quantum mechanic")
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
@@ -171,7 +169,7 @@ def test_write_tree(n=2):
 #     """Test for the exact values.
 #     """
 #     L = 4
-#     vals = orthopy.c1.associated_legendre.tree(L, x, scaling, symbolic=True)
+#     vals = orthopy.c1.associated_legendre.tree(L, x, scaling)
 #
 #     exacts = exact_natural(x)
 #     exacts = [

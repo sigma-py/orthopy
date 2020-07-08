@@ -24,7 +24,10 @@ class Eval:
     include the normalization.)
     """
 
-    def __init__(self, bary, scaling, symbolic=False):
+    def __init__(self, bary, scaling, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(bary).dtype == sympy.Basic
+
         self.bary = bary
 
         self.k = 0

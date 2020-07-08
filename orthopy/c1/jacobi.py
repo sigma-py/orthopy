@@ -52,12 +52,14 @@ def savefig(filename, *args, **kwargs):
 
 
 class Eval(Eval1D):
-    def __init__(self, X, *args, **kwargs):
-        super().__init__(X, RecurrenceCoefficients(*args, **kwargs))
+    def __init__(self, X, *args, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+        super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic))
 
 
 class RecurrenceCoefficients:
-    def __init__(self, alpha, beta, scaling, symbolic=False):
+    def __init__(self, alpha, beta, scaling, symbolic):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         self.rc = cls(alpha, beta, symbolic)
         self.p0 = self.rc.p0

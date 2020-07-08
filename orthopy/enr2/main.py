@@ -3,7 +3,7 @@ from ..helpers import ProductEval
 
 
 class Eval(ProductEval):
-    def __init__(self, X, standardization, symbolic=False):
+    def __init__(self, X, standardization, symbolic="auto"):
         rc = {"probabilists": RCProbabilistNormal, "physicists": RCPhysicistNormal}[
             standardization
         ](symbolic)

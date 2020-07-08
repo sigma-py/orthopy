@@ -85,7 +85,7 @@ def ff(l, m):
 def test_exact(x, scaling, factor):
     """Test for the exact values.
     """
-    evaluator = orthopy.c1.associated_legendre.Eval(x, scaling, symbolic=True)
+    evaluator = orthopy.c1.associated_legendre.Eval(x, scaling)
 
     exacts = exact_natural(x)
     exacts = [
