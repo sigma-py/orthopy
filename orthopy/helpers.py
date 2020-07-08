@@ -82,7 +82,7 @@ class ProductEval:
         X = numpy.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
-        self.k = 0
+        self.L = 0
         self.X = X
         self.last_values = [None, None]
         self.last_degrees = [None, None]
@@ -92,14 +92,13 @@ class ProductEval:
 
     def __next__(self):
         X = self.X
-        L = self.k
         dim = X.shape[0]
 
-        if L == 0:
+        if self.L == 0:
             values = numpy.array([X[0] * 0 + self.p0n])
             degrees = numpy.array([numpy.zeros(dim, dtype=int)])
         else:
-            aa, bb, cc = self.rc[L - 1]
+            aa, bb, cc = self.rc[self.L - 1]
             self.a = numpy.append(self.a, aa)
             self.b = numpy.append(self.b, bb)
             self.c = numpy.append(self.c, cc)
@@ -112,7 +111,7 @@ class ProductEval:
             degrees = []
 
             mask0 = numpy.ones(len(self.last_degrees[0]), dtype=bool)
-            if L > 1:
+            if self.L > 1:
                 mask1 = numpy.ones(len(self.last_degrees[1]), dtype=bool)
 
             for i in range(dim):
@@ -121,7 +120,7 @@ class ProductEval:
 
                 val = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
 
-                if L > 1:
+                if self.L > 1:
                     lv1 = self.last_values[1][mask1]
                     idx1 = self.last_degrees[1][mask1][:, i]
                     yy = idx1 + 1 > 0
@@ -134,7 +133,7 @@ class ProductEval:
                 degrees.append(deg)
                 # mask is True for all entries where the first `i` degrees are 0
                 mask0 &= self.last_degrees[0][:, i] == 0
-                if L > 1:
+                if self.L > 1:
                     mask1 &= self.last_degrees[1][:, i] == 0
 
             values = numpy.concatenate(values)
@@ -145,7 +144,7 @@ class ProductEval:
 
         self.last_degrees[1] = self.last_degrees[0]
         self.last_degrees[0] = degrees
-        self.k += 1
+        self.L += 1
 
         return values, degrees
 
