@@ -54,9 +54,8 @@ import itertools
 vals = list(itertools.islice(Eval(x, "normal"), n + 1))
 ```
 Instead of evaluating at only one point, you can provide an array of arbitrary shape for
-`x`. The polynomials will then be evaluated for all points at once. The computation are
-fully be vectorized and usually very fast.  You can also use sympy for symbolic
-computation; make sure to pass a variable and set
+`x`. The polynomials will then be evaluated for all points at once. You can also use
+sympy for symbolic computation; make sure to pass a variable and set
 `symbolic=True`:
 ```python
 import itertools
@@ -76,7 +75,6 @@ x
 5*x**3/2 - 3*x/2
 35*x**4/8 - 15*x**2/4 + 3/8
 ```
-(Set `x` to `0.5` to get the values above.)
 
 All `Eval` methods have a `scaling` argument which can be set to three values:
 
@@ -111,7 +109,24 @@ orthopy.c1.jacobi.tree(x, alpha, beta, "normal", symbolic=False)
 
 Recurrence coefficients can be explicitly retrieved by
 ```python
-p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
+import orthopy
+
+alpha = 0
+beta = 0
+symbolic = True
+rc = orthopy.c1.jacobi.RCMonic(alpha, beta, symbolic)
+# RCClassical, RCNormal
+print(rc.p0)
+for k in range(5):
+    print(rc[k])
+```
+```
+1
+(1, 0, None)
+(1, 0, 1/3)
+(1, 0, 4/15)
+(1, 0, 9/35)
+(1, 0, 16/63)
 ```
 
 

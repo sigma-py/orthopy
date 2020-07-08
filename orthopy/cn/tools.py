@@ -71,3 +71,33 @@ def plot_tree_2d(n, *args, res=100, colorbar=True, cmap="RdBu_r", clim=None, **k
 
     if colorbar:
         plt.colorbar()
+
+
+def write_tree(filename, n, *args, res=20, **kwargs):
+    import meshio
+    import meshzoo
+
+    points, cells = meshzoo.cube(-1, 1, -1, 1, -1, 1, res, res, res)
+
+    evaluator = Eval(points.T, *args, **kwargs)
+    meshes = []
+    for L, level in enumerate(itertools.islice(evaluator, n)):
+        for k, vals in enumerate(level):
+            pts = points.copy()
+
+            pts[:, 0] += 2.2 * (k - L)
+            pts[:, 2] -= 2.7 * L
+
+            meshes.append(meshio.Mesh(pts, {"tetra": cells}))
+
+    # merge meshes
+    points = numpy.concatenate([mesh.points for mesh in meshes])
+    #
+    cells = []
+    k = 0
+    for mesh in meshes:
+        cells.append(mesh.cells[0].data + k)
+        k += mesh.points.shape[0]
+    cells = numpy.concatenate(cells)
+
+    meshio.write_points_cells(filename, points, {"tetra": cells})

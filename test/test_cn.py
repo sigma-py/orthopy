@@ -57,6 +57,7 @@ def test_normality(d, n=4):
         assert _integrate_poly(val ** 2) == 1
 
 
+@pytest.mark.parametrize("n", [2])
 def test_show_tree(n):
     alpha = 0.0
     beta = 0.0

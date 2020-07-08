@@ -73,6 +73,12 @@ class ProductEval:
          (1, 1, 0) (1, 0, 1)
          (0, 2, 0) (0, 1, 1) (0, 0, 2)
 
+    L = 4:
+         (3, 0, 0)
+         (2, 1, 0) (2, 0, 1)
+         (1, 2, 0) (1, 1, 1) (1, 0, 2)
+         (0, 3, 0) (0, 2, 1) (0, 1, 2) (0, 0, 3)
+
     The main insight here that makes computation for n dimensions easy is that the next
     level is composed by:
 
