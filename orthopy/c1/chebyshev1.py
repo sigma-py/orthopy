@@ -1,12 +1,25 @@
-import itertools
-
 import sympy
 
 from . import gegenbauer
 
 
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+def plot(n, scaling):
+    print("A")
+    gegenbauer.plot(n, -0.5, scaling)
+
+
+def show(*args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot(*args, **kwargs)
+    plt.show()
+
+
+def savefig(filename, *args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
 class Eval(gegenbauer.Eval):

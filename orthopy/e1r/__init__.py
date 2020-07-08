@@ -1,4 +1,4 @@
-from .main import Eval, RecurrenceCoefficients, tree
+from .main import Eval, RecurrenceCoefficients
 from .tools import plot, savefig, show
 
-__all__ = ["tree", "Eval", "RecurrenceCoefficients", "show", "plot", "savefig"]
+__all__ = ["Eval", "RecurrenceCoefficients", "show", "plot", "savefig"]

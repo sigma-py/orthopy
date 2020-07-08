@@ -13,7 +13,7 @@ x = sympy.Symbol("x")
 # See <https://github.com/nschloe/note-no-gamma>.
 # def _integrate(f):
 #     return sympy.integrate(f * sympy.exp(-(x ** 2 / 2)), (x, -oo, +oo)) / sqrt(2 * pi)
-def _integrate_all_monomials_probabilist(max_k):
+def _integrate_all_monomials_probabilists(max_k):
     out = []
     for k in range(max_k + 1):
         if k == 0:
@@ -27,7 +27,7 @@ def _integrate_all_monomials_probabilist(max_k):
 
 # def _integrate(f):
 #     return sympy.integrate(f * sympy.exp(-(x ** 2)), (x, -oo, +oo))
-def _integrate_all_monomials_physicist(max_k):
+def _integrate_all_monomials_physicists(max_k):
     out = []
     for k in range(max_k + 1):
         if k == 0:
@@ -43,43 +43,44 @@ def _integrate_all_monomials_physicist(max_k):
 # summing.
 def _integrate_poly(p, standardization):
     coeffs = p.all_coeffs()[::-1]
-    if standardization == "physicist":
-        int_all_monomials = _integrate_all_monomials_physicist(p.degree())
+    if standardization == "physicists":
+        int_all_monomials = _integrate_all_monomials_physicists(p.degree())
     else:
-        assert standardization == "probabilist"
-        int_all_monomials = _integrate_all_monomials_probabilist(p.degree())
+        assert standardization == "probabilists"
+        int_all_monomials = _integrate_all_monomials_probabilists(p.degree())
     return sum(coeff * mono_int for coeff, mono_int in zip(coeffs, int_all_monomials))
 
 
 @pytest.mark.parametrize(
     "standardization,scaling,int0",
     [
-        ("physicist", "classical", sqrt(pi)),
-        ("physicist", "monic", sqrt(pi)),
-        ("physicist", "normal", sqrt(sqrt(pi))),
-        ("probabilist", "monic", 1),
-        ("probabilist", "normal", 1),
+        ("physicists", "classical", sqrt(pi)),
+        ("physicists", "monic", sqrt(pi)),
+        ("physicists", "normal", sqrt(sqrt(pi))),
+        ("probabilists", "monic", 1),
+        ("probabilists", "normal", 1),
     ],
 )
 def test_integral0(standardization, scaling, int0, n=4):
     p = sympy.poly(x)
-    vals = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
+    evaluator = orthopy.e1r2.Eval(p, standardization, scaling, symbolic=True)
 
-    assert _integrate_poly(vals[0], standardization) == int0
-    for val in vals[1:]:
-        assert _integrate_poly(val, standardization) == 0
+    assert _integrate_poly(next(evaluator), standardization) == int0
+    for _ in range(n + 1):
+        assert _integrate_poly(next(evaluator), standardization) == 0
 
 
-@pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
+@pytest.mark.parametrize("standardization", ["probabilists", "physicists"])
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_orthogonality(standardization, scaling, n=4):
     p = sympy.poly(x)
-    tree = orthopy.e1r2.tree(n, p, standardization, scaling, symbolic=True)
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.e1r2.Eval(p, standardization, scaling, symbolic=True)
+    vals = [next(evaluator) for _ in range(n + 1)]
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, standardization) == 0
 
 
-@pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
+@pytest.mark.parametrize("standardization", ["probabilists", "physicists"])
 def test_normality(standardization, n=4):
     p = sympy.poly(x)
     iterator = orthopy.e1r2.Eval(p, standardization, "normal", symbolic=True)
@@ -89,14 +90,14 @@ def test_normality(standardization, n=4):
         assert _integrate_poly(val ** 2, standardization) == 1
 
 
-# @pytest.mark.parametrize("standardization", ["probabilist", "physicist"])
+# @pytest.mark.parametrize("standardization", ["probabilists", "physicists"])
 # def test_show(standardization):
 #     orthopy.e1r2.show(4, standardization, "normal")
 
 
 def test_show(n=5):
-    orthopy.e1r2.show(n, "probabilist", "normal")
-    orthopy.e1r2.savefig("e1r2.svg", n, "probabilist", "normal")
+    orthopy.e1r2.show(n, "probabilists", "normal")
+    orthopy.e1r2.savefig("e1r2.svg", n, "probabilists", "normal")
 
 
 if __name__ == "__main__":

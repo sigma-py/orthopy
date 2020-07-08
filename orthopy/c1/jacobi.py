@@ -1,4 +1,3 @@
-import itertools
 import math
 
 import numpy
@@ -7,39 +6,46 @@ import sympy
 from ..helpers import Eval1D
 
 
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
-
-
 def plot(n, *args, **kwargs):
     import dufte
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plt.style.use(dufte.style)
 
     x = numpy.linspace(-1.0, 1.0, 100)
-    for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
-        plt.plot(x, level, label=f"n={k}")
+    evaluator = Eval(x, *args, **kwargs)
+    for k in range(n + 1):
+        plt.plot(x, next(evaluator), label=f"n={k}")
 
     plt.grid(axis="x")
     dufte.legend()
     ax = plt.gca()
 
     alpha, beta, scaling = args
-    plt.title(f"Jacobi polynomials (α={alpha}, β={beta}, scaling={scaling})")
+    if alpha == beta:
+        if alpha == 0:
+            plt.title(f"Legendre polynomials (scaling={scaling})")
+        elif alpha == -0.5:
+            plt.title(f"Chebyshev 1 polynomials (scaling={scaling})")
+        elif alpha == +0.5:
+            plt.title(f"Chebyshev 2 polynomials (scaling={scaling})")
+        else:
+            plt.title(f"Gegenbauer polynomials (λ={alpha}, scaling={scaling})")
+    else:
+        plt.title(f"Jacobi polynomials (α={alpha}, β={beta}, scaling={scaling})")
     ax.spines["right"].set_visible(True)
     ax.spines["left"].set_visible(True)
 
 
 def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.show()
 
 
 def savefig(filename, *args, **kwargs):
-    import matplotlib.pyplot as plt
+    from matplotlib import pyplot as plt
 
     plot(*args, **kwargs)
     plt.savefig(filename, transparent=True, bbox_inches="tight")

@@ -1,11 +1,5 @@
-import itertools
-
 from ..c1 import jacobi
 from ..helpers import ProductEval
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
 
 
 class Eval(ProductEval):

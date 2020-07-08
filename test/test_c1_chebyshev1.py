@@ -3,10 +3,10 @@ import itertools
 import numpy
 import pytest
 import sympy
+from helpers import get_nth
 from sympy import Rational, S, pi, sqrt
 
 import orthopy
-from helpers import get_nth
 
 
 @pytest.mark.parametrize(
@@ -111,11 +111,11 @@ def _integrate_poly(p):
 def test_integral0(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    vals = orthopy.c1.chebyshev1.tree(n, p, "normal", symbolic=True)
+    evaluator = orthopy.c1.chebyshev1.Eval(p, "normal", symbolic=True)
 
-    assert _integrate_poly(vals[0]) == sqrt(pi)
-    for val in vals[1:]:
-        assert _integrate_poly(val) == 0
+    assert _integrate_poly(next(evaluator)) == sqrt(pi)
+    for _ in range(n + 1):
+        assert _integrate_poly(next(evaluator)) == 0
 
 
 def test_normality(n=4):
@@ -131,8 +131,9 @@ def test_normality(n=4):
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    tree = orthopy.c1.chebyshev1.tree(n, p, "normal", symbolic=True)
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.c1.chebyshev1.Eval(p, "normal", symbolic=True)
+    vals = [next(evaluator) for _ in range(n + 1)]
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
@@ -151,13 +152,10 @@ def test_eval(t, ref, tol=1.0e-14):
     assert numpy.all(value == ref)
 
 
-def test_plot(n=4):
-    orthopy.c1.plot(n, -0.5, -0.5)
+def test_show(n=5):
+    orthopy.c1.chebyshev1.show(n, "normal")
+    orthopy.c1.chebyshev1.savefig("chebyshev1.svg", n, "normal")
 
 
 if __name__ == "__main__":
-    test_plot()
-    import matplotlib.pyplot as plt
-
-    # plt.show()
-    plt.savefig("line-segment-chebyshev1.png", transparent=True)
+    test_show()

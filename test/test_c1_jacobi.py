@@ -2,10 +2,10 @@ import math
 
 import numpy
 import pytest
+from helpers import get_nth
 from sympy import S, sqrt
 
 import orthopy
-from helpers import get_nth
 
 
 @pytest.mark.parametrize(

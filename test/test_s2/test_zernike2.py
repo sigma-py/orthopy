@@ -3,9 +3,9 @@ import itertools
 import numpy
 import pytest
 import sympy
+from helpers_s2 import _integrate_poly
 
 import orthopy
-from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
 P = [sympy.poly(x, X) for x in X]
@@ -130,8 +130,9 @@ def test_zernike2_integral0(scaling, int0, n=4):
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_zernike2_orthogonality(scaling, n=4):
-    tree = numpy.concatenate(orthopy.s2.zernike2.tree(n, P, scaling, symbolic=True))
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.s2.zernike2.Eval(P, scaling, symbolic=True)
+    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
@@ -142,21 +143,19 @@ def test_zernike2_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-def test_show(scaling="normal", n=2, r=1):
-    def f(X):
-        return orthopy.s2.zernike2.tree(n, X, scaling)[n][r]
+@pytest.mark.parametrize("degrees", [(2, 1)])
+def test_show(degrees, scaling="normal"):
+    orthopy.s2.zernike2.show_single(degrees)
 
-    orthopy.s2.show(f, lcar=1.0e-2)
+
+@pytest.mark.parametrize("n", [2])
+def test_show_tree(n, scaling="normal"):
+    orthopy.s2.zernike2.show_tree(n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7))
+    orthopy.s2.zernike2.savefig_tree(
+        "disk-zernike2-tree.png", n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7)
+    )
 
 
 if __name__ == "__main__":
-    # iterator = orthopy.s2.zernike2.Eval(P, "monic", symbolic=True)
-    # for k, vals in enumerate(itertools.islice(iterator, 5)):
-    #     print()
-    #     for val in vals:
-    #         print(val)
-    iterator = orthopy.s2.zernike2.Eval(P, "normal", symbolic=True)
-    for k, vals in enumerate(itertools.islice(iterator, 5)):
-        print()
-        for val in vals:
-            print(_integrate_poly(val ** 2), val)
+    # test_show((3, 2), "normal")
+    test_show_tree(5, "normal")

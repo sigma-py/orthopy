@@ -1,18 +1,12 @@
-import itertools
-
 import numpy
 import sympy
 
 
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
-
-
 class Eval:
-    """Evaluates the entire tree of orthogonal triangle polynomials.
+    """Evaluates orthogonal polynomials on the triangle.
 
-    The return value is a list of arrays, where `out[k]` hosts the `2*k+1`
-    values of the `k`th level of the tree
+    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
+    `k`th level of the tree
 
         (0, 0)
         (0, 1)   (1, 1)

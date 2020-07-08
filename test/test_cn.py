@@ -1,10 +1,10 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import sympy
 
-import ndim
 import orthopy
 
 # def _integrate(f, X):
@@ -27,7 +27,7 @@ def test_integral0(d, n=4):
     p = [sympy.poly(x, X) for x in X]
     iterator = orthopy.cn.Eval(p, symbolic=True)
 
-    for k, vals in enumerate(itertools.islice(iterator, n)):
+    for k, (vals, _) in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             assert _integrate_poly(vals[0]) == sympy.sqrt(2) ** d
         else:
@@ -39,7 +39,8 @@ def test_integral0(d, n=4):
 def test_orthogonality(d, n):
     X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    tree = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
+    evaluator = orthopy.cn.Eval(p, symbolic=True)
+    tree = numpy.concatenate([next(evaluator)[0] for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
@@ -49,11 +50,36 @@ def test_normality(d, n=4):
     X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
 
-    vals = numpy.concatenate(orthopy.cn.tree(n, p, symbolic=True))
+    evaluator = orthopy.cn.Eval(p, symbolic=True)
+    vals = numpy.concatenate([next(evaluator)[0] for _ in range(n + 1)])
 
     for val in vals:
         assert _integrate_poly(val ** 2) == 1
 
 
+@pytest.mark.parametrize("n", [2])
+def test_show_tree(n):
+    alpha = 0.0
+    beta = 0.0
+
+    # 1D
+    orthopy.cn.show_tree_1d(n, alpha, beta, "normal")
+    orthopy.cn.savefig_tree_1d("c1.svg", n, alpha, beta, "normal")
+
+    # 2D
+    orthopy.cn.show_tree_2d(n, alpha, beta, clim=(-1, 1))
+    orthopy.cn.savefig_tree_2d("c2.png", n, alpha, beta, clim=(-1, 1))
+
+
+@pytest.mark.parametrize("n", [2])
+def test_write_tree(n):
+    alpha = 0.0
+    beta = 0.0
+
+    # 3D
+    orthopy.cn.write_tree_3d("c3.vtk", n, alpha, beta)
+
+
 if __name__ == "__main__":
-    test_integral0()
+    # test_write_tree(5)
+    test_show_tree(5)

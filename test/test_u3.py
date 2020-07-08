@@ -1,11 +1,11 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import sympy
 from sympy import pi, sqrt
 
-import ndim
 import orthopy
 
 X = sympy.symbols("x, y, z")
@@ -62,7 +62,8 @@ def test_normality(scaling, n=5):
     "scaling", ["acoustic", "geodetic", "quantum mechanic", "schmidt"]
 )
 def test_orthogonality(scaling, n=3):
-    tree = numpy.concatenate(orthopy.u3.tree(n, P, scaling=scaling, symbolic=True))
+    evaluator = orthopy.u3.Eval(P, scaling=scaling, symbolic=True)
+    tree = numpy.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * _conj(f1)) == 0
 
@@ -117,35 +118,33 @@ def sph_exact2(theta, phi):
     ],
 )
 def test_spherical_harmonics(theta, phi):
-    L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree_polar(
-        L, theta, phi, scaling="quantum mechanic", symbolic=True
+    evaluator = orthopy.u3.EvalPolar(
+        theta, phi, scaling="quantum mechanic", symbolic=True
     )
-
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(numpy.array(sympy.simplify(v - e)) == 0)
 
 
 @pytest.mark.parametrize("theta,phi", [(1.0e-1, 16.0 / 5.0), (1.0e-4, 7.0e-5)])
 def test_spherical_harmonics_numpy(theta, phi):
-    L = 2
     exacts = sph_exact2(theta, phi)
-    vals = orthopy.u3.tree_polar(L, theta, phi, scaling="quantum mechanic")
+    evaluator = orthopy.u3.EvalPolar(theta, phi, scaling="quantum mechanic")
 
     cmplx = numpy.vectorize(complex)
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         assert numpy.all(abs(val - cmplx(ex)) < 1.0e-12)
 
 
-def test_write():
-    def sph22(polar, azimuthal):
-        return orthopy.u3.tree_polar(5, polar, azimuthal, scaling="quantum mechanic")[
-            5
-        ][3]
+def test_write_single(n=5, r=3):
+    orthopy.u3.write_single(f"sph{n}{r}.vtk", n, r, "quantum mechanic")
 
-    orthopy.u3.write("sph.vtk", sph22)
+
+def test_write_tree(n=2):
+    orthopy.u3.write_tree(f"sph{n}.vtk", n, "quantum mechanic")
 
 
 # from associated_legendre
@@ -186,4 +185,4 @@ def test_write():
 
 
 if __name__ == "__main__":
-    test_normality(n=3)
+    test_write_tree(n=5)

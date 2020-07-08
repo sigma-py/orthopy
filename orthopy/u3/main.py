@@ -1,17 +1,7 @@
-import itertools
-
 import numpy
 import sympy
 
 from ..helpers import Eval135
-
-
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
-
-
-def tree_polar(n, *args, **kwargs):
-    return list(itertools.islice(EvalPolar(*args, **kwargs), n + 1))
 
 
 class Eval(Eval135):

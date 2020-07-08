@@ -15,41 +15,122 @@
 
 orthopy provides various orthogonal polynomial classes for
 [lines](#line-segment--1-1-with-weight-function-1-x%CE%B1-1-x%CE%B2),
-[triangles](#triangle-T2),
-[quadrilaterals](#quadrilateral),
-[disks](#disk),
-[spheres](#sphere),
-[hexahedra](#hexahedron), and
-[n-cubes](#n-cube).
+[triangles](#triangle-42),
+[disks](#disk-s2),
+[spheres](#sphere-u2),
+[n-cubes](#n-cube-cn),
+[nD space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
 All computations are done using numerically stable recurrence schemes.
 Furthermore, all functions are fully vectorized and can return results in [_exact
 arithmetic_](#symbolic-and-numerical-computation).
 
-_Note:_ In previous versions, orthopy contained tools for working with Gauss quadrature
-rules as well. Those have moved over to [quadpy](https://github.com/nschloe/quadpy).
+### Basic usage
+
+The main function of all submodules is the iterator `Eval` which evaluates the series of
+orthogonal polynomials with increasing degree, e.g.,
+```python
+import orthopy
+
+x = 0.5
+
+for k, val in enumerate(orthopy.c1.legendre.Eval(x, "classical")):
+     print(val)
+     if k == 4:
+         break
+```
+```python
+1.0          # P_0(0.5)
+0.5          # P_1(0.5)
+-0.125       # P_2(0.5)
+-0.4375      # P_3(0.5)
+-0.2890625   # P_4(0.5)
+```
+Other ways of getting the first `n` items are
+```python
+evaluator = Eval(x, "normal")
+vals = [next(evaluator) for _ in range(n)]
+
+import itertools
+vals = list(itertools.islice(Eval(x, "normal"), n + 1))
+```
+Instead of evaluating at only one point, you can provide an array of arbitrary shape for
+`x`. The polynomials will then be evaluated for all points at once. You can also use
+sympy for symbolic computation; make sure to pass a variable and set
+`symbolic=True`:
+```python
+import itertools
+import orthopy
+import sympy
+
+x = sympy.Symbol("x")
+
+evaluator = orthopy.c1.legendre.Eval(x, "classical", symbolic=True)
+for level in itertools.islice(evaluator, 5):
+     print(sympy.expand(level))
+```
+```
+1
+x
+3*x**2/2 - 1/2
+5*x**3/2 - 3*x/2
+35*x**4/8 - 15*x**2/4 + 3/8
+```
+
+All `Eval` methods have a `scaling` argument which can be set to three values:
+
+  * `"monic"`: The leading coefficient is 1.
+  * `"classical"`: The maximum value is 1 (or  (n+alpha over n)).
+  * `"normal"`: The integral of the squared function over the domain is 1.
+
+For univariate ("one-dimensional") integrals, every level contains one functions. For
+bivariate ("two-dimensional") functions, every level will contain one functions more
+than the previous.
+
+
+See the trees for triangles and disks below.
+
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
-<img src="https://nschloe.github.io/orthopy/jacobi.svg" width="45%">
+<img src="https://nschloe.github.io/orthopy/legendre.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev2.svg" width="100%">
+:-------------------:|:------------------:|:-------------:|
+Legendre             |  Chebyshev 1       |  Chebyshev 2  |
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
 
 ```python
-vals = orthopy.c1.jacobi.tree(4, x, alpha, beta, "normal", symbolic=False)
+orthopy.c1.legendre.Eval(x, "normal", symbolic=False)
+orthopy.c1.chebyshev1.Eval(x, "normal", symbolic=False)
+orthopy.c1.chebyshev2.tree(x, "normal", symbolic=False)
+orthopy.c1.gegenbauer.tree(x, lmbda, "normal", symbolic=False)
+orthopy.c1.jacobi.tree(x, alpha, beta, "normal", symbolic=False)
 ```
 
 Recurrence coefficients can be explicitly retrieved by
 ```python
-p0, a, b, c = orthopy.c1.jacobi.recurrence_coefficients(n, a, b, "monic")
+import orthopy
+
+alpha = 0
+beta = 0
+symbolic = True
+rc = orthopy.c1.jacobi.RCMonic(alpha, beta, symbolic)
+# RCClassical, RCNormal
+print(rc.p0)
+for k in range(5):
+    print(rc[k])
 ```
-Possible choices for the scaling are
-  * `"monic"` (leading coefficient 1),
-  * `"classical"`, (_p(1) = (n+alpha over n)_), and
-  * `"normal"` (integral over the squared function is 1).
+```
+1
+(1, 0, None)
+(1, 0, 1/3)
+(1, 0, 4/15)
+(1, 0, 9/35)
+(1, 0, 16/63)
+```
 
 
-#### Associated Legendre polynomials
+#### Associated Legendre "polynomials"
 
 <img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
@@ -81,9 +162,7 @@ All polynomials are normalized over the measure.
 
 ### Triangle (_T<sub>2</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/triangle-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/triangle-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/triangle-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
+<img src="https://nschloe.github.io/orthopy/triangle-tree.png" width="40%">
 
 ```python
 for level in orthopy.t2.Eval(x, "normal", symbolic=False):
@@ -94,28 +173,13 @@ for level in orthopy.t2.Eval(x, "normal", symbolic=False):
 # or for the entire tree up to degree 4
 vals = orthopy.t2.tree(x, 4, "normal", symbolic=False)
 ```
-Available scalings are
-  * `"normal"` (normalized polynomials, i.e., the integral of the squared function equals 1) and
-  * `"1"` where the polynomial is `1` in at least one corner of the triangle.
-
-
-### Quadrilateral (_C<sub>2</sub>_)
-
-<img src="https://nschloe.github.io/orthopy/quad-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/quad-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
-
-```python
-vals = orthopy.quadrilateral.tree(4, x, symbolic=False)
-```
-All polynomials are normalized on the quadrilateral.
 
 
 ### Disk (_S<sub>2</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/disk-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-4-3.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=4, k=3  |
+<img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
+:------------:|:-----------------:|:-----------:|
+Yu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
 
 ```python
 for level in orthopy.s2.Eval(x, symbolic=False):
@@ -129,67 +193,49 @@ vals = orthopy.s2.tree(4, x, symbolic=False)
 All polynomials are normalized on the unit disk.
 
 
-### 2D space with weight function exp(-r<sup>2</sup>) (_E<sub>2</sub><sup>r<sup>2</sup></sup>_)
-
-<img src="https://nschloe.github.io/orthopy/e2r2-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/e2r2-3-1.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=3, k=1  |
-
-```python
-vals = orthopy.e2r2.tree(4, x, symbolic=False)
-```
-All polynomials are normalized over the measure.
-
-
 ### Sphere (_U<sub>3</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/sphere-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/sphere-5-3.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=5, k=3  |
+<img src="https://nschloe.github.io/orthopy/sph-tree.png" width="50%">
 
 Complex-valued _spherical harmonics,_ plotted with
-[cplot](https://github.com/nschloe/cplot/) coloring.
+[cplot](https://github.com/nschloe/cplot/) coloring (black=zero, green=real positive,
+pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
+in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
 
 ```python
-for level in orthopy.u3.Eval(polar, azimuthal, standardization="quantum mechanic", symbolic=False):
+for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
     # `level` contains all evalutations of the spherical harmonics with the next
     # degree at the points x
     pass
-
-# or for the entire tree up to degree n
-vals = orthopy.u3.tree(
-    polar, azimuthal, n, standardization="quantum mechanic", symbolic=False
-)
 ```
 
+### _n_-Cube (_C<sub>n</sub>_)
 
-### Hexahedron (_C<sub>3</sub>_)
-
-<img src="https://nschloe.github.io/orthopy/hexa-1-0.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-2-1.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/hexa-5-5.png" width="70%">
-:-------------------:|:------------------:|:----------:|
-n=1, k=0             |  n=2, k=1          |  n=5, k=5  |
-
-```python
-vals = orthopy.c3.tree(3, x, symbolic=False)
-```
-All polynomials are normalized on the hexahedron.
-
-
-### n-Cube (_C<sub>n</sub>_)
+<img src="https://nschloe.github.io/orthopy/c1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/c2.png" width="100%"> | <img src="https://nschloe.github.io/orthopy/c3.png" width="100%">
+:-------------------------:|:------------------:|:---------------:|
+C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
 ```python
-vals = orthopy.cn.tree(6, x, symbolic=False)
+evaluator = orthopy.cn.Eval(X, symbolic=False)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
 
-### nD space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
+### <i>n</i>D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
+
+<img src="https://nschloe.github.io/orthopy/e1r2.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/e2r2.png" width="100%"> | <img src="https://nschloe.github.io/orthopy/e3r2.png" width="100%">
+:-------------------------:|:------------------:|:---------------:|
+_E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></sup>_     | _E<sub>3</sub><sup>r<sup>2</sup></sup>_  |
 
 ```python
-vals = orthopy.enr2.tree(4, x, symbolic=False)
+evaluator = orthopy.enr2.Eval(
+    x,
+    standardization="probabilists",  # or "physicists"
+    symbolic=False
+)
 ```
-All polynomials are normalized over the measure. The dimensionality is
-determined by `X.shape[0]`.
+All polynomials are normalized over the measure. The dimensionality is determined by
+`X.shape[0]`.
 
 
 ### Other tools
@@ -199,28 +245,6 @@ determined by `X.shape[0]`.
    ```python
    vals = orthopy.c1.clenshaw(a, alpha, beta, t)
    ```
-
-
-#### Symbolic and numerical computation
-
-By default, all operations are performed numerically. However, if `symbolic=True` is
-specified, all computations are performed symbolically. This can be used, for example,
-to get explicit representations of the polynomials:
-```python
-import numpy
-import orthopy
-import sympy
-
-b0, b1, b2 = sympy.Symbol("b0"), sympy.Symbol("b1"), sympy.Symbol("b2")
-
-tree = orthopy.t2.tree(numpy.array([b0, b1, b2]), 3, "normal", symbolic=True)
-
-print(sympy.expand(tree[3][1]))
-```
-```
-42*sqrt(6)*b0*b2**2 - 24*sqrt(6)*b0*b2 + 2*sqrt(6)*b0 - 42*sqrt(6)*b1*b2**2
-+ 24*sqrt(6)*b1*b2 - 2*sqrt(6)*b1
-```
 
 
 ### Installation

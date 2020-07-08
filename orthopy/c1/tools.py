@@ -1,7 +1,5 @@
 import numpy
 
-from . import jacobi
-
 
 def clenshaw(a, alpha, beta, t):
     """Clenshaw's algorithm for evaluating
@@ -35,38 +33,3 @@ def clenshaw(a, alpha, beta, t):
     phi1 = t - alpha[0]
 
     return phi0 * a[0] + phi1 * b[1] - beta[1] * phi0 * b[2]
-
-
-def show(*args, **kwargs):
-    import matplotlib.pyplot as plt
-
-    plot(*args, **kwargs)
-    plt.show()
-
-
-def plot(L, alpha, beta):
-    import matplotlib.pyplot as plt
-
-    xlim = [-1.0, +1.0]
-    x = numpy.linspace(xlim[0], xlim[1], 500)
-
-    for k, val in enumerate(jacobi.Eval(x, alpha, beta, "normal")):
-        if k > L:
-            break
-        plt.plot(x, val)
-
-    # plt.axes().set_aspect('equal')
-
-    plt.xlim(*xlim)
-    # plt.ylim(-2, +2)
-    plt.tick_params(
-        axis="both",
-        which="both",
-        bottom="off",
-        top="off",
-        left="off",
-        right="off",
-        labelbottom="off",
-        labelleft="off",
-    )
-    plt.grid()

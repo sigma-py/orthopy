@@ -1,14 +1,14 @@
 import itertools
 
+import ndim
 import numpy
 import pytest
 import scipy.special
 import sympy
+from helpers import get_nth
 from sympy import Rational, S
 
-import ndim
 import orthopy
-from helpers import get_nth
 
 b0 = sympy.Symbol("b0")
 b1 = sympy.Symbol("b1")
@@ -81,13 +81,13 @@ def eval_orthpolys4(bary):
 
 @pytest.mark.parametrize("x", [numpy.array([0.24, 0.65]), numpy.random.rand(2, 5)])
 def test_t2_orth(x, tol=1.0e-12):
-    L = 4
     exacts = eval_orthpolys4(x)
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "normal")
+    evaluator = orthopy.t2.Eval(bary, "normal")
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
 
@@ -95,7 +95,6 @@ def test_t2_orth(x, tol=1.0e-12):
 def test_t2_orth_exact():
     x = numpy.array([S(1) / 3, S(1) / 7])
 
-    L = 2
     exacts = [
         [sympy.sqrt(2)],
         [-S(8) / 7, 8 * sympy.sqrt(3) / 21],
@@ -107,9 +106,10 @@ def test_t2_orth_exact():
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "normal", symbolic=True)
+    evaluator = orthopy.t2.Eval(bary, "normal", symbolic=True)
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert v == e
 
@@ -117,16 +117,16 @@ def test_t2_orth_exact():
 def test_t2_orth_classical_exact():
     x = numpy.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
 
-    L = 2
     exacts = [
         [[1, 1, 1]],
         [[-S(34) / 35, S(2) / 35, S(38) / 35], [S(2) / 35, S(4) / 35, S(6) / 35]],
     ]
 
     bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
-    vals = orthopy.t2.tree(L, bary, "classical", symbolic=True)
+    evaluator = orthopy.t2.Eval(bary, "classical", symbolic=True)
 
-    for val, ex in zip(vals, exacts):
+    for ex in exacts:
+        val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(v == e)
 
@@ -165,31 +165,22 @@ def test_normality(n=4):
 def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
-    tree = numpy.concatenate(orthopy.t2.tree(n, p, scaling, symbolic=True))
+    evaluator = orthopy.t2.Eval(p, scaling, symbolic=True)
+    tree = numpy.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
-def test_show(n=2, r=1):
-    # plot the t2
-    alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
-    corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
+def test_show_single(degrees=(1, 1)):
+    orthopy.t2.show_single(degrees, colorbar=False)
+    orthopy.t2.savefig_single("triangle.png", degrees, colorbar=False)
 
-    # corners = numpy.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]).T
 
-    def f(bary):
-        return orthopy.t2.tree(n, bary, "normal")[n][r]
-
-    # cmap = mpl.colors.ListedColormap(["white", "black"])
-    orthopy.t2.show(corners, f, n=100, colorbar=False)
-
-    # orthopy.t2.plot(corners, f)
-    # import matplotlib.pyplot as plt
-    # plt.savefig('t2.png', transparent=True)
+def test_show_tree(n=3):
+    orthopy.t2.show_tree(n, colorbar=True, clim=(-3, 3))
+    orthopy.t2.savefig_tree("triangle-tree.png", n, colorbar=True, clim=(-3, 3))
 
 
 if __name__ == "__main__":
-    # x_ = numpy.array([0.24, 0.65])
-    # # x_ = numpy.random.rand(3, 2)
-    # test_t2_orth(x=x_)
-    test_show(n=2, r=1)
+    # test_show_single((2, 1))
+    test_show_tree(5)

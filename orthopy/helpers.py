@@ -1,22 +1,5 @@
-import math
-import sys
-
 import numpy
 import sympy
-
-
-def _math_comb(n, k):
-    if sys.version < "3.8":
-        if k > n - k:
-            k = n - k
-
-        out = 1
-        for i in range(k):
-            out *= n - i
-            out //= i + 1
-        return out
-
-    return math.comb(n, k)
 
 
 def full_like(x, val):
@@ -62,16 +45,22 @@ class ProductEval:
     3D:
 
     L = 1:
-         (0, 0, 0)
+                   (0, 0, 0)
 
     L = 2:
-         (1, 0, 0)
-         (0, 1, 0) (0, 0, 1)
+                   (1, 0, 0)
+              (0, 1, 0) (0, 0, 1)
 
     L = 3:
-         (2, 0, 0)
-         (1, 1, 0) (1, 0, 1)
+                   (2, 0, 0)
+              (1, 1, 0) (1, 0, 1)
          (0, 2, 0) (0, 1, 1) (0, 0, 2)
+
+    L = 4:
+                   (3, 0, 0)
+              (2, 1, 0) (2, 0, 1)
+         (1, 2, 0) (1, 1, 1) (1, 0, 2)
+    (0, 3, 0) (0, 2, 1) (0, 1, 2) (0, 0, 3)
 
     The main insight here that makes computation for n dimensions easy is that the next
     level is composed by:
@@ -93,58 +82,71 @@ class ProductEval:
         X = numpy.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
-        self.k = 0
+        self.L = 0
         self.X = X
-        self.last = [None, None]
+        self.last_values = [None, None]
+        self.last_degrees = [None, None]
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        a = self.a
-        b = self.b
-        c = self.c
-
         X = self.X
-        L = self.k
         dim = X.shape[0]
 
-        if L == 0:
-            out = numpy.array([X[0] * 0 + self.p0n])
+        if self.L == 0:
+            values = numpy.array([X[0] * 0 + self.p0n])
+            degrees = numpy.array([numpy.zeros(dim, dtype=int)])
         else:
-            aa, bb, cc = self.rc[L - 1]
-            a.append(aa)
-            b.append(bb)
-            c.append(cc)
+            aa, bb, cc = self.rc[self.L - 1]
+            self.a = numpy.append(self.a, aa)
+            self.b = numpy.append(self.b, bb)
+            self.c = numpy.append(self.c, cc)
 
-            level = []
-            for i in range(dim - 1):
-                m1 = _math_comb(L + dim - i - 2, dim - i - 1)
-                last0 = self.last[0][-m1:]
-                if L > 1:
-                    m2 = _math_comb(L + dim - i - 3, dim - i - 1)
-                    last1 = self.last[1][-m2:]
-                r = 0
-                for k in range(L):
-                    m = _math_comb(k + dim - i - 2, dim - i - 2)
-                    val = last0[r : r + m] * (a[L - k - 1] * X[i] - b[L - k - 1])
-                    if L - k > 1:
-                        val -= last1[r : r + m] * c[L - k - 1]
-                    r += m
-                    level.append(val)
+            a = self.a
+            b = self.b
+            c = self.c
 
-            # treat the last one separately
-            val = self.last[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
-            if L > 1:
-                val -= self.last[1][-1] * c[L - 1]
-            level.append([val])
+            values = []
+            degrees = []
 
-            out = numpy.concatenate(level)
+            mask0 = numpy.ones(len(self.last_degrees[0]), dtype=bool)
+            if self.L > 1:
+                mask1 = numpy.ones(len(self.last_degrees[1]), dtype=bool)
 
-        self.last[1] = self.last[0]
-        self.last[0] = out
-        self.k += 1
-        return out
+            for i in range(dim):
+                lv0 = self.last_values[0][mask0]
+                idx0 = self.last_degrees[0][mask0][:, i]
+
+                val = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
+
+                if self.L > 1:
+                    lv1 = self.last_values[1][mask1]
+                    idx1 = self.last_degrees[1][mask1][:, i]
+                    yy = idx1 + 1 > 0
+                    val[: len(idx1)][yy] -= (lv1[yy].T * c[idx1[yy] + 1]).T
+
+                values.append(val)
+
+                deg = self.last_degrees[0][mask0]
+                deg[:, i] += 1
+                degrees.append(deg)
+                # mask is True for all entries where the first `i` degrees are 0
+                mask0 &= self.last_degrees[0][:, i] == 0
+                if self.L > 1:
+                    mask1 &= self.last_degrees[1][:, i] == 0
+
+            values = numpy.concatenate(values)
+            degrees = numpy.concatenate(degrees)
+
+        self.last_values[1] = self.last_values[0]
+        self.last_values[0] = values
+
+        self.last_degrees[1] = self.last_degrees[0]
+        self.last_degrees[0] = degrees
+        self.L += 1
+
+        return values, degrees
 
 
 class Eval135:
@@ -156,8 +158,8 @@ class Eval135:
     (including this one) use the classical Legendre recurrence relation with increasing
     L.
 
-    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
-    `k`th level of the tree
+    The return value is a list of arrays, where `values[k]` hosts the `2*k+1` values of
+    the `k`th level of the tree
 
                               (0, 0)
                     (-1, 1)   (0, 1)   (1, 1)

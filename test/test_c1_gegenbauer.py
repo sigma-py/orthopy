@@ -1,9 +1,9 @@
 import numpy
 import pytest
+from helpers import get_nth
 from sympy import Rational
 
 import orthopy
-from helpers import get_nth
 
 
 # simple smoke test for gegenbauer

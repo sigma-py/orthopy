@@ -3,9 +3,9 @@ import itertools
 import numpy
 import pytest
 import sympy
+from helpers_s2 import _integrate_poly
 
 import orthopy
-from helpers_s2 import _integrate_poly
 
 X = sympy.symbols("x, y")
 P = [sympy.poly(x, X) for x in X]
@@ -40,8 +40,9 @@ def test_yu_integral0(scaling, int0, n=4):
 
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_yu_orthogonality(scaling, n=4):
-    tree = numpy.concatenate(orthopy.s2.yu.tree(n, P, scaling, symbolic=True))
-    for f0, f1 in itertools.combinations(tree, 2):
+    evaluator = orthopy.s2.yu.Eval(P, scaling, symbolic=True)
+    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 
 
@@ -52,29 +53,20 @@ def test_yu_normality(n=4):
             assert _integrate_poly(val ** 2) == 1
 
 
-def test_show(scaling="normal", n=2, r=1):
-    def f(X):
-        return orthopy.s2.yu.tree(n, X, scaling)[n][r]
+@pytest.mark.parametrize("degrees", [(2, 1)])
+def test_show(degrees, scaling="normal"):
+    orthopy.s2.yu.show_single(degrees, scaling=scaling)
+    orthopy.s2.yu.savefig_single("disk-yu.png", degrees, scaling=scaling)
 
-    # k = numpy.linspace(0, 2 * numpy.pi, 100000)
-    # X = numpy.array([numpy.cos(k), numpy.sin(k)])
-    # print(numpy.min(f(X)), numpy.max(f(X)))
-    # x0 = [numpy.sqrt(1 / (n)), numpy.sqrt((n-1) / (n))]
-    # print(f(x0))
 
-    # p = [sympy.poly(x, X) for x in X]
-    # iterator = orthopy.s2.yu.Eval(p, "classical", symbolic=True)
-    # for k, vals in enumerate(itertools.islice(iterator, 10)):
-    #     print()
-    #     for val in vals:
-    #         print(val)
-    # exit(1)
-
-    orthopy.s2.show(f, lcar=1.0e-2)
-    # orthopy.s2.plot(f, lcar=2.0e-2)
-    # import matplotlib.pyplot as plt
-    # plt.savefig('s2.png', transparent=True)
+@pytest.mark.parametrize("n", [2])
+def test_show_tree(n, scaling="normal"):
+    orthopy.s2.yu.show_tree(n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7))
+    orthopy.s2.yu.savefig_tree(
+        "disk-yu-tree.png", n, scaling=scaling, colorbar=True, clim=(-1.7, 1.7)
+    )
 
 
 if __name__ == "__main__":
-    test_show("classical", n=5, r=2)
+    # test_show((3, 2), "normal")
+    test_show_tree(5, "normal")

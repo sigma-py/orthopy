@@ -1,12 +1,47 @@
-import itertools
 import math
 
 import numpy
 import sympy
 
+from .tools import plot_single as ps
 
-def tree(n, *args, **kwargs):
-    return list(itertools.islice(Eval(*args, **kwargs), n + 1))
+
+def savefig_single(filename, *args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot_single(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_single(*args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot_single(*args, **kwargs)
+    plt.show()
+
+
+def plot_single(*args, **kwargs):
+    ps("Zernike-2", Eval, *args, **kwargs)
+
+
+def savefig_tree(filename, *args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.savefig(filename, transparent=True, bbox_inches="tight")
+
+
+def show_tree(*args, **kwargs):
+    from matplotlib import pyplot as plt
+
+    plot_tree(*args, **kwargs)
+    plt.show()
+
+
+def plot_tree(*args, **kwargs):
+    from .tools import plot_tree as pt
+
+    pt("Zernike-2", Eval, *args, **kwargs)
 
 
 class Eval:
