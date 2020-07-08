@@ -65,29 +65,24 @@ def test_normality(d, standardization, n=4):
             assert _integrate_poly(val ** 2, standardization) == 1
 
 
-# @pytest.mark.parametrize("n", [2])
-# def test_show_tree(n):
-#     alpha = 0.0
-#     beta = 0.0
-#
-#     # 1D
-#     orthopy.enr2.show_tree_1d(n, alpha, beta, "normal")
-#     orthopy.enr2.savefig_tree_1d("c1.svg", n, alpha, beta, "normal")
-#
-#     # 2D
-#     orthopy.enr2.show_tree_2d(n, alpha, beta, clim=(-1, 1))
-#     orthopy.enr2.savefig_tree_2d("c2.png", n, alpha, beta, clim=(-1, 1))
-#
-#
-# @pytest.mark.parametrize("n", [2])
-# def test_write_tree(n):
-#     alpha = 0.0
-#     beta = 0.0
-#
-#     # 3D
-#     orthopy.enr2.write_tree_3d("c3.vtk", n, alpha, beta)
-#
-#
-# if __name__ == "__main__":
-#     test_write_tree(5)
-#     # test_show_tree(5)
+@pytest.mark.parametrize("n", [2])
+def test_show_tree(n):
+    standardization = "probabilists"
+    # 1D
+    orthopy.enr2.show_tree_1d(n, standardization, "normal")
+    orthopy.enr2.savefig_tree_1d("e1r2.svg", n, standardization, "normal")
+    # 2D
+    orthopy.enr2.show_tree_2d(n, standardization, clim=(-2, 2))
+    orthopy.enr2.savefig_tree_2d("e2r2.png", n, standardization, clim=(-2, 2))
+
+
+@pytest.mark.parametrize("n", [2])
+def test_write_tree(n):
+    standardization = "probabilists"
+    # 3D
+    orthopy.enr2.write_tree_3d("e3r2.vtk", n, standardization)
+
+
+if __name__ == "__main__":
+    # test_show_tree(5)
+    test_write_tree(5)
