@@ -56,8 +56,8 @@ def plot_tree_2d(n, *args, res=100, colorbar=True, cmap="RdBu_r", clim=None, **k
     plt.gca().set_aspect("equal")
     plt.axis("off")
 
-    for k, level in enumerate(itertools.islice(evaluator, n + 1)):
-        for r, z in enumerate(level):
+    for k, (values, _) in enumerate(itertools.islice(evaluator, n + 1)):
+        for r, z in enumerate(values):
             offset = [2.8 * (r - k / 2), -2.6 * k]
             pts = points + offset
 

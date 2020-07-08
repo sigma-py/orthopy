@@ -62,22 +62,22 @@ class ProductEval:
     3D:
 
     L = 1:
-         (0, 0, 0)
+                   (0, 0, 0)
 
     L = 2:
-         (1, 0, 0)
-         (0, 1, 0) (0, 0, 1)
+                   (1, 0, 0)
+              (0, 1, 0) (0, 0, 1)
 
     L = 3:
-         (2, 0, 0)
-         (1, 1, 0) (1, 0, 1)
+                   (2, 0, 0)
+              (1, 1, 0) (1, 0, 1)
          (0, 2, 0) (0, 1, 1) (0, 0, 2)
 
     L = 4:
-         (3, 0, 0)
-         (2, 1, 0) (2, 0, 1)
+                   (3, 0, 0)
+              (2, 1, 0) (2, 0, 1)
          (1, 2, 0) (1, 1, 1) (1, 0, 2)
-         (0, 3, 0) (0, 2, 1) (0, 1, 2) (0, 0, 3)
+    (0, 3, 0) (0, 2, 1) (0, 1, 2) (0, 0, 3)
 
     The main insight here that makes computation for n dimensions easy is that the next
     level is composed by:
@@ -101,12 +101,16 @@ class ProductEval:
         self.p0n = rc.p0 ** self.dim
         self.k = 0
         self.X = X
-        self.last = [None, None]
+        self.last_values = [None, None]
+        self.last_degrees = None
 
     def __iter__(self):
         return self
 
     def __next__(self):
+        print()
+        print()
+        print("start")
         a = self.a
         b = self.b
         c = self.c
@@ -116,20 +120,23 @@ class ProductEval:
         dim = X.shape[0]
 
         if L == 0:
-            out = numpy.array([X[0] * 0 + self.p0n])
+            values = numpy.array([X[0] * 0 + self.p0n])
+            degrees = numpy.array([numpy.zeros(dim, dtype=int)])
         else:
             aa, bb, cc = self.rc[L - 1]
             a.append(aa)
             b.append(bb)
             c.append(cc)
 
-            level = []
+            values = []
+            degrees = []
+            mask = numpy.ones(len(self.last_degrees), dtype=bool)
             for i in range(dim - 1):
                 m1 = _math_comb(L + dim - i - 2, dim - i - 1)
-                last0 = self.last[0][-m1:]
+                last0 = self.last_values[0][-m1:]
                 if L > 1:
                     m2 = _math_comb(L + dim - i - 3, dim - i - 1)
-                    last1 = self.last[1][-m2:]
+                    last1 = self.last_values[1][-m2:]
                 r = 0
                 for k in range(L):
                     m = _math_comb(k + dim - i - 2, dim - i - 2)
@@ -137,20 +144,37 @@ class ProductEval:
                     if L - k > 1:
                         val -= last1[r : r + m] * c[L - k - 1]
                     r += m
-                    level.append(val)
+                    values.append(val)
+
+                deg = self.last_degrees[mask]
+                deg[:, i] += 1
+                degrees.append(deg)
+                # mask is True for all entries where the first k degrees are 0
+                mask &= (self.last_degrees[:, i] == 0)
 
             # treat the last one separately
-            val = self.last[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
+            val = self.last_values[0][-1] * (a[L - 1] * X[-1] - b[L - 1])
             if L > 1:
-                val -= self.last[1][-1] * c[L - 1]
-            level.append([val])
+                val -= self.last_values[1][-1] * c[L - 1]
+            values.append([val])
+            deg = self.last_degrees[-1]
+            deg[-1] += 1
+            degrees.append([deg])
 
-            out = numpy.concatenate(level)
+            values = numpy.concatenate(values)
+            degrees = numpy.concatenate(degrees)
 
-        self.last[1] = self.last[0]
-        self.last[0] = out
+        self.last_values[1] = self.last_values[0]
+        self.last_values[0] = values
+
+        self.last_degrees = degrees
         self.k += 1
-        return out
+
+        print(values)
+        print(degrees)
+        print("end")
+        # assert len(values) == len(degrees)
+        return values, degrees
 
 
 class Eval135:
@@ -162,8 +186,8 @@ class Eval135:
     (including this one) use the classical Legendre recurrence relation with increasing
     L.
 
-    The return value is a list of arrays, where `out[k]` hosts the `2*k+1` values of the
-    `k`th level of the tree
+    The return value is a list of arrays, where `values[k]` hosts the `2*k+1` values of
+    the `k`th level of the tree
 
                               (0, 0)
                     (-1, 1)   (0, 1)   (1, 1)
