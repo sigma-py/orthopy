@@ -177,10 +177,10 @@ def test_show_single(degrees=(1, 1)):
 
 
 def test_show_tree(n=3):
-    orthopy.t2.show_tree(n, colorbar=True, clim=(-10, 10))
-    orthopy.t2.savefig_tree("triangle-tree.png", n, colorbar=True, clim=(-10, 10))
+    orthopy.t2.show_tree(n, colorbar=True, clim=(-3, 3))
+    orthopy.t2.savefig_tree("triangle-tree.png", n, colorbar=True, clim=(-3, 3))
 
 
 if __name__ == "__main__":
     # test_show_single((2, 1))
-    test_show_tree(3)
+    test_show_tree(5)
