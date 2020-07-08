@@ -33,7 +33,8 @@ import orthopy
 
 x = 0.5
 
-for k, val in enumerate(orthopy.c1.legendre.Eval(x, "classical")):
+evaluator = orthopy.c1.legendre.Eval(x, "classical")
+for k, val in enumerate(evaluator):
      print(val)
      if k == 4:
          break
@@ -85,7 +86,6 @@ For univariate ("one-dimensional") integrals, every level contains one functions
 bivariate ("two-dimensional") functions, every level will contain one functions more
 than the previous.
 
-
 See the trees for triangles and disks below.
 
 
@@ -101,9 +101,9 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 ```python
 orthopy.c1.legendre.Eval(x, "normal")
 orthopy.c1.chebyshev1.Eval(x, "normal")
-orthopy.c1.chebyshev2.tree(x, "normal")
-orthopy.c1.gegenbauer.tree(x, lmbda, "normal")
-orthopy.c1.jacobi.tree(x, alpha, beta, "normal")
+orthopy.c1.chebyshev2.Eval(x, "normal")
+orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
+orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
 ```
 
 Recurrence coefficients can be explicitly retrieved by
@@ -131,9 +131,9 @@ for k in range(5):
 <img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
 ```python
-vals = orthopy.c1.associated_legendre.tree(
-    x, 4, phi=None, standardization="natural", with_condon_shortley_phase=True
-    )
+evaluator = orthopy.c1.associated_legendre.Eval(
+    x, phi=None, standardization="natural", with_condon_shortley_phase=True
+)
 ```
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
@@ -141,7 +141,7 @@ vals = orthopy.c1.associated_legendre.tree(
 
 (Generalized) Laguerre polynomials.
 ```python
-vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal")
+evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 ```
 
 
@@ -150,7 +150,7 @@ vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal")
 
 Hermite polynomials.
 ```python
-vals = orthopy.e1r2.tree(x, 4, "normal")
+evaluator = orthopy.e1r2.Eval(x, "normal")
 ```
 All polynomials are normalized over the measure.
 
@@ -160,13 +160,10 @@ All polynomials are normalized over the measure.
 <img src="https://nschloe.github.io/orthopy/triangle-tree.png" width="40%">
 
 ```python
-for level in orthopy.t2.Eval(x, "normal"):
-    # `level` contains all evalutations of the orthogonal polynomials with the next
-    # degree at the points x
-    pass
+import orthopy
 
-# or for the entire tree up to degree 4
-vals = orthopy.t2.tree(x, 4, "normal")
+bary = [0.1, 0.7, 0.2]
+evaluator = orthopy.t2.Eval(bary, "normal")
 ```
 
 
@@ -174,18 +171,21 @@ vals = orthopy.t2.tree(x, 4, "normal")
 
 <img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
 :------------:|:-----------------:|:-----------:|
-Yu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
+Xu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
+
+orthopy contains several families of orthogonal polynomials on the unit disk: After
+[Xu](https://arxiv.org/abs/1701.02709),
+[Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials), and modified Zernike.
 
 ```python
-for level in orthopy.s2.Eval(x):
-    # `level` contains all evalutations of the orthogonal polynomials with the next
-    # degree at the points x
-    pass
+import orthopy
 
-# or for the entire tree up to degree 4
-vals = orthopy.s2.tree(4, x)
+x = [0.1, -0.3]
+
+evaluator = orthopy.s2.yu.Eval(x, "normal")
+# evaluator = orthopy.s2.zernike.Eval(x, "normal")
+# evaluator = orthopy.s2.zernike2.Eval(x, "normal")
 ```
-All polynomials are normalized on the unit disk.
 
 
 ### Sphere (_U<sub>3</sub>_)
@@ -198,10 +198,7 @@ pink=real negative, blue=imaginary positive, yellow=imaginary negative). The fun
 in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
 
 ```python
-for level in orthopy.u3.Eval(x, scaling="quantum mechanic"):
-    # `level` contains all evalutations of the spherical harmonics with the next
-    # degree at the points x
-    pass
+evaluator = orthopy.u3.Eval(x, scaling="quantum mechanic")
 ```
 
 ### _n_-Cube (_C<sub>n</sub>_)
