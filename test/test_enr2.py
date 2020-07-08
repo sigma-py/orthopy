@@ -24,7 +24,7 @@ def _integrate_poly(p, standardization):
 def test_integral0(d, standardization, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
+    evaluator = orthopy.enr2.Eval(p, standardization)
 
     vals, _ = next(evaluator)
     ref = (
@@ -42,7 +42,7 @@ def test_integral0(d, standardization, n=4):
 def test_orthogonality(d, n, standardization):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
+    evaluator = orthopy.enr2.Eval(p, standardization)
     vals = numpy.concatenate([next(evaluator)[0] for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, standardization) == 0
@@ -53,7 +53,7 @@ def test_orthogonality(d, n, standardization):
 def test_normality(d, standardization, n=4):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
-    evaluator = orthopy.enr2.Eval(p, standardization, symbolic=True)
+    evaluator = orthopy.enr2.Eval(p, standardization)
 
     vals, _ = next(evaluator)
     val = sympy.poly(vals[0], X)
@@ -84,5 +84,5 @@ def test_write_tree(n):
 
 
 if __name__ == "__main__":
-    # test_show_tree(5)
-    test_write_tree(5)
+    test_show_tree(5)
+    # test_write_tree(5)

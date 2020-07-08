@@ -1,10 +1,10 @@
+import numpy
 import sympy
 
 from . import gegenbauer
 
 
 def plot(n, scaling):
-    print("A")
     gegenbauer.plot(n, -0.5, scaling)
 
 
@@ -50,6 +50,9 @@ class Eval(gegenbauer.Eval):
         16*sqrt(2)*x**5/sqrt(pi) - 20*sqrt(2)*x**3/sqrt(pi) + 5*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, scaling, symbolic=False):
+    def __init__(self, X, scaling, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+
         lmbda = -sympy.S(1) / 2 if symbolic else -0.5
         super().__init__(X, lmbda, scaling, symbolic)

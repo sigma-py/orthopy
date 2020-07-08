@@ -20,10 +20,10 @@ def savefig(filename, *args, **kwargs):
 
 
 class Eval(jacobi.Eval):
-    def __init__(self, X, lmbda, scaling, symbolic=False):
-        super().__init__(X, lmbda, lmbda, scaling, symbolic)
+    def __init__(self, X, lmbda, scaling, symbolic="auto"):
+        super().__init__(X, lmbda, lmbda, scaling, symbolic=symbolic)
 
 
 class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
-    def __init__(self, lmbda, scaling, symbolic=False):
-        super().__init__(lmbda, lmbda, scaling, symbolic)
+    def __init__(self, lmbda, scaling, symbolic="auto"):
+        super().__init__(lmbda, lmbda, scaling, symbolic=symbolic)

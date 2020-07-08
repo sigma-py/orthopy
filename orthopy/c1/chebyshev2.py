@@ -1,3 +1,4 @@
+import numpy
 import sympy
 
 from . import gegenbauer
@@ -49,6 +50,9 @@ class Eval(gegenbauer.Eval):
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, scaling, symbolic=False):
+    def __init__(self, X, scaling, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+
         lmbda = sympy.S(1) / 2 if symbolic else 0.5
         super().__init__(X, lmbda, scaling, symbolic)

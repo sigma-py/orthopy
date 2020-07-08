@@ -143,7 +143,7 @@ def test_integral0(scaling, int0, n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
 
-    iterator = orthopy.t2.Eval(p, scaling, symbolic=True)
+    iterator = orthopy.t2.Eval(p, scaling)
     for k, vals in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             assert _integrate_poly(vals[0]) == int0
@@ -155,7 +155,7 @@ def test_integral0(scaling, int0, n=4):
 def test_normality(n=4):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
-    iterator = orthopy.t2.Eval(p, "normal", symbolic=True)
+    iterator = orthopy.t2.Eval(p, "normal")
     for vals in itertools.islice(iterator, n):
         for val in vals:
             assert _integrate_poly(val ** 2) == 1
@@ -165,7 +165,7 @@ def test_normality(n=4):
 def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
-    evaluator = orthopy.t2.Eval(p, scaling, symbolic=True)
+    evaluator = orthopy.t2.Eval(p, scaling)
     tree = numpy.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0

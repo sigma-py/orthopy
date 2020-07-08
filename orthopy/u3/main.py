@@ -8,9 +8,12 @@ class Eval(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
-    def __init__(self, X, scaling, complex_valued=True, symbolic=False):
+    def __init__(self, X, scaling, complex_valued=True, symbolic="auto"):
         assert len(X) == 3
         # assert X[0] ** 2 + X[1] ** 2 + X[2] ** 2 == 1
+
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
 
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
@@ -57,7 +60,10 @@ class EvalPolar(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
-    def __init__(self, polar, azimuthal, scaling, complex_valued=True, symbolic=False):
+    def __init__(self, polar, azimuthal, scaling, complex_valued=True, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(polar).dtype == sympy.Basic
+
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
         rc = {

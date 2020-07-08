@@ -33,7 +33,7 @@ def _integrate_poly(p, alpha, x):
 def test_integral0(alpha, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    evaluator = orthopy.e1r.Eval(p, alpha=alpha, scaling="normal", symbolic=True)
+    evaluator = orthopy.e1r.Eval(p, alpha=alpha, scaling="normal")
 
     assert _integrate_poly(next(evaluator), alpha, x) == 1
     for _ in range(n + 1):
@@ -45,7 +45,7 @@ def test_integral0(alpha, n=4):
 def test_orthogonality(alpha, scaling, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    evaluator = orthopy.e1r.Eval(p, scaling, alpha=alpha, symbolic=True)
+    evaluator = orthopy.e1r.Eval(p, scaling, alpha=alpha)
     vals = [next(evaluator) for _ in range(n + 1)]
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, alpha, x) == 0
@@ -55,7 +55,7 @@ def test_orthogonality(alpha, scaling, n=4):
 def test_normality(alpha, n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    evaluator = orthopy.e1r.Eval(p, "normal", alpha=alpha, symbolic=True)
+    evaluator = orthopy.e1r.Eval(p, "normal", alpha=alpha)
     for k in range(n + 1):
         val = next(evaluator)
         if k == 0:

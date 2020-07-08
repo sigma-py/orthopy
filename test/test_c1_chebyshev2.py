@@ -113,7 +113,7 @@ def _integrate_poly(p):
 def test_integral0(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    evaluator = orthopy.c1.chebyshev2.Eval(p, "normal", symbolic=True)
+    evaluator = orthopy.c1.chebyshev2.Eval(p, "normal")
 
     assert _integrate_poly(next(evaluator)) == sqrt(pi) / sqrt(2)
     for _ in range(n + 1):
@@ -124,7 +124,7 @@ def test_normality(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
 
-    iterator = orthopy.c1.chebyshev2.Eval(p, "normal", symbolic=True)
+    iterator = orthopy.c1.chebyshev2.Eval(p, "normal")
     for k, val in enumerate(itertools.islice(iterator, n)):
         if k == 0:
             val = sympy.poly(val, x)
@@ -137,7 +137,7 @@ def test_normality(n=4):
 def test_orthogonality(n=4):
     x = sympy.Symbol("x")
     p = sympy.poly(x)
-    evaluator = orthopy.c1.chebyshev2.Eval(p, "normal", symbolic=True)
+    evaluator = orthopy.c1.chebyshev2.Eval(p, "normal")
     vals = [next(evaluator) for _ in range(n + 1)]
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0

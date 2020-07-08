@@ -33,7 +33,8 @@ import orthopy
 
 x = 0.5
 
-for k, val in enumerate(orthopy.c1.legendre.Eval(x, "classical")):
+evaluator = orthopy.c1.legendre.Eval(x, "classical")
+for k, val in enumerate(evaluator):
      print(val)
      if k == 4:
          break
@@ -55,8 +56,7 @@ vals = list(itertools.islice(Eval(x, "normal"), n + 1))
 ```
 Instead of evaluating at only one point, you can provide an array of arbitrary shape for
 `x`. The polynomials will then be evaluated for all points at once. You can also use
-sympy for symbolic computation; make sure to pass a variable and set
-`symbolic=True`:
+sympy for symbolic computation:
 ```python
 import itertools
 import orthopy
@@ -64,7 +64,7 @@ import sympy
 
 x = sympy.Symbol("x")
 
-evaluator = orthopy.c1.legendre.Eval(x, "classical", symbolic=True)
+evaluator = orthopy.c1.legendre.Eval(x, "classical")
 for level in itertools.islice(evaluator, 5):
      print(sympy.expand(level))
 ```
@@ -86,7 +86,6 @@ For univariate ("one-dimensional") integrals, every level contains one functions
 bivariate ("two-dimensional") functions, every level will contain one functions more
 than the previous.
 
-
 See the trees for triangles and disks below.
 
 
@@ -100,21 +99,18 @@ Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), L
 (α=β=0) polynomials.
 
 ```python
-orthopy.c1.legendre.Eval(x, "normal", symbolic=False)
-orthopy.c1.chebyshev1.Eval(x, "normal", symbolic=False)
-orthopy.c1.chebyshev2.tree(x, "normal", symbolic=False)
-orthopy.c1.gegenbauer.tree(x, lmbda, "normal", symbolic=False)
-orthopy.c1.jacobi.tree(x, alpha, beta, "normal", symbolic=False)
+orthopy.c1.legendre.Eval(x, "normal")
+orthopy.c1.chebyshev1.Eval(x, "normal")
+orthopy.c1.chebyshev2.Eval(x, "normal")
+orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
+orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
 ```
 
 Recurrence coefficients can be explicitly retrieved by
 ```python
 import orthopy
 
-alpha = 0
-beta = 0
-symbolic = True
-rc = orthopy.c1.jacobi.RCMonic(alpha, beta, symbolic)
+rc = orthopy.c1.jacobi.RCMonic(alpha=0, beta=0, symbolic=True)
 # RCClassical, RCNormal
 print(rc.p0)
 for k in range(5):
@@ -135,10 +131,9 @@ for k in range(5):
 <img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
 ```python
-vals = orthopy.c1.associated_legendre.tree(
-    x, 4, phi=None, standardization="natural", with_condon_shortley_phase=True,
-    symbolic=False
-    )
+evaluator = orthopy.c1.associated_legendre.Eval(
+    x, phi=None, standardization="natural", with_condon_shortley_phase=True
+)
 ```
 
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
@@ -146,7 +141,7 @@ vals = orthopy.c1.associated_legendre.tree(
 
 (Generalized) Laguerre polynomials.
 ```python
-vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal", symbolic=False)
+evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 ```
 
 
@@ -155,7 +150,7 @@ vals = orthopy.e1r.tree(x, 4, alpha=0, scaling="normal", symbolic=False)
 
 Hermite polynomials.
 ```python
-vals = orthopy.e1r2.tree(x, 4, "normal", symbolic=False)
+evaluator = orthopy.e1r2.Eval(x, "normal")
 ```
 All polynomials are normalized over the measure.
 
@@ -165,32 +160,32 @@ All polynomials are normalized over the measure.
 <img src="https://nschloe.github.io/orthopy/triangle-tree.png" width="40%">
 
 ```python
-for level in orthopy.t2.Eval(x, "normal", symbolic=False):
-    # `level` contains all evalutations of the orthogonal polynomials with the next
-    # degree at the points x
-    pass
+import orthopy
 
-# or for the entire tree up to degree 4
-vals = orthopy.t2.tree(x, 4, "normal", symbolic=False)
+bary = [0.1, 0.7, 0.2]
+evaluator = orthopy.t2.Eval(bary, "normal")
 ```
 
 
 ### Disk (_S<sub>2</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/disk-yu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
+<img src="https://nschloe.github.io/orthopy/disk-xu-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike-tree.png" width="70%"> | <img src="https://nschloe.github.io/orthopy/disk-zernike2-tree.png" width="70%">
 :------------:|:-----------------:|:-----------:|
-Yu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
+Xu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)          |  Zernike 2  |
+
+orthopy contains several families of orthogonal polynomials on the unit disk: After
+[Xu](https://arxiv.org/abs/1701.02709),
+[Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials), and modified Zernike.
 
 ```python
-for level in orthopy.s2.Eval(x, symbolic=False):
-    # `level` contains all evalutations of the orthogonal polynomials with the next
-    # degree at the points x
-    pass
+import orthopy
 
-# or for the entire tree up to degree 4
-vals = orthopy.s2.tree(4, x, symbolic=False)
+x = [0.1, -0.3]
+
+evaluator = orthopy.s2.xu.Eval(x, "normal")
+# evaluator = orthopy.s2.zernike.Eval(x, "normal")
+# evaluator = orthopy.s2.zernike2.Eval(x, "normal")
 ```
-All polynomials are normalized on the unit disk.
 
 
 ### Sphere (_U<sub>3</sub>_)
@@ -203,10 +198,7 @@ pink=real negative, blue=imaginary positive, yellow=imaginary negative). The fun
 in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
 
 ```python
-for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
-    # `level` contains all evalutations of the spherical harmonics with the next
-    # degree at the points x
-    pass
+evaluator = orthopy.u3.Eval(x, scaling="quantum mechanic")
 ```
 
 ### _n_-Cube (_C<sub>n</sub>_)
@@ -216,7 +208,7 @@ for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
 C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
 ```python
-evaluator = orthopy.cn.Eval(X, symbolic=False)
+evaluator = orthopy.cn.Eval(X)
 ```
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
@@ -230,8 +222,7 @@ _E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></s
 ```python
 evaluator = orthopy.enr2.Eval(
     x,
-    standardization="probabilists",  # or "physicists"
-    symbolic=False
+    standardization="probabilists"  # or "physicists"
 )
 ```
 All polynomials are normalized over the measure. The dimensionality is determined by
