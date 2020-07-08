@@ -158,9 +158,6 @@ for level in orthopy.t2.Eval(x, "normal", symbolic=False):
 # or for the entire tree up to degree 4
 vals = orthopy.t2.tree(x, 4, "normal", symbolic=False)
 ```
-Available scalings are
-  * `"normal"` (normalized polynomials, i.e., the integral of the squared function equals 1) and
-  * `"1"` where the polynomial is `1` in at least one corner of the triangle.
 
 
 ### Disk (_S<sub>2</sub>_)

@@ -57,5 +57,18 @@ def test_normality(d, n=4):
         assert _integrate_poly(val ** 2) == 1
 
 
+def test_show_tree(n):
+    alpha = 0.0
+    beta = 0.0
+
+    # # 1D
+    # orthopy.cn.show_tree_1d(n, alpha, beta, scaling)
+    # orthopy.cn.savefig_tree_1d("c1.svg", n, alpha, beta, scaling)
+
+    # 2D
+    orthopy.cn.show_tree_2d(n, alpha, beta, clim=(-1, 1))
+    orthopy.cn.savefig_tree_2d("c2.png", n, alpha, beta, clim=(-1, 1))
+
+
 if __name__ == "__main__":
-    test_integral0()
+    test_show_tree(5)
