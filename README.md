@@ -211,7 +211,7 @@ for level in orthopy.u3.Eval(x, scaling="quantum mechanic", symbolic=False):
 
 ### _n_-Cube (_C<sub>n</sub>_)
 
-<img src="https://nschloe.github.io/orthopy/c1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/c2.png" width="100%"> | x
+<img src="https://nschloe.github.io/orthopy/c1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/c2.png" width="100%"> | <img src="https://nschloe.github.io/orthopy/c3.png" width="100%">
 :-------------------------:|:------------------:|:---------------:|
 C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
