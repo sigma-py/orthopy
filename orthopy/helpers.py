@@ -108,9 +108,6 @@ class ProductEval:
         return self
 
     def __next__(self):
-        print()
-        print()
-        print("start")
         a = self.a
         b = self.b
         c = self.c
@@ -170,9 +167,6 @@ class ProductEval:
         self.last_degrees = degrees
         self.k += 1
 
-        print(values)
-        print(degrees)
-        print("end")
         # assert len(values) == len(degrees)
         return values, degrees
 

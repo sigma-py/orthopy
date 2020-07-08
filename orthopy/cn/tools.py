@@ -73,7 +73,7 @@ def plot_tree_2d(n, *args, res=100, colorbar=True, cmap="RdBu_r", clim=None, **k
         plt.colorbar()
 
 
-def write_tree(filename, n, *args, res=20, **kwargs):
+def write_tree_3d(filename, n, *args, res=20, **kwargs):
     import meshio
     import meshzoo
 
@@ -81,17 +81,26 @@ def write_tree(filename, n, *args, res=20, **kwargs):
 
     evaluator = Eval(points.T, *args, **kwargs)
     meshes = []
-    for L, level in enumerate(itertools.islice(evaluator, n)):
-        for k, vals in enumerate(level):
+
+    corners = numpy.array(
+        [
+            [numpy.cos(k * 2 * numpy.pi / 3), numpy.sin(k * 2 * numpy.pi / 3)]
+            for k in range(3)
+        ]
+    )
+
+    for L, (values, degrees) in enumerate(itertools.islice(evaluator, n)):
+        for vals, degs in zip(values, degrees):
+            offset = sum([corner * d for corner, d in zip(corners, degs)])
             pts = points.copy()
-
-            pts[:, 0] += 2.2 * (k - L)
-            pts[:, 2] -= 2.7 * L
-
-            meshes.append(meshio.Mesh(pts, {"tetra": cells}))
+            pts[:, 0] += 2.0 * offset[0]
+            pts[:, 1] += 2.0 * offset[1]
+            pts[:, 2] -= 3.0 * L
+            meshes.append(meshio.Mesh(pts, {"tetra": cells}, point_data={"f": vals}))
 
     # merge meshes
     points = numpy.concatenate([mesh.points for mesh in meshes])
+    f_vals = numpy.concatenate([mesh.point_data["f"] for mesh in meshes])
     #
     cells = []
     k = 0
@@ -100,4 +109,6 @@ def write_tree(filename, n, *args, res=20, **kwargs):
         k += mesh.points.shape[0]
     cells = numpy.concatenate(cells)
 
-    meshio.write_points_cells(filename, points, {"tetra": cells})
+    meshio.write_points_cells(
+        filename, points, {"tetra": cells}, point_data={"f": f_vals}
+    )

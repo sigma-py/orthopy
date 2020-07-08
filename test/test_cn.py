@@ -71,5 +71,15 @@ def test_show_tree(n):
     orthopy.cn.savefig_tree_2d("c2.png", n, alpha, beta, clim=(-1, 1))
 
 
+@pytest.mark.parametrize("n", [2])
+def test_write_tree(n):
+    alpha = 0.0
+    beta = 0.0
+
+    # 3D
+    orthopy.cn.write_tree_3d("c3.vtk", n, alpha, beta)
+
+
 if __name__ == "__main__":
+    # test_write_tree(5)
     test_show_tree(5)

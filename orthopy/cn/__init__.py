@@ -6,6 +6,7 @@ from .tools import (
     savefig_tree_2d,
     show_tree_1d,
     show_tree_2d,
+    write_tree_3d
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "plot_tree_2d",
     "show_tree_2d",
     "savefig_tree_2d",
+    "write_tree_3d",
 ]
