@@ -92,11 +92,11 @@ def chebyshev(moments):
     assert m % 2 == 0
     # https://stackoverflow.com/a/30039361/353337
     dtype = sympy.Rational if isinstance(moments[0], sympy.Basic) else moments.dtype
-    zeros = numpy.zeros(m, dtype=dtype)
-    return chebyshev_modified(moments, zeros, zeros)
+    zeros = numpy.zeros((m, 3), dtype=dtype)
+    return chebyshev_modified(moments, zeros)
 
 
-def chebyshev_modified(nu, a, b):
+def chebyshev_modified(nu, recurrence_coefficients):
     """Given the first 2n modified moments `nu_k = int p_k(t) dt`, where the p_k are
     orthogonal polynomials with recurrence coefficients a, b, this method implements the
     modified Chebyshev algorithm (see, e.g., [2]) for computing the associated
@@ -107,31 +107,35 @@ def chebyshev_modified(nu, a, b):
 
     n = m // 2
 
-    alpha = numpy.empty(n, dtype=a.dtype)
-    beta = numpy.empty(n, dtype=a.dtype)
+    alpha = []
+    beta = []
     sigma = [None, None, None]
 
     if n > 0:
         k = 0
         sigma[0] = numpy.asarray(nu)
-        alpha[0] = a[0] + nu[1] / nu[0]
-        beta[0] = math.nan
+        _, a0, _ = recurrence_coefficients[0]
+        alpha.append(a0 + nu[1] / nu[0])
+        beta.append(math.nan)
 
     for k in range(1, n):
         sigma[2] = sigma[1]
         sigma[1] = sigma[0]
 
         L = numpy.arange(k, 2 * n - k)
+
+        _, aL, bL = numpy.array([recurrence_coefficients[i] for i in L]).T
         sigma[0] = (
-            sigma[0][2:] - (alpha[k - 1] - a[L]) * sigma[0][1:-1] + b[L] * sigma[1][:-2]
+            sigma[0][2:] - (alpha[k - 1] - aL) * sigma[0][1:-1] + bL * sigma[1][:-2]
         )
         if k > 1:
             sigma[0] -= beta[k - 1] * sigma[2][2:-2]
 
-        alpha[k] = a[k] + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0]
-        beta[k] = sigma[0][0] / sigma[1][0]
+        _, ak, _ = recurrence_coefficients[k]
+        alpha.append(ak + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0])
+        beta.append(sigma[0][0] / sigma[1][0])
 
-    return alpha, beta
+    return numpy.asarray(alpha), numpy.asarray(beta)
 
 
 def gautschi_test_3(moments, alpha, beta):

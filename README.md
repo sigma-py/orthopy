@@ -6,7 +6,7 @@
 [![gh-actions](https://img.shields.io/github/workflow/status/nschloe/orthopy/ci?style=flat-square)](https://github.com/nschloe/orthopy/actions?query=workflow%3Aci)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/orthopy.svg?style=flat-square)](https://codecov.io/gh/nschloe/orthopy)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
-[![orthogonal](https://img.shields.io/badge/orthogonal-definitely-ff69b4.svg?style=flat-square)](https://github.com/nschloe/orthopy)
+[![orthogonal](https://img.shields.io/badge/orthogonal-yes-ff69b4.svg?style=flat-square)](https://github.com/nschloe/orthopy)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/orthopy.svg?style=flat-square)](https://pypi.org/pypi/orthopy/)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg?style=flat-square)](https://pypi.org/project/orthopy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173151)
@@ -26,18 +26,21 @@ arithmetic_](#symbolic-and-numerical-computation).
 
 ### Basic usage
 
+Install orthopy from [pypi](https://pypi.org/project/orthopy) via
+```
+pip install orthopy
+```
 The main function of all submodules is the iterator `Eval` which evaluates the series of
-orthogonal polynomials with increasing degree, e.g.,
+orthogonal polynomials with increasing degree at given points using a recurrence
+relation, e.g.,
 ```python
 import orthopy
 
 x = 0.5
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
-for k, val in enumerate(evaluator):
-     print(val)
-     if k == 4:
-         break
+for _ in range(5):
+     print(next(evaluator))
 ```
 ```python
 1.0          # P_0(0.5)
@@ -47,16 +50,17 @@ for k, val in enumerate(evaluator):
 -0.2890625   # P_4(0.5)
 ```
 Other ways of getting the first `n` items are
+<!--exdown-skip-->
 ```python
 evaluator = Eval(x, "normal")
 vals = [next(evaluator) for _ in range(n)]
 
 import itertools
-vals = list(itertools.islice(Eval(x, "normal"), n + 1))
+vals = list(itertools.islice(Eval(x, "normal"), n))
 ```
-Instead of evaluating at only one point, you can provide an array of arbitrary shape for
-`x`. The polynomials will then be evaluated for all points at once. You can also use
-sympy for symbolic computation:
+Instead of evaluating at only one point, you can provide any array for `x`; the
+polynomials will then be evaluated for all points at once. You can also use sympy for
+symbolic computation:
 ```python
 import itertools
 import orthopy
@@ -65,8 +69,8 @@ import sympy
 x = sympy.Symbol("x")
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
-for level in itertools.islice(evaluator, 5):
-     print(sympy.expand(level))
+for val in itertools.islice(evaluator, 5):
+     print(sympy.expand(val))
 ```
 ```
 1
@@ -82,11 +86,10 @@ All `Eval` methods have a `scaling` argument which can be set to three values:
   * `"classical"`: The maximum value is 1 (or  (n+alpha over n)).
   * `"normal"`: The integral of the squared function over the domain is 1.
 
-For univariate ("one-dimensional") integrals, every level contains one functions. For
-bivariate ("two-dimensional") functions, every level will contain one functions more
-than the previous.
-
-See the trees for triangles and disks below.
+For univariate ("one-dimensional") integrals, every new iterationcontains one function.
+For bivariate ("two-dimensional") functions, every level will contain one function more
+than the previous, and it's getting continues this way for multivariate families.  See
+the tree plots below.
 
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
@@ -97,13 +100,23 @@ Legendre             |  Chebyshev 1       |  Chebyshev 2  |
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
-
+<!--exdown-skip-->
 ```python
+import orthopy
+
 orthopy.c1.legendre.Eval(x, "normal")
 orthopy.c1.chebyshev1.Eval(x, "normal")
 orthopy.c1.chebyshev2.Eval(x, "normal")
 orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
 orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
+```
+
+The plots above are generated with
+```python
+import orthopy
+
+orthopy.c1.jacobi.show(5, 0.0, 0.0, "normal")
+# plot, savefig also exist
 ```
 
 Recurrence coefficients can be explicitly retrieved by
@@ -126,20 +139,11 @@ for k in range(5):
 ```
 
 
-#### Associated Legendre "polynomials"
-
-<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
-
-```python
-evaluator = orthopy.c1.associated_legendre.Eval(
-    x, phi=None, standardization="natural", with_condon_shortley_phase=True
-)
-```
-
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
 <img src="https://nschloe.github.io/orthopy/e1r.svg" width="45%">
 
 (Generalized) Laguerre polynomials.
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 ```
@@ -149,15 +153,32 @@ evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 <img src="https://nschloe.github.io/orthopy/e1r2.svg" width="45%">
 
 Hermite polynomials.
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.e1r2.Eval(x, "normal")
 ```
 All polynomials are normalized over the measure.
 
 
-### Triangle (_T<sub>2</sub>_)
+#### Associated Legendre "polynomials"
+<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
+Not all of those are polynomials, so they should really be called associated Legendre
+_functions_. At the <i>k</i>th iteration, they contain _2k+1_ functions, indexed from
+_-k_ to _k_. (See the color grouping in the above plot.)
+<!--exdown-skip-->
+```python
+evaluator = orthopy.c1.associated_legendre.Eval(
+    x, phi=None, standardization="natural", with_condon_shortley_phase=True
+)
+```
+
+### Triangle (_T<sub>2</sub>_)
 <img src="https://nschloe.github.io/orthopy/triangle-tree.png" width="40%">
+
+orthopy's triangle orthogonal polynomials are evaluated in terms of [barycentric
+coordinates](https://en.wikipedia.org/wiki/Barycentric_coordinate_system), so the
+`X.shape[0]` has to be 3.
 
 ```python
 import orthopy
@@ -195,11 +216,28 @@ evaluator = orthopy.s2.xu.Eval(x, "normal")
 Complex-valued _spherical harmonics,_ plotted with
 [cplot](https://github.com/nschloe/cplot/) coloring (black=zero, green=real positive,
 pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
-in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
-
+in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>th
+level.
+<!--exdown-skip-->
 ```python
-evaluator = orthopy.u3.Eval(x, scaling="quantum mechanic")
+evaluator = orthopy.u3.Eval(
+    x,
+    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+)
+
+evaluator = orthopy.u3.EvalPolar(
+    polar, azimuthal,
+    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+)
 ```
+To generate the above plot, write the tree mesh to a file
+```python
+import orthopy
+
+orthopy.u3.write_tree("u3.vtk", 5, "quantum mechanic")
+```
+and open it with [ParaView](https://www.paraview.org/). Select the _srgb1_ data set and
+turn off _Map Scalars_.
 
 ### _n_-Cube (_C<sub>n</sub>_)
 
@@ -207,6 +245,7 @@ evaluator = orthopy.u3.Eval(x, scaling="quantum mechanic")
 :-------------------------:|:------------------:|:---------------:|
 C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.cn.Eval(X)
 ```
@@ -219,6 +258,7 @@ determined by `X.shape[0]`.
 :-------------------------:|:------------------:|:---------------:|
 _E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></sup>_     | _E<sub>3</sub><sup>r<sup>2</sup></sup>_  |
 
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.enr2.Eval(
     x,
@@ -231,8 +271,16 @@ All polynomials are normalized over the measure. The dimensionality is determine
 
 ### Other tools
 
+ * Generating recurrence coefficients for 1D domains with
+   [Stieltjes](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#stieltjes),
+   [Golub-Welsch](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#golub-welsch),
+   [Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#chebyshev), and
+   [modified
+   Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#modified-chebyshev).
+
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
+   <!--exdown-skip-->
    ```python
    vals = orthopy.c1.clenshaw(a, alpha, beta, t)
    ```
