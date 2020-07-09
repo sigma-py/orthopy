@@ -47,7 +47,7 @@ class Eval(Eval135):
                 X[0] + imag_unit * X[1],
             ]
         else:
-            # real-valued, but not always a polynomial; see associated legendre
+            # real-valued, but not always a polynomial; see associated Legendre
             # functions
             sqrt = sympy.sqrt if symbolic else numpy.sqrt
             a = sqrt(X[0] ** 2 + X[1] ** 2)

@@ -26,18 +26,20 @@ arithmetic_](#symbolic-and-numerical-computation).
 
 ### Basic usage
 
+Install orthopy from [pypi](https://pypi.org/project/orthopy) via
+```
+pip install orthopy
+```
 The main function of all submodules is the iterator `Eval` which evaluates the series of
-orthogonal polynomials with increasing degree, e.g.,
+orthogonal polynomials with increasing degree at given points, e.g.,
 ```python
 import orthopy
 
 x = 0.5
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
-for k, val in enumerate(evaluator):
-     print(val)
-     if k == 4:
-         break
+for _ in range(5):
+     print(next(evaluator))
 ```
 ```python
 1.0          # P_0(0.5)
@@ -52,11 +54,11 @@ evaluator = Eval(x, "normal")
 vals = [next(evaluator) for _ in range(n)]
 
 import itertools
-vals = list(itertools.islice(Eval(x, "normal"), n + 1))
+vals = list(itertools.islice(Eval(x, "normal"), n))
 ```
-Instead of evaluating at only one point, you can provide an array of arbitrary shape for
-`x`. The polynomials will then be evaluated for all points at once. You can also use
-sympy for symbolic computation:
+Instead of evaluating at only one point, you can provide any array for `x`; the
+polynomials will then be evaluated for all points at once. You can also use sympy for
+symbolic computation:
 ```python
 import itertools
 import orthopy
@@ -65,8 +67,8 @@ import sympy
 x = sympy.Symbol("x")
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
-for level in itertools.islice(evaluator, 5):
-     print(sympy.expand(level))
+for val in itertools.islice(evaluator, 5):
+     print(sympy.expand(val))
 ```
 ```
 1
@@ -195,11 +197,27 @@ evaluator = orthopy.s2.xu.Eval(x, "normal")
 Complex-valued _spherical harmonics,_ plotted with
 [cplot](https://github.com/nschloe/cplot/) coloring (black=zero, green=real positive,
 pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
-in the middle are real-valued. The complex angle takes _n_ turns on the _n_th level.
-
+in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>th
+level.
 ```python
-evaluator = orthopy.u3.Eval(x, scaling="quantum mechanic")
+evaluator = orthopy.u3.Eval(
+    x,
+    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+)
+
+evaluator = orthopy.u3.EvalPolar(
+    polar, azimuthal,
+    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+)
 ```
+To generate the above plot, write the tree mesh to a file
+```python
+import orthopy
+
+orthopy.u3.write_tree("u3.vtk", 5, "normal")
+```
+and open it with [ParaView](https://www.paraview.org/). Select the _srgb1_ data set and
+turn off _Map Scalars_.
 
 ### _n_-Cube (_C<sub>n</sub>_)
 
