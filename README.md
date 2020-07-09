@@ -19,14 +19,14 @@ orthopy provides various orthogonal polynomial classes for
 [disks](#disk-s2),
 [spheres](#sphere-u2),
 [n-cubes](#n-cube-cn),
-[nD space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
-All computations are done using numerically stable recurrence schemes.
-Furthermore, all functions are fully vectorized and can return results in [_exact
-arithmetic_](#symbolic-and-numerical-computation).
+[the nD space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
+and more.
+All computations are done using numerically stable recurrence schemes.  Furthermore, all
+functions are fully vectorized and can return results in _exact arithmetic_.
 
 ### Basic usage
 
-Install orthopy from [pypi](https://pypi.org/project/orthopy) via
+Install orthopy from [PyPi](https://pypi.org/project/orthopy) via
 ```
 pip install orthopy
 ```
@@ -86,13 +86,12 @@ All `Eval` methods have a `scaling` argument which can be set to three values:
   * `"classical"`: The maximum value is 1 (or  (n+alpha over n)).
   * `"normal"`: The integral of the squared function over the domain is 1.
 
-For univariate ("one-dimensional") integrals, every new iterationcontains one function.
-For bivariate ("two-dimensional") functions, every level will contain one function more
-than the previous, and it's getting continues this way for multivariate families.  See
-the tree plots below.
+For univariate ("one-dimensional") integrals, every new iteration contains one function.
+For bivariate ("two-dimensional") domains, every level will contain one function more
+than the previous, and similarly for multivariate families. See the tree plots below.
 
 
-### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
+### Line segment (-1, +1) with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
 
 <img src="https://nschloe.github.io/orthopy/legendre.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev2.svg" width="100%">
 :-------------------:|:------------------:|:-------------:|
@@ -148,23 +147,28 @@ for k in range(5):
 evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 ```
 
-
 ### 1D space with weight function exp(-r<sup>2</sup>)
 <img src="https://nschloe.github.io/orthopy/e1r2.svg" width="45%">
 
-Hermite polynomials.
+Hermite polynomials come in two standardizations:
+
+  * `"physicists"` (against the weight function `exp(-x ** 2)`
+  * `"probabilists"` (against the weight function `1 / sqrt(2 * pi) * exp(-x ** 2 / 2)`
+
 <!--exdown-skip-->
 ```python
-evaluator = orthopy.e1r2.Eval(x, "normal")
+evaluator = orthopy.e1r2.Eval(
+    x,
+    "probabilists",  # or "physicists"
+    "normal"
+)
 ```
-All polynomials are normalized over the measure.
-
 
 #### Associated Legendre "polynomials"
 <img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
 Not all of those are polynomials, so they should really be called associated Legendre
-_functions_. At the <i>k</i>th iteration, they contain _2k+1_ functions, indexed from
+_functions_. The <i>k</i>th iteration contains _2k+1_ functions, indexed from
 _-k_ to _k_. (See the color grouping in the above plot.)
 <!--exdown-skip-->
 ```python
@@ -196,7 +200,8 @@ Xu            |  [Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials)   
 
 orthopy contains several families of orthogonal polynomials on the unit disk: After
 [Xu](https://arxiv.org/abs/1701.02709),
-[Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials), and modified Zernike.
+[Zernike](https://en.wikipedia.org/wiki/Zernike_polynomials), and a simplified version
+of Zernike polynomials.
 
 ```python
 import orthopy
@@ -245,12 +250,15 @@ turn off _Map Scalars_.
 :-------------------------:|:------------------:|:---------------:|
 C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
-<!--exdown-skip-->
-```python
-evaluator = orthopy.cn.Eval(X)
-```
+Jacobi product polynomials.
 All polynomials are normalized on the n-dimensional cube. The dimensionality is
 determined by `X.shape[0]`.
+
+<!--exdown-skip-->
+```python
+evaluator = orthopy.cn.Eval(X, alpha=0, beta=0)
+values, degrees = next(evaluator)
+```
 
 ### <i>n</i>D space with weight function exp(-r<sup>2</sup>) (_E<sub>n</sub><sup>r<sup>2</sup></sup>_)
 
@@ -258,15 +266,18 @@ determined by `X.shape[0]`.
 :-------------------------:|:------------------:|:---------------:|
 _E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></sup>_     | _E<sub>3</sub><sup>r<sup>2</sup></sup>_  |
 
+Hermite product polynomials.
+All polynomials are normalized over the measure. The dimensionality is determined by
+`X.shape[0]`.
+
 <!--exdown-skip-->
 ```python
 evaluator = orthopy.enr2.Eval(
     x,
     standardization="probabilists"  # or "physicists"
 )
+values, degrees = next(evaluator)
 ```
-All polynomials are normalized over the measure. The dimensionality is determined by
-`X.shape[0]`.
 
 
 ### Other tools
@@ -277,6 +288,13 @@ All polynomials are normalized over the measure. The dimensionality is determine
    [Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#chebyshev), and
    [modified
    Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#modified-chebyshev).
+
+ * The the sanity of recurrence coefficients with test 3 from [Gautschi's article](https://doi.org/10.1007/BF02218441):
+   computing the weighted sum of orthogonal polynomials:
+   <!--exdown-skip-->
+   ```python
+   orthopy.tools.gautschi_test_3(moments, alpha, beta)
+   ```
 
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:

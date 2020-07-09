@@ -54,6 +54,8 @@ def golub_welsch(moments):
     return alpha, beta
 
 
+# We could make stieltjes() an iterator with __next__() easily enough, but the same
+# isn't possible to chebyshev(). For the sake of consistency, keep it a function.
 def stieltjes(integrate, n):
     t = sympy.Symbol("t")
 
