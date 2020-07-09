@@ -50,6 +50,7 @@ for _ in range(5):
 -0.2890625   # P_4(0.5)
 ```
 Other ways of getting the first `n` items are
+<!--exdown-skip-->
 ```python
 evaluator = Eval(x, "normal")
 vals = [next(evaluator) for _ in range(n)]
@@ -99,6 +100,7 @@ Legendre             |  Chebyshev 1       |  Chebyshev 2  |
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
+<!--exdown-skip-->
 ```python
 import orthopy
 
@@ -141,6 +143,7 @@ for k in range(5):
 <img src="https://nschloe.github.io/orthopy/e1r.svg" width="45%">
 
 (Generalized) Laguerre polynomials.
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 ```
@@ -150,6 +153,7 @@ evaluator = orthopy.e1r.Eval(x, alpha=0, scaling="normal")
 <img src="https://nschloe.github.io/orthopy/e1r2.svg" width="45%">
 
 Hermite polynomials.
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.e1r2.Eval(x, "normal")
 ```
@@ -162,7 +166,7 @@ All polynomials are normalized over the measure.
 Not all of those are polynomials, so they should really be called associated Legendre
 _functions_. At the <i>k</i>th iteration, they contain _2k+1_ functions, indexed from
 _-k_ to _k_. (See the color grouping in the above plot.)
-
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.c1.associated_legendre.Eval(
     x, phi=None, standardization="natural", with_condon_shortley_phase=True
@@ -214,6 +218,7 @@ Complex-valued _spherical harmonics,_ plotted with
 pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
 in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>th
 level.
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.u3.Eval(
     x,
@@ -229,7 +234,7 @@ To generate the above plot, write the tree mesh to a file
 ```python
 import orthopy
 
-orthopy.u3.write_tree("u3.vtk", 5, "normal")
+orthopy.u3.write_tree("u3.vtk", 5, "quantum mechanic")
 ```
 and open it with [ParaView](https://www.paraview.org/). Select the _srgb1_ data set and
 turn off _Map Scalars_.
@@ -240,6 +245,7 @@ turn off _Map Scalars_.
 :-------------------------:|:------------------:|:---------------:|
 C<sub>1</sub> (Legendre)   |  C<sub>2</sub>     |  C<sub>3</sub>  |
 
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.cn.Eval(X)
 ```
@@ -252,6 +258,7 @@ determined by `X.shape[0]`.
 :-------------------------:|:------------------:|:---------------:|
 _E<sub>1</sub><sup>r<sup>2</sup></sup>_   |  _E<sub>2</sub><sup>r<sup>2</sup></sup>_     | _E<sub>3</sub><sup>r<sup>2</sup></sup>_  |
 
+<!--exdown-skip-->
 ```python
 evaluator = orthopy.enr2.Eval(
     x,
@@ -266,6 +273,7 @@ All polynomials are normalized over the measure. The dimensionality is determine
 
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
+   <!--exdown-skip-->
    ```python
    vals = orthopy.c1.clenshaw(a, alpha, beta, t)
    ```
