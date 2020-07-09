@@ -278,6 +278,13 @@ All polynomials are normalized over the measure. The dimensionality is determine
    [modified
    Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#modified-chebyshev).
 
+ * The the sanity of recurrence coefficients with test 3 from [Gautschi's article](https://doi.org/10.1007/BF02218441):
+   computing the weighted sum of orthogonal polynomials:
+   <!--exdown-skip-->
+   ```python
+   orthopy.tools.gautschi_test_3(moments, alpha, beta)
+   ```
+
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
    <!--exdown-skip-->
