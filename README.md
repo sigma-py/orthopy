@@ -271,6 +271,13 @@ All polynomials are normalized over the measure. The dimensionality is determine
 
 ### Other tools
 
+ * Generating recurrence coefficients for 1D domains with
+   [Stieltjes](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#stieltjes),
+   [Golub-Welsch](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#golub-welsch),
+   [Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#chebyshev), and
+   [modified
+   Chebyshev](https://github.com/nschloe/orthopy/wiki/Generating-1D-recurrence-coefficients-for-a-given-weight#modified-chebyshev).
+
  * [Clenshaw algorithm](https://en.wikipedia.org/wiki/Clenshaw_algorithm) for
    computing the weighted sum of orthogonal polynomials:
    <!--exdown-skip-->
