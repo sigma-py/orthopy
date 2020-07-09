@@ -7,8 +7,21 @@ import sympy
 import orthopy
 
 
+def test_stieltjes():
+    n = 5
+    alpha0, beta0 = orthopy.tools.stieltjes(
+        lambda t, ft: sympy.integrate(ft, (t, -1, 1)), n
+    )
+
+    rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=True)
+    _, alpha1, beta1 = numpy.array([rc[k] for k in range(n)]).T
+
+    assert (alpha0 == alpha1).all()
+    assert (beta0 == beta1).all()
+
+
 def test_golub_welsch(tol=1.0e-14):
-    """Test the custom Gauss generator with the weight function x**2.
+    """Test the custom Gauss generator with the weight function x ** 2.
     """
     alpha = 2.0
 
@@ -17,11 +30,10 @@ def test_golub_welsch(tol=1.0e-14):
     #
     #                                     / 0 if k is odd,
     #    int_{-1}^{+1} |x^alpha| x^k dx ={
-    #                                     \ 2/(alpha+k+1) if k is even.
+    #                                     \ 2 / (alpha + k + 1) if k is even.
     #
     n = 5
-    k = numpy.arange(2 * n + 1)
-    moments = (1.0 + (-1.0) ** k) / (k + alpha + 1)
+    moments = [0 if k % 2 == 1 else 2 / (k + alpha + 1) for k in range(2 * n + 1)]
     alpha, beta = orthopy.tools.golub_welsch(moments)
 
     assert numpy.all(abs(alpha) < tol)
@@ -94,16 +106,3 @@ def test_chebyshev_modified(tol=1.0e-14):
     assert numpy.all(abs(alpha) < tol)
     assert math.isnan(beta[0])
     assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
-
-
-def test_stieltjes():
-    n = 5
-    alpha0, beta0 = orthopy.tools.stieltjes(
-        lambda t, ft: sympy.integrate(ft, (t, -1, 1)), n
-    )
-
-    rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=True)
-    _, alpha1, beta1 = numpy.array([rc[k] for k in range(n)]).T
-
-    assert (alpha0 == alpha1).all()
-    assert (beta0 == beta1).all()

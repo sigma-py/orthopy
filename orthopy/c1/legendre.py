@@ -47,10 +47,10 @@ class Eval(gegenbauer.Eval):
         63*sqrt(22)*x**5/16 - 35*sqrt(22)*x**3/8 + 15*sqrt(22)*x/16
     """
 
-    def __init__(self, X, scaling, symbolic=False):
+    def __init__(self, X, scaling, symbolic="auto"):
         super().__init__(X, 0, scaling, symbolic)
 
 
 class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):
-    def __init__(self, scaling, symbolic=False):
+    def __init__(self, scaling, symbolic):
         super().__init__(0, scaling, symbolic)
