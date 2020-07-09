@@ -135,7 +135,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
         alpha.append(ak + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0])
         beta.append(sigma[0][0] / sigma[1][0])
 
-    return alpha, beta
+    return numpy.asarray(alpha), numpy.asarray(beta)
 
 
 def gautschi_test_3(moments, alpha, beta):

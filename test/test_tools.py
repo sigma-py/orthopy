@@ -99,9 +99,7 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments[2] = 8.0 / 45.0
 
     rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=False)
-    _, b, c = numpy.array([rc[k] for k in range(2 * n)]).T
-
-    alpha, beta = orthopy.tools.chebyshev_modified(moments, b, c)
+    alpha, beta = orthopy.tools.chebyshev_modified(moments, rc)
 
     assert numpy.all(abs(alpha) < tol)
     assert math.isnan(beta[0])
