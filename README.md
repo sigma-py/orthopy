@@ -6,7 +6,7 @@
 [![gh-actions](https://img.shields.io/github/workflow/status/nschloe/orthopy/ci?style=flat-square)](https://github.com/nschloe/orthopy/actions?query=workflow%3Aci)
 [![codecov](https://img.shields.io/codecov/c/github/nschloe/orthopy.svg?style=flat-square)](https://codecov.io/gh/nschloe/orthopy)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
-[![orthogonal](https://img.shields.io/badge/orthogonal-definitely-ff69b4.svg?style=flat-square)](https://github.com/nschloe/orthopy)
+[![orthogonal](https://img.shields.io/badge/orthogonal-yes-ff69b4.svg?style=flat-square)](https://github.com/nschloe/orthopy)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/orthopy.svg?style=flat-square)](https://pypi.org/pypi/orthopy/)
 [![PyPi Version](https://img.shields.io/pypi/v/orthopy.svg?style=flat-square)](https://pypi.org/project/orthopy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1173151.svg?style=flat-square)](https://doi.org/10.5281/zenodo.1173151)
@@ -31,7 +31,8 @@ Install orthopy from [pypi](https://pypi.org/project/orthopy) via
 pip install orthopy
 ```
 The main function of all submodules is the iterator `Eval` which evaluates the series of
-orthogonal polynomials with increasing degree at given points, e.g.,
+orthogonal polynomials with increasing degree at given points using a recurrence
+relation, e.g.,
 ```python
 import orthopy
 
@@ -84,11 +85,10 @@ All `Eval` methods have a `scaling` argument which can be set to three values:
   * `"classical"`: The maximum value is 1 (or  (n+alpha over n)).
   * `"normal"`: The integral of the squared function over the domain is 1.
 
-For univariate ("one-dimensional") integrals, every level contains one functions. For
-bivariate ("two-dimensional") functions, every level will contain one functions more
-than the previous.
-
-See the trees for triangles and disks below.
+For univariate ("one-dimensional") integrals, every new iterationcontains one function.
+For bivariate ("two-dimensional") functions, every level will contain one function more
+than the previous, and it's getting continues this way for multivariate families.  See
+the tree plots below.
 
 
 ### Line segment [-1, +1] with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
@@ -99,13 +99,22 @@ Legendre             |  Chebyshev 1       |  Chebyshev 2  |
 
 Jacobi, Gegenbauer (α=β), Chebyshev 1 (α=β=-1/2), Chebyshev 2 (α=β=1/2), Legendre
 (α=β=0) polynomials.
-
 ```python
+import orthopy
+
 orthopy.c1.legendre.Eval(x, "normal")
 orthopy.c1.chebyshev1.Eval(x, "normal")
 orthopy.c1.chebyshev2.Eval(x, "normal")
 orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
 orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
+```
+
+The plots above are generated with
+```python
+import orthopy
+
+orthopy.c1.jacobi.show(5, 0.0, 0.0, "normal")
+# plot, savefig also exist
 ```
 
 Recurrence coefficients can be explicitly retrieved by
@@ -128,16 +137,6 @@ for k in range(5):
 ```
 
 
-#### Associated Legendre "polynomials"
-
-<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
-
-```python
-evaluator = orthopy.c1.associated_legendre.Eval(
-    x, phi=None, standardization="natural", with_condon_shortley_phase=True
-)
-```
-
 ### 1D half-space with weight function x<sup>α</sup> exp(-r)
 <img src="https://nschloe.github.io/orthopy/e1r.svg" width="45%">
 
@@ -157,9 +156,25 @@ evaluator = orthopy.e1r2.Eval(x, "normal")
 All polynomials are normalized over the measure.
 
 
-### Triangle (_T<sub>2</sub>_)
+#### Associated Legendre "polynomials"
+<img src="https://nschloe.github.io/orthopy/associated-legendre.svg" width="45%">
 
+Not all of those are polynomials, so they should really be called associated Legendre
+_functions_. At the <i>k</i>th iteration, they contain _2k+1_ functions, indexed from
+_-k_ to _k_. (See the color grouping in the above plot.)
+
+```python
+evaluator = orthopy.c1.associated_legendre.Eval(
+    x, phi=None, standardization="natural", with_condon_shortley_phase=True
+)
+```
+
+### Triangle (_T<sub>2</sub>_)
 <img src="https://nschloe.github.io/orthopy/triangle-tree.png" width="40%">
+
+orthopy's triangle orthogonal polynomials are evaluated in terms of [barycentric
+coordinates](https://en.wikipedia.org/wiki/Barycentric_coordinate_system), so the
+`X.shape[0]` has to be 3.
 
 ```python
 import orthopy
