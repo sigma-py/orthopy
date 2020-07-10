@@ -227,12 +227,12 @@ in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>
 level.
 <!--exdown-skip-->
 ```python
-evaluator = orthopy.u3.Eval(
+evaluator = orthopy.u3.EvalCartesian(
     x,
     scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
 )
 
-evaluator = orthopy.u3.EvalPolar(
+evaluator = orthopy.u3.EvalSpherical(
     polar, azimuthal,
     scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
 )

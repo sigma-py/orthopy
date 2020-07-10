@@ -4,7 +4,7 @@ import sympy
 from ..helpers import Eval135
 
 
-class Eval(Eval135):
+class EvalCartesian(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
@@ -56,7 +56,7 @@ class Eval(Eval135):
         super().__init__(rc, X[2], xi, symbolic=symbolic)
 
 
-class EvalPolar(Eval135):
+class EvalSpherical(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
