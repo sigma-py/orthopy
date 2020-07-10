@@ -91,7 +91,7 @@ For bivariate ("two-dimensional") domains, every level will contain one function
 than the previous, and similarly for multivariate families. See the tree plots below.
 
 
-### Line segment (-1, +1) with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
+### Line segment (-1, +1) with weight function (1-x)<sup>α</sup> (1+x)<sup>β</sup>
 
 <img src="https://nschloe.github.io/orthopy/legendre.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev2.svg" width="100%">
 :-------------------:|:------------------:|:-------------:|
@@ -122,8 +122,10 @@ Recurrence coefficients can be explicitly retrieved by
 ```python
 import orthopy
 
-rc = orthopy.c1.jacobi.RCMonic(alpha=0, beta=0, symbolic=True)
-# RCClassical, RCNormal
+rc = orthopy.c1.jacobi.RecurrenceCoefficients(
+    "monic",  # or "classical", "normal"
+    alpha=0, beta=0, symbolic=True
+)
 print(rc.p0)
 for k in range(5):
     print(rc[k])
