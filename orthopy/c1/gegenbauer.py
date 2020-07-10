@@ -25,5 +25,5 @@ class Eval(jacobi.Eval):
 
 
 class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
-    def __init__(self, lmbda, scaling, symbolic="auto"):
-        super().__init__(lmbda, lmbda, scaling, symbolic=symbolic)
+    def __init__(self, scaling, lmbda, symbolic="auto"):
+        super().__init__(scaling, lmbda, lmbda, symbolic=symbolic)

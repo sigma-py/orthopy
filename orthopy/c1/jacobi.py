@@ -59,16 +59,26 @@ class Eval(Eval1D):
 
 
 class RecurrenceCoefficients:
-    def __init__(self, alpha, beta, scaling, symbolic):
-        cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
+    def __init__(self, scaling, alpha, beta, symbolic):
+        cls = {"monic": _RCMonic, "classical": _RCClassical, "normal": _RCNormal}[
+            scaling
+        ]
         self.rc = cls(alpha, beta, symbolic)
         self.p0 = self.rc.p0
+
+        gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
+        self.int_1 = (
+            2 ** (alpha + beta + 1)
+            * gamma(alpha + 1)
+            * gamma(beta + 1)
+            / gamma(alpha + beta + 2)
+        )
 
     def __getitem__(self, N):
         return self.rc[N]
 
 
-class RCMonic:
+class _RCMonic:
     """Generate the recurrence coefficients a_k, b_k, c_k in
 
     P_{k+1}(x) = (a_k x - b_k) * P_{k}(x) - c_k * P_{k-1}(x)
@@ -130,7 +140,7 @@ class RCMonic:
         return a, b, c
 
 
-class RCClassical:
+class _RCClassical:
     def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.nan = None if symbolic else math.nan
@@ -138,14 +148,6 @@ class RCClassical:
         self.beta = beta
 
         self.p0 = 1 if symbolic else 1.0
-
-        # gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
-        # self.int_1 = (
-        #     2 ** (alpha + beta + 1)
-        #     * gamma(alpha + 1)
-        #     * gamma(beta + 1)
-        #     / gamma(alpha + beta + 2)
-        # )
 
     def __getitem__(self, N):
         frac = self.frac
@@ -174,7 +176,7 @@ class RCClassical:
         return a, b, c
 
 
-class RCNormal:
+class _RCNormal:
     def __init__(self, alpha, beta, symbolic):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.sqrt = sympy.sqrt if symbolic else math.sqrt

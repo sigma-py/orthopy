@@ -4,7 +4,7 @@ import numpy
 
 
 def plot_single(
-    name, evaluator, degrees, res=50, scaling="normal", colorbar=True, cmap="RdBu_r"
+    name, evaluator, degrees, res=50, scaling="normal", colorbar=True, cmap="RdBu_r",
 ):
     import meshzoo
     from matplotlib import pyplot as plt
@@ -43,11 +43,11 @@ def plot_single(
     )
 
 
-def savefig_tree(filename, *args, **kwargs):
+def savefig_tree(filename, *args, dpi=None, **kwargs):
     from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
-    plt.savefig(filename, transparent=True, bbox_inches="tight")
+    plt.savefig(filename, dpi=dpi, transparent=True, bbox_inches="tight")
 
 
 def show_tree(*args, **kwargs):
@@ -68,6 +68,7 @@ def plot_tree(
     colorbar=False,
     cmap="RdBu_r",
     clim=None,
+    show_title=True,
 ):
     import dufte
     import meshzoo
@@ -100,4 +101,5 @@ def plot_tree(
     if colorbar:
         plt.colorbar()
 
-    plt.title(f"{name} orthogonal polynomials on the disk ({scaling})")
+    if show_title:
+        plt.title(f"{name} orthogonal polynomials on the disk ({scaling})")

@@ -43,6 +43,9 @@ class RecurrenceCoefficients:
         self.rc = cls(alpha, symbolic)
         self.p0 = self.rc.p0
 
+        gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
+        self.int_1 = gamma(alpha + 1)
+
     def __getitem__(self, N):
         return self.rc[N]
 
