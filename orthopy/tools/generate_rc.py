@@ -50,8 +50,9 @@ def golub_welsch(moments):
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    beta = numpy.hstack([Rd[0], Rd[1:-1] / Rd[:-2]]) ** 2
-    return alpha, beta
+    beta = numpy.hstack([math.nan, Rd[1:-1] / Rd[:-2]]) ** 2
+    int_1 = Rd[0]
+    return alpha, beta, int_1
 
 
 # We could make stieltjes() an iterator with __next__() easily enough, but the same
@@ -70,18 +71,19 @@ def stieltjes(integrate, n):
 
         if k == 0:
             pi[0] = 1
+            mu[0] = integrate(t, pi[0] ** 2)
+            alpha[k] = integrate(t, t * pi[0] ** 2) / mu[0]
+            int_1 = mu[0]
         else:
             pi[0] = (t - alpha[k - 1]) * pi[1]
             if k > 1:
                 pi[0] -= beta[k - 1] * pi[2]
 
-        mu[0] = integrate(t, pi[0] ** 2)
-        alpha[k] = integrate(t, t * pi[0] ** 2) / mu[0]
-
-        if k > 0:
+            mu[0] = integrate(t, pi[0] ** 2)
+            alpha[k] = integrate(t, t * pi[0] ** 2) / mu[0]
             beta[k] = mu[0] / mu[1]
 
-    return alpha, beta
+    return alpha, beta, int_1
 
 
 def chebyshev(moments):
@@ -112,6 +114,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
     alpha = []
     beta = []
     sigma = [None, None, None]
+    int_1 = nu[0]
 
     if n > 0:
         k = 0
@@ -137,7 +140,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
         alpha.append(ak + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0])
         beta.append(sigma[0][0] / sigma[1][0])
 
-    return numpy.asarray(alpha), numpy.asarray(beta)
+    return numpy.asarray(alpha), numpy.asarray(beta), int_1
 
 
 def gautschi_test_3(moments, alpha, beta):

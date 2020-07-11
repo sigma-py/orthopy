@@ -9,7 +9,7 @@ import orthopy
 
 def test_stieltjes():
     n = 5
-    alpha0, beta0 = orthopy.tools.stieltjes(
+    alpha0, beta0, int_1 = orthopy.tools.stieltjes(
         lambda t, ft: sympy.integrate(ft, (t, -1, 1)), n
     )
 
@@ -18,6 +18,7 @@ def test_stieltjes():
 
     assert (alpha0 == alpha1).all()
     assert (beta0 == beta1).all()
+    assert int_1 == rc.int_1
 
 
 def test_golub_welsch(tol=1.0e-14):
@@ -34,14 +35,15 @@ def test_golub_welsch(tol=1.0e-14):
     #
     n = 5
     moments = [0 if k % 2 == 1 else 2 / (k + alpha + 1) for k in range(2 * n + 1)]
-    alpha, beta = orthopy.tools.golub_welsch(moments)
+    alpha, beta, int_1 = orthopy.tools.golub_welsch(moments)
 
     assert numpy.all(abs(alpha) < tol)
-    assert abs(beta[0] - 2.0 / 3.0) < tol
+    assert math.isnan(beta[0])
     assert abs(beta[1] - 3.0 / 5.0) < tol
     assert abs(beta[2] - 4.0 / 35.0) < tol
     assert abs(beta[3] - 25.0 / 63.0) < tol
     assert abs(beta[4] - 16.0 / 99.0) < tol
+    assert abs(int_1 - math.sqrt(2.0 / 3.0)) < tol
 
     orthopy.tools.gautschi_test_3(moments, alpha, beta)
 
@@ -62,7 +64,7 @@ def test_chebyshev(dtype):
     if dtype == sympy.S:
         moments = [sympy.S(1 + (-1) ** kk) / (kk + alpha + 1) for kk in range(2 * n)]
 
-        alpha, beta = orthopy.tools.chebyshev(moments)
+        alpha, beta, int_1 = orthopy.tools.chebyshev(moments)
 
         assert all([a == 0 for a in alpha])
         assert math.isnan(beta[0])
@@ -70,17 +72,19 @@ def test_chebyshev(dtype):
             beta[1:]
             == [sympy.S(3) / 5, sympy.S(4) / 35, sympy.S(25) / 63, sympy.S(16) / 99]
         ).all()
+        assert int_1 == sympy.S(2) / 3
     else:
         assert dtype == numpy.float
         tol = 1.0e-14
         k = numpy.arange(2 * n)
         moments = (1.0 + (-1.0) ** k) / (k + alpha + 1)
 
-        alpha, beta = orthopy.tools.chebyshev(moments)
+        alpha, beta, int_1 = orthopy.tools.chebyshev(moments)
 
         assert numpy.all(abs(alpha) < tol)
         assert numpy.isnan(beta[0])
         assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
+        assert abs(int_1 - 2 / 3) < tol
 
 
 def test_chebyshev_modified(tol=1.0e-14):
@@ -99,8 +103,9 @@ def test_chebyshev_modified(tol=1.0e-14):
     moments[2] = 8.0 / 45.0
 
     rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=False)
-    alpha, beta = orthopy.tools.chebyshev_modified(moments, rc)
+    alpha, beta, int_1 = orthopy.tools.chebyshev_modified(moments, rc)
 
     assert numpy.all(abs(alpha) < tol)
     assert math.isnan(beta[0])
     assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
+    assert abs(int_1 - 2 / 3) < tol
