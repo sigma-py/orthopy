@@ -80,6 +80,10 @@ class RecurrenceCoefficients:
         }[standardization][scaling](symbolic)
         self.p0 = self.rc.p0
 
+        sqrt = sympy.sqrt if symbolic else math.sqrt
+        pi = sympy.pi if symbolic else math.pi
+        self.int_1 = 1.0 if standardization == "probabilists" else sqrt(pi)
+
     def __getitem__(self, N):
         return self.rc[N]
 
