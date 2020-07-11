@@ -48,7 +48,7 @@ class Eval(gegenbauer.Eval):
     """
 
     def __init__(self, X, scaling, symbolic="auto"):
-        super().__init__(X, 0, scaling, symbolic)
+        super().__init__(X, scaling, 0, symbolic)
 
 
 class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):

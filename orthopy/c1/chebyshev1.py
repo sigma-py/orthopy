@@ -55,4 +55,4 @@ class Eval(gegenbauer.Eval):
             symbolic = numpy.asarray(X).dtype == sympy.Basic
 
         lmbda = -sympy.S(1) / 2 if symbolic else -0.5
-        super().__init__(X, lmbda, scaling, symbolic)
+        super().__init__(X, scaling, lmbda, symbolic)
