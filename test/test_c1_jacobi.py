@@ -39,17 +39,17 @@ def test_jacobi_monic(scaling, n, y):
     alpha = 3
     beta = 2
 
-    y2 = get_nth(orthopy.c1.jacobi.Eval(x[2], alpha, beta, scaling, symbolic=True), n)
+    y2 = get_nth(orthopy.c1.jacobi.Eval(x[2], scaling, alpha, beta, symbolic=True), n)
     assert y2 == y[2]
 
-    val = get_nth(orthopy.c1.jacobi.Eval(x, alpha, beta, scaling, symbolic=True), n)
+    val = get_nth(orthopy.c1.jacobi.Eval(x, scaling, alpha, beta, symbolic=True), n)
     assert all(val == y)
 
 
 @pytest.mark.parametrize("symbolic", [True, False])
 def test_jacobi(symbolic):
     n = 5
-    rc = orthopy.c1.jacobi.RCMonic(1, 1, symbolic)
+    rc = orthopy.c1.jacobi.RecurrenceCoefficients("monic", 1, 1, symbolic)
     alpha, beta, gamma = numpy.array([rc[k] for k in range(n)]).T
 
     if symbolic:
@@ -66,8 +66,8 @@ def test_jacobi(symbolic):
 
 
 def test_show(n=5):
-    orthopy.c1.jacobi.show(n, 0, 0, "normal")
-    orthopy.c1.jacobi.savefig("jacobi.svg", n, 0, 0, "normal")
+    orthopy.c1.jacobi.show(n, "normal", 0, 0)
+    orthopy.c1.jacobi.savefig("jacobi.svg", n, "normal", 0, 0)
 
 
 if __name__ == "__main__":

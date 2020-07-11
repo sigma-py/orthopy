@@ -2,7 +2,7 @@ import itertools
 
 import numpy
 
-from .main import Eval
+from .main import EvalCartesian
 
 
 def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
@@ -15,7 +15,7 @@ def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
 
     points, cells = meshzoo.icosa_sphere(res)
 
-    evaluator = Eval(points.T, scaling, complex_valued=True)
+    evaluator = EvalCartesian(points.T, scaling, complex_valued=True)
     vals = next(itertools.islice(evaluator, n, None))[r]
 
     srgb1_vals = cplot.get_srgb1(vals, colorspace="cam16")
@@ -37,7 +37,7 @@ def write_tree(filename, n, scaling, res=20, colors_enhancement=2.5):
 
     points, cells = meshzoo.icosa_sphere(res)
 
-    evaluator = Eval(points.T, scaling, complex_valued=True)
+    evaluator = EvalCartesian(points.T, scaling, complex_valued=True)
     meshes = []
     for L, level in enumerate(itertools.islice(evaluator, n)):
         for k, vals in enumerate(level):

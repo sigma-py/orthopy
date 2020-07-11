@@ -2,7 +2,7 @@ from . import gegenbauer
 
 
 def plot(n, scaling):
-    gegenbauer.plot(n, 0, scaling)
+    gegenbauer.plot(n, scaling, 0)
 
 
 def show(*args, **kwargs):
@@ -48,9 +48,9 @@ class Eval(gegenbauer.Eval):
     """
 
     def __init__(self, X, scaling, symbolic="auto"):
-        super().__init__(X, 0, scaling, symbolic)
+        super().__init__(X, scaling, 0, symbolic)
 
 
 class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):
     def __init__(self, scaling, symbolic):
-        super().__init__(0, scaling, symbolic)
+        super().__init__(scaling, 0, symbolic)

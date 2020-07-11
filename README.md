@@ -91,7 +91,7 @@ For bivariate ("two-dimensional") domains, every level will contain one function
 than the previous, and similarly for multivariate families. See the tree plots below.
 
 
-### Line segment (-1, +1) with weight function (1-x)<sup>α</sup> (1-x)<sup>β</sup>
+### Line segment (-1, +1) with weight function (1-x)<sup>α</sup> (1+x)<sup>β</sup>
 
 <img src="https://nschloe.github.io/orthopy/legendre.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev1.svg" width="100%"> | <img src="https://nschloe.github.io/orthopy/chebyshev2.svg" width="100%">
 :-------------------:|:------------------:|:-------------:|
@@ -106,15 +106,15 @@ import orthopy
 orthopy.c1.legendre.Eval(x, "normal")
 orthopy.c1.chebyshev1.Eval(x, "normal")
 orthopy.c1.chebyshev2.Eval(x, "normal")
-orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
-orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
+orthopy.c1.gegenbauer.Eval(x, "normal", lmbda)
+orthopy.c1.jacobi.Eval(x, "normal", alpha, beta)
 ```
 
 The plots above are generated with
 ```python
 import orthopy
 
-orthopy.c1.jacobi.show(5, 0.0, 0.0, "normal")
+orthopy.c1.jacobi.show(5, "normal", 0.0, 0.0)
 # plot, savefig also exist
 ```
 
@@ -122,8 +122,10 @@ Recurrence coefficients can be explicitly retrieved by
 ```python
 import orthopy
 
-rc = orthopy.c1.jacobi.RCMonic(alpha=0, beta=0, symbolic=True)
-# RCClassical, RCNormal
+rc = orthopy.c1.jacobi.RecurrenceCoefficients(
+    "monic",  # or "classical", "normal"
+    alpha=0, beta=0, symbolic=True
+)
 print(rc.p0)
 for k in range(5):
     print(rc[k])
@@ -225,12 +227,12 @@ in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>
 level.
 <!--exdown-skip-->
 ```python
-evaluator = orthopy.u3.Eval(
+evaluator = orthopy.u3.EvalCartesian(
     x,
     scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
 )
 
-evaluator = orthopy.u3.EvalPolar(
+evaluator = orthopy.u3.EvalSpherical(
     polar, azimuthal,
     scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
 )

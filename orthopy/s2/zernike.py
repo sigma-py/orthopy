@@ -24,11 +24,11 @@ def plot_single(*args, **kwargs):
     ps("Zernike", Eval, *args, **kwargs)
 
 
-def savefig_tree(filename, *args, **kwargs):
+def savefig_tree(filename, *args, dpi=None, **kwargs):
     from matplotlib import pyplot as plt
 
     plot_tree(*args, **kwargs)
-    plt.savefig(filename, transparent=True, bbox_inches="tight")
+    plt.savefig(filename, dpi=dpi, transparent=True, bbox_inches="tight")
 
 
 def show_tree(*args, **kwargs):

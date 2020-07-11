@@ -10,5 +10,5 @@ class Eval(ProductEval):
         if symbolic == "auto":
             symbolic = numpy.asarray(X).dtype == sympy.Basic
 
-        rc = jacobi.RCNormal(alpha, beta, symbolic)
+        rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
         super().__init__(rc, X, symbolic)
