@@ -19,7 +19,7 @@ def show_single(*args, **kwargs):
 def plot_single(*args, **kwargs):
     from .tools import plot_single as ps
 
-    ps("Yu", Eval, *args, **kwargs)
+    ps("Xu", Eval, *args, **kwargs)
 
 
 def savefig_tree(filename, *args, **kwargs):

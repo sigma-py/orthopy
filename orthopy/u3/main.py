@@ -60,9 +60,10 @@ class EvalSpherical(Eval135):
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
     """
 
-    def __init__(self, polar, azimuthal, scaling, complex_valued=True, symbolic="auto"):
+    def __init__(self, theta_phi, scaling, complex_valued=True, symbolic="auto"):
+        assert len(theta_phi) == 2
         if symbolic == "auto":
-            symbolic = numpy.asarray(polar).dtype == sympy.Basic
+            symbolic = numpy.asarray(theta_phi).dtype == sympy.Basic
 
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
@@ -73,12 +74,8 @@ class EvalSpherical(Eval135):
             "schmidt": RCSchmidt(False, symbolic),
         }[scaling]
 
-        sin = sympy.sin if symbolic else numpy.sin
-        cos = sympy.cos if symbolic else numpy.cos
-        exp = sympy.exp if symbolic else numpy.exp
-
-        sin_polar = sin(polar)
-        cos_polar = cos(polar)
+        sin = numpy.vectorize(sympy.sin) if symbolic else numpy.sin
+        cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
 
         # X = [
         #     sin_polar * cos_azimu,
@@ -86,15 +83,20 @@ class EvalSpherical(Eval135):
         #     cos_polar,
         # ]
 
-        xi = [sin_polar, sin_polar]
         if complex_valued:
-            imag_unit = sympy.I if symbolic else 1j
-            xi = [
-                xi[0] / exp(imag_unit * azimuthal),
-                xi[1] * exp(imag_unit * azimuthal),
-            ]
+            sin_theta, sin_phi = sin(theta_phi)
+            cos_theta, cos_phi = cos(theta_phi)
 
-        super().__init__(rc, cos_polar, xi, symbolic=symbolic)
+            imag_unit = sympy.I if symbolic else 1j
+            exp_i_phi = cos_phi + imag_unit * sin_phi
+            xi = [sin_theta / exp_i_phi, sin_theta * exp_i_phi]
+        else:
+            theta = theta_phi[0]
+            sin_theta = sin(theta)
+            cos_theta = cos(theta)
+            xi = [sin_theta, sin_theta]
+
+        super().__init__(rc, cos_theta, xi, symbolic=symbolic)
 
 
 class RCSpherical:
