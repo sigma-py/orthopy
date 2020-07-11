@@ -76,18 +76,19 @@ def test_schmidt_seminormality(n=3):
             assert _integrate_poly(val * _conj(val)) == ref
 
 
-def sph_exact2(theta, phi):
+def sph_exact2(theta_phi):
     # Exact values from
     # <https://en.wikipedia.org/wiki/Table_of_spherical_harmonics>.
     try:
-        assert numpy.all(theta.shape == phi.shape)
-        y0_0 = numpy.full(theta.shape, sqrt(1 / pi) / 2)
+        y0_0 = numpy.full(theta_phi[1:].shape, sqrt(1 / pi) / 2)
     except AttributeError:
         y0_0 = sqrt(1 / pi) / 2
 
     sin = numpy.vectorize(sympy.sin)
     cos = numpy.vectorize(sympy.cos)
     exp = numpy.vectorize(sympy.exp)
+
+    theta, phi = theta_phi
 
     sin_theta = sin(theta)
     cos_theta = cos(theta)
@@ -107,29 +108,29 @@ def sph_exact2(theta, phi):
 
 
 @pytest.mark.parametrize(
-    "theta,phi",
+    "theta_phi",
     [
-        (sympy.S(1) / 10, sympy.S(16) / 5),
-        (sympy.S(1) / 10000, sympy.S(7) / 100000),
+        [sympy.S(1) / 10, sympy.S(16) / 5],
+        [sympy.S(1) / 10000, sympy.S(7) / 100000],
         # (
         #   numpy.array([sympy.S(3)/7, sympy.S(1)/13]),
         #   numpy.array([sympy.S(2)/5, sympy.S(2)/3]),
         # )
     ],
 )
-def test_spherical_harmonics(theta, phi):
-    exacts = sph_exact2(theta, phi)
-    evaluator = orthopy.u3.EvalSpherical(theta, phi, scaling="quantum mechanic")
+def test_spherical_harmonics(theta_phi):
+    exacts = sph_exact2(theta_phi)
+    evaluator = orthopy.u3.EvalSpherical(theta_phi, scaling="quantum mechanic")
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
             assert numpy.all(numpy.array(sympy.simplify(v - e)) == 0)
 
 
-@pytest.mark.parametrize("theta,phi", [(1.0e-1, 16.0 / 5.0), (1.0e-4, 7.0e-5)])
-def test_spherical_harmonics_numpy(theta, phi):
-    exacts = sph_exact2(theta, phi)
-    evaluator = orthopy.u3.EvalSpherical(theta, phi, scaling="quantum mechanic")
+@pytest.mark.parametrize("theta_phi", [[1.0e-1, 16.0 / 5.0], [1.0e-4, 7.0e-5]])
+def test_spherical_harmonics_numpy(theta_phi):
+    exacts = sph_exact2(theta_phi)
+    evaluator = orthopy.u3.EvalSpherical(theta_phi, scaling="quantum mechanic")
 
     cmplx = numpy.vectorize(complex)
     for ex in exacts:

@@ -233,7 +233,7 @@ evaluator = orthopy.u3.EvalCartesian(
 )
 
 evaluator = orthopy.u3.EvalSpherical(
-    polar, azimuthal,
+    theta_phi,  # polar, azimuthal angles
     scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
 )
 ```
