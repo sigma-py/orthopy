@@ -106,15 +106,15 @@ import orthopy
 orthopy.c1.legendre.Eval(x, "normal")
 orthopy.c1.chebyshev1.Eval(x, "normal")
 orthopy.c1.chebyshev2.Eval(x, "normal")
-orthopy.c1.gegenbauer.Eval(x, lmbda, "normal")
-orthopy.c1.jacobi.Eval(x, alpha, beta, "normal")
+orthopy.c1.gegenbauer.Eval(x, "normal", lmbda)
+orthopy.c1.jacobi.Eval(x, "normal", alpha, beta)
 ```
 
 The plots above are generated with
 ```python
 import orthopy
 
-orthopy.c1.jacobi.show(5, 0.0, 0.0, "normal")
+orthopy.c1.jacobi.show(5, "normal", 0.0, 0.0)
 # plot, savefig also exist
 ```
 

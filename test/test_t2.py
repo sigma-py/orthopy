@@ -29,7 +29,7 @@ def op(i, j, x, y):
     # scaling = "monic"
     scaling = "classical"
 
-    iterator = orthopy.c1.jacobi.Eval((x - y) / (x + y), 0, 0, scaling)
+    iterator = orthopy.c1.jacobi.Eval((x - y) / (x + y), scaling, 0, 0)
     val1 = get_nth(iterator, i)
 
     # val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
@@ -42,7 +42,7 @@ def op(i, j, x, y):
         if numpy.isnan(val1):
             val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
-    iterator = orthopy.c1.jacobi.Eval(1 - 2 * (x + y), 2 * i + 1, 0, scaling)
+    iterator = orthopy.c1.jacobi.Eval(1 - 2 * (x + y), scaling, 2 * i + 1, 0)
     val2 = get_nth(iterator, j)
     # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 

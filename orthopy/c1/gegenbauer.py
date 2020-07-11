@@ -1,8 +1,8 @@
 from . import jacobi
 
 
-def plot(n, lmbda, scaling):
-    jacobi.plot(n, lmbda, lmbda, scaling)
+def plot(n, scaling, lmbda):
+    jacobi.plot(n, scaling, lmbda, lmbda)
 
 
 def show(*args, **kwargs):

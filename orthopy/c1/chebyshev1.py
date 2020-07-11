@@ -5,7 +5,7 @@ from . import gegenbauer
 
 
 def plot(n, scaling):
-    gegenbauer.plot(n, -0.5, scaling)
+    gegenbauer.plot(n, scaling, -0.5)
 
 
 def show(*args, **kwargs):
