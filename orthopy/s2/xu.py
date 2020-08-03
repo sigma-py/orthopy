@@ -39,7 +39,7 @@ def show_tree(*args, **kwargs):
 def plot_tree(*args, **kwargs):
     from .tools import plot_tree as pt
 
-    pt("Yu", Eval, *args, **kwargs)
+    pt("Xu", Eval, *args, **kwargs)
 
 
 class Eval:
