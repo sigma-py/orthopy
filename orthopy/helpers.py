@@ -35,7 +35,7 @@ class Eval1D:
         return out
 
 
-class ProductEval:
+class ProductEvalWithDegrees:
     """Evaluates the entire tree of orthogonal polynomials for an n-dimensional product
     domain.
 
@@ -147,6 +147,18 @@ class ProductEval:
         self.L += 1
 
         return values, degrees
+
+
+class ProductEval(ProductEvalWithDegrees):
+    """Same as ProductEvalWithDegrees, but next() only returns the values.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __next__(self):
+        vals, _ = super().__next__()
+        return vals
 
 
 class Eval135:

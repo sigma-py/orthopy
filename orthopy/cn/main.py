@@ -2,10 +2,19 @@ import numpy
 import sympy
 
 from ..c1 import jacobi
-from ..helpers import ProductEval
+from ..helpers import ProductEval, ProductEvalWithDegrees
 
 
 class Eval(ProductEval):
+    def __init__(self, X, alpha=0, beta=0, symbolic="auto"):
+        if symbolic == "auto":
+            symbolic = numpy.asarray(X).dtype == sympy.Basic
+
+        rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
+        super().__init__(rc, X, symbolic)
+
+
+class EvalWithDegrees(ProductEvalWithDegrees):
     def __init__(self, X, alpha=0, beta=0, symbolic="auto"):
         if symbolic == "auto":
             symbolic = numpy.asarray(X).dtype == sympy.Basic

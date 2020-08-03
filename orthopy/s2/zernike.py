@@ -62,6 +62,7 @@ class Eval:
         self.X = X
         self.L = 0
         self.last = [None, None]
+        self.int_p0 = self.rc.p0 * numpy.pi
 
     def __iter__(self):
         return self
