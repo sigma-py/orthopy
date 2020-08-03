@@ -53,6 +53,9 @@ class EvalCartesian(Eval135):
             a = sqrt(X[0] ** 2 + X[1] ** 2)
             xi = [a, a]
 
+        pi = sympy.pi if symbolic else numpy.pi
+        self.int_p0 = rc.p0 * 4 * pi
+
         super().__init__(rc, X[2], xi, symbolic=symbolic)
 
 

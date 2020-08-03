@@ -61,6 +61,9 @@ class Eval:
         self.L = 0
         self.last = [None, None]
 
+        pi = sympy.pi if symbolic else numpy.pi
+        self.int_p0 = self.rc.p0 * pi
+
     def __iter__(self):
         return self
 

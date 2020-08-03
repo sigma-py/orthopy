@@ -35,7 +35,7 @@ class Eval1D:
         return out
 
 
-class ProductEval:
+class ProductEvalWithDegrees:
     """Evaluates the entire tree of orthogonal polynomials for an n-dimensional product
     domain.
 
@@ -73,7 +73,7 @@ class ProductEval:
     In the same manner this can be repeated for `dim` dimensions.
     """
 
-    def __init__(self, rc, X, symbolic):
+    def __init__(self, rc, int_1, X, symbolic):
         self.rc = rc
 
         self.a = []
@@ -82,6 +82,7 @@ class ProductEval:
         X = numpy.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
+        self.int_p0 = self.p0n * int_1 ** self.dim
         self.L = 0
         self.X = X
         self.last_values = [None, None]
@@ -147,6 +148,18 @@ class ProductEval:
         self.L += 1
 
         return values, degrees
+
+
+class ProductEval(ProductEvalWithDegrees):
+    """Same as ProductEvalWithDegrees, but next() only returns the values.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __next__(self):
+        vals, _ = super().__next__()
+        return vals
 
 
 class Eval135:

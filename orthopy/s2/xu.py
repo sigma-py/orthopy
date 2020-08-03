@@ -39,7 +39,7 @@ def show_tree(*args, **kwargs):
 def plot_tree(*args, **kwargs):
     from .tools import plot_tree as pt
 
-    pt("Yu", Eval, *args, **kwargs)
+    pt("Xu", Eval, *args, **kwargs)
 
 
 class Eval:
@@ -76,6 +76,9 @@ class Eval:
         self.one_min_x2 = 1 - self.X[0] ** 2
         self.L = 0
         self.last = [None, None]
+
+        pi = sympy.pi if symbolic else numpy.pi
+        self.int_p0 = self.rc.p0 * pi
 
     def __iter__(self):
         return self
