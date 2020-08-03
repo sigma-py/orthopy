@@ -34,7 +34,10 @@ class Eval(Eval1D):
     def __init__(self, X, *args, symbolic="auto", **kwargs):
         if symbolic == "auto":
             symbolic = numpy.asarray(X).dtype == sympy.Basic
-        super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs))
+
+        rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
+        self.int_p0 = rc.p0
+        super().__init__(X, rc)
 
 
 class RecurrenceCoefficients:

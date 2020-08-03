@@ -11,7 +11,7 @@ class Eval(ProductEval):
             symbolic = numpy.asarray(X).dtype == sympy.Basic
 
         rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
-        super().__init__(rc, X, symbolic)
+        super().__init__(rc, 1, X, symbolic)
 
 
 class EvalWithDegrees(ProductEvalWithDegrees):
@@ -20,4 +20,4 @@ class EvalWithDegrees(ProductEvalWithDegrees):
             symbolic = numpy.asarray(X).dtype == sympy.Basic
 
         rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
-        super().__init__(rc, X, symbolic)
+        super().__init__(rc, 1, X, symbolic)

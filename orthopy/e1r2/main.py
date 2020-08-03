@@ -60,7 +60,10 @@ class Eval(Eval1D):
     def __init__(self, X, *args, symbolic="auto", **kwargs):
         if symbolic == "auto":
             symbolic = numpy.asarray(X).dtype == sympy.Basic
-        super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs))
+
+        rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
+        self.int_p0 = rc.p0 * rc.int_1
+        super().__init__(X, rc)
 
 
 class RecurrenceCoefficients:
@@ -82,7 +85,7 @@ class RecurrenceCoefficients:
 
         sqrt = sympy.sqrt if symbolic else math.sqrt
         pi = sympy.pi if symbolic else math.pi
-        self.int_1 = 1.0 if standardization == "probabilists" else sqrt(pi)
+        self.int_1 = 1 if standardization == "probabilists" else sqrt(pi)
 
     def __getitem__(self, N):
         return self.rc[N]

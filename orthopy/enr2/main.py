@@ -13,7 +13,11 @@ class Eval(ProductEval):
         rc = {"probabilists": RCProbabilistNormal, "physicists": RCPhysicistNormal}[
             standardization
         ](symbolic)
-        super().__init__(rc, X, symbolic)
+
+        sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        pi = sympy.pi if symbolic else numpy.pi
+        int_1 = sqrt(pi)
+        super().__init__(rc, int_1, X, symbolic)
 
 
 class EvalWithDegrees(ProductEvalWithDegrees):
@@ -24,4 +28,8 @@ class EvalWithDegrees(ProductEvalWithDegrees):
         rc = {"probabilists": RCProbabilistNormal, "physicists": RCPhysicistNormal}[
             standardization
         ](symbolic)
-        super().__init__(rc, X, symbolic)
+
+        sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        pi = sympy.pi if symbolic else numpy.pi
+        int_1 = sqrt(pi)
+        super().__init__(rc, int_1, X, symbolic)

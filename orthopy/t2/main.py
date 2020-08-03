@@ -37,6 +37,8 @@ class Eval:
             scaling
         ](symbolic)
 
+        self.int_p0 = self.rc.p0
+
     def __iter__(self):
         return self
 

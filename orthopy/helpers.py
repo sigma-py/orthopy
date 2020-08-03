@@ -73,7 +73,7 @@ class ProductEvalWithDegrees:
     In the same manner this can be repeated for `dim` dimensions.
     """
 
-    def __init__(self, rc, X, symbolic):
+    def __init__(self, rc, int_1, X, symbolic):
         self.rc = rc
 
         self.a = []
@@ -82,6 +82,7 @@ class ProductEvalWithDegrees:
         X = numpy.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
+        self.int_p0 = self.p0n * int_1 ** self.dim
         self.L = 0
         self.X = X
         self.last_values = [None, None]
