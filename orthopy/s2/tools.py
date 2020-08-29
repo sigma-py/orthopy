@@ -4,7 +4,13 @@ import numpy
 
 
 def plot_single(
-    name, evaluator, degrees, res=50, scaling="normal", colorbar=True, cmap="RdBu_r",
+    name,
+    evaluator,
+    degrees,
+    res=50,
+    scaling="normal",
+    colorbar=True,
+    cmap="RdBu_r",
 ):
     import meshzoo
     from matplotlib import pyplot as plt

@@ -172,8 +172,7 @@ class RCClassical:
 
 
 class RCMonic:
-    """alpha and beta both equal 1.
-    """
+    """alpha and beta both equal 1."""
 
     def __init__(self, symbolic, mu=1):
         self.S = sympy.S if symbolic else lambda x: x

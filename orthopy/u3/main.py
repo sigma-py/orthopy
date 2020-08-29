@@ -5,8 +5,7 @@ from ..helpers import Eval135
 
 
 class EvalCartesian(Eval135):
-    """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
-    """
+    """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`."""
 
     def __init__(self, X, scaling, complex_valued=True, symbolic="auto"):
         assert len(X) == 3
@@ -60,8 +59,7 @@ class EvalCartesian(Eval135):
 
 
 class EvalSpherical(Eval135):
-    """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`.
-    """
+    """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`."""
 
     def __init__(self, theta_phi, scaling, complex_valued=True, symbolic="auto"):
         assert len(theta_phi) == 2

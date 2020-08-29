@@ -9,6 +9,4 @@ __all__ = [
     "jacobi",
     "legendre",
     "clenshaw",
-    "show",
-    "plot",
 ]

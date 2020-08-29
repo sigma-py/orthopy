@@ -22,8 +22,7 @@ def test_stieltjes():
 
 
 def test_golub_welsch(tol=1.0e-14):
-    """Test the custom Gauss generator with the weight function x ** 2.
-    """
+    """Test the custom Gauss generator with the weight function x ** 2."""
     alpha = 2.0
 
     # Get the moment corresponding to the weight function omega(x) =

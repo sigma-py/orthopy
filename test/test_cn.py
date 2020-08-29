@@ -21,8 +21,7 @@ def _integrate_poly(p):
 
 @pytest.mark.parametrize("d", [2, 3, 5])
 def test_integral0(d, n=4):
-    """Make sure that the polynomials are orthonormal
-    """
+    """Make sure that the polynomials are orthonormal"""
     X = [sympy.Symbol(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     iterator = orthopy.cn.Eval(p)
