@@ -53,8 +53,7 @@ numpy.random.seed(10)
 
 
 def ff(l, m):
-    """factorial(l-m) / factorial(l+m)
-    """
+    """factorial(l-m) / factorial(l+m)"""
     if m > 0:
         return sympy.S(1) / sympy.prod([l - m + 1 + i for i in range(2 * m)])
     return sympy.prod([l - abs(m) + 1 + i for i in range(2 * abs(m))])
@@ -83,8 +82,7 @@ def ff(l, m):
     ],
 )
 def test_exact(x, scaling, factor):
-    """Test for the exact values.
-    """
+    """Test for the exact values."""
     evaluator = orthopy.c1.associated_legendre.Eval(x, scaling)
 
     exacts = exact_natural(x)

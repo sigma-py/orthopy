@@ -151,8 +151,7 @@ class ProductEvalWithDegrees:
 
 
 class ProductEval(ProductEvalWithDegrees):
-    """Same as ProductEvalWithDegrees, but next() only returns the values.
-    """
+    """Same as ProductEvalWithDegrees, but next() only returns the values."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
