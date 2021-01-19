@@ -63,7 +63,9 @@ def stieltjes(integrate, n):
     alpha = n * [None]
     beta = n * [None]
     mu = [None, None]
+    # See <https://github.com/microsoft/pyright/issues/1229> for the pyright issues.
     pi = [None, None, None]
+    int_1 = None
 
     for k in range(n):
         pi[1], pi[2] = pi[0], pi[1]
