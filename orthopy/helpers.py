@@ -76,9 +76,9 @@ class ProductEvalWithDegrees:
     def __init__(self, rc, int_1, X, symbolic):
         self.rc = rc
 
-        self.a = []
-        self.b = []
-        self.c = []
+        self.a = None
+        self.b = None
+        self.c = None
         X = np.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
@@ -100,9 +100,11 @@ class ProductEvalWithDegrees:
             degrees = np.array([np.zeros(dim, dtype=int)])
         else:
             aa, bb, cc = self.rc[self.L - 1]
-            self.a = np.append(self.a, aa)
-            self.b = np.append(self.b, bb)
-            self.c = np.append(self.c, cc)
+            # cannot just np.append here since numpy will convert to float64
+            # https://github.com/numpy/numpy/issues/18189
+            self.a = np.array([aa]) if self.a is None else np.append(self.a, aa)
+            self.b = np.array([bb]) if self.b is None else np.append(self.b, bb)
+            self.c = np.array([cc]) if self.c is None else np.append(self.c, cc)
 
             a = self.a
             b = self.b
