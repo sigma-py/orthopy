@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 from .main import Eval
 
@@ -34,12 +34,12 @@ def plot_single(
                 return level[r]
 
     if corners is None:
-        alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
-        corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
+        alpha = np.pi * np.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
+        corners = np.array([np.cos(alpha), np.sin(alpha)])
 
     bary, cells = meshzoo.triangle(res)
-    x, y = numpy.dot(corners, bary)
-    z = numpy.array(f(bary), dtype=float)
+    x, y = np.dot(corners, bary)
+    z = np.array(f(bary), dtype=float)
 
     plt.tripcolor(x, y, cells, z, shading="flat")
 
@@ -53,7 +53,7 @@ def plot_single(
     plt.clim(-mx, mx)
 
     # triangle outlines
-    X = numpy.column_stack([corners, corners[:, 0]])
+    X = np.column_stack([corners, corners[:, 0]])
     plt.plot(X[0], X[1], "-k")
 
     plt.gca().set_aspect("equal")
@@ -95,17 +95,17 @@ def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=
 
     for k, level in enumerate(itertools.islice(evaluator, n + 1)):
         for r, z in enumerate(level):
-            alpha = numpy.pi * numpy.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
-            corners = numpy.array([numpy.cos(alpha), numpy.sin(alpha)])
+            alpha = np.pi * np.array([7.0 / 6.0, 11.0 / 6.0, 3.0 / 6.0])
+            corners = np.array([np.cos(alpha), np.sin(alpha)])
             corners[0] += 2.1 * (r - k / 2)
             corners[1] -= 1.9 * k
-            x, y = numpy.dot(corners, bary)
+            x, y = np.dot(corners, bary)
 
             plt.tripcolor(x, y, cells, z, shading="flat")
             plt.clim(clim)
 
             # triangle outlines
-            X = numpy.column_stack([corners, corners[:, 0]])
+            X = np.column_stack([corners, corners[:, 0]])
             plt.plot(X[0], X[1], "-k")
 
     if colorbar:

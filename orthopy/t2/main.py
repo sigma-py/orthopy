@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import sympy
 
 
@@ -26,7 +26,7 @@ class Eval:
 
     def __init__(self, bary, scaling, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(bary).dtype == sympy.Basic
+            symbolic = np.asarray(bary).dtype == sympy.Basic
 
         self.bary = bary
 
@@ -46,12 +46,12 @@ class Eval:
         u, v, w = self.bary
 
         if self.k == 0:
-            out = numpy.array([u * 0 + self.rc.p0])
+            out = np.array([u * 0 + self.rc.p0])
         else:
             alpha, beta, gamma, delta, epsilon = self.rc[self.k]
-            out = numpy.concatenate(
+            out = np.concatenate(
                 [
-                    self.last[0] * (numpy.multiply.outer(alpha, 1 - 2 * w).T - beta).T,
+                    self.last[0] * (np.multiply.outer(alpha, 1 - 2 * w).T - beta).T,
                     [delta * self.last[0][-1] * (u - v)],
                 ]
             )
@@ -74,7 +74,7 @@ class RCClassical:
     def __getitem__(self, n):
         n = self.S(n)
 
-        r = numpy.arange(n)
+        r = np.arange(n)
         alpha = n * (2 * n + 1) / ((n - r) * (n + r + 1))
         beta = n * (2 * r + 1) ** 2 / ((n - r) * (n + r + 1) * (2 * n - 1))
         delta = (2 * n - 1) / n
@@ -83,7 +83,7 @@ class RCClassical:
             gamma = None
             epsilon = None
         else:
-            r = numpy.arange(n - 1)
+            r = np.arange(n - 1)
             gamma = (
                 (n - r - 1)
                 * (n + r)
@@ -103,8 +103,8 @@ class RCMonic:
     def __getitem__(self, n):
         assert n > 0
 
-        r = numpy.arange(n)
-        alpha = numpy.ones(n, dtype=int)
+        r = np.arange(n)
+        alpha = np.ones(n, dtype=int)
         delta = 1
         n = self.S(n)
 
@@ -114,7 +114,7 @@ class RCMonic:
             gamma = None
             epsilon = None
         else:
-            r = numpy.arange(n - 1)
+            r = np.arange(n - 1)
             gamma = (n - r - 1) ** 2 * (n + r) ** 2 / ((2 * n - 1) ** 2 * (n - 1) * n)
             epsilon = (n - 1) ** 2 / ((2 * n - 1) * (2 * n - 3))
 
@@ -152,7 +152,7 @@ class RCNormal:
 
     def __init__(self, symbolic):
         self.S = sympy.S if symbolic else lambda x: x
-        self.sqrt = sympy.sqrt if symbolic else numpy.sqrt
+        self.sqrt = sympy.sqrt if symbolic else np.sqrt
 
         self.p0 = self.sqrt(2)
 
@@ -160,7 +160,7 @@ class RCNormal:
         n = self.S(n)
         sqrt = self.sqrt
 
-        r = numpy.arange(n)
+        r = np.arange(n)
         alpha = sqrt((n + 1) * n) * ((2 * n + 1) / ((n - r) * (n + r + 1)))
         beta = (
             sqrt((n + 1) * n) * (2 * r + 1) ** 2 / ((n - r) * (n + r + 1) * (2 * n - 1))
@@ -171,7 +171,7 @@ class RCNormal:
             gamma = None
             epsilon = None
         else:
-            r = numpy.arange(n - 1)
+            r = np.arange(n - 1)
             gamma = sqrt((n + 1) / (n - 1)) * (
                 (n - r - 1)
                 * (n + r)

@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import pytest
 import sympy
 
@@ -7,7 +7,7 @@ import orthopy
 
 # https://en.wikipedia.org/wiki/Associated_Legendre_polynomials#The_first_few_associated_Legendre_functions
 def exact_natural(x):
-    sqrt = numpy.vectorize(sympy.sqrt)
+    sqrt = np.vectorize(sympy.sqrt)
     sqrt1mx2 = sqrt(1 - x ** 2)
 
     p0_0 = 1
@@ -49,7 +49,7 @@ def exact_natural(x):
     ]
 
 
-numpy.random.seed(10)
+np.random.seed(10)
 
 
 def ff(l, m):
@@ -64,7 +64,7 @@ def ff(l, m):
     [
         sympy.S(1) / 10,
         sympy.S(1) / 1000,
-        numpy.array([sympy.S(3) / 7, sympy.S(1) / 13]),
+        np.array([sympy.S(3) / 7, sympy.S(1) / 13]),
     ],
 )
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ def test_exact(x, scaling, factor):
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
-            assert numpy.all(v == e)
+            assert np.all(v == e)
 
 
 def test_show(n=2):

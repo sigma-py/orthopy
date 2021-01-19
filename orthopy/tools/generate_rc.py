@@ -23,7 +23,7 @@
 """
 import math
 
-import numpy
+import numpy as np
 import sympy
 
 
@@ -40,8 +40,8 @@ def golub_welsch(moments):
     assert len(moments) % 2 == 1
     n = (len(moments) - 1) // 2
 
-    M = numpy.array([[moments[i + j] for j in range(n + 1)] for i in range(n + 1)])
-    R = numpy.linalg.cholesky(M).T
+    M = np.array([[moments[i + j] for j in range(n + 1)] for i in range(n + 1)])
+    R = np.linalg.cholesky(M).T
 
     # (upper) diagonal
     Rd = R.diagonal()
@@ -50,7 +50,7 @@ def golub_welsch(moments):
     alpha = q.copy()
     alpha[+1:] -= q[:-1]
 
-    beta = numpy.hstack([math.nan, Rd[1:-1] / Rd[:-2]]) ** 2
+    beta = np.hstack([math.nan, Rd[1:-1] / Rd[:-2]]) ** 2
     int_1 = Rd[0]
     return alpha, beta, int_1
 
@@ -98,7 +98,7 @@ def chebyshev(moments):
     assert m % 2 == 0
     # https://stackoverflow.com/a/30039361/353337
     dtype = sympy.Rational if isinstance(moments[0], sympy.Basic) else moments.dtype
-    zeros = numpy.zeros((m, 3), dtype=dtype)
+    zeros = np.zeros((m, 3), dtype=dtype)
     return chebyshev_modified(moments, zeros)
 
 
@@ -120,7 +120,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
 
     if n > 0:
         k = 0
-        sigma[0] = numpy.asarray(nu)
+        sigma[0] = np.asarray(nu)
         _, a0, _ = recurrence_coefficients[0]
         alpha.append(a0 + nu[1] / nu[0])
         beta.append(math.nan)
@@ -128,7 +128,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
     for k in range(1, n):
         sigma[2], sigma[1] = sigma[1], sigma[0]
 
-        _, aL, bL = numpy.array(
+        _, aL, bL = np.array(
             [recurrence_coefficients[i] for i in range(k, 2 * n - k)]
         ).T
         sigma[0] = (
@@ -141,7 +141,7 @@ def chebyshev_modified(nu, recurrence_coefficients):
         alpha.append(ak + sigma[0][1] / sigma[0][0] - sigma[1][1] / sigma[1][0])
         beta.append(sigma[0][0] / sigma[1][0])
 
-    return numpy.asarray(alpha), numpy.asarray(beta), int_1
+    return np.asarray(alpha), np.asarray(beta), int_1
 
 
 def gautschi_test_3(moments, alpha, beta):
@@ -151,21 +151,21 @@ def gautschi_test_3(moments, alpha, beta):
     n = len(alpha)
     assert len(beta) == n
 
-    D = numpy.empty(n + 1)
-    Dp = numpy.empty(n + 1)
+    D = np.empty(n + 1)
+    Dp = np.empty(n + 1)
     D[0] = 1.0
     D[1] = moments[0]
     Dp[0] = 0.0
     Dp[1] = moments[1]
     for k in range(2, n + 1):
-        A = numpy.array([moments[i : i + k] for i in range(k)])
-        D[k] = numpy.linalg.det(A)
+        A = np.array([moments[i : i + k] for i in range(k)])
+        D[k] = np.linalg.det(A)
         #
         A[:, -1] = moments[k : 2 * k]
-        Dp[k] = numpy.linalg.det(A)
+        Dp[k] = np.linalg.det(A)
 
-    errors_alpha = numpy.zeros(n)
-    errors_beta = numpy.zeros(n)
+    errors_alpha = np.zeros(n)
+    errors_beta = np.zeros(n)
 
     errors_alpha[0] = abs(alpha[0] - (Dp[1] / D[1] - Dp[0] / D[0]))
     errors_beta[0] = abs(beta[0] - D[1])

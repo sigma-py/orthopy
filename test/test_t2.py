@@ -1,7 +1,7 @@
 import itertools
 
 import ndim
-import numpy
+import numpy as np
 import pytest
 import scipy.special
 import sympy
@@ -32,27 +32,23 @@ def op(i, j, x, y):
     iterator = orthopy.c1.jacobi.Eval((x - y) / (x + y), scaling, 0, 0)
     val1 = get_nth(iterator, i)
 
-    # val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
+    # val1 = np.polyval(scipy.special.jacobi(i, 0, 0), (x - y) / (x + y))
 
     # treat x==0, y==0 separately
-    if isinstance(val1, numpy.ndarray):
-        idx = numpy.where(numpy.logical_and(x == 0, y == 0))[0]
-        val1[idx] = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
+    if isinstance(val1, np.ndarray):
+        idx = np.where(np.logical_and(x == 0, y == 0))[0]
+        val1[idx] = np.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
     else:
-        if numpy.isnan(val1):
-            val1 = numpy.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
+        if np.isnan(val1):
+            val1 = np.polyval(scipy.special.jacobi(i, 0, 0), 0.0)
 
     iterator = orthopy.c1.jacobi.Eval(1 - 2 * (x + y), scaling, 2 * i + 1, 0)
     val2 = get_nth(iterator, j)
-    # val2 = numpy.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
+    # val2 = np.polyval(scipy.special.jacobi(j, 2*i+1, 0), 1-2*(x+y))
 
-    flt = numpy.vectorize(float)
+    flt = np.vectorize(float)
     return flt(
-        numpy.sqrt(2 * i + 1)
-        * val1
-        * (x + y) ** i
-        * numpy.sqrt(2 * j + 2 * i + 2)
-        * val2
+        np.sqrt(2 * i + 1) * val1 * (x + y) ** i * np.sqrt(2 * j + 2 * i + 2) * val2
     )
 
 
@@ -79,21 +75,21 @@ def eval_orthpolys4(bary):
     ]
 
 
-@pytest.mark.parametrize("x", [numpy.array([0.24, 0.65]), numpy.random.rand(2, 5)])
+@pytest.mark.parametrize("x", [np.array([0.24, 0.65]), np.random.rand(2, 5)])
 def test_t2_orth(x, tol=1.0e-12):
     exacts = eval_orthpolys4(x)
 
-    bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
+    bary = np.array([x[0], x[1], 1 - x[0] - x[1]])
     evaluator = orthopy.t2.Eval(bary, "normal")
 
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.abs(v - e) < tol * numpy.abs(e))
+            assert np.all(np.abs(v - e) < tol * np.abs(e))
 
 
 def test_t2_orth_exact():
-    x = numpy.array([S(1) / 3, S(1) / 7])
+    x = np.array([S(1) / 3, S(1) / 7])
 
     exacts = [
         [sympy.sqrt(2)],
@@ -105,7 +101,7 @@ def test_t2_orth_exact():
         ],
     ]
 
-    bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
+    bary = np.array([x[0], x[1], 1 - x[0] - x[1]])
     evaluator = orthopy.t2.Eval(bary, "normal", symbolic=True)
 
     for ex in exacts:
@@ -115,20 +111,20 @@ def test_t2_orth_exact():
 
 
 def test_t2_orth_classical_exact():
-    x = numpy.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
+    x = np.array([[S(1) / 5, S(2) / 5, S(3) / 5], [S(1) / 7, S(2) / 7, S(3) / 7]])
 
     exacts = [
         [[1, 1, 1]],
         [[-S(34) / 35, S(2) / 35, S(38) / 35], [S(2) / 35, S(4) / 35, S(6) / 35]],
     ]
 
-    bary = numpy.array([x[0], x[1], 1 - x[0] - x[1]])
+    bary = np.array([x[0], x[1], 1 - x[0] - x[1]])
     evaluator = orthopy.t2.Eval(bary, "classical", symbolic=True)
 
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
-            assert numpy.all(v == e)
+            assert np.all(v == e)
 
 
 @pytest.mark.parametrize(
@@ -166,7 +162,7 @@ def test_orthogonality(scaling, n=3):
     p = [sympy.poly(x, [b0, b1]) for x in [b0, b1, 1 - b0 - b1]]
     # b = [b0, b1, 1 - b0 - b1]
     evaluator = orthopy.t2.Eval(p, scaling)
-    tree = numpy.concatenate([next(evaluator) for _ in range(n)])
+    tree = np.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * f1) == 0
 

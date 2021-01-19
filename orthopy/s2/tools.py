@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 
 def plot_single(
@@ -24,7 +24,7 @@ def plot_single(
                 return level[r]
 
     points, cells = meshzoo.disk(6, res)
-    z = numpy.array(f(points.T), dtype=float)
+    z = np.array(f(points.T), dtype=float)
 
     plt.tripcolor(points[:, 0], points[:, 1], cells, z, shading="flat")
 

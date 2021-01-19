@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 from .main import EvalCartesian
 
@@ -57,15 +57,15 @@ def write_tree(filename, n, scaling, res=20, colors_enhancement=2.5):
             )
 
     # merge meshes
-    points = numpy.concatenate([mesh.points for mesh in meshes])
-    srgb1_vals = numpy.concatenate([mesh.point_data["srgb1"] for mesh in meshes])
+    points = np.concatenate([mesh.points for mesh in meshes])
+    srgb1_vals = np.concatenate([mesh.point_data["srgb1"] for mesh in meshes])
     #
     cells = []
     k = 0
     for mesh in meshes:
         cells.append(mesh.cells[0].data + k)
         k += mesh.points.shape[0]
-    cells = numpy.concatenate(cells)
+    cells = np.concatenate(cells)
 
     meshio.write_points_cells(
         filename, points, {"triangle": cells}, point_data={"srgb1": srgb1_vals}

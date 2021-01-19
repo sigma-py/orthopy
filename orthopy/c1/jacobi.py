@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import sympy
 
 from ..helpers import Eval1D
@@ -12,7 +12,7 @@ def plot(n, *args, **kwargs):
 
     plt.style.use(dufte.style)
 
-    x = numpy.linspace(-1.0, 1.0, 100)
+    x = np.linspace(-1.0, 1.0, 100)
     evaluator = Eval(x, *args, **kwargs)
     for k in range(n + 1):
         plt.plot(x, next(evaluator), label=f"n={k}")
@@ -54,7 +54,7 @@ def savefig(filename, *args, **kwargs):
 class Eval(Eval1D):
     def __init__(self, X, *args, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
         super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic))
 
 

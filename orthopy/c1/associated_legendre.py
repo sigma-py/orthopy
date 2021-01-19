@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 import sympy
 
 from ..helpers import Eval135
@@ -12,12 +12,12 @@ def plot(n, *args, **kwargs):
 
     plt.style.use(dufte.style)
 
-    x = numpy.linspace(-1.0, 1.0, 200)
+    x = np.linspace(-1.0, 1.0, 200)
     for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
         # Choose all colors in each level approximately equal, around the reference
         # color.
         ref_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][k]
-        ref_rgb = numpy.array(
+        ref_rgb = np.array(
             list(int(ref_color[1:][i : i + 2], 16) / 255 for i in (0, 2, 4))
         )
         for l, entry in enumerate(level):
@@ -77,7 +77,7 @@ class Eval(Eval135):
     def __init__(self, X, scaling, symbolic="auto"):
         cls = {"classical": RCClassical, "normal": RCNormal}[scaling]
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
         rc = cls(symbolic)
         super().__init__(rc, X, symbolic=symbolic)
 
@@ -100,8 +100,8 @@ class RCClassical:
 
 class RCNormal:
     def __init__(self, symbolic):
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
-        self.frac = numpy.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
+        self.frac = np.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         self.p0 = 1 / self.sqrt(2)
 
@@ -109,13 +109,13 @@ class RCNormal:
         z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
         z1 = -self.sqrt(self.frac(2 * L + 1, 2 * L))
         #
-        m = numpy.arange(-L + 1, L)
+        m = np.arange(-L + 1, L)
         c0 = self.sqrt(self.frac((2 * L - 1) * (2 * L + 1), (L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
-            m = numpy.arange(-L + 2, L - 1)
+            m = np.arange(-L + 2, L - 1)
             c1 = self.sqrt(
                 self.frac(
                     (L + m - 1) * (L - m - 1) * (2 * L + 1),
