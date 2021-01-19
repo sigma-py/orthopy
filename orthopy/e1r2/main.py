@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import sympy
 
 from ..helpers import Eval1D
@@ -59,7 +59,7 @@ class Eval(Eval1D):
 
     def __init__(self, X, *args, symbolic="auto", **kwargs):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
         self.int_p0 = rc.p0 * rc.int_1

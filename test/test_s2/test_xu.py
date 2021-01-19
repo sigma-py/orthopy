@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 import pytest
 import sympy
 from helpers_s2 import _integrate_poly
@@ -41,7 +41,7 @@ def test_xu_integral0(scaling, int0, n=4):
 @pytest.mark.parametrize("scaling", ["classical", "monic", "normal"])
 def test_xu_orthogonality(scaling, n=4):
     evaluator = orthopy.s2.xu.Eval(P, scaling)
-    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    vals = np.concatenate([next(evaluator) for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1) == 0
 

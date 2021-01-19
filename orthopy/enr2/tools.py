@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 from ..e1r2 import plot as plot_hermite
 from .main import EvalWithDegrees
@@ -67,7 +67,7 @@ def plot_tree_2d(
             plt.clim(clim)
 
             # rectangle outlines
-            corners = numpy.array(
+            corners = np.array(
                 [
                     [-alpha, alpha, alpha, -alpha, -alpha],
                     [-alpha, -alpha, alpha, alpha, -alpha],
@@ -91,11 +91,8 @@ def write_tree_3d(filename, n, *args, res=20, alpha=2.0, **kwargs):
     evaluator = EvalWithDegrees(points.T, *args, **kwargs)
     meshes = []
 
-    corners = numpy.array(
-        [
-            [numpy.cos(k * 2 * numpy.pi / 3), numpy.sin(k * 2 * numpy.pi / 3)]
-            for k in range(3)
-        ]
+    corners = np.array(
+        [[np.cos(k * 2 * np.pi / 3), np.sin(k * 2 * np.pi / 3)] for k in range(3)]
     )
 
     for L, (values, degrees) in enumerate(itertools.islice(evaluator, n)):
@@ -108,15 +105,15 @@ def write_tree_3d(filename, n, *args, res=20, alpha=2.0, **kwargs):
             meshes.append(meshio.Mesh(pts, {"tetra": cells}, point_data={"f": vals}))
 
     # merge meshes
-    points = numpy.concatenate([mesh.points for mesh in meshes])
-    f_vals = numpy.concatenate([mesh.point_data["f"] for mesh in meshes])
+    points = np.concatenate([mesh.points for mesh in meshes])
+    f_vals = np.concatenate([mesh.point_data["f"] for mesh in meshes])
     #
     cells = []
     k = 0
     for mesh in meshes:
         cells.append(mesh.cells[0].data + k)
         k += mesh.points.shape[0]
-    cells = numpy.concatenate(cells)
+    cells = np.concatenate(cells)
 
     meshio.write_points_cells(
         filename, points, {"tetra": cells}, point_data={"f": f_vals}

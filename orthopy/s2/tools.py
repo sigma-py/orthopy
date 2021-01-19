@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 
 def plot_single(
@@ -24,7 +24,7 @@ def plot_single(
                 return level[r]
 
     points, cells = meshzoo.disk(6, res)
-    z = numpy.array(f(points.T), dtype=float)
+    z = np.array(f(points.T), dtype=float)
 
     plt.tripcolor(points[:, 0], points[:, 1], cells, z, shading="flat")
 
@@ -39,7 +39,7 @@ def plot_single(
 
     # circle outline
     circle = plt.Circle((0, 0), 1.0, edgecolor="k", fill=False)
-    plt.gca().add_artist(circle)
+    plt.gca().add_patch(circle)
 
     plt.gca().set_aspect("equal")
     plt.axis("off")
@@ -102,7 +102,7 @@ def plot_tree(
 
             # circle outline
             circle = plt.Circle(offset, 1.0, edgecolor="k", fill=False)
-            plt.gca().add_artist(circle)
+            plt.gca().add_patch(circle)
 
     if colorbar:
         plt.colorbar()

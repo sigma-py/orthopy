@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import sympy
 
 from . import gegenbauer
@@ -52,7 +52,7 @@ class Eval(gegenbauer.Eval):
 
     def __init__(self, X, scaling, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         lmbda = -sympy.S(1) / 2 if symbolic else -0.5
         super().__init__(X, scaling, lmbda, symbolic)

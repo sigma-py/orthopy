@@ -1,7 +1,7 @@
 import itertools
 
 import ndim
-import numpy
+import numpy as np
 import pytest
 import sympy
 
@@ -43,7 +43,7 @@ def test_orthogonality(d, n, standardization):
     X = [sympy.symbols(f"x{k}") for k in range(d)]
     p = [sympy.poly(x, X) for x in X]
     evaluator = orthopy.enr2.Eval(p, standardization)
-    vals = numpy.concatenate([next(evaluator) for _ in range(n + 1)])
+    vals = np.concatenate([next(evaluator) for _ in range(n + 1)])
     for f0, f1 in itertools.combinations(vals, 2):
         assert _integrate_poly(f0 * f1, standardization) == 0
 

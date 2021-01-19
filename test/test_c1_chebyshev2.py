@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 import pytest
 import sympy
 from helpers import get_nth
@@ -21,7 +21,7 @@ import orthopy
     ],
 )
 def test_chebyshev2_monic(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = np.array([0, Rational(1, 2), 1])
 
     scaling = "monic"
 
@@ -46,7 +46,7 @@ def test_chebyshev2_monic(n, y):
     ],
 )
 def test_chebyshev2_p11(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = np.array([0, Rational(1, 2), 1])
 
     scaling = "classical"
 
@@ -72,7 +72,7 @@ def test_chebyshev2_p11(n, y):
     ],
 )
 def test_chebyshev2_normal(n, y):
-    x = numpy.array([0, S(1) / 2, 1])
+    x = np.array([0, S(1) / 2, 1])
 
     scaling = "normal"
 
@@ -148,14 +148,14 @@ def test_orthogonality(n=4):
     [
         (Rational(1, 2), 0),
         (1, Rational(3, 16)),
-        (numpy.array([1]), numpy.array([Rational(3, 16)])),
-        (numpy.array([1, 2]), numpy.array([Rational(3, 16), Rational(195, 8)])),
+        (np.array([1]), np.array([Rational(3, 16)])),
+        (np.array([1, 2]), np.array([Rational(3, 16), Rational(195, 8)])),
     ],
 )
 def test_eval(t, ref):
     n = 5
     value = get_nth(orthopy.c1.chebyshev2.Eval(t, "monic", symbolic=True), n)
-    assert numpy.all(value == ref)
+    assert np.all(value == ref)
 
 
 def test_show(n=5):

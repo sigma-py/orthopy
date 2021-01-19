@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 
 from .main import Eval
 
@@ -11,7 +11,7 @@ def plot(n, *args, **kwargs):
 
     plt.style.use(dufte.style)
 
-    x = numpy.linspace(0.0, 4.4, 100)
+    x = np.linspace(0.0, 4.4, 100)
     for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
         plt.plot(x, level, label=f"n={k}")
 

@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import pytest
 import sympy
 
@@ -14,7 +14,7 @@ def test_stieltjes():
     )
 
     rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=True)
-    _, alpha1, beta1 = numpy.array([rc[k] for k in range(n)]).T
+    _, alpha1, beta1 = np.array([rc[k] for k in range(n)]).T
 
     assert (alpha0 == alpha1).all()
     assert (beta0 == beta1).all()
@@ -36,7 +36,7 @@ def test_golub_welsch(tol=1.0e-14):
     moments = [0 if k % 2 == 1 else 2 / (k + alpha + 1) for k in range(2 * n + 1)]
     alpha, beta, int_1 = orthopy.tools.golub_welsch(moments)
 
-    assert numpy.all(abs(alpha) < tol)
+    assert np.all(abs(alpha) < tol)
     assert math.isnan(beta[0])
     assert abs(beta[1] - 3.0 / 5.0) < tol
     assert abs(beta[2] - 4.0 / 35.0) < tol
@@ -47,7 +47,7 @@ def test_golub_welsch(tol=1.0e-14):
     orthopy.tools.gautschi_test_3(moments, alpha, beta)
 
 
-@pytest.mark.parametrize("dtype", [numpy.float, sympy.S])
+@pytest.mark.parametrize("dtype", [np.float, sympy.S])
 def test_chebyshev(dtype):
     alpha = 2
 
@@ -73,16 +73,16 @@ def test_chebyshev(dtype):
         ).all()
         assert int_1 == sympy.S(2) / 3
     else:
-        assert dtype == numpy.float
+        assert dtype == np.float
         tol = 1.0e-14
-        k = numpy.arange(2 * n)
+        k = np.arange(2 * n)
         moments = (1.0 + (-1.0) ** k) / (k + alpha + 1)
 
         alpha, beta, int_1 = orthopy.tools.chebyshev(moments)
 
-        assert numpy.all(abs(alpha) < tol)
-        assert numpy.isnan(beta[0])
-        assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
+        assert np.all(abs(alpha) < tol)
+        assert np.isnan(beta[0])
+        assert np.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
         assert abs(int_1 - 2 / 3) < tol
 
 
@@ -97,14 +97,14 @@ def test_chebyshev_modified(tol=1.0e-14):
     #                                        \ 0     otherwise.
     #
     n = 5
-    moments = numpy.zeros(2 * n)
+    moments = np.zeros(2 * n)
     moments[0] = 2.0 / 3.0
     moments[2] = 8.0 / 45.0
 
     rc = orthopy.c1.legendre.RecurrenceCoefficients("monic", symbolic=False)
     alpha, beta, int_1 = orthopy.tools.chebyshev_modified(moments, rc)
 
-    assert numpy.all(abs(alpha) < tol)
+    assert np.all(abs(alpha) < tol)
     assert math.isnan(beta[0])
-    assert numpy.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
+    assert np.all(abs(beta[1:] - [3 / 5, 4 / 35, 25 / 63, 16 / 99]) < tol)
     assert abs(int_1 - 2 / 3) < tol

@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 
 def clenshaw(a, alpha, beta, t):
@@ -16,9 +16,9 @@ def clenshaw(a, alpha, beta, t):
     assert len(a) == n + 1
 
     try:
-        b = numpy.empty((n + 1,) + t.shape)
+        b = np.empty((n + 1,) + t.shape)
     except AttributeError:  # 'float' object has no attribute 'shape'
-        b = numpy.empty(n + 1)
+        b = np.empty(n + 1)
 
     # b[0] is unused, can be any value
     # TODO shift the array

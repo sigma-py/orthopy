@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import sympy
 
 
@@ -55,7 +55,7 @@ class Eval:
 
     def __init__(self, X, scaling, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         self.rc = {"classical": RCClassical, "normal": RCNormal}[scaling](symbolic)
 
@@ -63,7 +63,7 @@ class Eval:
         self.L = 0
         self.last = [None, None]
 
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else np.pi
         self.int_p0 = self.rc.p0 * pi
 
     def __iter__(self):
@@ -71,13 +71,13 @@ class Eval:
 
     def __next__(self):
         if self.L == 0:
-            out = numpy.array([0 * self.X[0] + self.rc.p0])
+            out = np.array([0 * self.X[0] + self.rc.p0])
         else:
             alpha, beta, gamma = self.rc[self.L]
 
             shape = list(self.last[0].shape)
             shape[0] += 1
-            out = numpy.zeros(shape, dtype=self.last[0].dtype)
+            out = np.zeros(shape, dtype=self.last[0].dtype)
 
             n = self.L + 1
             half = n // 2

@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import sympy
 
 from ..helpers import Eval135
@@ -12,7 +12,7 @@ class EvalCartesian(Eval135):
         # assert X[0] ** 2 + X[1] ** 2 + X[2] ** 2 == 1
 
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
@@ -48,11 +48,11 @@ class EvalCartesian(Eval135):
         else:
             # real-valued, but not always a polynomial; see associated Legendre
             # functions
-            sqrt = sympy.sqrt if symbolic else numpy.sqrt
+            sqrt = sympy.sqrt if symbolic else np.sqrt
             a = sqrt(X[0] ** 2 + X[1] ** 2)
             xi = [a, a]
 
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else np.pi
         self.int_p0 = rc.p0 * 4 * pi
 
         super().__init__(rc, X[2], xi, symbolic=symbolic)
@@ -64,7 +64,7 @@ class EvalSpherical(Eval135):
     def __init__(self, theta_phi, scaling, complex_valued=True, symbolic="auto"):
         assert len(theta_phi) == 2
         if symbolic == "auto":
-            symbolic = numpy.asarray(theta_phi).dtype == sympy.Basic
+            symbolic = np.asarray(theta_phi).dtype == sympy.Basic
 
         # Conventions from
         # <https://en.wikipedia.org/wiki/Spherical_harmonics#Orthogonality_and_normalization>.
@@ -75,8 +75,8 @@ class EvalSpherical(Eval135):
             "schmidt": RCSchmidt(False, symbolic),
         }[scaling]
 
-        sin = numpy.vectorize(sympy.sin) if symbolic else numpy.sin
-        cos = numpy.vectorize(sympy.cos) if symbolic else numpy.cos
+        sin = np.vectorize(sympy.sin) if symbolic else np.sin
+        cos = np.vectorize(sympy.cos) if symbolic else np.cos
 
         # X = [
         #     sin_polar * cos_azimu,
@@ -102,8 +102,8 @@ class EvalSpherical(Eval135):
 
 class RCSpherical:
     def __init__(self, with_cs_phase, symbolic, geodetic):
-        pi = sympy.pi if symbolic else numpy.pi
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        pi = sympy.pi if symbolic else np.pi
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.S = sympy.S if symbolic else lambda x: x
 
         # The starting value 1 has the effect of multiplying the entire tree by
@@ -118,13 +118,13 @@ class RCSpherical:
         z0 = self.sqrt((2 * L + 1) / (2 * L))
         z1 = z0 * self.phase
         #
-        m = numpy.arange(-L + 1, L)
+        m = np.arange(-L + 1, L)
         c0 = self.sqrt((2 * L - 1) * (2 * L + 1) / ((L + m) * (L - m)))
         #
         if L == 1:
             c1 = None
         else:
-            m = numpy.arange(-L + 2, L - 1)
+            m = np.arange(-L + 2, L - 1)
             c1 = self.sqrt(
                 (L + m - 1)
                 * (L - m - 1)
@@ -136,7 +136,7 @@ class RCSpherical:
 
 class RCSchmidt:
     def __init__(self, with_cs_phase, symbolic):
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.S = sympy.S if symbolic else lambda x: x
         self.phase = -1 if with_cs_phase else 1
 
@@ -150,13 +150,13 @@ class RCSchmidt:
         z0 = self.sqrt((2 * L - 1) / (2 * L))
         z1 = z0 * self.phase
         #
-        m = numpy.arange(-L + 1, L)
+        m = np.arange(-L + 1, L)
         c0 = (2 * L - 1) / self.sqrt((L + m) * (L - m))
         #
         if L == 1:
             c1 = None
         else:
-            m = numpy.arange(-L + 2, L - 1)
+            m = np.arange(-L + 2, L - 1)
             c1 = self.sqrt((L + m - 1) * (L - m - 1) / ((L + m) * (L - m)))
 
         return z0, z1, c0, c1

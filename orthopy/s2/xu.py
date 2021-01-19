@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import sympy
 
 
@@ -66,7 +66,7 @@ class Eval:
 
     def __init__(self, X, scaling, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
             scaling
@@ -77,7 +77,7 @@ class Eval:
         self.L = 0
         self.last = [None, None]
 
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else np.pi
         self.int_p0 = self.rc.p0 * pi
 
     def __iter__(self):
@@ -85,12 +85,12 @@ class Eval:
 
     def __next__(self):
         if self.L == 0:
-            out = numpy.array([0 * self.X[0] + self.rc.p0])
+            out = np.array([0 * self.X[0] + self.rc.p0])
         else:
             alpha, beta, gamma, delta = self.rc[self.L]
-            out = numpy.concatenate(
+            out = np.concatenate(
                 [
-                    self.last[0] * numpy.multiply.outer(alpha, self.X[0]),
+                    self.last[0] * np.multiply.outer(alpha, self.X[0]),
                     [self.last[0][-1] * beta * self.X[1]],
                 ]
             )
@@ -112,7 +112,7 @@ class RCClassical:
 
     def __init__(self, symbolic, mu=1):
         self.S = sympy.S if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.mu = mu
         assert self.mu > -1
 
@@ -153,7 +153,7 @@ class RCClassical:
         n = self.S(n)
         mu = self.mu
 
-        alpha = numpy.full(n, (mu + 2 * n - 1) / (mu + n))
+        alpha = np.full(n, (mu + 2 * n - 1) / (mu + n))
         # case distinction for mu==0
         if n == 1:
             beta = 1
@@ -164,7 +164,7 @@ class RCClassical:
             gamma = None
             delta = None
         else:  # n > 1
-            k = numpy.arange(n - 1)
+            k = np.arange(n - 1)
             gamma = (n - 1 - k) * (n + k + mu - 1) / ((mu + n) * (mu + n - 1))
             delta = (n - 1) / (mu + n - 1)
 
@@ -176,7 +176,7 @@ class RCMonic:
 
     def __init__(self, symbolic, mu=1):
         self.S = sympy.S if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.mu = mu
         assert self.mu > -1
 
@@ -188,14 +188,14 @@ class RCMonic:
         n = self.S(n)
         mu = self.mu
 
-        alpha = numpy.ones(n, dtype=int)
+        alpha = np.ones(n, dtype=int)
         beta = 1
 
         if n == 1:
             gamma = None
             delta = None
         else:
-            k = numpy.arange(n - 1)
+            k = np.arange(n - 1)
             gamma = (
                 (n - 1 - k) * (n + k + mu - 1) / ((2 * n + mu - 3) * (2 * n + mu - 1))
             )
@@ -272,11 +272,11 @@ class RCNormal:
     # default: weight function 1
     def __init__(self, symbolic, mu=1):
         self.S = sympy.S if symbolic else lambda x: x
-        self.sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+        self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.mu = mu
         assert self.mu > -1
 
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else np.pi
         self.p0 = 1 / self.sqrt(pi)
 
     def __getitem__(self, n):
@@ -285,7 +285,7 @@ class RCNormal:
         n = self.S(n)
         mu = self.mu
 
-        k = numpy.arange(n)
+        k = np.arange(n)
         alpha = self.sqrt(
             (2 * n + mu + 1) * (2 * n + mu - 1) / ((n - k) * (n + k + mu))
         )
@@ -296,7 +296,7 @@ class RCNormal:
             gamma = None
             delta = None
         else:
-            k = numpy.arange(n - 1)
+            k = np.arange(n - 1)
             gamma = self.sqrt(
                 (n - 1 - k)
                 * (2 * n + mu + 1)

@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import sympy
 
 from .tools import plot_single as ps
@@ -52,7 +52,7 @@ class Eval:
 
     def __init__(self, X, scaling, symbolic="auto"):
         if symbolic == "auto":
-            symbolic = numpy.asarray(X).dtype == sympy.Basic
+            symbolic = np.asarray(X).dtype == sympy.Basic
 
         self.rc = {"classical": RCClassical, "monic": RCMonic, "normal": RCNormal}[
             scaling
@@ -61,7 +61,7 @@ class Eval:
         self.L = 0
         self.last = [None, None]
 
-        pi = sympy.pi if symbolic else numpy.pi
+        pi = sympy.pi if symbolic else np.pi
         self.int_p0 = self.rc.p0 * pi
 
     def __iter__(self):
@@ -69,13 +69,13 @@ class Eval:
 
     def __next__(self):
         if self.L == 0:
-            out = numpy.array([0 * self.X[0] + self.rc.p0])
+            out = np.array([0 * self.X[0] + self.rc.p0])
         else:
             alpha, beta, gamma = self.rc[self.L]
 
             shape = list(self.last[0].shape)
             shape[0] += 1
-            out = numpy.zeros(shape, dtype=self.last[0].dtype)
+            out = np.zeros(shape, dtype=self.last[0].dtype)
 
             last_X = self.last[0] * self.X[0]
             last_Y = self.last[0] * self.X[1]
@@ -117,12 +117,12 @@ class RCMonic:
         assert n > 0
 
         n = self.S(n)
-        alpha = numpy.array([i / n for i in range(1, n + 1)])
-        beta = numpy.array([(n - i) / n for i in range(n)])
+        alpha = np.array([i / n for i in range(1, n + 1)])
+        beta = np.array([(n - i) / n for i in range(n)])
         if n == 1:
             gamma = None
         else:
-            gamma = numpy.array([i * (n - i) / (n * (n - 1)) for i in range(1, n)])
+            gamma = np.array([i * (n - i) / (n * (n - 1)) for i in range(1, n)])
         return alpha, beta, gamma
 
 

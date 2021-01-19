@@ -1,6 +1,6 @@
 import itertools
 
-import numpy
+import numpy as np
 import pytest
 import scipy.special
 import sympy
@@ -36,7 +36,7 @@ import orthopy
     ],
 )
 def test_legendre_monic(scaling, n, y):
-    x = numpy.array([0, S(1) / 2, 1])
+    x = np.array([0, S(1) / 2, 1])
 
     # Test evaluation of one value
     y0 = get_nth(orthopy.c1.legendre.Eval(x[0], scaling, symbolic=True), n)
@@ -80,19 +80,19 @@ def test_orthogonality(n=4):
     [
         (sympy.S(1) / 2, sympy.S(23) / 2016),
         (1, sympy.S(8) / 63),
-        (numpy.array([1]), numpy.array([sympy.S(8) / 63])),
-        (numpy.array([1, 2]), numpy.array([sympy.S(8) / 63, sympy.S(1486) / 63])),
+        (np.array([1]), np.array([sympy.S(8) / 63])),
+        (np.array([1, 2]), np.array([sympy.S(8) / 63, sympy.S(1486) / 63])),
     ],
 )
 def test_eval(t, ref, tol=1.0e-14):
     n = 5
     value = get_nth(orthopy.c1.legendre.Eval(t, "monic", symbolic=True), n)
-    assert numpy.all(value == ref)
+    assert np.all(value == ref)
 
     # Evaluating the Legendre polynomial in this way is rather unstable, so don't go too
     # far with n.
-    approx_ref = numpy.polyval(scipy.special.legendre(n, monic=True), t)
-    assert numpy.all(numpy.abs(value - approx_ref) < tol)
+    approx_ref = np.polyval(scipy.special.legendre(n, monic=True), t)
+    assert np.all(np.abs(value - approx_ref) < tol)
 
 
 def test_show(n=5):

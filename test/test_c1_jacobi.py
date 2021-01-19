@@ -1,6 +1,6 @@
 import math
 
-import numpy
+import numpy as np
 import pytest
 from helpers import get_nth
 from sympy import S, sqrt
@@ -34,7 +34,7 @@ import orthopy
     ],
 )
 def test_jacobi_monic(scaling, n, y):
-    x = numpy.array([0, S(1) / 2, 1])
+    x = np.array([0, S(1) / 2, 1])
 
     alpha = 3
     beta = 2
@@ -50,19 +50,19 @@ def test_jacobi_monic(scaling, n, y):
 def test_jacobi(symbolic):
     n = 5
     rc = orthopy.c1.jacobi.RecurrenceCoefficients("monic", 1, 1, symbolic)
-    alpha, beta, gamma = numpy.array([rc[k] for k in range(n)]).T
+    alpha, beta, gamma = np.array([rc[k] for k in range(n)]).T
 
     if symbolic:
-        assert numpy.all(alpha == 1)
-        assert numpy.all(beta == 0)
-        assert numpy.all(gamma == [None, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
+        assert np.all(alpha == 1)
+        assert np.all(beta == 0)
+        assert np.all(gamma == [None, S(1) / 5, S(8) / 35, S(5) / 21, S(8) / 33])
     else:
         tol = 1.0e-14
-        assert numpy.all(numpy.abs(alpha - 1) < tol)
-        assert numpy.all(numpy.abs(beta) < tol)
+        assert np.all(np.abs(alpha - 1) < tol)
+        assert np.all(np.abs(beta) < tol)
         ref_gamma = [math.nan, 1 / 5, 8 / 35, 5 / 21, 8 / 33]
         assert math.isnan(gamma[0])
-        assert numpy.all(numpy.abs(gamma[1:] - ref_gamma[1:]) < tol)
+        assert np.all(np.abs(gamma[1:] - ref_gamma[1:]) < tol)
 
 
 def test_show(n=5):

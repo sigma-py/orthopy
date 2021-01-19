@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import pytest
 from helpers import get_nth
 from sympy import Rational
@@ -19,7 +19,7 @@ import orthopy
     ],
 )
 def test_gegenbauer_monic(n, y):
-    x = numpy.array([0, Rational(1, 2), 1])
+    x = np.array([0, Rational(1, 2), 1])
     lmbda = -Rational(1, 2)
 
     # Test evaluation of one value

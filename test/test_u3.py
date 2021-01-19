@@ -1,7 +1,7 @@
 import itertools
 
 import ndim
-import numpy
+import numpy as np
 import pytest
 import sympy
 from sympy import pi, sqrt
@@ -63,7 +63,7 @@ def test_normality(scaling, n=5):
 )
 def test_orthogonality(scaling, n=3):
     evaluator = orthopy.u3.EvalCartesian(P, scaling=scaling)
-    tree = numpy.concatenate([next(evaluator) for _ in range(n)])
+    tree = np.concatenate([next(evaluator) for _ in range(n)])
     for f0, f1 in itertools.combinations(tree, 2):
         assert _integrate_poly(f0 * _conj(f1)) == 0
 
@@ -80,13 +80,13 @@ def sph_exact2(theta_phi):
     # Exact values from
     # <https://en.wikipedia.org/wiki/Table_of_spherical_harmonics>.
     try:
-        y0_0 = numpy.full(theta_phi[1:].shape, sqrt(1 / pi) / 2)
+        y0_0 = np.full(theta_phi[1:].shape, sqrt(1 / pi) / 2)
     except AttributeError:
         y0_0 = sqrt(1 / pi) / 2
 
-    sin = numpy.vectorize(sympy.sin)
-    cos = numpy.vectorize(sympy.cos)
-    exp = numpy.vectorize(sympy.exp)
+    sin = np.vectorize(sympy.sin)
+    cos = np.vectorize(sympy.cos)
+    exp = np.vectorize(sympy.exp)
 
     theta, phi = theta_phi
 
@@ -113,8 +113,8 @@ def sph_exact2(theta_phi):
         [sympy.S(1) / 10, sympy.S(16) / 5],
         [sympy.S(1) / 10000, sympy.S(7) / 100000],
         # (
-        #   numpy.array([sympy.S(3)/7, sympy.S(1)/13]),
-        #   numpy.array([sympy.S(2)/5, sympy.S(2)/3]),
+        #   np.array([sympy.S(3)/7, sympy.S(1)/13]),
+        #   np.array([sympy.S(2)/5, sympy.S(2)/3]),
         # )
     ],
 )
@@ -124,7 +124,7 @@ def test_spherical_harmonics(theta_phi):
     for ex in exacts:
         val = next(evaluator)
         for v, e in zip(val, ex):
-            assert numpy.all(numpy.array(sympy.simplify(v - e)) == 0)
+            assert np.all(np.array(sympy.simplify(v - e)) == 0)
 
 
 @pytest.mark.parametrize("theta_phi", [[1.0e-1, 16.0 / 5.0], [1.0e-4, 7.0e-5]])
@@ -132,10 +132,10 @@ def test_spherical_harmonics_numpy(theta_phi):
     exacts = sph_exact2(theta_phi)
     evaluator = orthopy.u3.EvalSpherical(theta_phi, scaling="quantum mechanic")
 
-    cmplx = numpy.vectorize(complex)
+    cmplx = np.vectorize(complex)
     for ex in exacts:
         val = next(evaluator)
-        assert numpy.all(abs(val - cmplx(ex)) < 1.0e-12)
+        assert np.all(abs(val - cmplx(ex)) < 1.0e-12)
 
 
 def test_write_single(n=5, r=3):
@@ -152,7 +152,7 @@ def test_write_tree(n=2):
 #     [
 #         sympy.S(1) / 10,
 #         sympy.S(1) / 1000,
-#         numpy.array([sympy.S(3) / 7, sympy.S(1) / 13]),
+#         np.array([sympy.S(3) / 7, sympy.S(1) / 13]),
 #     ],
 # )
 # @pytest.mark.parametrize(
@@ -180,7 +180,7 @@ def test_write_tree(n=2):
 #
 #     for val, ex in zip(vals, exacts):
 #         for v, e in zip(val, ex):
-#             assert numpy.all(v == e)
+#             assert np.all(v == e)
 
 
 if __name__ == "__main__":

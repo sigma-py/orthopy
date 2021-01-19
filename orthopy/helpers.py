@@ -1,10 +1,10 @@
-import numpy
+import numpy as np
 import sympy
 
 
 def full_like(x, val):
-    if isinstance(x, numpy.ndarray):
-        return numpy.full_like(x, val)
+    if isinstance(x, np.ndarray):
+        return np.full_like(x, val)
 
     # assume x is just a float or int or sympy.Poly
     return x * 0 + val
@@ -76,10 +76,10 @@ class ProductEvalWithDegrees:
     def __init__(self, rc, int_1, X, symbolic):
         self.rc = rc
 
-        self.a = []
-        self.b = []
-        self.c = []
-        X = numpy.asarray(X)
+        self.a = None
+        self.b = None
+        self.c = None
+        X = np.asarray(X)
         self.dim = X.shape[0]
         self.p0n = rc.p0 ** self.dim
         self.int_p0 = self.p0n * int_1 ** self.dim
@@ -96,13 +96,15 @@ class ProductEvalWithDegrees:
         dim = X.shape[0]
 
         if self.L == 0:
-            values = numpy.array([X[0] * 0 + self.p0n])
-            degrees = numpy.array([numpy.zeros(dim, dtype=int)])
+            values = np.array([X[0] * 0 + self.p0n])
+            degrees = np.array([np.zeros(dim, dtype=int)])
         else:
             aa, bb, cc = self.rc[self.L - 1]
-            self.a = numpy.append(self.a, aa)
-            self.b = numpy.append(self.b, bb)
-            self.c = numpy.append(self.c, cc)
+            # cannot just np.append here since numpy will convert to float64
+            # https://github.com/numpy/numpy/issues/18189
+            self.a = np.array([aa]) if self.a is None else np.append(self.a, aa)
+            self.b = np.array([bb]) if self.b is None else np.append(self.b, bb)
+            self.c = np.array([cc]) if self.c is None else np.append(self.c, cc)
 
             a = self.a
             b = self.b
@@ -111,15 +113,15 @@ class ProductEvalWithDegrees:
             values = []
             degrees = []
 
-            mask0 = numpy.ones(len(self.last_degrees[0]), dtype=bool)
+            mask0 = np.ones(len(self.last_degrees[0]), dtype=bool)
             if self.L > 1:
-                mask1 = numpy.ones(len(self.last_degrees[1]), dtype=bool)
+                mask1 = np.ones(len(self.last_degrees[1]), dtype=bool)
 
             for i in range(dim):
                 lv0 = self.last_values[0][mask0]
                 idx0 = self.last_degrees[0][mask0][:, i]
 
-                val = lv0 * (numpy.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
+                val = lv0 * (np.multiply.outer(a[idx0], X[i]).T - b[idx0]).T
 
                 if self.L > 1:
                     lv1 = self.last_values[1][mask1]
@@ -137,8 +139,8 @@ class ProductEvalWithDegrees:
                 if self.L > 1:
                     mask1 &= self.last_degrees[1][:, i] == 0
 
-            values = numpy.concatenate(values)
-            degrees = numpy.concatenate(degrees)
+            values = np.concatenate(values)
+            degrees = np.concatenate(degrees)
 
         self.last_values[1] = self.last_values[0]
         self.last_values[0] = values
@@ -187,7 +189,7 @@ class Eval135:
         # xi[0] == sqrt(1 - x**2) / exp(i*phi)
         # xi[1] == sqrt(1 - x**2) * exp(i*phi)
         if xi is None:
-            sqrt = numpy.vectorize(sympy.sqrt) if symbolic else numpy.sqrt
+            sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
             # Such functions aren't always polynomials, see, e.g.,
             # <https://en.wikipedia.org/wiki/Associated_Legendre_polynomials>:
             #
@@ -206,13 +208,13 @@ class Eval135:
 
     def __next__(self):
         if self.k == 0:
-            out = numpy.array([full_like(self.x, self.rc.p0)])
+            out = np.array([full_like(self.x, self.rc.p0)])
         else:
             z0, z1, c0, c1 = self.rc[self.k]
-            out = numpy.concatenate(
+            out = np.concatenate(
                 [
                     [self.last[0][0] * (self.xi[0] * z0)],
-                    self.last[0] * numpy.multiply.outer(c0, self.x),
+                    self.last[0] * np.multiply.outer(c0, self.x),
                     [self.last[0][-1] * (self.xi[1] * z1)],
                 ]
             )
