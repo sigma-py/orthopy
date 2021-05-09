@@ -47,7 +47,7 @@ def test_golub_welsch(tol=1.0e-14):
     orthopy.tools.gautschi_test_3(moments, alpha, beta)
 
 
-@pytest.mark.parametrize("dtype", [np.float, sympy.S])
+@pytest.mark.parametrize("dtype", [float, sympy.S])
 def test_chebyshev(dtype):
     alpha = 2
 
@@ -73,7 +73,7 @@ def test_chebyshev(dtype):
         ).all()
         assert int_1 == sympy.S(2) / 3
     else:
-        assert dtype == np.float
+        assert dtype == float
         tol = 1.0e-14
         k = np.arange(2 * n)
         moments = (1.0 + (-1.0) ** k) / (k + alpha + 1)

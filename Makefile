@@ -20,11 +20,12 @@ publish: tag upload
 
 clean:
 	@find . | grep -E "(__pycache__|\.pyc|\.pyo$\)" | xargs rm -rf
-	@rm -rf *.egg-info/ build/ dist/ *.png *.svg *.vtk
+	@rm -rf src/*.egg-info/ build/ dist/ *.png *.svg *.vtk .tox/
 
 format:
 	isort .
 	black .
+	# blacken-docs .
 
 lint:
 	black --check .
