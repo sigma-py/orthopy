@@ -25,7 +25,7 @@ clean:
 format:
 	isort .
 	black .
-	blacken-docs .
+	# blacken-docs .
 
 lint:
 	black --check .
