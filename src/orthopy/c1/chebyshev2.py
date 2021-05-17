@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 import sympy
 
@@ -50,7 +52,7 @@ class Eval(gegenbauer.Eval):
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, scaling, symbolic="auto"):
+    def __init__(self, X, scaling: str, symbolic: Union[str, bool] = "auto"):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 

@@ -1,4 +1,5 @@
 import itertools
+from typing import Union
 
 import numpy as np
 import sympy
@@ -74,7 +75,7 @@ class Eval(Eval135):
     <https://doi.org/10.1016/j.cpc.2010.08.038>.
     """
 
-    def __init__(self, X, scaling, symbolic="auto"):
+    def __init__(self, X, scaling: str, symbolic: Union[str, bool] = "auto"):
         cls = {"classical": RCClassical, "normal": RCNormal}[scaling]
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
@@ -83,11 +84,11 @@ class Eval(Eval135):
 
 
 class RCClassical:
-    def __init__(self, symbolic):
+    def __init__(self, symbolic: bool):
         self.frac = sympy.Rational if symbolic else lambda x, y: x / y
         self.p0 = 1
 
-    def __getitem__(self, L):
+    def __getitem__(self, L: int):
         z0 = self.frac(1, 2 * L)
         z1 = -(2 * L - 1)
         c0 = [self.frac(2 * L - 1, L - m) for m in range(-L + 1, L)]
@@ -99,13 +100,13 @@ class RCClassical:
 
 
 class RCNormal:
-    def __init__(self, symbolic):
+    def __init__(self, symbolic: bool):
         self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.frac = np.vectorize(sympy.Rational) if symbolic else lambda x, y: x / y
 
         self.p0 = 1 / self.sqrt(2)
 
-    def __getitem__(self, L):
+    def __getitem__(self, L: int):
         z0 = self.sqrt(self.frac(2 * L + 1, 2 * L))
         z1 = -self.sqrt(self.frac(2 * L + 1, 2 * L))
         #
