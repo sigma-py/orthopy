@@ -1,4 +1,5 @@
 import math
+from typing import Union
 
 import numpy as np
 import sympy
@@ -41,7 +42,9 @@ class Eval(Eval1D):
 
 
 class RecurrenceCoefficients:
-    def __init__(self, scaling, alpha=0, symbolic=False):
+    def __init__(
+        self, scaling: str, alpha: Union[int, float] = 0, symbolic: bool = False
+    ):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         self.rc = cls(alpha, symbolic)
         self.p0 = self.rc.p0
@@ -49,17 +52,17 @@ class RecurrenceCoefficients:
         gamma = sympy.gamma if symbolic else lambda x: math.gamma(float(x))
         self.int_1 = gamma(alpha + 1)
 
-    def __getitem__(self, N):
+    def __getitem__(self, N: int):
         return self.rc[N]
 
 
 class RCMonic:
-    def __init__(self, alpha, symbolic):
+    def __init__(self, alpha: Union[int, float], symbolic: bool):
         self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.p0 = 1
 
-    def __getitem__(self, k):
+    def __getitem__(self, k: int):
         a = 1
         b = 2 * k + 1 + self.alpha
         c = k * (k + self.alpha) if k > 0 else self.nan
