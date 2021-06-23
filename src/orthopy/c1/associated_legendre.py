@@ -54,7 +54,7 @@ def savefig(filename, *args, **kwargs):
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
-class Eval(Eval135):
+class Eval:
     """
     Useful references are
 
@@ -80,7 +80,13 @@ class Eval(Eval135):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
         rc = cls(symbolic)
-        super().__init__(rc, X, symbolic=symbolic)
+        self._eval135 = Eval135(rc, X, symbolic=symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval135)
 
 
 class RCClassical:

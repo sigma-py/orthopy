@@ -51,11 +51,18 @@ def savefig(filename, *args, **kwargs):
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
-class Eval(Eval1D):
+class Eval:
     def __init__(self, X, *args, symbolic="auto"):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
-        super().__init__(X, RecurrenceCoefficients(*args, symbolic=symbolic))
+
+        self._eval_1d = Eval1D(X, RecurrenceCoefficients(*args, symbolic=symbolic))
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval_1d)
 
 
 class RecurrenceCoefficients:

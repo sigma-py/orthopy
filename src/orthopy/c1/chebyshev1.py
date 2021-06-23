@@ -22,7 +22,7 @@ def savefig(filename, *args, **kwargs):
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
-class Eval(gegenbauer.Eval):
+class Eval:
     """Chebyshev polynomials of the first kind. The first few are:
 
     scaling == "monic":
@@ -66,4 +66,10 @@ class Eval(gegenbauer.Eval):
             symbolic = np.asarray(X).dtype == sympy.Basic
 
         lmbda = -sympy.S(1) / 2 if symbolic else -0.5
-        super().__init__(X, scaling, lmbda, symbolic)
+        self._gegenbauer_eval = gegenbauer.Eval(X, scaling, lmbda, symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._gegenbauer_eval)

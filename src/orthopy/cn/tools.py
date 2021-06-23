@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 
 from ..c1.jacobi import plot as plot_jacobi
-from .main import Eval, EvalWithDegrees
+from .main import Eval
 
 
 def show_tree_1d(*args, **kwargs):
@@ -79,7 +79,7 @@ def write_tree_3d(filename, n, *args, res=20, **kwargs):
 
     points, cells = meshzoo.cube(-1, 1, -1, 1, -1, 1, res, res, res)
 
-    evaluator = EvalWithDegrees(points.T, *args, **kwargs)
+    evaluator = Eval(points.T, *args, return_degrees=True, **kwargs)
     meshes = []
 
     corners = np.array(

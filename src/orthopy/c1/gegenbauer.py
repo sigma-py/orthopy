@@ -19,9 +19,15 @@ def savefig(filename, *args, **kwargs):
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
-class Eval(jacobi.Eval):
+class Eval:
     def __init__(self, X, scaling, lmbda, symbolic="auto"):
-        super().__init__(X, scaling, lmbda, lmbda, symbolic=symbolic)
+        self._jacobi_eval = jacobi.Eval(X, scaling, lmbda, lmbda, symbolic=symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._jacobi_eval)
 
 
 class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
