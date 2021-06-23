@@ -35,6 +35,7 @@ class RecurrenceCoefficients:
         self._jacobi_rc = jacobi.RecurrenceCoefficients(
             scaling, lmbda, lmbda, symbolic=symbolic
         )
+        self.int_1 = self._jacobi_rc.int_1
 
     def __getitem__(self, N):
         return self._jacobi_rc[N]
