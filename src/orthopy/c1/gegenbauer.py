@@ -30,6 +30,11 @@ class Eval:
         return next(self._jacobi_eval)
 
 
-class RecurrenceCoefficients(jacobi.RecurrenceCoefficients):
+class RecurrenceCoefficients:
     def __init__(self, scaling, lmbda, symbolic="auto"):
-        super().__init__(scaling, lmbda, lmbda, symbolic=symbolic)
+        self._jacobi_rc = jacobi.RecurrenceCoefficients(
+            scaling, lmbda, lmbda, symbolic=symbolic
+        )
+
+    def __getitem__(self, N):
+        return self._jacobi_rc[N]
