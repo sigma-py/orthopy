@@ -4,7 +4,7 @@ import sympy
 from ..helpers import Eval135
 
 
-class EvalCartesian(Eval135):
+class EvalCartesian:
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`."""
 
     def __init__(self, X, scaling, complex_valued=True, symbolic="auto"):
@@ -55,10 +55,16 @@ class EvalCartesian(Eval135):
         pi = sympy.pi if symbolic else np.pi
         self.int_p0 = rc.p0 * 4 * pi
 
-        super().__init__(rc, X[2], xi, symbolic=symbolic)
+        self._eval_135 = Eval135(rc, X[2], xi, symbolic=symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval_135)
 
 
-class EvalSpherical(Eval135):
+class EvalSpherical:
     """Evaluate spherical harmonics degree by degree `n` at angles `polar`, `azimuthal`."""
 
     def __init__(self, theta_phi, scaling, complex_valued=True, symbolic="auto"):
@@ -97,7 +103,13 @@ class EvalSpherical(Eval135):
             cos_theta = cos(theta)
             xi = [sin_theta, sin_theta]
 
-        super().__init__(rc, cos_theta, xi, symbolic=symbolic)
+        self._eval_135 = Eval135(rc, cos_theta, xi, symbolic=symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval_135)
 
 
 class RCSpherical:

@@ -6,7 +6,7 @@ import sympy
 from ..helpers import Eval1D
 
 
-class Eval(Eval1D):
+class Eval:
     """Recurrence coefficients for Hermite polynomials.
 
     The physicicist's standardization is with respect to the weight function exp(-x^2),
@@ -63,7 +63,13 @@ class Eval(Eval1D):
 
         rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
         self.int_p0 = rc.p0 * rc.int_1
-        super().__init__(X, rc)
+        self._eval_1d = Eval1D(X, rc)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval_1d)
 
 
 class RecurrenceCoefficients:

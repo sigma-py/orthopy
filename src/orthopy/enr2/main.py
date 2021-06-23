@@ -6,7 +6,7 @@ from ..helpers import ProductEval, ProductEvalWithDegrees
 
 
 class Eval(ProductEval):
-    def __init__(self, X, standardization, symbolic="auto"):
+    def __init__(self, X, standardization, symbolic="auto", return_degrees=False):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
@@ -17,19 +17,12 @@ class Eval(ProductEval):
         sqrt = sympy.sqrt if symbolic else np.sqrt
         pi = sympy.pi if symbolic else np.pi
         int_1 = sqrt(pi)
-        super().__init__(rc, int_1, X, symbolic)
 
+        cls = ProductEvalWithDegrees if return_degrees else ProductEval
+        self._product_eval = cls(rc, int_1, X, symbolic)
 
-class EvalWithDegrees(ProductEvalWithDegrees):
-    def __init__(self, X, standardization, symbolic="auto"):
-        if symbolic == "auto":
-            symbolic = np.asarray(X).dtype == sympy.Basic
+    def __iter__(self):
+        return self
 
-        rc = {"probabilists": RCProbabilistNormal, "physicists": RCPhysicistNormal}[
-            standardization
-        ](symbolic)
-
-        sqrt = sympy.sqrt if symbolic else np.sqrt
-        pi = sympy.pi if symbolic else np.pi
-        int_1 = sqrt(pi)
-        super().__init__(rc, int_1, X, symbolic)
+    def __next__(self):
+        return next(self._product_eval)

@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 
 from ..e1r2 import plot as plot_hermite
-from .main import EvalWithDegrees
+from .main import Eval
 
 
 def show_tree_1d(*args, **kwargs):
@@ -52,7 +52,7 @@ def plot_tree_2d(
     plt.style.use(dufte.style)
 
     points, cells = meshzoo.rectangle(-alpha, alpha, -alpha, alpha, res, res)
-    evaluator = EvalWithDegrees(points.T, *args, **kwargs)
+    evaluator = Eval(points.T, *args, return_degrees=True, **kwargs)
 
     plt.set_cmap(cmap)
     plt.gca().set_aspect("equal")
@@ -88,7 +88,7 @@ def write_tree_3d(filename, n, *args, res=20, alpha=2.0, **kwargs):
         -alpha, alpha, -alpha, alpha, -alpha, alpha, res, res, res
     )
 
-    evaluator = EvalWithDegrees(points.T, *args, **kwargs)
+    evaluator = Eval(points.T, *args, return_degrees=True, **kwargs)
     meshes = []
 
     corners = np.array(
