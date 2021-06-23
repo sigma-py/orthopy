@@ -19,7 +19,7 @@ def savefig(filename, *args, **kwargs):
     plt.savefig(filename, transparent=True, bbox_inches="tight")
 
 
-class Eval(gegenbauer.Eval):
+class Eval:
     """Legendre. The first few are:
 
     scaling == "monic":
@@ -48,7 +48,13 @@ class Eval(gegenbauer.Eval):
     """
 
     def __init__(self, X, scaling, symbolic="auto"):
-        super().__init__(X, scaling, 0, symbolic)
+        self._gegenbauer_eval = gegenbauer.Eval(X, scaling, 0, symbolic)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._gegenbauer_eval)
 
 
 class RecurrenceCoefficients(gegenbauer.RecurrenceCoefficients):

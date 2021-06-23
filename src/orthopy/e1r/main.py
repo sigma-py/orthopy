@@ -7,7 +7,7 @@ import sympy
 from ..helpers import Eval1D
 
 
-class Eval(Eval1D):
+class Eval:
     """Generalized Laguerre polynomials. Set alpha=0 (default) to get classical
     Laguerre.
 
@@ -38,7 +38,13 @@ class Eval(Eval1D):
 
         rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
         self.int_p0 = rc.p0
-        super().__init__(X, rc)
+        self._eval_1d = Eval1D(X, rc)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._eval_1d)
 
 
 class RecurrenceCoefficients:

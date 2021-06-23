@@ -5,19 +5,17 @@ from ..c1 import jacobi
 from ..helpers import ProductEval, ProductEvalWithDegrees
 
 
-class Eval(ProductEval):
-    def __init__(self, X, alpha=0, beta=0, symbolic="auto"):
+class Eval:
+    def __init__(self, X, alpha=0, beta=0, symbolic="auto", return_degrees=False):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
         rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
-        super().__init__(rc, 1, X, symbolic)
+        cls = ProductEvalWithDegrees if return_degrees else ProductEval
+        self._product_eval = cls(rc, 1, X, symbolic)
 
+    def __iter__(self):
+        return self
 
-class EvalWithDegrees(ProductEvalWithDegrees):
-    def __init__(self, X, alpha=0, beta=0, symbolic="auto"):
-        if symbolic == "auto":
-            symbolic = np.asarray(X).dtype == sympy.Basic
-
-        rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
-        super().__init__(rc, 1, X, symbolic)
+    def __next__(self):
+        return next(self._product_eval)
