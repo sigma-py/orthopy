@@ -5,7 +5,7 @@ from ..e1r2.main import RCPhysicistNormal, RCProbabilistNormal
 from ..helpers import ProductEval, ProductEvalWithDegrees
 
 
-class Eval(ProductEval):
+class Eval:
     def __init__(self, X, standardization, symbolic="auto", return_degrees=False):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
