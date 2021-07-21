@@ -35,6 +35,8 @@ def test_integral0(alpha, n=4):
     p = sympy.poly(x)
     evaluator = orthopy.e1r.Eval(p, alpha=alpha, scaling="normal")
 
+    assert evaluator.int_p0 == 1
+
     assert _integrate_poly(next(evaluator), alpha, x) == 1
     for _ in range(n + 1):
         assert _integrate_poly(next(evaluator), alpha, x) == 0

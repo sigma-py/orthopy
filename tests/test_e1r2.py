@@ -65,6 +65,8 @@ def test_integral0(standardization, scaling, int0, n=4):
     p = sympy.poly(x)
     evaluator = orthopy.e1r2.Eval(p, standardization, scaling)
 
+    assert evaluator.int_p0 == int0
+
     assert _integrate_poly(next(evaluator), standardization) == int0
     for _ in range(n + 1):
         assert _integrate_poly(next(evaluator), standardization) == 0
