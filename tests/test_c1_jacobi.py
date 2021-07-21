@@ -40,7 +40,6 @@ def test_jacobi_monic(scaling, n, y):
     beta = 2
 
     evaluator = orthopy.c1.jacobi.Eval(x[2], scaling, alpha, beta, symbolic=True)
-    assert evaluator.int_p0 == 1
 
     y2 = get_nth(evaluator, n)
     assert y2 == y[2]

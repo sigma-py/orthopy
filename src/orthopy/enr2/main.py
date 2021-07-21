@@ -19,7 +19,7 @@ class Eval:
         int_1 = sqrt(pi)
 
         cls = ProductEvalWithDegrees if return_degrees else ProductEval
-        self._product_eval = cls(rc, int_1, X, symbolic)
+        self._product_eval = cls(rc, int_1, X)
 
     def __iter__(self):
         return self
