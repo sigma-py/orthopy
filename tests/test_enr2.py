@@ -31,7 +31,8 @@ def test_integral0(d, standardization, n=4):
         sympy.sqrt(sympy.sqrt(sympy.pi)) ** d if standardization == "physicists" else 1
     )
     assert _integrate_poly(vals[0], standardization) == ref
-    for k in range(n):
+    assert evaluator.int_p0 == ref
+    for _ in range(n):
         vals = next(evaluator)
         for val in vals:
             assert _integrate_poly(val, standardization) == 0
