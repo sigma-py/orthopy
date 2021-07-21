@@ -12,7 +12,8 @@ class Eval:
 
         rc = jacobi.RecurrenceCoefficients("normal", alpha, beta, symbolic)
         cls = ProductEvalWithDegrees if return_degrees else ProductEval
-        self._product_eval = cls(rc, 1, X, symbolic)
+        self._product_eval = cls(rc, 1, X)
+        self.int_p0 = self._product_eval.int_p0
 
     def __iter__(self):
         return self

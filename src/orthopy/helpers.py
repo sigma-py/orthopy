@@ -73,7 +73,7 @@ class ProductEvalWithDegrees:
     In the same manner this can be repeated for `dim` dimensions.
     """
 
-    def __init__(self, rc, int_1, X, symbolic):
+    def __init__(self, rc, int_1, X):
         self.rc = rc
 
         self.a = None
