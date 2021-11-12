@@ -1,4 +1,10 @@
-from typing import Union
+from __future__ import annotations
+
+try:
+    # Python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 import numpy as np
 import sympy
@@ -52,7 +58,7 @@ class Eval:
         32*sqrt(2)*x**5/sqrt(pi) - 32*sqrt(2)*x**3/sqrt(pi) + 6*sqrt(2)*x/sqrt(pi)
     """
 
-    def __init__(self, X, scaling: str, symbolic: Union[str, bool] = "auto"):
+    def __init__(self, X, scaling: str, symbolic: Literal["auto"] | bool = "auto"):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
