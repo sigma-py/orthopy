@@ -5,7 +5,7 @@ import numpy as np
 from .main import EvalCartesian
 
 
-def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
+def write_single(filename, n, r, scaling, res=20):
     """This function creates a sphere mesh with "srgb1" values. Can be views in ParaView
     by disabling "Map Scalars".
     """
@@ -20,17 +20,12 @@ def write_single(filename, n, r, scaling, res=20, colors_enhancement=2.5):
 
     srgb1_vals = cplot.get_srgb1(vals, colorspace="cam16")
 
-    # exaggerate colors a bit
-    srgb1_vals *= colors_enhancement
-    srgb1_vals[srgb1_vals > 1] = 1
-    srgb1_vals[srgb1_vals < 0] = 0
-
     meshio.write_points_cells(
         filename, points, {"triangle": cells}, point_data={"srgb1": srgb1_vals}
     )
 
 
-def write_tree(filename, n, scaling, res=20, colors_enhancement=2.5):
+def write_tree(filename, n, scaling, res=20):
     import cplot
     import meshio
     import meshzoo
@@ -42,10 +37,10 @@ def write_tree(filename, n, scaling, res=20, colors_enhancement=2.5):
     for L, level in enumerate(itertools.islice(evaluator, n)):
         for k, vals in enumerate(level):
             srgb1_vals = cplot.get_srgb1(vals, colorspace="cam16")
-            # exaggerate colors a bit
-            srgb1_vals *= colors_enhancement
-            srgb1_vals[srgb1_vals > 1] = 1
-            srgb1_vals[srgb1_vals < 0] = 0
+            # # exaggerate colors a bit
+            # srgb1_vals *= 2.5
+            # srgb1_vals[srgb1_vals > 1] = 1
+            # srgb1_vals[srgb1_vals < 0] = 0
 
             pts = points.copy()
 
