@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import itertools
-from typing import Union
 
 import numpy as np
 import sympy
@@ -7,7 +8,7 @@ import sympy
 from ..helpers import Eval135
 
 
-def plot(n, *args, **kwargs):
+def plot(n: int, *args, **kwargs):
     import dufte
     from matplotlib import pyplot as plt
 
@@ -75,7 +76,7 @@ class Eval:
     <https://doi.org/10.1016/j.cpc.2010.08.038>.
     """
 
-    def __init__(self, X, scaling: str, symbolic: Union[str, bool] = "auto"):
+    def __init__(self, X, scaling: str, symbolic: str | bool = "auto"):
         cls = {"classical": RCClassical, "normal": RCNormal}[scaling]
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic

@@ -1,5 +1,12 @@
+from __future__ import annotations
+
 import math
-from typing import Union
+
+try:
+    # Python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 import numpy as np
 import sympy
@@ -32,10 +39,11 @@ class Eval:
     The classical and normal standarizations differ for alpha != 0.
     """
 
-    def __init__(self, X, *args, symbolic="auto", **kwargs):
+    def __init__(self, X, *args, symbolic: Literal["auto"] | bool = "auto", **kwargs):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
+        assert isinstance(symbolic, bool)
         rc = RecurrenceCoefficients(*args, symbolic=symbolic, **kwargs)
         self.int_p0 = rc.p0
         self._eval_1d = Eval1D(X, rc)
@@ -49,7 +57,10 @@ class Eval:
 
 class RecurrenceCoefficients:
     def __init__(
-        self, scaling: str, alpha: Union[int, float] = 0, symbolic: bool = False
+        self,
+        scaling: Literal["monic"] | Literal["classical"] | Literal["normal"],
+        alpha: int | float = 0,
+        symbolic: bool = False,
     ):
         cls = {"monic": RCMonic, "classical": RCClassical, "normal": RCNormal}[scaling]
         self.rc = cls(alpha, symbolic)
@@ -63,7 +74,7 @@ class RecurrenceCoefficients:
 
 
 class RCMonic:
-    def __init__(self, alpha: Union[int, float], symbolic: bool):
+    def __init__(self, alpha: int | float, symbolic: bool):
         self.nan = None if symbolic else math.nan
         self.alpha = alpha
         self.p0 = 1
@@ -76,7 +87,7 @@ class RCMonic:
 
 
 class RCClassical:
-    def __init__(self, alpha, symbolic):
+    def __init__(self, alpha: int | float, symbolic: bool):
         self.nan = None if symbolic else math.nan
         self.S = sympy.S if symbolic else lambda a: a
         self.alpha = alpha
@@ -93,7 +104,7 @@ class RCClassical:
 
 
 class RCNormal:
-    def __init__(self, alpha, symbolic):
+    def __init__(self, alpha: int | float, symbolic: bool):
         self.nan = None if symbolic else math.nan
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         self.S = sympy.S if symbolic else lambda a: a

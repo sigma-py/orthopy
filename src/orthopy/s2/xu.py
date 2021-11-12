@@ -1,5 +1,14 @@
+from __future__ import annotations
+
 import numpy as np
 import sympy
+from numpy.typing import ArrayLike
+
+try:
+    # Python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 
 def savefig_single(filename, *args, **kwargs):
@@ -64,7 +73,12 @@ class Eval:
     recurrence relation can be worked out from there.
     """
 
-    def __init__(self, X, scaling, symbolic="auto"):
+    def __init__(
+        self,
+        X: ArrayLike,
+        scaling: Literal["classical"] | Literal["monic"] | Literal["normal"],
+        symbolic: Literal["auto"] | bool = "auto",
+    ):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
@@ -110,7 +124,7 @@ class RCClassical:
     last polynomial in each level) is 1.
     """
 
-    def __init__(self, symbolic, mu=1):
+    def __init__(self, symbolic: bool, mu: int | float = 1):
         self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.mu = mu
@@ -147,7 +161,7 @@ class RCClassical:
     #   z(n) = (mu + n) / (mu + 2 * n - 1)
     #
     # TODO only the leftmost and rightmost values are correct
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
 
         n = self.S(n)
@@ -174,7 +188,7 @@ class RCClassical:
 class RCMonic:
     """alpha and beta both equal 1."""
 
-    def __init__(self, symbolic, mu=1):
+    def __init__(self, symbolic: bool, mu: int | float = 1):
         self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = np.vectorize(sympy.sqrt) if symbolic else np.sqrt
         self.mu = mu
@@ -182,7 +196,7 @@ class RCMonic:
 
         self.p0 = 1
 
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
 
         n = self.S(n)
