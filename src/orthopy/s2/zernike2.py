@@ -1,7 +1,16 @@
+from __future__ import annotations
+
+try:
+    # Python 3.8+
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+
 import math
 
 import numpy as np
 import sympy
+from numpy.typing import ArrayLike
 
 from .tools import plot_single as ps
 
@@ -50,7 +59,12 @@ class Eval:
     n-ball.
     """
 
-    def __init__(self, X, scaling, symbolic="auto"):
+    def __init__(
+        self,
+        X: ArrayLike,
+        scaling: Literal["classical"] | Literal["monic"] | Literal["normal"],
+        symbolic: Literal["auto"] | bool = "auto",
+    ):
         if symbolic == "auto":
             symbolic = np.asarray(X).dtype == sympy.Basic
 
@@ -93,10 +107,10 @@ class Eval:
 
 
 class RCClassical:
-    def __init__(self, symbolic):
+    def __init__(self, _):
         self.p0 = 1
 
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
 
         alpha = 1
@@ -109,11 +123,11 @@ class RCClassical:
 
 
 class RCMonic:
-    def __init__(self, symbolic):
+    def __init__(self, symbolic: bool):
         self.S = sympy.S if symbolic else lambda x: x
         self.p0 = 1
 
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
 
         n = self.S(n)
@@ -127,13 +141,13 @@ class RCMonic:
 
 
 class RCNormal:
-    def __init__(self, symbolic):
+    def __init__(self, symbolic: bool):
         self.S = sympy.S if symbolic else lambda x: x
         self.sqrt = sympy.sqrt if symbolic else math.sqrt
         pi = sympy.pi if symbolic else math.pi
         self.p0 = 1 / self.sqrt(pi)
 
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
         n = self.S(n)
         sqrt = self.sqrt

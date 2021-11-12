@@ -293,7 +293,7 @@ class RCNormal:
         pi = sympy.pi if symbolic else np.pi
         self.p0 = 1 / self.sqrt(pi)
 
-    def __getitem__(self, n):
+    def __getitem__(self, n: int):
         assert n > 0
 
         n = self.S(n)
