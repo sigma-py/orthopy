@@ -45,11 +45,11 @@ def savefig_tree_2d(filename, *args, **kwargs):
 def plot_tree_2d(
     n, *args, res=100, alpha=2.0, colorbar=True, cmap="RdBu_r", clim=None, **kwargs
 ):
-    import dufte
+    import matplotx
     import meshzoo
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     points, cells = meshzoo.rectangle(-alpha, alpha, -alpha, alpha, res, res)
     evaluator = Eval(points.T, *args, return_degrees=True, **kwargs)

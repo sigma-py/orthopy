@@ -76,11 +76,11 @@ def plot_tree(
     clim=None,
     show_title=True,
 ):
-    import dufte
+    import matplotx
     import meshzoo
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     points, cells = meshzoo.disk(6, res)
     evaluator = evaluator(points.T, scaling)

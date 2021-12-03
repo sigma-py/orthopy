@@ -6,17 +6,17 @@ from .main import Eval
 
 
 def plot(n, *args, **kwargs):
-    import dufte
+    import matplotx
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     x = np.linspace(-2.2, 2.2, 100)
     for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
         plt.plot(x, level, label=f"n={k}")
 
     plt.grid(axis="x")
-    dufte.legend()
+    matplotx.line_labels()
 
     variant, scaling = args
     plt.title(f"Hermite polynomials ({variant}, scaling={scaling})")

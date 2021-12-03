@@ -80,11 +80,11 @@ def show_tree(*args, **kwargs):
 # Use a diverging colormap by default so the zeros are well recognizable
 # https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
 def plot_tree(n, res=100, scaling="normal", colorbar=False, cmap="RdBu_r", clim=None):
-    import dufte
+    import matplotx
     import meshzoo
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     bary, cells = meshzoo.triangle(res)
     evaluator = Eval(bary, scaling)

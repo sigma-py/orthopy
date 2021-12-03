@@ -9,10 +9,10 @@ from ..helpers import Eval135
 
 
 def plot(n: int, *args, **kwargs):
-    import dufte
+    import matplotx
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     x = np.linspace(-1.0, 1.0, 200)
     for k, level in enumerate(itertools.islice(Eval(x, *args, **kwargs), n + 1)):
@@ -29,7 +29,7 @@ def plot(n: int, *args, **kwargs):
             plt.plot(x, entry, label=f"n={k}, r={l - k}", color=col)
 
     plt.grid(axis="x")
-    dufte.legend()
+    matplotx.line_labels()
     ax = plt.gca()
     ax.spines["top"].set_visible(False)
     ax.spines["bottom"].set_visible(False)

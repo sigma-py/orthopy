@@ -7,10 +7,10 @@ from ..helpers import Eval1D
 
 
 def plot(n, *args, **kwargs):
-    import dufte
+    import matplotx
     from matplotlib import pyplot as plt
 
-    plt.style.use(dufte.style)
+    plt.style.use(matplotx.styles.dufte)
 
     x = np.linspace(-1.0, 1.0, 100)
     evaluator = Eval(x, *args, **kwargs)
@@ -18,7 +18,7 @@ def plot(n, *args, **kwargs):
         plt.plot(x, next(evaluator), label=f"n={k}")
 
     plt.grid(axis="x")
-    dufte.legend()
+    matplotx.line_labels()
     ax = plt.gca()
 
     alpha, beta, scaling = args
