@@ -24,13 +24,30 @@ and more.
 All computations are done using numerically stable recurrence schemes. Furthermore, all
 functions are fully vectorized and can return results in _exact arithmetic_.
 
-### Basic usage
+### Installation
 
-Install orthopy from [PyPi](https://pypi.org/project/orthopy) via
+Install orthopy [from PyPI](https://pypi.org/project/orthopy/) with
 
 ```
 pip install orthopy
 ```
+
+### How to get a license
+
+Licenses for personal and academic use can be purchased
+[here](https://buy.stripe.com/aEUg1H38OgDw5qMfZ3).
+You'll receive a confirmation email with a license key.
+Install the key with
+
+```
+plm add <your-license-key>
+```
+
+on your machine and you're good to go.
+
+For commerical use, please contact support@mondaytech.com.
+
+### Basic usage
 
 The main function of all submodules is the iterator `Eval` which evaluates the series of
 orthogonal polynomials with increasing degree at given points using a recurrence
