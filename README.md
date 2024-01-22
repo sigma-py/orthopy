@@ -45,7 +45,7 @@ plm add <your-license-key>
 
 on your machine and you're good to go.
 
-For commerical use, please contact support@mondaytech.com.
+For commercial use, please contact support@mondaytech.com.
 
 ### Basic usage
 
