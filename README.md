@@ -257,11 +257,10 @@ evaluator = orthopy.s2.xu.Eval(x, "normal")
 
 <img src="https://raw.githubusercontent.com/sigma-py/orthopy/assets/sph-tree.png" width="50%">
 
-Complex-valued _spherical harmonics,_ plotted with
-[cplot](https://github.com/nschloe/cplot/) coloring (black=zero, green=real positive,
-pink=real negative, blue=imaginary positive, yellow=imaginary negative). The functions
-in the middle are real-valued. The complex angle takes _n_ turns on the <i>n</i>th
-level.
+Complex-valued _spherical harmonics,_ (black=zero, green=real positive,
+pink=real negative, blue=imaginary positive, yellow=imaginary negative). The
+functions in the middle are real-valued. The complex angle takes _n_ turns on
+the <i>n</i>th level.
 
 <!--pytest.mark.skip-->
 
@@ -277,16 +276,16 @@ evaluator = orthopy.u3.EvalSpherical(
 )
 ```
 
-To generate the above plot, write the tree mesh to a file
-
-```python
-import orthopy
-
-orthopy.u3.write_tree("u3.vtk", 5, "quantum mechanic")
-```
-
-and open it with [ParaView](https://www.paraview.org/). Select the _srgb1_ data set and
-turn off _Map Scalars_.
+<!-- To generate the above plot, write the tree mesh to a file -->
+<!---->
+<!-- ```python -->
+<!-- import orthopy -->
+<!---->
+<!-- orthopy.u3.write_tree("u3.vtk", 5, "quantum mechanic") -->
+<!-- ``` -->
+<!---->
+<!-- and open it with [ParaView](https://www.paraview.org/). Select the _srgb1_ data set and -->
+<!-- turn off _Map Scalars_. -->
 
 ### _n_-Cube (_C<sub>n</sub>_)
 
