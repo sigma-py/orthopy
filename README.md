@@ -19,7 +19,7 @@ orthopy provides various orthogonal polynomial classes for
 [disks](#disk-s2),
 [spheres](#sphere-u2),
 [n-cubes](#n-cube-cn),
-[the nD space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
+[the *n*D space with weight function exp(-r<sup>2</sup>)](#nd-space-with-weight-function-exp-r2-enr2)
 and more.
 All computations are done using numerically stable recurrence schemes. Furthermore, all
 functions are fully vectorized and can return results in _exact arithmetic_.
