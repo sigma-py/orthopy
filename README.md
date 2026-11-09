@@ -60,15 +60,15 @@ x = 0.5
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
 for _ in range(5):
-     print(next(evaluator))
+    print(next(evaluator))
 ```
 
 ```python
-1.0          # P_0(0.5)
-0.5          # P_1(0.5)
--0.125       # P_2(0.5)
--0.4375      # P_3(0.5)
--0.2890625   # P_4(0.5)
+1.0  # P_0(0.5)
+0.5  # P_1(0.5)
+-0.125  # P_2(0.5)
+-0.4375  # P_3(0.5)
+-0.2890625  # P_4(0.5)
 ```
 
 Other ways of getting the first `n` items are
@@ -80,6 +80,7 @@ evaluator = Eval(x, "normal")
 vals = [next(evaluator) for _ in range(n)]
 
 import itertools
+
 vals = list(itertools.islice(Eval(x, "normal"), n))
 ```
 
@@ -96,7 +97,7 @@ x = sympy.Symbol("x")
 
 evaluator = orthopy.c1.legendre.Eval(x, "classical")
 for val in itertools.islice(evaluator, 5):
-     print(sympy.expand(val))
+    print(sympy.expand(val))
 ```
 
 ```
@@ -154,7 +155,9 @@ import orthopy
 
 rc = orthopy.c1.jacobi.RecurrenceCoefficients(
     "monic",  # or "classical", "normal"
-    alpha=0, beta=0, symbolic=True
+    alpha=0,
+    beta=0,
+    symbolic=True,
 )
 print(rc.p0)
 for k in range(5):
@@ -197,7 +200,7 @@ Hermite polynomials come in two standardizations:
 evaluator = orthopy.e1r2.Eval(
     x,
     "probabilists",  # or "physicists"
-    "normal"
+    "normal",
 )
 ```
 
@@ -267,12 +270,12 @@ the <i>n</i>th level.
 ```python
 evaluator = orthopy.u3.EvalCartesian(
     x,
-    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+    scaling="quantum mechanic",  # or "acoustic", "geodetic", "schmidt"
 )
 
 evaluator = orthopy.u3.EvalSpherical(
     theta_phi,  # polar, azimuthal angles
-    scaling="quantum mechanic"  # or "acoustic", "geodetic", "schmidt"
+    scaling="quantum mechanic",  # or "acoustic", "geodetic", "schmidt"
 )
 ```
 
@@ -319,7 +322,7 @@ All polynomials are normalized over the measure. The dimensionality is determine
 ```python
 evaluator = orthopy.enr2.Eval(
     x,
-    standardization="probabilists"  # or "physicists"
+    standardization="probabilists",  # or "physicists"
 )
 values, degrees = next(evaluator)
 ```
